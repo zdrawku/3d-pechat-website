@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "dprinting-services1": {
+    "dprinting-services-website": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/dprinting-services1",
+            "outputPath": "dist/dprinting-services-website",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -69,10 +69,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "dprinting-services1:build:production"
+              "buildTarget": "dprinting-services-website:build:production"
             },
             "development": {
-              "buildTarget": "dprinting-services1:build:development"
+              "buildTarget": "dprinting-services-website:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -80,7 +80,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "dprinting-services1:build"
+            "buildTarget": "dprinting-services-website:build"
           }
         },
         "test": {
