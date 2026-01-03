@@ -1,0 +1,64 @@
+:host {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  align-content: flex-start;
+  gap: 0;
+}
+.row-layout {
+  display: flex;
+}
+.row_layout_contact {
+  background-color: var(--ig-surface-50);
+  justify-content: center;
+  align-items: center;
+  align-content: flex-start;
+  gap: 32px;
+  position: relative;
+  padding: 48px 32px;
+  min-width: 50px;
+  min-height: 50px;
+  flex-grow: 1;
+  flex-shrink: 0;
+}
+.column-layout {
+  display: flex;
+  flex-direction: column;
+}
+.column_layout_contact_form {
+  justify-content: center;
+  align-items: stretch;
+  align-content: flex-start;
+  gap: 32px;
+  position: relative;
+  min-width: 320px;
+  min-height: 50px;
+  max-width: 700px;
+  flex-grow: 1;
+  flex-basis: 0;
+}
+.contact_form_inputs {
+  justify-content: flex-start;
+  align-items: stretch;
+  align-content: flex-start;
+  gap: 24px;
+  position: relative;
+  min-width: 50px;
+  min-height: 50px;
+  flex-shrink: 0;
+}
+.content {
+  text-align: center;
+  height: max-content;
+  min-width: min-content;
+}
+.user-input {
+  height: max-content;
+  min-width: min-content;
+}
+.button_send_message {
+  --ig-size: var(--ig-size-medium);
+  height: max-content;
+}

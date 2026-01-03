@@ -1,0 +1,40 @@
+<div class="row-layout row_layout_contact">
+  <div class="column-layout column_layout_contact_form">
+    <h3 class="content">
+      Свържете се с нас
+    </h3>
+    <p class="content">
+      Имате въпроси или нужда от оферта? Изпратете ни съобщение!
+    </p>
+    <div class="column-layout contact_form_inputs">
+      <igx-input-group type="border" class="user-input">
+        <input type="text" [(ngModel)]="value" placeholder="Вашето име" required="true" igxInput #igxInput />
+        <label igxLabel>Име</label>
+        @if (igxInput.validity.valueMissing) {
+          <igx-hint>This field is required</igx-hint>
+        }
+      </igx-input-group>
+      <igx-input-group type="border" class="user-input">
+        <input type="email" [(ngModel)]="value1" placeholder="Вашият имейл" required="true" igxInput #igxInput1 />
+        <label igxLabel>Email address</label>
+        @if (igxInput1.validity.valueMissing) {
+          <igx-hint>This field is required</igx-hint>
+        }
+      </igx-input-group>
+      <igx-input-group type="border" class="user-input">
+        <input type="text" [(ngModel)]="value2" placeholder="Тема на съобщението" required="true" igxInput #igxInput2 />
+        <label igxLabel>Тема</label>
+        @if (igxInput2.validity.valueMissing) {
+          <igx-hint>This field is required</igx-hint>
+        }
+      </igx-input-group>
+      <igx-input-group type="border" class="user-input">
+        <label igxLabel>Съобщение</label>
+        <textarea placeholder="Вашето съобщение..." required="true" igxInput></textarea>
+      </igx-input-group>
+      <button igxButton="contained" type="button" class="button_send_message">
+        Изпрати съобщение
+      </button>
+    </div>
+  </div>
+</div>

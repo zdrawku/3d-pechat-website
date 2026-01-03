@@ -1,0 +1,162 @@
+:host {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  align-content: flex-start;
+  gap: 0;
+}
+.row-layout {
+  display: flex;
+}
+.row_layout_main_hero {
+  background-color: var(--ig-surface-50);
+  justify-content: center;
+  align-items: center;
+  align-content: flex-start;
+  gap: 32px;
+  position: relative;
+  padding: 32px;
+  min-width: 50px;
+  min-height: 50px;
+  flex-grow: 1;
+  flex-shrink: 0;
+}
+.row_layout_main_hero_content {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  align-content: flex-start;
+  gap: 32px;
+  position: relative;
+  max-width: 1400px;
+}
+.column-layout {
+  display: flex;
+  flex-direction: column;
+}
+.column_layout_hero_text {
+  justify-content: center;
+  align-items: stretch;
+  align-content: flex-start;
+  gap: 24px;
+  position: relative;
+  min-width: 320px;
+  flex-grow: 1;
+  flex-basis: 0;
+}
+.hero_action_buttons {
+  justify-content: flex-start;
+  align-items: stretch;
+  align-content: flex-start;
+  gap: 8px;
+  position: relative;
+  min-width: 50px;
+  min-height: 50px;
+  flex-shrink: 0;
+}
+.hero_buttons_row {
+  justify-content: flex-start;
+  align-items: stretch;
+  align-content: flex-start;
+  gap: 16px;
+  position: relative;
+  min-width: 50px;
+  min-height: 50px;
+  flex-shrink: 0;
+}
+.image_gallery_section_template_1 {
+  justify-content: center;
+  align-items: center;
+  align-content: flex-start;
+  gap: 32px;
+  position: relative;
+  padding: 32px;
+  min-width: 50px;
+  min-height: 50px;
+  flex-grow: 1;
+  flex-shrink: 0;
+}
+.column_layout_2 {
+  justify-content: flex-start;
+  align-items: stretch;
+  align-content: flex-start;
+  gap: 32px;
+  position: relative;
+  min-width: 50px;
+  min-height: 50px;
+  flex-grow: 1;
+  flex-basis: 0;
+}
+.carousel_1 {
+  height: 581px;
+  min-width: 300px;
+  min-height: 240px;
+  max-height: 581px;
+  flex-grow: 1;
+  flex-basis: 0;
+}
+.column_layout_3 {
+  justify-content: flex-start;
+  align-items: center;
+  align-content: flex-start;
+  gap: 13px;
+  position: relative;
+  width: 50%;
+  min-width: 50px;
+  min-height: 50px;
+  max-width: 50%;
+  flex-shrink: 0;
+}
+.content {
+  height: max-content;
+  min-width: min-content;
+}
+.hero_engage_statement {
+  color: var(--ig-gray-800);
+  width: 662px;
+  height: max-content;
+  min-width: min-content;
+  max-width: 662px;
+}
+.hero_image_main {
+  object-fit: cover;
+  border-radius: 8px;
+  min-width: 200px;
+  min-height: 0;
+  max-height: 350px;
+  flex-grow: 1;
+  flex-basis: 0;
+}
+.image_1 {
+  object-fit: cover;
+  border-radius: 0px;
+  min-width: 320px;
+  min-height: 0;
+  flex-grow: 1;
+  flex-basis: 0;
+}
+.title_1 {
+  text-align: center;
+  color: var(--ig-secondary-400);
+  height: max-content;
+  min-width: min-content;
+}
+.title_2 {
+  color: var(--ig-gray-800);
+  height: max-content;
+  min-width: min-content;
+}
+.carousel_slide_1 {
+  justify-content: flex-start;
+  align-items: stretch;
+  align-content: flex-start;
+  gap: 20px;
+  position: absolute;
+}
+.main_action_button {
+  --ig-size: var(--ig-size-medium);
+  height: max-content;
+  flex-shrink: 0;
+}
