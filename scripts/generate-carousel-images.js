@@ -1,38 +1,62 @@
 const fs = require('fs');
 const path = require('path');
 
-// Path to the images folder
-const imagesDir = path.join(__dirname, '../src/assets/real-images/first-page-images');
-const outputFile = path.join(__dirname, '../src/app/main-page/carousel-images.ts');
+// Define image folders and their output files
+const imageFolders = [
+    {
+        name: 'first-page-images',
+        dir: path.join(__dirname, '../src/assets/real-images/first-page-images'),
+        output: path.join(__dirname, '../src/app/main-page/carousel-images.ts'),
+        exportName: 'carouselImages'
+    },
+    {
+        name: 'general-images',
+        dir: path.join(__dirname, '../src/assets/real-images/general-images'),
+        output: path.join(__dirname, '../src/app/portfolio-page/carousel-images.ts'),
+        exportName: 'carouselImages'
+    }
+];
 
-// Read all files from the directory
-fs.readdir(imagesDir, (err, files) => {
-  if (err) {
-    console.error('Error reading images directory:', err);
-    process.exit(1);
-  }
+// Process each folder synchronously
+let totalImages = 0;
+imageFolders.forEach(folder => {
+    try {
+        // Check if directory exists
+        if (!fs.existsSync(folder.dir)) {
+            console.warn(`⚠ Warning: Directory not found: ${folder.dir}`);
+            return;
+        }
 
-  // Filter only image files
-  const imageFiles = files.filter(file => {
-    const ext = path.extname(file).toLowerCase();
-    return ['.jpg', '.jpeg', '.png', '.webp', '.gif'].includes(ext);
-  });
+        // Read all files from the directory
+        const files = fs.readdirSync(folder.dir);
 
-  // Generate the TypeScript file content
-  const fileContent = `// This file is auto-generated. Do not edit manually.
+        // Filter only image files
+        const imageFiles = files.filter(file => {
+            const ext = path.extname(file).toLowerCase();
+            return ['.jpg', '.jpeg', '.png', '.webp', '.gif'].includes(ext);
+        });
+
+        // Sort files for consistent ordering
+        imageFiles.sort();
+
+        // Generate the TypeScript file content
+        const fileContent = `// This file is auto-generated. Do not edit manually.
 // Run 'npm run generate-images' to regenerate this file.
 
-export const carouselImages: string[] = [
-${imageFiles.map(file => `  '/assets/real-images/first-page-images/${file}'`).join(',\n')}
+export const ${folder.exportName}: string[] = [
+${imageFiles.map(file => `  '/assets/real-images/${folder.name}/${file}'`).join(',\n')}
 ];
 `;
 
-  // Write the file
-  fs.writeFile(outputFile, fileContent, (err) => {
-    if (err) {
-      console.error('Error writing carousel-images.ts:', err);
-      process.exit(1);
+        // Write the file synchronously
+        fs.writeFileSync(folder.output, fileContent);
+        console.log(`✓ Generated ${folder.name}/carousel-images.ts with ${imageFiles.length} images`);
+        totalImages += imageFiles.length;
+    } catch (err) {
+        console.error(`✗ Error processing ${folder.name}:`, err.message);
+        process.exit(1);
     }
-    console.log(`✓ Generated carousel-images.ts with ${imageFiles.length} images`);
-  });
 });
+
+console.log(`\n✓ Total: ${totalImages} images across ${imageFolders.length} carousels`);
+
