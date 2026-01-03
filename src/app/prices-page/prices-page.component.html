@@ -136,17 +136,17 @@
           sell
         </igx-icon>
         <igx-select type="border" [(ngModel)]="value1" class="user-input">
+          <igx-select-item value="0.80">
+            0.80 Euro
+          </igx-select-item>
+          <igx-select-item value="1.00">
+            1.00 Euro
+          </igx-select-item>
+          <igx-select-item value="1.25">
+            1.25 Euro
+          </igx-select-item>
           <igx-select-item value="1.50">
             1.50 Euro
-          </igx-select-item>
-          <igx-select-item value="1.80">
-            1.80 Euro
-          </igx-select-item>
-          <igx-select-item value="2.25">
-            2.25 Euro
-          </igx-select-item>
-          <igx-select-item value="2.70">
-            2.70 Euro
           </igx-select-item>
           <label igxLabel>Цена на Пакета</label>
         </igx-select>
@@ -159,7 +159,7 @@
           payments
         </igx-icon>
         <h4 class="content_1">
-          0.00 Euro
+          {{ totalPrice }} Euro
         </h4>
         <p class="ig-typography__body-2 content_1">
           (Крайна Цена)
@@ -177,43 +177,43 @@
     </h4>
     <div class="row-layout color-swatches-row">
       <div class="column-layout weight-input-column">
-        <igx-avatar src="/assets/Auto%20generated%20image%20for%209e965d76-43bb-4cc0-9a7a-00fcf4f4f8fa-76de8869-605f-4b32-a064-d433f166f1e3.png" shape="circle" class="avatar-orange"></igx-avatar>
+        <igx-avatar src="/assets/Auto generated image for 9e965d76-43bb-4cc0-9a7a-00fcf4f4f8fa-76de8869-605f-4b32-a064-d433f166f1e3.png" shape="circle" class="avatar-orange"></igx-avatar>
         <p class="ig-typography__body-2 content_1">
           Оранжево
         </p>
       </div>
       <div class="column-layout weight-input-column">
-        <igx-avatar src="/assets/Auto%20generated%20image%20for%2018dfca18-e335-4928-90d5-ebd3b35555b5-560a52a1-4370-441a-ade5-7acd2e759690.png" shape="circle" class="avatar-orange"></igx-avatar>
+        <igx-avatar src="/assets/Auto generated image for 18dfca18-e335-4928-90d5-ebd3b35555b5-560a52a1-4370-441a-ade5-7acd2e759690.png" shape="circle" class="avatar-orange"></igx-avatar>
         <p class="ig-typography__body-2 content_1">
           Лилаво
         </p>
       </div>
       <div class="column-layout weight-input-column">
-        <igx-avatar src="/assets/Auto%20generated%20image%20for%2023a34c67-82e6-40ee-8176-772b8598a10d-416f2e8f-78c0-4f5f-9531-ec07ad007f3f.png" shape="circle" class="avatar-orange"></igx-avatar>
+        <igx-avatar src="/assets/Auto generated image for 23a34c67-82e6-40ee-8176-772b8598a10d-416f2e8f-78c0-4f5f-9531-ec07ad007f3f.png" shape="circle" class="avatar-orange"></igx-avatar>
         <p class="ig-typography__body-2 content_1">
           Сиво-синьо
         </p>
       </div>
       <div class="column-layout weight-input-column">
-        <igx-avatar src="/assets/Auto%20generated%20image%20for%209dd1128d-b30c-4cd5-8683-0ca548892a5a-c726d54f-a69b-414a-99e9-999203613342.png" shape="circle" class="avatar-orange"></igx-avatar>
+        <igx-avatar src="/assets/Auto generated image for 9dd1128d-b30c-4cd5-8683-0ca548892a5a-c726d54f-a69b-414a-99e9-999203613342.png" shape="circle" class="avatar-orange"></igx-avatar>
         <p class="ig-typography__body-2 content_1">
           Пясък-перла
         </p>
       </div>
       <div class="column-layout weight-input-column">
-        <igx-avatar src="/assets/Auto%20generated%20image%20for%20a4816c79-82cb-40f3-95e1-9ea1f454d882-9f1ea73f-669a-4fd8-ba6c-5c519c78e796.png" shape="circle" class="avatar-orange"></igx-avatar>
+        <igx-avatar src="/assets/Auto generated image for a4816c79-82cb-40f3-95e1-9ea1f454d882-9f1ea73f-669a-4fd8-ba6c-5c519c78e796.png" shape="circle" class="avatar-orange"></igx-avatar>
         <p class="ig-typography__body-2 content_1">
           Бяло
         </p>
       </div>
       <div class="column-layout weight-input-column">
-        <igx-avatar src="/assets/Auto%20generated%20image%20for%20902d11cc-abb2-475c-acb6-d1c6e14fd924-d7a24832-5257-4646-a0c0-53b04a38affb.png" shape="circle" class="avatar-orange"></igx-avatar>
+        <igx-avatar src="/assets/Auto generated image for 902d11cc-abb2-475c-acb6-d1c6e14fd924-d7a24832-5257-4646-a0c0-53b04a38affb.png" shape="circle" class="avatar-orange"></igx-avatar>
         <p class="ig-typography__body-2 content_1">
           Жълто
         </p>
       </div>
       <div class="column-layout weight-input-column">
-        <igx-avatar src="/assets/Auto%20generated%20image%20for%20ce6479fc-7167-4df3-abfb-e2d8e063bbb1-ee4a6898-fdc4-42a4-ac67-9bf9990ab2f4.png" shape="circle" class="avatar-orange"></igx-avatar>
+        <igx-avatar src="/assets/Auto generated image for ce6479fc-7167-4df3-abfb-e2d8e063bbb1-ee4a6898-fdc4-42a4-ac67-9bf9990ab2f4.png" shape="circle" class="avatar-orange"></igx-avatar>
         <p class="ig-typography__body-2 content_1">
           Розово
         </p>
