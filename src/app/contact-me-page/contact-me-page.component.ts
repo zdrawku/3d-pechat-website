@@ -12,4 +12,11 @@ export class ContactMePageComponent {
   public value?: string;
   public value1?: string;
   public value2?: string;
+
+  phoneNumber: string = '+359883310616';
+
+  openViber(): void {
+    const viberUrl = `viber://add?number=${this.phoneNumber}`;
+    window.location.href = viberUrl;
+  }
 }
