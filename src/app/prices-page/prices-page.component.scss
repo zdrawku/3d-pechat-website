@@ -12,7 +12,7 @@
   flex-direction: column;
 }
 .price-page-main-column {
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   align-content: flex-start;
   gap: 23px;
@@ -20,6 +20,7 @@
   padding: 48px 32px;
   min-width: 50px;
   min-height: 50px;
+  flex-grow: 1;
   flex-shrink: 0;
 }
 .row-layout {
@@ -29,7 +30,7 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: stretch;
-  align-content: flex-start;
+  align-content: center;
   gap: 24px;
   position: relative;
   min-width: 50px;
@@ -109,16 +110,6 @@
   flex-shrink: 0;
 }
 .calculator-section {
-  justify-content: flex-start;
-  align-items: center;
-  align-content: flex-start;
-  gap: 16px;
-  position: relative;
-  min-width: 50px;
-  min-height: 50px;
-  flex-shrink: 0;
-}
-.calculator-inputs-row {
   justify-content: center;
   align-items: center;
   align-content: flex-start;
