@@ -10,8 +10,9 @@
 .navigation_bar_1 {
   --igx-navbar-text-color: var(--ig-surface-500-contrast);
   --igx-navbar-background: var(--ig-surface-500);
-  z-index: 1;
-  position: sticky;
+  z-index: 1000;
+  position: fixed;
+  top: 0;
   width: 100%;
   min-width: 100%;
   max-width: 100%;
@@ -66,6 +67,7 @@
   position: relative;
   flex-grow: 1;
   flex-basis: 0;
+  padding-top: 56px; /* Add padding for fixed navbar height */
 }
 .footer_section {
   background-color: var(--ig-surface-150);
