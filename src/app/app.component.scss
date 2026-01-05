@@ -22,6 +22,11 @@
   min-height: 0;
   max-width: 232px;
   flex-shrink: 0;
+  padding-top: 56px; /* Add padding for fixed navbar height */
+  
+  ::ng-deep .igx-nav-drawer__aside {
+    padding-top: 56px;
+  }
 }
 .main_view_container_2 {
   overflow: auto;

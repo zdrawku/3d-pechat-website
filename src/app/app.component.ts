@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { IsActiveMatchOptions, Router, RouterLink, RouterOutlet } from '@angular/router';
-import { IGX_NAVBAR_DIRECTIVES, IGX_NAVIGATION_DRAWER_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxIconComponent, IgxToggleActionDirective } from 'igniteui-angular';
+import { IGX_NAVBAR_DIRECTIVES, IGX_NAVIGATION_DRAWER_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxIconComponent, IgxNavigationDrawerComponent, IgxToggleActionDirective } from 'igniteui-angular';
 
 @Component({
   selector: 'app-root',
@@ -9,6 +9,8 @@ import { IGX_NAVBAR_DIRECTIVES, IGX_NAVIGATION_DRAWER_DIRECTIVES, IgxButtonDirec
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  @ViewChild('navigationdrawer1', { static: true }) public drawer!: IgxNavigationDrawerComponent;
+
   constructor(
     public router: Router,
   ) {}
@@ -22,5 +24,13 @@ export class AppComponent {
         fragment: 'ignored'
     }
     return this.router.isActive(path, exactMatch);
+  }
+
+  public navigate(path: string): void {
+    this.router.navigate([path]);
+    // Close drawer on small screens after navigation
+    if (this.drawer && !this.drawer.pin) {
+      this.drawer.close();
+    }
   }
 }
