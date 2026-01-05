@@ -1,9 +1,10 @@
-import { ApplicationConfig, ErrorHandler, Provider, importProvidersFrom, isDevMode } from '@angular/core';
+import { ApplicationConfig, ErrorHandler, Provider, importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { BrowserModule, HammerModule } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 // Uncomment after installing @angular/service-worker
 // import { provideServiceWorker } from '@angular/service-worker';
+// import { isDevMode } from '@angular/core';
 
 import { routes } from './app.routes';
 import { GlobalErrorHandlerService } from './error-routing/error/global-error-handler.service';
