@@ -4,10 +4,10 @@
       <igx-icon class="icon_12">
         menu
       </igx-icon>
-      <h6 class="content">
+      <p class="content">
         <span class="full-text">3D Печат услуги</span>
         <span class="short-text">3D Печат</span>
-      </h6>
+      </p>
     </div>
     <button igxButton="flat" type="button" [routerLink]="[`/`]" class="button_home">
       Начало
@@ -22,12 +22,12 @@
       Обадете се
     </button>
   </igx-navbar-title>
-  <button igxIconButton="flat" class="icon_button_5">
+  <button igxIconButton="flat" class="icon_button_5" aria-label="Търсене">
     <igx-icon class="icon">
       search
     </igx-icon>
   </button>
-  <button igxIconButton="flat" [routerLink]="[`/contact`]" class="icon_button_5">
+  <button igxIconButton="flat" [routerLink]="[`/contact`]" class="icon_button_5" aria-label="Свържете се с нас">
     <igx-icon class="icon">
       phone
     </igx-icon>
@@ -63,10 +63,10 @@
     </ng-template>
   </igx-nav-drawer>
   <div class="column-layout group">
-    <div class="main_view_container_2">
+    <main class="main_view_container_2">
       <router-outlet></router-outlet>
-    </div>
-    <div class="column-layout footer_section">
+    </main>
+    <footer class="column-layout footer_section">
       <div class="row-layout row_layout_-6">
         <div class="row-layout row_layout_-5">
           <div class="column-layout column_layout">
@@ -82,9 +82,9 @@
               София, България
             </p>
             <div class="row-layout row_layout_-1">
-              <igx-icon family="imx-icon" name="imx-twitter" class="icon_site_footer"></igx-icon>
-              <igx-icon family="imx-icon" name="imx-facebook" class="icon_site_footer"></igx-icon>
-              <igx-icon family="imx-icon" name="imx-instagram" class="icon_site_footer"></igx-icon>
+              <igx-icon family="imx-icon" name="imx-twitter" class="icon_site_footer" role="button" tabindex="0" aria-label="Twitter профил"></igx-icon>
+              <igx-icon family="imx-icon" name="imx-facebook" class="icon_site_footer" role="button" tabindex="0" aria-label="Facebook страница"></igx-icon>
+              <igx-icon family="imx-icon" name="imx-instagram" class="icon_site_footer" role="button" tabindex="0" aria-label="Instagram профил"></igx-icon>
             </div>
           </div>
           <div class="column-layout column_layout">
@@ -157,6 +157,6 @@
           © 2025 3dpechat.bg - All Rights Reserved
         </p>
       </div>
-    </div>
+    </footer>
   </div>
 </div>

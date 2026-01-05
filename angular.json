@@ -29,7 +29,8 @@
               "src/favicon.ico",
               "src/assets",
               "src/robots.txt",
-              "src/sitemap.xml"
+              "src/sitemap.xml",
+              "src/.htaccess"
             ],
             "styles": [
               "src/styles.scss"
@@ -48,16 +49,28 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "5mb",
-                  "maximumError": "10mb"
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "8kb",
-                  "maximumError": "2mb"
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": true
+                },
+                "fonts": true
+              },
+              "sourceMap": false,
+              "extractLicenses": true,
+              "namedChunks": false,
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {
               "optimization": false,

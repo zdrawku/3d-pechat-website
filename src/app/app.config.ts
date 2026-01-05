@@ -1,7 +1,9 @@
-import { ApplicationConfig, ErrorHandler, Provider, importProvidersFrom } from '@angular/core';
+import { ApplicationConfig, ErrorHandler, Provider, importProvidersFrom, isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { BrowserModule, HammerModule } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
+// Uncomment after installing @angular/service-worker
+// import { provideServiceWorker } from '@angular/service-worker';
 
 import { routes } from './app.routes';
 import { GlobalErrorHandlerService } from './error-routing/error/global-error-handler.service';
@@ -13,7 +15,12 @@ import { environment } from '../environments/environment';
 const providers: Provider = [
   provideRouter(routes),
   importProvidersFrom(BrowserModule, HammerModule),
-  provideAnimations()
+  provideAnimations(),
+  // Uncomment after installing @angular/service-worker with: npm install @angular/service-worker --save
+  // provideServiceWorker('ngsw-worker.js', {
+  //   enabled: !isDevMode(),
+  //   registrationStrategy: 'registerWhenStable:30000'
+  // })
 ];
 
 if (environment.production) {
