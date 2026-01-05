@@ -8,16 +8,16 @@
         3D Печат услуги
       </h6>
     </div>
-    <button igxButton="flat" type="button" [routerLink]="[`/main-page`]" class="button_home">
+    <button igxButton="flat" type="button" [routerLink]="[`/`]" class="button_home">
       Начало
     </button>
-    <button igxButton="flat" type="button" [routerLink]="[`/portfolio-page`]" class="button_home">
+    <button igxButton="flat" type="button" [routerLink]="[`/portfolio`]" class="button_home">
       Портфолио
     </button>
-    <button igxButton="flat" type="button" [routerLink]="[`/prices-page`]" class="button_home">
+    <button igxButton="flat" type="button" [routerLink]="[`/prices`]" class="button_home">
       Цени
     </button>
-    <button igxButton="flat" type="button" [routerLink]="[`/contact-me-page`]" class="button_home">
+    <button igxButton="flat" type="button" [routerLink]="[`/contact`]" class="button_home">
       Обадете се
     </button>
   </igx-navbar-title>
@@ -26,7 +26,7 @@
       search
     </igx-icon>
   </button>
-  <button igxIconButton="flat" [routerLink]="[`/contact-me-page`]" class="icon_button_5">
+  <button igxIconButton="flat" [routerLink]="[`/contact`]" class="icon_button_5">
     <igx-icon class="icon">
       phone
     </igx-icon>
@@ -35,25 +35,25 @@
 <div class="row-layout horizontal_group_1">
   <igx-nav-drawer [isOpen]="true" [pin]="true" width="232px" #navigationdrawer1 class="navigation_drawer_1">
     <ng-template igxDrawer>
-      <div igxDrawerItem [routerLink]="[`/main-page`]" [active]="isActive(`/main-page`)">
+      <div igxDrawerItem [routerLink]="[`/`]" [active]="isActive(`/`)">
         <igx-icon class="icon_12">
           home_work
         </igx-icon>
         <span>Начало</span>
       </div>
-      <div igxDrawerItem [routerLink]="[`/portfolio-page`]" [active]="isActive(`/portfolio-page`)">
+      <div igxDrawerItem [routerLink]="[`/portfolio`]" [active]="isActive(`/portfolio`)">
         <igx-icon class="icon_12">
           co_present
         </igx-icon>
         <span>Портфолио</span>
       </div>
-      <div igxDrawerItem [routerLink]="[`/prices-page`]" [active]="isActive(`/prices-page`)">
+      <div igxDrawerItem [routerLink]="[`/prices`]" [active]="isActive(`/prices`)">
         <igx-icon class="icon_12">
           euro
         </igx-icon>
         <span>Цени</span>
       </div>
-      <div igxDrawerItem [routerLink]="[`/contact-me-page`]" [active]="isActive(`/contact-me-page`)">
+      <div igxDrawerItem [routerLink]="[`/contact`]" [active]="isActive(`/contact`)">
         <igx-icon class="icon_12">
           call
         </igx-icon>
