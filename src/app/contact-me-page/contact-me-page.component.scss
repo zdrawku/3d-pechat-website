@@ -22,6 +22,16 @@
   min-height: 50px;
   flex-grow: 1;
   flex-shrink: 0;
+  
+  @media (max-width: 768px) {
+    padding: 32px 16px;
+    gap: 24px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 24px 12px;
+    gap: 16px;
+  }
 }
 .column-layout {
   display: flex;
@@ -38,6 +48,16 @@
   max-width: 700px;
   flex-grow: 1;
   flex-basis: 0;
+  
+  @media (max-width: 480px) {
+    min-width: 280px;
+    gap: 24px;
+  }
+  
+  @media (max-width: 390px) {
+    min-width: 100%;
+    gap: 20px;
+  }
 }
 .contact_form_inputs {
   justify-content: flex-start;
@@ -53,6 +73,24 @@
   text-align: center;
   height: max-content;
   min-width: min-content;
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  
+  &:first-child {
+    // This targets the h3 title "Свържете се с нас"
+    @media (max-width: 768px) {
+      font-size: 1.5rem;
+    }
+    
+    @media (max-width: 480px) {
+      font-size: 1.25rem;
+    }
+    
+    @media (max-width: 390px) {
+      font-size: 1.125rem;
+    }
+  }
 }
 .user-input {
   height: max-content;
