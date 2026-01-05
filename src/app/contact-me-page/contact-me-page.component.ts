@@ -8,13 +8,14 @@ import { IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective } from 'igniteui-angular
   templateUrl: './contact-me-page.component.html',
   styleUrls: ['./contact-me-page.component.scss']
 })
+
 export class ContactMePageComponent {
   public value?: string;
   public value1?: string;
   public value2?: string;
   public message?: string;
 
-  phoneNumber: string = '+359883310616';
+  phoneNumber = '+359883310616';
 
   openViber(): void {
     const viberUrl = `viber://add?number=${this.phoneNumber}`;
