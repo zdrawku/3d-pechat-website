@@ -6,6 +6,8 @@
   align-items: stretch;
   align-content: flex-start;
   gap: 0;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 .column-layout {
   display: flex;
@@ -22,6 +24,15 @@
   min-height: 50px;
   flex-grow: 1;
   flex-shrink: 0;
+  
+  @media (max-width: 768px) {
+    padding: 32px 16px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 24px 12px;
+    gap: 16px;
+  }
 }
 .row-layout {
   display: flex;
@@ -212,6 +223,24 @@
   text-align: center;
   height: max-content;
   min-width: min-content;
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  
+  &:first-child {
+    // This targets the h2 title
+    @media (max-width: 768px) {
+      font-size: 1.75rem;
+    }
+    
+    @media (max-width: 480px) {
+      font-size: 1.5rem;
+    }
+    
+    @media (max-width: 390px) {
+      font-size: 1.25rem;
+    }
+  }
 }
 .avatar-single-color-basic {
   --ig-size: var(--ig-size-medium);
