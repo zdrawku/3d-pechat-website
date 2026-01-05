@@ -69,8 +69,7 @@
               },
               "sourceMap": false,
               "extractLicenses": true,
-              "namedChunks": false,
-              "serviceWorker": "ngsw-config.json"
+              "namedChunks": false
             },
             "development": {
               "optimization": false,
