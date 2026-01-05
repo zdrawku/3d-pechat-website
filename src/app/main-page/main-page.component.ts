@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { IGX_CAROUSEL_DIRECTIVES, IgxButtonDirective } from 'igniteui-angular';
 import { CommonModule } from '@angular/common';
 import { carouselImages } from './carousel-images';
@@ -11,4 +12,14 @@ import { carouselImages } from './carousel-images';
 })
 export class MainPageComponent {
   carouselImages = carouselImages;
+
+  constructor(private router: Router) {}
+
+  navigateToPortfolio() {
+    this.router.navigate(['/portfolio']);
+  }
+
+  navigateToContact() {
+    this.router.navigate(['/contact']);
+  }
 }

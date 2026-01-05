@@ -6,12 +6,12 @@
   align-items: stretch;
   align-content: flex-start;
   gap: 0;
+  background-color: var(--ig-surface-50);
 }
 .row-layout {
   display: flex;
 }
 .row_layout_contact {
-  background-color: var(--ig-surface-50);
   justify-content: center;
   align-items: center;
   align-content: flex-start;

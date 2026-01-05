@@ -13,7 +13,7 @@
   display: flex;
 }
 .row_layout_main_hero {
-  background-color: var(--ig-surface-50);
+  background-color: var(--ig-surface-150);
   justify-content: center;
   align-items: center;
   align-content: flex-start;
@@ -95,6 +95,7 @@
   }
 }
 .image_gallery_section_template_1 {
+  background-color: var(--ig-surface-50);
   justify-content: center;
   align-items: center;
   align-content: flex-start;
