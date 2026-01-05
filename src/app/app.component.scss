@@ -10,7 +10,7 @@
 .navigation_bar_1 {
   --igx-navbar-text-color: var(--ig-surface-500-contrast);
   --igx-navbar-background: var(--ig-surface-500);
-  z-index: 1000;
+  z-index: 10000;
   position: fixed;
   top: 0;
   width: 100%;
@@ -22,10 +22,24 @@
   min-height: 0;
   max-width: 232px;
   flex-shrink: 0;
+  position: sticky;
+  top: 56px;
+  height: calc(100vh - 56px);
+  overflow-y: auto;
+  z-index: 100;
   
   @media (max-width: 1023px) {
+    position: relative;
+    top: 0;
+    height: auto;
+    
     ::ng-deep .igx-nav-drawer__aside {
       padding-top: 56px;
+      z-index: 1000 !important;
+    }
+    
+    ::ng-deep .igx-nav-drawer__overlay {
+      z-index: 999 !important;
     }
   }
 }
