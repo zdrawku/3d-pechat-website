@@ -2,8 +2,8 @@
 // Run 'npm run generate-images' to regenerate this file.
 
 export const carouselImages: string[] = [
+  '/assets/real-images/general-images/0.png',
   '/assets/real-images/general-images/1.png',
-  '/assets/real-images/general-images/2.png',
   '/assets/real-images/general-images/20250108_000434.jpg',
   '/assets/real-images/general-images/20250109_204235.jpg',
   '/assets/real-images/general-images/20250109_204253.jpg',
@@ -19,6 +19,8 @@ export const carouselImages: string[] = [
   '/assets/real-images/general-images/20260104_221820.jpg',
   '/assets/real-images/general-images/3.png',
   '/assets/real-images/general-images/4.png',
+  '/assets/real-images/general-images/7.png',
+  '/assets/real-images/general-images/8.png',
   '/assets/real-images/general-images/IMG-457a2372bbac019f4e15ee7b415b6851-V.jpg',
   '/assets/real-images/general-images/IMG-5438230c2ebb06bf20f9792e54d8d05e-V.jpg'
 ];

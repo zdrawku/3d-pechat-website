@@ -2,6 +2,26 @@
   <div class="column-layout column_layout_4">
     <div class="column-layout column_layout_5">
       <h4 class="title_3">
+        Продукти и проекти моделирани за 3D печат
+      </h4>
+      <h6 class="title_4">
+        3D принтирани решения
+      </h6>
+    </div>
+    <div class="row-layout row_layout_3">
+      <igx-carousel [vertical]="false" animationType="slide" [interval]="3000" indicatorsOrientation="end"
+        class="carousel_1">
+        <igx-slide *ngFor="let image of carouselImages; let i = index" class="row-layout carousel_slide_1">
+          <img [src]="image" [alt]="'3D печат проект ' + (i + 1)" class="image_1" />
+        </igx-slide>
+      </igx-carousel>
+    </div>
+  </div>
+</div>
+<div class="row-layout image_gallery_section_template_toys_hand_painting">
+  <div class="column-layout column_layout_4">
+    <div class="column-layout column_layout_5">
+      <h4 class="title_3">
         Играчки за ръчно рисуване
       </h4>
       <h6 class="title_4">
@@ -16,26 +36,6 @@
       <img src="/assets/real-images/20251213_122205.jpg" alt="" class="image_7" />
       <img src="/assets/real-images/20251213_195315.jpg" alt="" class="image_7" />
       <img src="/assets/real-images/20251218_091205.jpg" alt="" class="image_7" />
-    </div>
-  </div>
-</div>
-<div class="row-layout image_gallery_section_template_toys_hand_painting">
-  <div class="column-layout column_layout_4">
-    <div class="column-layout column_layout_5">
-      <h4 class="title_3">
-        Общи
-      </h4>
-      <h6 class="title_4">
-        Ефективни 3D принтирани решения
-      </h6>
-    </div>
-    <div class="row-layout row_layout_3">
-      <igx-carousel [vertical]="false" animationType="slide" [interval]="3000" indicatorsOrientation="end"
-        class="carousel_1">
-        <igx-slide *ngFor="let image of carouselImages; let i = index" class="row-layout carousel_slide_1">
-          <img [src]="image" [alt]="'3D печат проект ' + (i + 1)" class="image_1" />
-        </igx-slide>
-      </igx-carousel>
     </div>
   </div>
 </div>
