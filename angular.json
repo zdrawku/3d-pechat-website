@@ -30,7 +30,12 @@
               "src/assets",
               "src/robots.txt",
               "src/sitemap.xml",
-              "src/.htaccess"
+              "src/.htaccess",
+              {
+                "glob": "CNAME",
+                "input": "public",
+                "output": "/"
+              }
             ],
             "styles": [
               "src/styles.scss"
