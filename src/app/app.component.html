@@ -15,6 +15,9 @@
     <button igxButton="flat" type="button" [routerLink]="[`/portfolio`]" class="button_home">
       Портфолио
     </button>
+    <button igxButton="flat" type="button" [routerLink]="[`/products`]" class="button_home">
+      Продукти
+    </button>
     <button igxButton="flat" type="button" [routerLink]="[`/prices`]" class="button_home">
       Цени
     </button>
@@ -47,6 +50,12 @@
           co_present
         </igx-icon>
         <span>Портфолио</span>
+      </div>
+      <div igxDrawerItem (click)="navigate('/products')" [active]="isActive(`/products`)">
+        <igx-icon class="icon_12">
+          inventory_2
+        </igx-icon>
+        <span>Продукти</span>
       </div>
       <div igxDrawerItem (click)="navigate('/prices')" [active]="isActive(`/prices`)">
         <igx-icon class="icon_12">
