@@ -100,3 +100,38 @@
   --ig-size: var(--ig-size-medium);
   height: max-content;
 }
+
+.social-media-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  
+  @media (max-width: 480px) {
+    gap: 12px;
+  }
+}
+
+.social_button {
+  --ig-size: var(--ig-size-medium);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  igx-icon {
+    font-size: 20px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.875rem;
+    padding: 8px 12px;
+    
+    igx-icon {
+      font-size: 18px;
+    }
+  }
+}
+
+.viber_button {
+  margin-left: 8px;
+}

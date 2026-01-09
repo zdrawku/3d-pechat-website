@@ -1,0 +1,156 @@
+<div class="column-layout products-page">
+  <!-- Hero Section -->
+  <div class="column-layout hero-section">
+    <div class="column-layout hero-content">
+      <h1 class="ig-typography__h1 page-title">
+        Монетни карти за запазване на Българската монета
+      </h1>
+      <p class="ig-typography__h4 page-subtitle">
+        3D принтирани монетни карти за съхранение на български стотинки и евро монети
+      </p>
+      <p class="ig-typography__body-1 hero-description">
+        Открийте нашата колекция от 3D принтирани монетни карти, създадени специално за съхранение и показ на български монети. 
+        Всяка карта е изработена с прецизност и внимание към детайлите, предлагайки перфектно прилягане за вашите монети.
+      </p>
+    </div>
+    
+  <!-- Products Grid Section -->
+  <div class="column-layout products-section">
+    <h2 class="ig-typography__h2 section-title">
+      Варианти
+    </h2>
+    
+    <div class="products-grid">
+      <!-- Product Card for each variant -->
+      <div *ngFor="let product of productVariants" class="product-card" igxCard>
+        <div igxCardHeader class="card-header">
+          <h3 class="ig-typography__h5 card-title">
+            {{ product.name }}
+          </h3>
+        </div>
+        
+        <!-- Image Carousel Section -->
+        <div class="card-image-section">
+          <div class="image-container">
+            <!-- Product images with flip indicator -->
+            <div class="product-image-wrapper" [class.show-back]="!product.showFront">
+              <div class="product-image front-image">
+                <img [src]="product.frontImage" 
+                     [alt]="product.name + ' - Лице'" 
+                     class="card-image"
+                     loading="lazy" />
+              </div>
+              <div class="product-image back-image">
+                <img [src]="product.backImage" 
+                     [alt]="product.name + ' - Гръб'" 
+                     class="card-image"
+                     loading="lazy" />
+              </div>
+            </div>
+            
+            <!-- Carousel Navigation Buttons -->
+            <button igxIconButton="flat" 
+                    class="carousel-nav prev-btn" 
+                    (click)="toggleToPrevious(product, $event)"
+                    aria-label="Обърни картата">
+              <igx-icon>chevron_left</igx-icon>
+            </button>
+            <button igxIconButton="flat" 
+                    class="carousel-nav next-btn" 
+                    (click)="toggleToNext(product, $event)"
+                    aria-label="Обърни картата">
+              <igx-icon>chevron_right</igx-icon>
+            </button>
+            
+            <!-- Side Indicator -->
+            <div class="side-indicator">
+              <span class="indicator-dot" [class.active]="product.showFront"></span>
+              <span class="indicator-dot" [class.active]="!product.showFront"></span>
+            </div>
+          </div>
+        </div>
+        
+        <div igxCardContent class="card-content">
+          <p class="ig-typography__body-1 product-description">
+            {{ product.description }}
+          </p>
+          
+                    
+          <!-- Custom design note for variant 5 -->
+          <div *ngIf="product.id === 5" class="custom-options">
+            <p class="ig-typography__body-2 custom-note">
+              ✨ Можете да персонализирате всеки аспект:
+            </p>
+            <ul class="custom-list">
+              <li>Форма на картата</li>
+              <li>Снимка или дизайн отпред/отзад</li>
+              <li>Българско знаме или друг дизайн</li>
+              <li>Размер и брой слотове за монети</li>
+              <li>Специални гравюри или текст</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div igxCardActions class="card-actions">
+          <button igxButton="outlined" type="button" (click)="orderProduct(product)" class="contact-button">
+            Поръчайте сега
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <div class="column-layout features-section">
+    <h2 class="ig-typography__h3 section-title">
+      Характеристики на продукта
+    </h2>
+    
+    <div class="features-grid">
+      <div class="feature-item">
+        <div class="feature-icon">🎯</div>
+        <h3 class="ig-typography__h6 feature-title">Прецизност</h3>
+        <p class="ig-typography__body-2">
+          Всяка карта е проектирана с точни размери за перфектно прилягане на монетите
+        </p>
+      </div>
+      
+      <div class="feature-item">
+        <div class="feature-icon">🎨</div>
+        <h3 class="ig-typography__h6 feature-title">Дизайн</h3>
+        <p class="ig-typography__body-2">
+          Красиви патриотични дизайни с българско знаме и карта на България
+        </p>
+      </div>
+      
+      <div class="feature-item">
+        <div class="feature-icon">💪</div>
+        <h3 class="ig-typography__h6 feature-title">Издръжливост</h3>
+        <p class="ig-typography__body-2">
+          Изработени от висококачествен PLA материал за дълготрайна употреба
+        </p>
+      </div>
+      
+      <div class="feature-item">
+        <div class="feature-icon">🔒</div>
+        <h3 class="ig-typography__h6 feature-title">Сигурност</h3>
+        <p class="ig-typography__body-2">
+          Монетите се задържат здрав в слотовете, осигурявайки безопасно съхранение
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA Section -->
+  <div class="column-layout cta-section">
+    <h2 class="ig-typography__h3 cta-title">
+      Готови да поръчате вашата монетна карта?
+    </h2>
+    <p class="ig-typography__body-1 cta-description">
+      Свържете се с нас днес и ще ви помогнем да изберете перфектния дизайн за вашата колекция!
+    </p>
+    <button igxButton="contained" type="button" (click)="navigateToContact()" class="cta-button">
+      Свържете се с нас
+    </button>
+  </div>
+</div>

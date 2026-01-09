@@ -1,10 +1,10 @@
 import { Component, ViewChild } from '@angular/core';
 import { IsActiveMatchOptions, Router, RouterLink, RouterOutlet } from '@angular/router';
-import { IGX_NAVBAR_DIRECTIVES, IGX_NAVIGATION_DRAWER_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxIconComponent, IgxNavigationDrawerComponent, IgxToggleActionDirective } from 'igniteui-angular';
+import { IGX_NAVBAR_DIRECTIVES, IGX_NAVIGATION_DRAWER_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxIconComponent, IgxNavigationDrawerComponent, IgxToggleActionDirective, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
 
 @Component({
   selector: 'app-root',
-  imports: [IGX_NAVIGATION_DRAWER_DIRECTIVES, IGX_NAVBAR_DIRECTIVES, IgxIconButtonDirective, IgxToggleActionDirective, IgxIconComponent, IgxButtonDirective, RouterOutlet, RouterLink],
+  imports: [IGX_NAVIGATION_DRAWER_DIRECTIVES, IGX_NAVBAR_DIRECTIVES, IgxIconButtonDirective, IgxToggleActionDirective, IgxIconComponent, IgxButtonDirective, IgxTooltipDirective, IgxTooltipTargetDirective, RouterOutlet, RouterLink],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
