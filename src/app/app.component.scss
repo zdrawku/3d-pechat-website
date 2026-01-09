@@ -226,6 +226,30 @@
   width: 24px;
   height: 24px;
   color: var(--ig-gray-600);
+  transition: color 0.3s ease;
+  
+  &:hover {
+    color: var(--ig-primary-500);
+  }
+}
+
+.row_layout_-1 {
+  a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+    
+    &:hover {
+      transform: scale(1.1);
+    }
+    
+    &:focus {
+      outline: 2px solid var(--ig-primary-500);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+  }
 }
 .title_site_footer {
   color: var(--ig-gray-900);
@@ -249,6 +273,13 @@
   height: max-content;
   min-width: min-content;
   flex-shrink: 0;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  
+  &:hover {
+    color: var(--ig-primary-500);
+    text-decoration: underline;
+  }
 }
 .button_home {
   --ig-size: var(--ig-size-medium);
@@ -260,4 +291,30 @@
 }
 .icon_button_5 {
   --foreground: var(--ig-surface-500-contrast);
+  
+  // Remove underline for anchor tags used as icon buttons
+  &[href] {
+    text-decoration: none !important;
+    color: inherit;
+    
+    &:hover {
+      text-decoration: none !important;
+    }
+  }
+}
+
+// Navbar social media icon styling
+igx-navbar {
+  a.icon_button_5 {
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    
+    igx-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
 }

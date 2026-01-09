@@ -25,16 +25,27 @@
       Обадете се
     </button>
   </igx-navbar-title>
-  <button igxIconButton="flat" class="icon_button_5" aria-label="Търсене">
+  <a href="https://www.instagram.com/3dpechat.bg" target="_blank" rel="noopener noreferrer" 
+     igxIconButton="flat" class="icon_button_5" aria-label="Instagram профил"
+     [igxTooltipTarget]="instagramNavTooltip">
     <igx-icon class="icon">
-      search
+      photo_camera
     </igx-icon>
-  </button>
-  <button igxIconButton="flat" [routerLink]="[`/contact`]" class="icon_button_5" aria-label="Свържете се с нас">
+  </a>
+  <div igxTooltip #instagramNavTooltip="tooltip">
+    Последвайте ни в Instagram
+  </div>
+  
+  <a href="https://www.tiktok.com/@3dpechat.bg" target="_blank" rel="noopener noreferrer"
+     igxIconButton="flat" class="icon_button_5" aria-label="TikTok профил"
+     [igxTooltipTarget]="tiktokNavTooltip">
     <igx-icon class="icon">
-      phone
+      music_note
     </igx-icon>
-  </button>
+  </a>
+  <div igxTooltip #tiktokNavTooltip="tooltip">
+    Гледайте ни в TikTok
+  </div>
 </igx-navbar>
 <div class="row-layout horizontal_group_1">
   <igx-nav-drawer [isOpen]="true" [pin]="true" width="232px" #navigationdrawer1 class="navigation_drawer_1">
@@ -91,9 +102,21 @@
               София, България
             </p>
             <div class="row-layout row_layout_-1">
-              <igx-icon family="imx-icon" name="imx-twitter" class="icon_site_footer" role="button" tabindex="0" aria-label="Twitter профил"></igx-icon>
-              <igx-icon family="imx-icon" name="imx-facebook" class="icon_site_footer" role="button" tabindex="0" aria-label="Facebook страница"></igx-icon>
-              <igx-icon family="imx-icon" name="imx-instagram" class="icon_site_footer" role="button" tabindex="0" aria-label="Instagram профил"></igx-icon>
+              <a href="https://www.instagram.com/3dpechat.bg" target="_blank" rel="noopener noreferrer" 
+                 aria-label="Instagram профил" [igxTooltipTarget]="instagramFooterTooltip">
+                <igx-icon class="icon_site_footer">photo_camera</igx-icon>
+              </a>
+              <div igxTooltip #instagramFooterTooltip="tooltip">
+                Instagram: Снимки на наши проекти
+              </div>
+              
+              <a href="https://www.tiktok.com/@3dpechat.bg" target="_blank" rel="noopener noreferrer" 
+                 aria-label="TikTok профил" [igxTooltipTarget]="tiktokFooterTooltip">
+                <igx-icon class="icon_site_footer">music_note</igx-icon>
+              </a>
+              <div igxTooltip #tiktokFooterTooltip="tooltip">
+                TikTok: Видеа от 3D печат процеса
+              </div>
             </div>
           </div>
           <div class="column-layout column_layout">
@@ -138,8 +161,8 @@
               <igx-icon class="icon_mail_footer">
                 mail_outline
               </igx-icon>
-              <a class="ig-typography__body-2 link_customer_support_footer">
-                Customer Support
+              <a href="mailto:3dpechat.bg@gmail.com" class="ig-typography__body-2 link_customer_support_footer">
+                3dpechat.bg@gmail.com
               </a>
             </div>
             <div class="row-layout row_layout_-2">

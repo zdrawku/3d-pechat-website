@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective } from 'igniteui-angular';
+import { IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
 
 @Component({
   selector: 'app-contact-me-page',
-  imports: [IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, FormsModule],
+  imports: [IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective, FormsModule],
   templateUrl: './contact-me-page.component.html',
   styleUrls: ['./contact-me-page.component.scss']
 })
@@ -17,6 +17,9 @@ export class ContactMePageComponent implements OnInit {
   public message?: string;
 
   phoneNumber = '+359883310616';
+  email = '3dpechat.bg@gmail.com';
+  instagramUrl = 'https://www.instagram.com/3dpechat.bg';
+  tiktokUrl = 'https://www.tiktok.com/@3dpechat.bg';
 
   constructor(private router: Router) {
     // Check if navigation state contains prefilled message
@@ -48,6 +51,14 @@ export class ContactMePageComponent implements OnInit {
     window.location.href = viberUrl;
   }
 
+  openInstagram(): void {
+    window.open(this.instagramUrl, '_blank');
+  }
+
+  openTikTok(): void {
+    window.open(this.tiktokUrl, '_blank');
+  }
+
   sendEmail(): void {
     // Validate required fields
     if (!this.value || !this.value1 || !this.value2 || !this.message) {
@@ -56,7 +67,7 @@ export class ContactMePageComponent implements OnInit {
     }
 
     // Construct the email
-    const to = 'zdrawko.kolew@gmail.com';
+    const to = this.email;
     const subject = encodeURIComponent(this.value2);
     const body = encodeURIComponent(
       `Име: ${this.value}\n` +

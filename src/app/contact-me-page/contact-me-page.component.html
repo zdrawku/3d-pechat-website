@@ -5,13 +5,36 @@
     </h3>
     <p class="content">
       Телфон +359883310616
-      <button igxButton="text" type="button" class="viber_button" (click)="openViber()">
+      <button igxButton="text" type="button" class="viber_button" (click)="openViber()"
+              [igxTooltipTarget]="viberTooltip">
         Отвори във Viber
       </button>
     </p>
+    <div igxTooltip #viberTooltip="tooltip">
+      Кликнете за директен чат във Viber
+    </div>
     <p class="content">
-      E-mail: zdrawko.kolew@gmail.com
+      E-mail: 3dpechat.bg@gmail.com
     </p>
+    <div class="social-media-buttons">
+      <button igxButton="outlined" type="button" class="social_button" (click)="openInstagram()" 
+              [igxTooltipTarget]="instagramTooltip">
+        <igx-icon>photo_camera</igx-icon>
+        Instagram
+      </button>
+      <div igxTooltip #instagramTooltip="tooltip">
+        Последвайте ни в Instagram за снимки на нашите проекти
+      </div>
+      
+      <button igxButton="outlined" type="button" class="social_button" (click)="openTikTok()"
+              [igxTooltipTarget]="tiktokTooltip">
+        <igx-icon>music_note</igx-icon>
+        TikTok
+      </button>
+      <div igxTooltip #tiktokTooltip="tooltip">
+        Гледайте видеа от нашите 3D печат проекти в TikTok
+      </div>
+    </div>
     <div class="column-layout contact_form_inputs">
       <igx-input-group type="border" class="user-input">
         <input type="text" [(ngModel)]="value" placeholder="Вашето име" required="true" igxInput #igxInput />
