@@ -75,10 +75,20 @@ export class ProductsPageComponent {
     },
     {
       id: 5,
-      name: 'Вариант 5: Персонализирани Български или правоъгълни карти',
-      description: 'Персонализирани карти - вие решавате дизайна, формата на картата, дали да има контурна снимка или държавно знаме отпред или отзад. Небето е границата!',
+      name: 'Вариант 5: Европейски съюз Българска карта чисто синьо',
+      description: 'България карта с дизайн на Европейския съюз - син фон с жълти звезди.',
       frontImage: '/assets/real-images/bg-cards/variant-5-front.jpg',
       backImage: '/assets/real-images/bg-cards/variant-5-back.jpg',
+      hasOldCoins: true,
+      hasEuroCoins: true,
+      showFront: true
+    },
+    {
+      id: 6,
+      name: 'Вариант 6: Персонализирани Български или правоъгълни карти',
+      description: 'Персонализирани карти - вие решавате дизайна, формата на картата, дали да има контурна снимка или държавно знаме отпред или отзад. Небето е границата!',
+      frontImage: '/assets/real-images/bg-cards/variant-10-front.jpg',
+      backImage: '/assets/real-images/bg-cards/variant-10-back.jpg',
       hasOldCoins: false,
       hasEuroCoins: false,
       showFront: true,
