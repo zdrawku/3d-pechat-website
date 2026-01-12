@@ -5,13 +5,24 @@
   <!-- CSP must be the FIRST tag in <head> and contain no comments -->
   <meta http-equiv="Content-Security-Policy"
         content="default-src 'self';
-                 script-src 'self' 'unsafe-inline' 'unsafe-eval';
-                 script-src-elem 'self';
+                 script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com;
+                 script-src-elem 'self' https://www.googletagmanager.com;
                  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
                  font-src 'self' https://fonts.gstatic.com;
                  img-src 'self' data: https:;
+                 connect-src 'self' https://www.google-analytics.com;
                  object-src 'none';
                  base-uri 'self';">
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YBR644GQL9"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-YBR644GQL9');
+  </script>
 
   <meta charset="utf-8">
   <title>3D печат и 3D принтиране по поръчка | Професионални услуги</title>
