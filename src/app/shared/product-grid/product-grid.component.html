@@ -1,11 +1,11 @@
 <div class="products-grid">
   <!-- Product Card for each variant -->
-  <div *ngFor="let product of products" class="product-card" igxCard>
-    <div igxCardHeader class="card-header">
+  <igx-card *ngFor="let product of products" class="product-card">
+    <igx-card-header class="card-header">
       <h3 class="ig-typography__h5 card-title">
         {{ product.name }}
       </h3>
-    </div>
+    </igx-card-header>
     
     <!-- Image Carousel Section -->
     <div class="card-image-section">
@@ -48,7 +48,7 @@
       </div>
     </div>
     
-    <div igxCardContent class="card-content">
+    <igx-card-content class="card-content">
       <p class="ig-typography__body-1 product-description">
         {{ product.description }}
       </p>
@@ -62,12 +62,12 @@
           <li *ngFor="let item of product.customContent.items">{{ item }}</li>
         </ul>
       </div>
-    </div>
+    </igx-card-content>
     
-    <div igxCardActions class="card-actions">
+    <igx-card-actions class="card-actions">
       <button igxButton="outlined" type="button" (click)="handleAction(product)" class="contact-button">
         Поръчайте сега
       </button>
-    </div>
-  </div>
+    </igx-card-actions>
+  </igx-card>
 </div>
