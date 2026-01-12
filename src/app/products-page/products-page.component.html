@@ -2,61 +2,61 @@
   <!-- Hero Section -->
   <div class="column-layout hero-section">
     <div class="column-layout hero-content">
-      <h1 class="ig-typography__h1 page-title">
+      <h1 class="ig-typography__h1 page-title" i18n>
         Монетни карти
       </h1>
-      <p class="ig-typography__h4 page-subtitle">
+      <p class="ig-typography__h4 page-subtitle" i18n>
         3D принтирани монетни карти за съхранение на български стотинки и евро монети
       </p>
-      <p class="ig-typography__body-1 hero-description">
-        Открийте нашата колекция от 3D принтирани монетни карти, създадени специално за съхранение и показ на български монети. 
+      <p class="ig-typography__body-1 hero-description" i18n>
+        Открийте нашата колекция от 3D принтирани монетни карти, създадени специално за съхранение и показ на български монети.
         Всяка карта е изработена с прецизност и внимание към детайлите, предлагайки перфектно прилягане за вашите монети.
       </p>
     </div>
-    
+
   <!-- Products Grid Section -->
-  <div class="column-layout products-section">    
-    <app-product-grid 
-      [products]="productVariants" 
+  <div class="column-layout products-section">
+    <app-product-grid
+      [products]="productVariants"
       (productAction)="orderProduct($event)">
     </app-product-grid>
   </div>
 
   <!-- Features Section -->
   <div class="column-layout features-section">
-    <h2 class="ig-typography__h3 section-title">
+    <h2 class="ig-typography__h3 section-title" i18n>
       Характеристики на продукта
     </h2>
-    
+
     <div class="features-grid">
       <div class="feature-item">
         <div class="feature-icon">🎯</div>
-        <h3 class="ig-typography__h6 feature-title">Прецизност</h3>
-        <p class="ig-typography__body-2">
+        <h3 class="ig-typography__h6 feature-title" i18n>Прецизност</h3>
+        <p class="ig-typography__body-2" i18n>
           Всяка карта е проектирана с точни размери за перфектно прилягане на монетите
         </p>
       </div>
-      
+
       <div class="feature-item">
         <div class="feature-icon">🎨</div>
-        <h3 class="ig-typography__h6 feature-title">Дизайн</h3>
-        <p class="ig-typography__body-2">
+        <h3 class="ig-typography__h6 feature-title" i18n>Дизайн</h3>
+        <p class="ig-typography__body-2" i18n>
           Красиви патриотични дизайни с българско знаме и карта на България
         </p>
       </div>
-      
+
       <div class="feature-item">
         <div class="feature-icon">💪</div>
-        <h3 class="ig-typography__h6 feature-title">Издръжливост</h3>
-        <p class="ig-typography__body-2">
+        <h3 class="ig-typography__h6 feature-title" i18n>Издръжливост</h3>
+        <p class="ig-typography__body-2" i18n>
           Изработени от висококачествен PLA материал за дълготрайна употреба
         </p>
       </div>
-      
+
       <div class="feature-item">
         <div class="feature-icon">🔒</div>
-        <h3 class="ig-typography__h6 feature-title">Сигурност</h3>
-        <p class="ig-typography__body-2">
+        <h3 class="ig-typography__h6 feature-title" i18n>Сигурност</h3>
+        <p class="ig-typography__body-2" i18n>
           Монетите се задържат здрав в слотовете, осигурявайки безопасно съхранение
         </p>
       </div>
@@ -65,13 +65,13 @@
 
   <!-- CTA Section -->
   <div class="column-layout cta-section">
-    <h2 class="ig-typography__h3 cta-title">
+    <h2 class="ig-typography__h3 cta-title" i18n>
       Готови да поръчате вашата монетна карта?
     </h2>
-    <p class="ig-typography__body-1 cta-description">
+    <p class="ig-typography__body-1 cta-description" i18n>
       Свържете се с нас днес и ще ви помогнем да изберете перфектния дизайн за вашата колекция!
     </p>
-    <button igxButton="contained" type="button" (click)="navigateToContact()" class="cta-button">
+    <button igxButton="contained" type="button" (click)="navigateToContact()" class="cta-button" i18n>
       Свържете се с нас
     </button>
   </div>

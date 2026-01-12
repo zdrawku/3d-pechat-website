@@ -5,37 +5,37 @@
         menu
       </igx-icon>
       <p class="content">
-        <span class="full-text">3D Печат услуги</span>
-        <span class="short-text">3D Печат</span>
+        <span class="full-text" i18n="@@app.title.full">3D Печат услуги</span>
+        <span class="short-text" i18n="@@app.title.short">3D Печат</span>
       </p>
     </div>
-    <button igxButton="flat" type="button" [routerLink]="[`/`]" class="button_home">
+    <button igxButton="flat" type="button" [routerLink]="[`/`]" class="button_home" i18n="@@nav.home">
       Начало
     </button>
-    <button igxButton="flat" type="button" [routerLink]="[`/portfolio`]" class="button_home">
+    <button igxButton="flat" type="button" [routerLink]="[`/portfolio`]" class="button_home" i18n="@@nav.portfolio">
       Портфолио
     </button>
-    <button igxButton="flat" type="button" [routerLink]="[`/products`]" class="button_home">
+    <button igxButton="flat" type="button" [routerLink]="[`/products`]" class="button_home" i18n="@@nav.products">
       Продукти
     </button>
-    <button igxButton="flat" type="button" [routerLink]="[`/prices`]" class="button_home">
+    <button igxButton="flat" type="button" [routerLink]="[`/prices`]" class="button_home" i18n="@@nav.prices">
       Цени
     </button>
-    <button igxButton="flat" type="button" [routerLink]="[`/contact`]" class="button_home">
+    <button igxButton="flat" type="button" [routerLink]="[`/contact`]" class="button_home" i18n="@@nav.contact">
       Обадете се
     </button>
   </igx-navbar-title>
-  <a href="https://www.instagram.com/3dpechat.bg" target="_blank" rel="noopener noreferrer" 
+  <a href="https://www.instagram.com/3dpechat.bg" target="_blank" rel="noopener noreferrer"
      igxIconButton="flat" class="icon_button_5" aria-label="Instagram профил"
      [igxTooltipTarget]="instagramNavTooltip">
     <igx-icon class="icon">
       photo_camera
     </igx-icon>
   </a>
-  <div igxTooltip #instagramNavTooltip="tooltip">
+  <div igxTooltip #instagramNavTooltip="tooltip" i18n="@@nav.instagram">
     Последвайте ни в Instagram
   </div>
-  
+
   <a href="https://www.tiktok.com/@3dpechat.bg" target="_blank" rel="noopener noreferrer"
      igxIconButton="flat" class="icon_button_5" aria-label="TikTok профил"
      [igxTooltipTarget]="tiktokNavTooltip">
@@ -43,10 +43,10 @@
       music_note
     </igx-icon>
   </a>
-  <div igxTooltip #tiktokNavTooltip="tooltip">
+  <div igxTooltip #tiktokNavTooltip="tooltip" i18n="@@nav.tiktok">
     Гледайте ни в TikTok
   </div>
-  
+
   <button class="theme-toggle-button" (click)="toggleTheme()" aria-label="Toggle theme"
           [igxTooltipTarget]="themeTooltip">
     <div class="theme-toggle-circle">
@@ -54,9 +54,13 @@
       <div class="theme-half dark-half"></div>
     </div>
   </button>
-  <div igxTooltip #themeTooltip="tooltip">
+  <div igxTooltip #themeTooltip="tooltip" i18n="@@nav.theme">
     Смени тема
   </div>
+
+  <button igxButton="flat" class="lang-toggle-button" (click)="switchLanguage()">
+    {{ currentLanguage === 'bg' ? 'EN' : 'BG' }}
+  </button>
 </igx-navbar>
 <div class="row-layout horizontal_group_1">
   <igx-nav-drawer [isOpen]="true" [pin]="true" width="232px" #navigationdrawer1 class="navigation_drawer_1">
@@ -65,31 +69,31 @@
         <igx-icon class="icon_12">
           home_work
         </igx-icon>
-        <span>Начало</span>
+        <span i18n="@@nav.home">Начало</span>
       </div>
       <div igxDrawerItem (click)="navigate('/portfolio')" [active]="isActive(`/portfolio`)">
         <igx-icon class="icon_12">
           co_present
         </igx-icon>
-        <span>Портфолио</span>
+        <span i18n="@@nav.portfolio">Портфолио</span>
       </div>
       <div igxDrawerItem (click)="navigate('/products')" [active]="isActive(`/products`)">
         <igx-icon class="icon_12">
           inventory_2
         </igx-icon>
-        <span>Продукти</span>
+        <span i18n="@@nav.products">Продукти</span>
       </div>
       <div igxDrawerItem (click)="navigate('/prices')" [active]="isActive(`/prices`)">
         <igx-icon class="icon_12">
           euro
         </igx-icon>
-        <span>Цени</span>
+        <span i18n="@@nav.prices">Цени</span>
       </div>
       <div igxDrawerItem (click)="navigate('/contact')" [active]="isActive(`/contact`)">
         <igx-icon class="icon_12">
           call
         </igx-icon>
-        <span>Свържете се с нас</span>
+        <span i18n="@@nav.contactUs">Свържете се с нас</span>
       </div>
     </ng-template>
   </igx-nav-drawer>
@@ -105,67 +109,67 @@
               <igx-icon class="icon_site_footer">
                 print
               </igx-icon>
-              <p class="ig-typography__subtitle-2 title_site_footer">
+              <p class="ig-typography__subtitle-2 title_site_footer" i18n="@@footer.title">
                 3D Печат Услуги
               </p>
             </div>
-            <p class="ig-typography__body-2 content_2">
+            <p class="ig-typography__body-2 content_2" i18n="@@footer.location">
               София, България
             </p>
             <div class="row-layout row_layout_-1">
-              <a href="https://www.instagram.com/3dpechat.bg" target="_blank" rel="noopener noreferrer" 
+              <a href="https://www.instagram.com/3dpechat.bg" target="_blank" rel="noopener noreferrer"
                  aria-label="Instagram профил" [igxTooltipTarget]="instagramFooterTooltip">
                 <igx-icon class="icon_site_footer">photo_camera</igx-icon>
               </a>
-              <div igxTooltip #instagramFooterTooltip="tooltip">
+              <div igxTooltip #instagramFooterTooltip="tooltip" i18n="@@footer.instagram">
                 Instagram: Снимки на наши проекти
               </div>
-              
-              <a href="https://www.tiktok.com/@3dpechat.bg" target="_blank" rel="noopener noreferrer" 
+
+              <a href="https://www.tiktok.com/@3dpechat.bg" target="_blank" rel="noopener noreferrer"
                  aria-label="TikTok профил" [igxTooltipTarget]="tiktokFooterTooltip">
                 <igx-icon class="icon_site_footer">music_note</igx-icon>
               </a>
-              <div igxTooltip #tiktokFooterTooltip="tooltip">
+              <div igxTooltip #tiktokFooterTooltip="tooltip" i18n="@@footer.tiktok">
                 TikTok: Видеа от 3D печат процеса
               </div>
             </div>
           </div>
           <div class="column-layout column_layout">
-            <p class="ig-typography__subtitle-2 content">
+            <p class="ig-typography__subtitle-2 content" i18n="@@footer.quickLinks">
               Quick Links
             </p>
-            <a class="ig-typography__body-2 content_2">
+            <a class="ig-typography__body-2 content_2" i18n="@@footer.aboutUs">
               About Us
             </a>
-            <a class="ig-typography__body-2 content_2">
+            <a class="ig-typography__body-2 content_2" i18n="@@footer.ourFleet">
               Our Fleet
             </a>
-            <a class="ig-typography__body-2 content_2">
+            <a class="ig-typography__body-2 content_2" i18n="@@footer.pricing">
               Pricing
             </a>
-            <a class="ig-typography__body-2 content_2">
+            <a class="ig-typography__body-2 content_2" i18n="@@footer.faq">
               FAQ
             </a>
           </div>
           <div class="column-layout column_layout">
-            <p class="ig-typography__subtitle-2 content">
+            <p class="ig-typography__subtitle-2 content" i18n="@@footer.legal">
               Legal
             </p>
-            <a class="ig-typography__body-2 content_2">
+            <a class="ig-typography__body-2 content_2" i18n="@@footer.privacy">
               Privacy Policy
             </a>
-            <a class="ig-typography__body-2 content_2">
+            <a class="ig-typography__body-2 content_2" i18n="@@footer.terms">
               Terms of Service
             </a>
-            <a class="ig-typography__body-2 content_2">
+            <a class="ig-typography__body-2 content_2" i18n="@@footer.cookie">
               Cookie Policy
             </a>
-            <a class="ig-typography__body-2 content_2">
+            <a class="ig-typography__body-2 content_2" i18n="@@footer.userAgreement">
               User Agreement
             </a>
           </div>
           <div class="column-layout column_layout_-3">
-            <p class="ig-typography__subtitle-2 content">
+            <p class="ig-typography__subtitle-2 content" i18n="@@footer.contactUs">
               Contact Us
             </p>
             <div class="row-layout row_layout_-2">
@@ -188,7 +192,7 @@
               <igx-icon class="icon_mail_footer">
                 business
               </igx-icon>
-              <p class="ig-typography__body-2 content_2">
+              <p class="ig-typography__body-2 content_2" i18n="@@footer.address">
                 София, Симеоновско шосе 110Б, ет.2
               </p>
             </div>
@@ -196,7 +200,7 @@
         </div>
       </div>
       <div class="row-layout row_layout_-7">
-        <p class="ig-typography__body-2 content_2">
+        <p class="ig-typography__body-2 content_2" i18n="@@footer.copyright">
           © 2025 3dpechat.bg - All Rights Reserved
         </p>
       </div>

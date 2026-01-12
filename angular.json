@@ -13,6 +13,12 @@
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
+      "i18n": {
+        "sourceLocale": "bg",
+        "locales": {
+          "en": "src/locale/messages.en.json"
+        }
+      },
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",
@@ -21,7 +27,8 @@
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
-              "zone.js"
+              "zone.js",
+              "@angular/localize/init"
             ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
@@ -47,7 +54,10 @@
               "includePaths": [
                 "node_modules"
               ]
-            }
+            },
+            "localize": [
+              "en"
+            ]
           },
           "configurations": {
             "production": {
@@ -80,6 +90,9 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "en": {
+              "localize": ["en"]
             }
           },
           "defaultConfiguration": "production"
@@ -92,6 +105,9 @@
             },
             "development": {
               "buildTarget": "dprinting-services-website:build:development"
+            },
+            "en": {
+              "buildTarget": "dprinting-services-website:build:development,en"
             }
           },
           "defaultConfiguration": "development"
@@ -99,7 +115,9 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "dprinting-services-website:build"
+            "buildTarget": "dprinting-services-website:build",
+            "format": "json",
+            "outFile": "src/locale/messages.json"
           }
         },
         "test": {
@@ -107,7 +125,8 @@
           "options": {
             "polyfills": [
               "zone.js",
-              "zone.js/testing"
+              "zone.js/testing",
+              "@angular/localize/init"
             ],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",

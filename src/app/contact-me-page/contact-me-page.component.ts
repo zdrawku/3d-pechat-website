@@ -30,7 +30,7 @@ export class ContactMePageComponent implements OnInit {
         this.message = state['prefilledMessage'];
       }
       if (state['productName']) {
-        this.value2 = `Поръчка за ${state['productName']}`;
+        this.value2 = $localize `Поръчка за ${state['productName']}`;
       }
     }
   }
@@ -42,7 +42,7 @@ export class ContactMePageComponent implements OnInit {
       this.message = state['prefilledMessage'];
     }
     if (state && state['productName'] && !this.value2) {
-      this.value2 = `Поръчка за ${state['productName']}`;
+      this.value2 = $localize `Поръчка за ${state['productName']}`;
     }
   }
 
@@ -62,7 +62,7 @@ export class ContactMePageComponent implements OnInit {
   sendEmail(): void {
     // Validate required fields
     if (!this.value || !this.value1 || !this.value2 || !this.message) {
-      alert('Моля, попълнете всички полета');
+      alert($localize `Моля, попълнете всички полета`);
       return;
     }
 
@@ -70,9 +70,9 @@ export class ContactMePageComponent implements OnInit {
     const to = this.email;
     const subject = encodeURIComponent(this.value2);
     const body = encodeURIComponent(
-      `Име: ${this.value}\n` +
-      `Email: ${this.value1}\n\n` +
-      `Съобщение:\n${this.message}`
+      $localize `Име: ${this.value}\n` +
+      $localize `Email: ${this.value1}\n\n` +
+      $localize `Съобщение:\n${this.message}`
     );
 
     // Open email client

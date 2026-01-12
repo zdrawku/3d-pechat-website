@@ -1,70 +1,70 @@
 <div class="row-layout row_layout_contact">
   <div class="column-layout column_layout_contact_form">
-    <h3 class="content">
+    <h3 class="content" i18n>
       Свържете се с нас
     </h3>
     <p class="content">
-      Телфон +359883310616
+      <span i18n>Телфон</span> +359883310616
       <button igxButton="text" type="button" class="viber_button" (click)="openViber()"
-              [igxTooltipTarget]="viberTooltip">
+              [igxTooltipTarget]="viberTooltip" i18n>
         Отвори във Viber
       </button>
     </p>
-    <div igxTooltip #viberTooltip="tooltip">
+    <div igxTooltip #viberTooltip="tooltip" i18n>
       Кликнете за директен чат във Viber
     </div>
     <p class="content">
       E-mail: 3dpechat.bg@gmail.com
     </p>
     <div class="social-media-buttons">
-      <button igxButton="outlined" type="button" class="social_button" (click)="openInstagram()" 
-              [igxTooltipTarget]="instagramTooltip">
+      <button igxButton="outlined" type="button" class="social_button" (click)="openInstagram()"
+              [igxTooltipTarget]="instagramTooltip" i18n>
         <igx-icon>photo_camera</igx-icon>
         Instagram
       </button>
-      <div igxTooltip #instagramTooltip="tooltip">
+      <div igxTooltip #instagramTooltip="tooltip" i18n>
         Последвайте ни в Instagram за снимки на нашите проекти
       </div>
-      
+
       <button igxButton="outlined" type="button" class="social_button" (click)="openTikTok()"
-              [igxTooltipTarget]="tiktokTooltip">
+              [igxTooltipTarget]="tiktokTooltip" i18n>
         <igx-icon>music_note</igx-icon>
         TikTok
       </button>
-      <div igxTooltip #tiktokTooltip="tooltip">
+      <div igxTooltip #tiktokTooltip="tooltip" i18n>
         Гледайте видеа от нашите 3D печат проекти в TikTok
       </div>
     </div>
     <div class="column-layout contact_form_inputs">
       <igx-input-group type="border" class="user-input">
-        <input type="text" [(ngModel)]="value" placeholder="Вашето име" required="true" igxInput #igxInput />
-        <label igxLabel>Име</label>
+        <input type="text" [(ngModel)]="value" placeholder="Вашето име" required="true" igxInput #igxInput i18n-placeholder />
+        <label igxLabel i18n>Име</label>
         @if (igxInput.validity.valueMissing) {
-          <igx-hint>Това поле е задължително</igx-hint>
+          <igx-hint i18n>Това поле е задължително</igx-hint>
         }
       </igx-input-group>
       <igx-input-group type="border" class="user-input">
-        <input type="email" [(ngModel)]="value1" placeholder="Вашият имейл" required="true" igxInput #igxInput1 />
-        <label igxLabel>Email адрес</label>
+        <input type="email" [(ngModel)]="value1" placeholder="Вашият имейл" required="true" igxInput #igxInput1 i18n-placeholder />
+        <label igxLabel i18n>Email адрес</label>
         @if (igxInput1.validity.valueMissing) {
-          <igx-hint>Това поле е задължително</igx-hint>
+          <igx-hint i18n>Това поле е задължително</igx-hint>
         }
       </igx-input-group>
       <igx-input-group type="border" class="user-input">
-        <input type="text" [(ngModel)]="value2" placeholder="Тема на съобщението" required="true" igxInput #igxInput2 />
-        <label igxLabel>Тема</label>
+        <input type="text" [(ngModel)]="value2" placeholder="Тема на съобщението" required="true" igxInput #igxInput2 i18n-placeholder />
+        <label igxLabel i18n>Тема</label>
         @if (igxInput2.validity.valueMissing) {
-          <igx-hint>Това поле е задължително</igx-hint>
+          <igx-hint i18n>Това поле е задължително</igx-hint>
         }
       </igx-input-group>
       <igx-input-group type="border" class="user-input">
-        <label igxLabel>Съобщение</label>
-        <textarea [(ngModel)]="message" placeholder="Вашето съобщение..." required="true" igxInput #igxTextarea></textarea>
+        <label igxLabel i18n>Съобщение</label>
+        <textarea [(ngModel)]="message" placeholder="Вашето съобщение..." required="true" igxInput #igxTextarea i18n-placeholder></textarea>
         @if (igxTextarea.validity.valueMissing) {
-          <igx-hint>Това поле е задължително</igx-hint>
+          <igx-hint i18n>Това поле е задължително</igx-hint>
         }
       </igx-input-group>
-      <button igxButton="contained" type="button" class="button_send_message" (click)="sendEmail()">
+      <button igxButton="contained" type="button" class="button_send_message" (click)="sendEmail()" i18n>
         Изпрати съобщение
       </button>
     </div>

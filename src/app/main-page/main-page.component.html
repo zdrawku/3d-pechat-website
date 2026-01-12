@@ -1,47 +1,47 @@
 <div class="row-layout row_layout_main_hero">
   <div class="row-layout row_layout_main_hero_content">
     <div class="column-layout column_layout_hero_text">
-      <h1 class="content">
+      <h1 class="content" i18n>
         Професионален 3D печат и 3D принтиране по поръчка
       </h1>
-      <p class="content">
+      <p class="content" i18n>
         Предлагаме професионален 3D печат и 3D принтиране по поръчка за прототипи, функционални детайли и малки серии. Работим с прецизност, качествени материали и кратки срокове, подходящи както за индивидуални клиенти, така и за бизнес проекти. Независимо дали имате готов модел или идея, която искате да реализирате, ние ще ви съдействаме на всеки етап от процеса.
       </p>
       <div class="column-layout hero_action_buttons">
         <div class="row-layout hero_buttons_row">
-          <button igxButton="contained" type="button" class="main_action_button" (click)="navigateToPortfolio()">
+          <button igxButton="contained" type="button" class="main_action_button" (click)="navigateToPortfolio()" i18n>
             Разгледайте портфолиото
           </button>
-          <button igxButton="outlined" type="button" class="main_action_button" (click)="navigateToContact()">
+          <button igxButton="outlined" type="button" class="main_action_button" (click)="navigateToContact()" i18n>
             Свържете се с нас
           </button>
         </div>
-        <p class="hero_engage_statement">
+        <p class="hero_engage_statement" i18n>
           Нека ви асистираме за вашият проект днес, вижте идеите си да оживяват.
         </p>
       </div>
     </div>
-    <img src="/assets/real-images/main-images/initial-3d-image-small.png" alt="3D печат услуги - професионално 3D принтиране" class="hero_image_main" loading="eager" fetchpriority="high" />
+    <img src="/assets/real-images/main-images/initial-3d-image-small.png" alt="3D печат услуги - професионално 3D принтиране" class="hero_image_main" loading="eager" fetchpriority="high" i18n-alt />
   </div>
 </div>
 <div class="row-layout image_gallery_section_template_1">
   <div class="row-layout column_layout_2">
     <igx-carousel [vertical]="false" animationType="slide" [interval]="2000" indicatorsOrientation="end" class="carousel_1">
       <igx-slide *ngFor="let image of carouselImages; let i = index" class="row-layout carousel_slide_1">
-        <img [src]="image" [alt]="'3D печат проект ' + (i + 1)" class="image_1" loading="lazy" />
+        <img [src]="image" [alt]="'3D печат проект ' + (i + 1)" class="image_1" loading="lazy" i18n-alt />
       </igx-slide>
     </igx-carousel>
     <div class="column-layout column_layout_3">
-      <h2 class="title_1">
+      <h2 class="title_1" i18n>
         Каквo представлява 3D печатът?
       </h2>
-      <p class="title_2">
+      <p class="title_2" i18n>
         3D принтирането представлява технология за създаване на физически обекти директно от дигитален 3D модел. Чрез постепенно наслагване на материал се постига готов детайл за сравнително кратко време, според неговите размери и сложност.
       </p>
-      <p class="title_2">
+      <p class="title_2" i18n>
         Методът се прилага широко както при разработката на прототипи, така и в реално производство в сфери като архитектура, индустриален дизайн, автомобилостроене, авиация, медицина и креативни индустрии. Нашите услуги за 3D печат включват изработка на детайли с различна сложност и размери.
       </p>
-      <p class="title_2">
+      <p class="title_2" i18n>
         Едно от основните предимства на 3D принтирането е свободата при формите – възможно е изработването на детайли с почти неограничена геометрия и разнообразни размери. Предлагаме 3D печат на малки серии, прототипи и функционални части с високо качество.
       </p>
     </div>

@@ -31,12 +31,12 @@ export class ProductsPageComponent {
   // 1. Place images in: src/assets/real-images/bg-cards/
   // 2. Update the frontImage and backImage properties in productVariants array below
   // 3. Images will automatically display in the flippable cards
-  
+
   public productVariants: ProductVariant[] = [
     {
       id: 1,
-      name: 'Вариант 1: Правоъгълна карта с българско знаме',
-      description: 'Правоъгълна монетна карта с българско знаме с хоризонтални цветове отпред.',
+      name: $localize `Вариант 1: Правоъгълна карта с българско знаме`,
+      description: $localize `Правоъгълна монетна карта с българско знаме с хоризонтални цветове отпред.`,
       frontImage: '/assets/real-images/bg-cards/variant-1-front.jpg',
       backImage: '/assets/real-images/bg-cards/variant-1-back.jpg',
       hasOldCoins: true,
@@ -45,8 +45,8 @@ export class ProductsPageComponent {
     },
     {
       id: 2,
-      name: 'Вариант 2: Правоъгълна карта с наклонено знаме',
-      description: 'Правоъгълна монетна карта с наклонено българско знаме (45 градуса).',
+      name: $localize `Вариант 2: Правоъгълна карта с наклонено знаме`,
+      description: $localize `Правоъгълна монетна карта с наклонено българско знаме (45 градуса).`,
       frontImage: '/assets/real-images/bg-cards/variant-2-front.jpg',
       backImage: '/assets/real-images/bg-cards/variant-2-back.jpg',
       hasOldCoins: true,
@@ -55,8 +55,8 @@ export class ProductsPageComponent {
     },
     {
       id: 3,
-      name: 'Вариант 3: България карта с хоризонтални линии',
-      description: 'България карта с форма на картата на страната с хоризонтални цветни линии.',
+      name: $localize `Вариант 3: България карта с хоризонтални линии`,
+      description: $localize `България карта с форма на картата на страната с хоризонтални цветни линии.`,
       frontImage: '/assets/real-images/bg-cards/variant-3-front.jpg',
       backImage: '/assets/real-images/bg-cards/variant-3-back.jpg',
       hasOldCoins: true,
@@ -65,8 +65,8 @@ export class ProductsPageComponent {
     },
     {
       id: 4,
-      name: 'Вариант 4: България карта с наклонени линии',
-      description: 'България карта с форма на картата на страната с наклонени цветни линии.',
+      name: $localize `Вариант 4: България карта с наклонени линии`,
+      description: $localize `България карта с форма на картата на страната с наклонени цветни линии.`,
       frontImage: '/assets/real-images/bg-cards/variant-4-front.jpg',
       backImage: '/assets/real-images/bg-cards/variant-4-back.jpg',
       hasOldCoins: true,
@@ -75,8 +75,8 @@ export class ProductsPageComponent {
     },
     {
       id: 5,
-      name: 'Вариант 5: Персонализирани Български или правоъгълни карти',
-      description: 'Персонализирани карти - вие решавате дизайна, формата на картата, дали да има контурна снимка или държавно знаме отпред или отзад. Небето е границата!',
+      name: $localize `Вариант 5: Персонализирани Български или правоъгълни карти`,
+      description: $localize `Персонализирани карти - вие решавате дизайна, формата на картата, дали да има контурна снимка или държавно знаме отпред или отзад. Небето е границата!`,
       frontImage: '/assets/real-images/bg-cards/variant-5-front.jpg',
       backImage: '/assets/real-images/bg-cards/variant-5-back.jpg',
       hasOldCoins: false,
@@ -84,13 +84,13 @@ export class ProductsPageComponent {
       showFront: true,
       customContent: {
         show: true,
-        title: '✨ Можете да персонализирате всеки аспект:',
+        title: $localize `✨ Можете да персонализирате всеки аспект:`,
         items: [
-          'Форма на картата',
-          'Снимка или дизайн отпред/отзад',
-          'Българско знаме или друг дизайн',
-          'Размер и брой слотове за монети',
-          'Специални гравюри или текст'
+          $localize `Форма на картата`,
+          $localize `Снимка или дизайн отпред/отзад`,
+          $localize `Българско знаме или друг дизайн`,
+          $localize `Размер и брой слотове за монети`,
+          $localize `Специални гравюри или текст`
         ]
       }
     }
@@ -103,8 +103,8 @@ export class ProductsPageComponent {
   }
 
   public orderProduct(product: ProductVariant): void {
-    const message = `Привет, искам да поръчам "${product.name}". ${product.description}`;
-    
+    const message = $localize `Привет, искам да поръчам "${product.name}". ${product.description}`;
+
     this.router.navigate(['/contact'], {
       state: {
         prefilledMessage: message,
