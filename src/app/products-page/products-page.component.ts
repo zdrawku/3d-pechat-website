@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { IgxButtonDirective, IGX_CARD_DIRECTIVES, IgxIconComponent, IgxIconButtonDirective } from 'igniteui-angular';
+import { IgxButtonDirective } from 'igniteui-angular';
 import { CommonModule } from '@angular/common';
+import { ProductGridComponent } from '../shared/product-grid/product-grid.component';
 
 interface ProductVariant {
   id: number;
@@ -12,11 +13,16 @@ interface ProductVariant {
   hasOldCoins: boolean;
   hasEuroCoins: boolean;
   showFront: boolean; // Track which side is showing
+  customContent?: {
+    show: boolean;
+    title: string;
+    items: string[];
+  };
 }
 
 @Component({
   selector: 'app-products-page',
-  imports: [CommonModule, IgxButtonDirective, IGX_CARD_DIRECTIVES, IgxIconComponent, IgxIconButtonDirective],
+  imports: [CommonModule, IgxButtonDirective, ProductGridComponent],
   templateUrl: './products-page.component.html',
   styleUrls: ['./products-page.component.scss']
 })
@@ -75,7 +81,18 @@ export class ProductsPageComponent {
       backImage: '/assets/real-images/bg-cards/variant-5-back.jpg',
       hasOldCoins: false,
       hasEuroCoins: false,
-      showFront: true
+      showFront: true,
+      customContent: {
+        show: true,
+        title: '✨ Можете да персонализирате всеки аспект:',
+        items: [
+          'Форма на картата',
+          'Снимка или дизайн отпред/отзад',
+          'Българско знаме или друг дизайн',
+          'Размер и брой слотове за монети',
+          'Специални гравюри или текст'
+        ]
+      }
     }
   ];
 
@@ -94,19 +111,5 @@ export class ProductsPageComponent {
         productName: product.name
       }
     });
-  }
-
-  public toggleCardSide(product: ProductVariant): void {
-    product.showFront = !product.showFront;
-  }
-
-  public toggleToPrevious(product: ProductVariant, event: Event): void {
-    event.stopPropagation();
-    product.showFront = !product.showFront;
-  }
-
-  public toggleToNext(product: ProductVariant, event: Event): void {
-    event.stopPropagation();
-    product.showFront = !product.showFront;
   }
 }

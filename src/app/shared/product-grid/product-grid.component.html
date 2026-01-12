@@ -1,0 +1,73 @@
+<div class="products-grid">
+  <!-- Product Card for each variant -->
+  <div *ngFor="let product of products" class="product-card" igxCard>
+    <div igxCardHeader class="card-header">
+      <h3 class="ig-typography__h5 card-title">
+        {{ product.name }}
+      </h3>
+    </div>
+    
+    <!-- Image Carousel Section -->
+    <div class="card-image-section">
+      <div class="image-container">
+        <!-- Product images with flip indicator -->
+        <div class="product-image-wrapper" [class.show-back]="!product.showFront">
+          <div class="product-image front-image">
+            <img [src]="product.frontImage" 
+                 [alt]="product.name + ' - Лице'" 
+                 class="card-image"
+                 loading="lazy" />
+          </div>
+          <div class="product-image back-image">
+            <img [src]="product.backImage" 
+                 [alt]="product.name + ' - Гръб'" 
+                 class="card-image"
+                 loading="lazy" />
+          </div>
+        </div>
+        
+        <!-- Carousel Navigation Buttons -->
+        <button igxIconButton="flat" 
+                class="carousel-nav prev-btn" 
+                (click)="toggleToPrevious(product, $event)"
+                aria-label="Обърни картата">
+          <igx-icon>chevron_left</igx-icon>
+        </button>
+        <button igxIconButton="flat" 
+                class="carousel-nav next-btn" 
+                (click)="toggleToNext(product, $event)"
+                aria-label="Обърни картата">
+          <igx-icon>chevron_right</igx-icon>
+        </button>
+        
+        <!-- Side Indicator -->
+        <div class="side-indicator">
+          <span class="indicator-dot" [class.active]="product.showFront"></span>
+          <span class="indicator-dot" [class.active]="!product.showFront"></span>
+        </div>
+      </div>
+    </div>
+    
+    <div igxCardContent class="card-content">
+      <p class="ig-typography__body-1 product-description">
+        {{ product.description }}
+      </p>
+      
+      <!-- Custom content section (optional) -->
+      <div *ngIf="product.customContent?.show" class="custom-options">
+        <p class="ig-typography__body-2 custom-note">
+          {{ product.customContent.title }}
+        </p>
+        <ul class="custom-list">
+          <li *ngFor="let item of product.customContent.items">{{ item }}</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div igxCardActions class="card-actions">
+      <button igxButton="outlined" type="button" (click)="handleAction(product)" class="contact-button">
+        Поръчайте сега
+      </button>
+    </div>
+  </div>
+</div>
