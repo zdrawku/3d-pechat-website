@@ -46,6 +46,17 @@
   <div igxTooltip #tiktokNavTooltip="tooltip">
     Гледайте ни в TikTok
   </div>
+  
+  <button class="theme-toggle-button" (click)="toggleTheme()" aria-label="Toggle theme"
+          [igxTooltipTarget]="themeTooltip">
+    <div class="theme-toggle-circle">
+      <div class="theme-half light-half"></div>
+      <div class="theme-half dark-half"></div>
+    </div>
+  </button>
+  <div igxTooltip #themeTooltip="tooltip">
+    Смени тема
+  </div>
 </igx-navbar>
 <div class="row-layout horizontal_group_1">
   <igx-nav-drawer [isOpen]="true" [pin]="true" width="232px" #navigationdrawer1 class="navigation_drawer_1">

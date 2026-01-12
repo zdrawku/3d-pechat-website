@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { IsActiveMatchOptions, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { IGX_NAVBAR_DIRECTIVES, IGX_NAVIGATION_DRAWER_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxIconComponent, IgxNavigationDrawerComponent, IgxToggleActionDirective, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
 
@@ -8,12 +8,44 @@ import { IGX_NAVBAR_DIRECTIVES, IGX_NAVIGATION_DRAWER_DIRECTIVES, IgxButtonDirec
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   @ViewChild('navigationdrawer1', { static: true }) public drawer!: IgxNavigationDrawerComponent;
+  private isDarkTheme = false;
 
   constructor(
     public router: Router,
   ) {}
+
+  ngOnInit(): void {
+    // Check if user has a saved theme preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      this.isDarkTheme = savedTheme === 'dark';
+      this.applyTheme();
+    } else {
+      // Check system preference
+      this.isDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      this.applyTheme();
+    }
+  }
+
+  toggleTheme(): void {
+    this.isDarkTheme = !this.isDarkTheme;
+    this.applyTheme();
+    // Save preference
+    localStorage.setItem('theme', this.isDarkTheme ? 'dark' : 'light');
+  }
+
+  private applyTheme(): void {
+    const root = document.documentElement;
+    if (this.isDarkTheme) {
+      root.classList.remove('light-theme');
+      root.classList.add('dark-theme');
+    } else {
+      root.classList.remove('dark-theme');
+      root.classList.add('light-theme');
+    }
+  }
 
 
   public isActive(path: string): boolean {

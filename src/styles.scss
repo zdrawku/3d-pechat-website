@@ -6,7 +6,8 @@
 @include core();
 @include typography($font-family: "Roboto");
 
-$custom-palette: palette(
+// Light theme palette
+$light-palette: palette(
   $primary: #FF5722,
   $secondary: #4CAF50,
   $surface: #F5F5F5,
@@ -14,13 +15,83 @@ $custom-palette: palette(
   $success: #8BC34A,
   $warn: #FFC107,
   $info: #2196F3);
-@include theme($palette: $custom-palette, $schema: $light-material-schema, $roundness: 0);
+
+// Dark theme palette
+$dark-palette: palette(
+  $primary: #FF7043,
+  $secondary: #66BB6A,
+  $surface: #1E1E1E,
+  $error: #EF5350,
+  $success: #9CCC65,
+  $warn: #FFCA28,
+  $info: #42A5F5);
+
+// Apply light theme by default
+@include theme($palette: $light-palette, $schema: $light-material-schema, $roundness: 0);
+
+// Dark theme CSS variable overrides
+.dark-theme {
+  // Surface colors
+  --ig-surface-500: #1E1E1E;
+  --ig-surface-500-contrast: #FFFFFF;
+  --ig-surface-400: #2A2A2A;
+  --ig-surface-300: #363636;
+  --ig-surface-200: #424242;
+  --ig-surface-150: #4E4E4E;
+  --ig-surface-100: #5A5A5A;
+  
+  // Primary colors
+  --ig-primary-500: #FF7043;
+  --ig-primary-500-contrast: #FFFFFF;
+  --ig-primary-400: #FF8A65;
+  --ig-primary-600: #F4511E;
+  
+  // Secondary colors
+  --ig-secondary-500: #66BB6A;
+  --ig-secondary-500-contrast: #000000;
+  --ig-secondary-400: #81C784;
+  --ig-secondary-600: #4CAF50;
+  
+  // Error colors
+  --ig-error-500: #EF5350;
+  --ig-error-500-contrast: #FFFFFF;
+  
+  // Success colors
+  --ig-success-500: #9CCC65;
+  --ig-success-500-contrast: #000000;
+  
+  // Warn colors
+  --ig-warn-500: #FFCA28;
+  --ig-warn-500-contrast: #000000;
+  
+  // Info colors
+  --ig-info-500: #42A5F5;
+  --ig-info-500-contrast: #FFFFFF;
+  
+  // Gray colors for dark mode
+  --ig-gray-100: #5A5A5A;
+  --ig-gray-200: #666666;
+  --ig-gray-300: #757575;
+  --ig-gray-400: #8A8A8A;
+  --ig-gray-500: #9E9E9E;
+  --ig-gray-600: #B0B0B0;
+  --ig-gray-700: #BDBDBD;
+  --ig-gray-800: #D0D0D0;
+  --ig-gray-900: #E5E5E5;
+}
 
 // Override gray colors for better contrast (WCAG AA compliance)
 :root {
   --ig-gray-700: #4A4A4A;
   --ig-gray-800: #333333;
   --ig-gray-900: #1A1A1A;
+}
+
+// Dark mode gray overrides
+.dark-theme {
+  --ig-gray-700: #B0B0B0;
+  --ig-gray-800: #D0D0D0;
+  --ig-gray-900: #E5E5E5;
 }
 
 // Reduce heading sizes globally
