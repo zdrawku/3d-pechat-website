@@ -73,39 +73,30 @@ export class AppComponent implements OnInit {
   public switchLanguage(): void {
     const newLang = this.currentLanguage === 'bg' ? 'en' : 'bg';
 
-    // In a real deployment, you would redirect to the other locale's URL
-    // For local development with 'ng serve --configuration=en', this won't automatically switch
-    // because Angular builds separate bundles for each locale.
-
-    // Assuming standard Angular localization setup where locales are served from subdirectories
-    // or different ports/domains.
-
-    // Example logic for switching (adjust based on your deployment strategy):
-    const currentUrl = window.location.href;
-    let newUrl = currentUrl;
+    const { pathname, search, hash, origin } = window.location;
+    let newPath = pathname;
+    let newOrigin = origin;
 
     if (newLang === 'en') {
-        // If we are currently in BG (root or /bg/), switch to /en/
-        // This is a simplified example. You might need more robust URL handling.
-        if (currentUrl.includes('/bg/')) {
-             newUrl = currentUrl.replace('/bg/', '/en/');
-        } else {
-             // Assuming root is BG, append /en/ (or replace base path)
-             // This part depends heavily on how you serve the app.
-             // For now, let's just alert or log, as we can't easily switch ports in dev mode.
-             console.log('Switching to English');
-             // window.location.href = '/en/'; // Uncomment for production if served under /en/
-        }
+      // Switch to English: Prepend /en if not present
+      if (!pathname.startsWith('/en/')) {
+        newPath = `/en${pathname === '/' ? '/' : pathname}`;
+      }
+      // Handle local development port switching
+      if (newOrigin.includes('localhost')) {
+        newOrigin = newOrigin.replace('4200', '4201');
+      }
     } else {
-        // Switch to BG
-        if (currentUrl.includes('/en/')) {
-            newUrl = currentUrl.replace('/en/', '/bg/'); // or remove /en/ if BG is root
-        }
-         console.log('Switching to Bulgarian');
+      // Switch to Bulgarian: Remove /en prefix
+      if (pathname.startsWith('/en/')) {
+        newPath = pathname.substring(3) || '/';
+      }
+      // Handle local development port switching
+      if (newOrigin.includes('localhost')) {
+        newOrigin = newOrigin.replace('4201', '4200');
+      }
     }
 
-    // For development purposes, we can't easily hot-swap locales without restarting ng serve
-    // with a different configuration.
-    alert(`To see the ${newLang.toUpperCase()} version in development, please run: ng serve --configuration=${newLang}`);
+    window.location.href = `${newOrigin}${newPath}${search}${hash}`;
   }
 }

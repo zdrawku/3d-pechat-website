@@ -54,13 +54,12 @@
               "includePaths": [
                 "node_modules"
               ]
-            },
-            "localize": [
-              "en"
-            ]
+            }
           },
           "configurations": {
             "production": {
+              "localize": ["bg", "en"],
+              "baseHref": "/",
               "budgets": [
                 {
                   "type": "initial",
@@ -92,7 +91,13 @@
               "sourceMap": true
             },
             "en": {
-              "localize": ["en"]
+              "baseHref": "/en/",
+              "localize": [
+                "en"
+              ]
+            },
+            "bg": {
+              "baseHref": "/"
             }
           },
           "defaultConfiguration": "production"
@@ -107,7 +112,12 @@
               "buildTarget": "dprinting-services-website:build:development"
             },
             "en": {
-              "buildTarget": "dprinting-services-website:build:development,en"
+              "buildTarget": "dprinting-services-website:build:development,en",
+              "port": 4201
+            },
+            "bg": {
+              "buildTarget": "dprinting-services-website:build:development,bg",
+              "port": 4200
             }
           },
           "defaultConfiguration": "development"

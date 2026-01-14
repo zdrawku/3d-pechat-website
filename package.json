@@ -11,7 +11,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "node --max-old-space-size=8192 ./node_modules/@angular/cli/bin/ng test",
     "lint": "ng lint",
-    "extract-i18n": "ng extract-i18n --output-path=src/locale"
+    "extract-i18n": "ng extract-i18n --output-path=src/locale",
+    "build:gh": "ng build --configuration=production"
   },
   "private": true,
   "dependencies": {
