@@ -7,7 +7,6 @@ on:
 
 jobs:
   build-and-deploy:
-
     runs-on: ubuntu-latest
 
     permissions:
@@ -25,21 +24,34 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
-        # cache: 'npm' # enable after committing lock file from first install
-    - run: npm i # replace with 'npm ci' after committing lock file from first install
+
+    - name: Install dependencies
+      run: npm install
+
     - name: Set project name
+      # This extracts the name from your package.json
       run: echo "PROJECT_NAME=$(jq -r '.name' package.json)" >> $GITHUB_ENV
-    - name: Build project with dynamic base-href
-      run: npm run build -- --base-href "/"
-    - name: SPA routing handling
+
+    - name: Build project
+      # We build with base-href "/" for custom domains
+      run: npm run build -- --configuration production --base-href "/"
+
+    - name: SPA routing handling (404 hack)
+      # This is the fix. It copies index.html to 404.html
+      # We use -f to force overwrite if it exists
       run: cp ./dist/${{ env.PROJECT_NAME }}/browser/index.html ./dist/${{ env.PROJECT_NAME }}/browser/404.html
-    - name: Upload build artifact to GitHub Pages
+
+    - name: Upload build artifact
       uses: actions/upload-pages-artifact@v3
       with:
+        # Ensure this path matches where your index.html is
         path: ./dist/${{ env.PROJECT_NAME }}/browser
+
     - name: Deploy to GitHub Pages
+      id: deployment
       uses: actions/deploy-pages@v4
