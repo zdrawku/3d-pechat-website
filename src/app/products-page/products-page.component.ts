@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { IgxButtonDirective } from 'igniteui-angular';
+import { IgxButtonDirective, IgxIconModule } from 'igniteui-angular';
 import { CommonModule } from '@angular/common';
 import { ProductGridComponent } from '../shared/product-grid/product-grid.component';
 
@@ -22,7 +22,7 @@ interface ProductVariant {
 
 @Component({
   selector: 'app-products-page',
-  imports: [CommonModule, IgxButtonDirective, ProductGridComponent],
+  imports: [CommonModule, IgxButtonDirective, ProductGridComponent, IgxIconModule],
   templateUrl: './products-page.component.html',
   styleUrls: ['./products-page.component.scss']
 })
@@ -31,7 +31,7 @@ export class ProductsPageComponent {
   // 1. Place images in: src/assets/real-images/bg-cards/
   // 2. Update the frontImage and backImage properties in productVariants array below
   // 3. Images will automatically display in the flippable cards
-  
+
   public productVariants: ProductVariant[] = [
     {
       id: 1,
@@ -106,7 +106,30 @@ export class ProductsPageComponent {
     }
   ];
 
-  constructor(private router: Router) {}
+  public headphoneStandProductVariants: ProductVariant[] = [
+    {
+      id: 1,
+      name: 'Стойка за слушалки',
+      description: '3D принтирана стойка за слушалки с опция за отвор за касичка.',
+      frontImage: '/assets/real-images/headphoneStand-back.png',
+      backImage: '/assets/real-images/headphoneStand-front-2.png',
+      hasOldCoins: false,
+      hasEuroCoins: false,
+      showFront: true,
+      customContent: {
+        show: true,
+        title: '✨ Можете да персонализирате всеки аспект:',
+        items: [
+          'Големина на стойката до 25 см височина',
+          'Стойката може да има отвор отгоре за касичка',
+          'Цвят по избор',
+          'Отлично за бюро'
+        ]
+      }
+    }
+  ];
+
+  constructor(private router: Router) { }
 
   public navigateToContact(): void {
     this.router.navigate(['/contact']);
@@ -114,7 +137,7 @@ export class ProductsPageComponent {
 
   public orderProduct(product: ProductVariant): void {
     const message = `Привет, искам да поръчам "${product.name}". ${product.description}`;
-    
+
     this.router.navigate(['/contact'], {
       state: {
         prefilledMessage: message,
@@ -122,4 +145,38 @@ export class ProductsPageComponent {
       }
     });
   }
+
+  public copySectionLink(sectionId: string): void {
+  // 1. Construct the URL
+  const newUrl = `${window.location.origin}${window.location.pathname}#${sectionId}`;
+
+  // 2. Update Browser URL (Visual only, no reload)
+  window.history.pushState(null, '', `#${sectionId}`);
+
+  // 3. Smooth Scroll to the Section
+  const element = document.getElementById(sectionId);
+  if (element) {
+    element.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',   // Aligns the top of the element with the top of the viewport
+      inline: 'nearest'
+    });
+  }
+
+  // 4. Copy to Clipboard
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(newUrl).then(() => {
+       // Optional: Add a toast notification here
+       console.log('Link copied and scrolled!');
+    });
+  } else {
+    // Fallback for older browsers
+    const tempInput = document.createElement('input');
+    tempInput.value = newUrl;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+  }
+}
 }

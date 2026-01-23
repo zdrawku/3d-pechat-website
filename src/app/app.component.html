@@ -59,7 +59,8 @@
   </div>
 </igx-navbar>
 <div class="row-layout horizontal_group_1">
-  <igx-nav-drawer [isOpen]="true" [pin]="true" width="232px" #navigationdrawer1 class="navigation_drawer_1">
+  <igx-nav-drawer [isOpen]="true" width="232px" #navigationdrawer1 class="navigation_drawer_1"
+    [enableGestures]="true">
     <ng-template igxDrawer>
       <div igxDrawerItem (click)="navigate('/')" [active]="isActive(`/`)">
         <igx-icon class="icon_12">

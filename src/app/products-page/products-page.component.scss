@@ -40,6 +40,48 @@
     line-height: 1.3;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    display: flex;
+    align-items: center;
+    gap: 4px; /* Tighter gap for smaller icon */
+    justify-content: center; /* Since parent is centered */
+
+    @media (max-width: 768px) {
+      flex-wrap: wrap; 
+    }
+  }
+
+  .copy-link-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ig-gray-600); /* Use theme variable */
+    transition: all 0.2s ease-in-out;
+    opacity: 0.6;
+    
+    /* Reset button default line-height to ensure icon centers */
+    line-height: 0; 
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+      color: var(--ig-gray-900);
+      opacity: 1;
+    }
+  }
+
+  /* Target the Ignite UI Icon directly */
+  igx-icon {
+    /* This controls the size of the icon font */
+    font-size: 18px !important; 
+    width: 18px !important;
+    height: 18px !important;
+    
+    /* Ensure it doesn't look 'fat' */
+    --ig-icon-size: 18px; 
   }
 
   .page-subtitle {
@@ -219,4 +261,5 @@
       gap: 20px;
     }
   }
+  
 }
