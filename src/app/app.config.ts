@@ -9,6 +9,8 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { routes } from './app.routes';
 import { GlobalErrorHandlerService } from './error-routing/error/global-error-handler.service';
 import { environment } from '../environments/environment';
+import { provideMarkdown } from 'ngx-markdown';
+import { provideHttpClient } from '@angular/common/http';
 
 // provide the HAMMER_GESTURE_CONFIG token
 // to override the default settings of the HammerModule
@@ -16,6 +18,8 @@ import { environment } from '../environments/environment';
 const providers: Provider = [
   provideRouter(routes),
   importProvidersFrom(BrowserModule, HammerModule),
+  provideHttpClient(),
+  provideMarkdown(),
   provideAnimations(),
   // Uncomment after installing @angular/service-worker with: npm install @angular/service-worker --save
   // provideServiceWorker('ngsw-worker.js', {

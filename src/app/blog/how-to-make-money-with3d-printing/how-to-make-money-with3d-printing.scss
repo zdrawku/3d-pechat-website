@@ -1,0 +1,174 @@
+// Variables for consistent theming
+$primary-color: #2c3e50; // Dark Blue/Grey for text
+$accent-color: #3498db;  // Blue for links/highlights
+$bg-light: #f8f9fa;      // Light grey for backgrounds
+$border-color: #e9ecef;
+$text-color: #333;
+$font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+// Main Container
+.blog-container {
+  max-width: 1200px;       // Prevents lines from being too long to read
+  margin: 2rem auto;      // Centers the blog post
+  padding: 0 1.5rem;      // Adds side padding for mobile
+  font-family: $font-family;
+  color: $text-color;
+  line-height: 1.8;       // Improves readability significantly
+
+  // We use ::ng-deep to target elements created by ngx-markdown
+  ::ng-deep {
+
+    // 1. HEADINGS
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: $primary-color;
+      margin-bottom: 0.5rem;
+      margin-top: 0;
+      line-height: 1.2;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: $primary-color;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid $border-color;
+      padding-bottom: 0.5rem;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 0.8rem;
+      color: lighten($primary-color, 10%);
+    }
+
+    // 2. PARAGRAPHS & STRONG
+    p {
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+    }
+
+    strong {
+      color: darken($primary-color, 20%); // Makes bold text pop slightly more
+      font-weight: 700;
+    }
+
+    // 3. BLOCKQUOTES (The "Real Example" box)
+    blockquote {
+      background: $bg-light;
+      border-left: 5px solid $accent-color;
+      margin: 2rem 0;
+      padding: 1.5rem;
+      font-style: italic;
+      color: #555;
+      border-radius: 0 8px 8px 0;
+      
+      p {
+        margin-bottom: 0; // Remove margin from the p inside blockquote
+      }
+    }
+
+    // 4. LISTS (The Checkmarks and Bullets)
+    ul, ol {
+      margin-bottom: 1.5rem;
+      padding-left: 1.5rem;
+
+      li {
+        margin-bottom: 0.5rem;
+        padding-left: 0.5rem;
+        
+        // Optional: Make the "Check/Cross" emojis bigger if they are text
+        &::marker {
+          color: $accent-color;
+        }
+      }
+    }
+
+    // 5. TABLES (The License Table)
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      font-size: 1rem;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+
+      thead {
+        background-color: $primary-color;
+        color: #fff;
+        
+        th {
+          padding: 1rem;
+          text-align: left;
+          font-weight: 600;
+        }
+      }
+
+      tbody {
+        tr {
+          border-bottom: 1px solid $border-color;
+          
+          &:last-child {
+            border-bottom: none;
+          }
+
+          &:nth-child(even) {
+            background-color: $bg-light; // Zebra striping
+          }
+
+          td {
+            padding: 1rem;
+            vertical-align: top;
+          }
+        }
+      }
+    }
+
+    // 6. CODE BLOCKS (The Formula)
+    pre {
+      background: #282c34;
+      color: #abb2bf;
+      padding: 1.5rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      
+      code {
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.95rem;
+      }
+    }
+    
+    // Inline code (e.g. `material + tok`)
+    p > code, li > code {
+       background: rgba(0,0,0,0.05);
+       padding: 0.2rem 0.4rem;
+       border-radius: 4px;
+       font-family: 'Consolas', monospace;
+       color: #e83e8c; // Pinkish color often used for code
+    }
+
+    // 7. IMAGES
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    // 8. Customizing the "Reading Time" (assuming it's bold at top)
+    p:first-of-type strong {
+       font-size: 0.9rem;
+       text-transform: uppercase;
+       color: #888;
+       letter-spacing: 1px;
+    }
+  }
+}
