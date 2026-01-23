@@ -103,6 +103,25 @@ export class ProductsPageComponent {
           'Специални гравюри или текст'
         ]
       }
+    },
+    {
+      id: 7,
+      name: 'Вариант 7: Правоъгълни карти с премиум кейс',
+      description: 'Персонализирани правоъгълни карти с премиум кейс за съхранение.',
+      frontImage: '/assets/real-images/Variant-7-back.png',
+      backImage: '/assets/real-images/Variant-7-front.png',
+      hasOldCoins: false,
+      hasEuroCoins: false,
+      showFront: true,
+      customContent: {
+        show: true,
+        title: '✨ Различни цветове на картата и кейса:',
+        items: [
+          'Зелен кейс, бордо червен или черен',
+          'Правоъгълна карта с наклонено знаме',
+          'Правоъгълна монетна карта с наклонено българско знаме (45 градуса)'
+        ]
+      }
     }
   ];
 
