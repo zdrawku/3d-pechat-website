@@ -28,7 +28,20 @@ export class WhatIs3dPrintingComponent implements OnInit {
     this.title.setTitle('Какво представлява 3D принтирането? - Пълно ръководство 2026');
     this.meta.addTags([
       { name: 'description', content: 'Научете всичко за 3D принтирането - как работи, какви са видовете технологии, приложения и бъдещето на адитивното производство.' },
-      { name: 'keywords', content: '3D принтиране, 3D принтер, адитивно производство, FDM, SLA, технология, производство' }
+      { name: 'keywords', content: '3D принтиране, 3D принтер, адитивно производство, FDM, SLA, технология, производство' },
+      // Canonical URL
+      { rel: 'canonical', href: 'https://3dpechat.bg/blog/what-is-3d-printing' },
+      // Open Graph Tags
+      { property: 'og:type', content: 'article' },
+      { property: 'og:title', content: 'Какво представлява 3D принтирането? - Пълно ръководство 2026' },
+      { property: 'og:description', content: 'Научете всичко за 3D принтирането - как работи, какви са видовете технологии, приложения и бъдещето на адитивното производство.' },
+      { property: 'og:url', content: 'https://3dpechat.bg/blog/what-is-3d-printing' },
+      { property: 'og:image', content: 'https://3dpechat.bg/assets/real-images/main-images/3dprinting-hero.jpg' },
+      // Twitter Card Tags
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: 'Какво представлява 3D принтирането? - Пълно ръководство 2026' },
+      { name: 'twitter:description', content: 'Научете всичко за 3D принтирането - как работи, какви са видовете технологии, приложения и бъдещето на адитивното производство.' },
+      { name: 'twitter:image', content: 'https://3dpechat.bg/assets/real-images/main-images/3dprinting-hero.jpg' }
     ]);
     this.addStructuredData();
   }
