@@ -1,3 +1,7 @@
 <article class="blog-container">
+    <button igxButton="contained" (click)="goBack()" class="back-button">
+        <igx-icon>arrow_back</igx-icon>
+        Back to Articles
+    </button>
     <markdown [data]="postContent"></markdown>
 </article>

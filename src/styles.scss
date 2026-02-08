@@ -153,4 +153,16 @@ html, body {
       max-width: 100%;
     }
   }
+
+  .back-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2rem;
+    
+    igx-icon {
+      display: flex;
+      align-items: center;
+    }
+  }
 }

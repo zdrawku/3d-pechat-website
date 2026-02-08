@@ -1,14 +1,15 @@
 import { Component, OnInit, Renderer2, Inject } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BlogService } from '../../services/blog.service';
 import { MarkdownModule } from 'ngx-markdown';
+import { IgxButtonModule, IgxIconModule } from 'igniteui-angular';
 import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-how-to-make-money-with3d-printing',
   standalone: true,
-  imports: [MarkdownModule],
+  imports: [MarkdownModule, IgxButtonModule, IgxIconModule],
   templateUrl: './how-to-make-money-with3d-printing.html',
   styleUrls: ['./how-to-make-money-with3d-printing.scss'],
 })
@@ -19,6 +20,7 @@ export class HowToMakeMoneyWith3dPrinting implements OnInit{
     private title: Title,
     private blogService: BlogService,
     private route: ActivatedRoute,
+    private router: Router,
     private renderer: Renderer2,
     @Inject(DOCUMENT) private document: Document
   ) {
@@ -35,6 +37,10 @@ export class HowToMakeMoneyWith3dPrinting implements OnInit{
     this.blogService.getPost("how-to-make-money").subscribe(data => {
       this.postContent = data;
     });
+  }
+
+  goBack(): void {
+    this.router.navigate(['/blog']);
   }
 
   private addStructuredData(): void {
