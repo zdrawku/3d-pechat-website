@@ -198,6 +198,34 @@
     }
   }
 
+  .search-container {
+    .search-input {
+      ::ng-deep {
+        .igx-input-group__bundle {
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+        }
+
+        .igx-input-group__bundle:hover {
+          border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .igx-input-group__bundle:focus-within {
+          border-color: rgba(255, 255, 255, 0.7);
+          box-shadow: 0 2px 12px rgba(255, 255, 255, 0.2);
+        }
+
+        input {
+          color: #ffffff;
+        }
+
+        input::placeholder {
+          color: rgba(255, 255, 255, 0.5);
+        }
+      }
+    }
+  }
+
   .results-info {
     color: #b0b0b0;
   }
