@@ -1,5 +1,7 @@
 # SEO Configuration for Blog Pages
 
+> **📘 Looking to add a new article?** See the comprehensive [ARTICLE_CREATION_GUIDE.md](./ARTICLE_CREATION_GUIDE.md) for complete step-by-step instructions on creating blog posts, including content structure, image optimization, and component setup.
+
 ## ✅ Already Implemented
 
 ### 1. Meta Tags
@@ -31,7 +33,9 @@ All blog components have proper meta tags:
 
 ## 📋 SEO Checklist for Each New Blog
 
-When adding a new blog, make sure to:
+> **💡 Detailed instructions:** For a complete step-by-step guide on adding articles, see [ARTICLE_CREATION_GUIDE.md](./ARTICLE_CREATION_GUIDE.md)
+
+**Quick checklist:**
 
 1. ✅ **Add to blog service** (`src/app/services/blog.service.ts`)
    - Include proper title, description, and tags
