@@ -24,6 +24,9 @@
     <button igxButton="flat" type="button" [routerLink]="[`/contact`]" class="button_home">
       Обадете се
     </button>
+    <button igxButton="flat" type="button" [routerLink]="[`/blog`]" class="button_home">
+      Блог
+    </button>
   </igx-navbar-title>
   <a href="https://www.instagram.com/3dpechat.bg" target="_blank" rel="noopener noreferrer" 
      igxIconButton="flat" class="icon_button_5" aria-label="Instagram профил"
@@ -92,16 +95,12 @@
         </igx-icon>
         <span>Свържете се с нас</span>
       </div>
-      <!-- <div igxDrawerItem >
+      <div igxDrawerItem  (click)="navigate('/blog')" [active]="isActive(`/blog`)">
         <igx-icon class="icon_12">
           article
         </igx-icon>
-        <span>Блог:</span>
+        <span>Блог</span>
       </div>
-      <div igxDrawerItem (click)="navigate('/how-to-make-money-3d-printing')" [active]="isActive(`/how-to-make-money-3d-printing`)">
-        &nbsp; - 
-        <span>Как да започна?</span>
-      </div> -->
     </ng-template>
   </igx-nav-drawer>
   <div class="column-layout group">

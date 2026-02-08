@@ -1,0 +1,233 @@
+.blog-list-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  min-height: calc(100vh - 200px);
+
+  .blog-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem 0;
+
+    .blog-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 0.5rem;
+
+      @media (max-width: 768px) {
+        font-size: 2rem;
+      }
+    }
+
+    .blog-subtitle {
+      font-size: 1.1rem;
+      color: #666;
+      margin: 0;
+    }
+  }
+
+  .search-container {
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    
+    .search-input {
+      width: 100%;
+      font-size: 1rem;
+
+      .clear-icon {
+        cursor: pointer;
+        transition: color 0.2s;
+
+        &:hover {
+          color: #e74c3c;
+        }
+      }
+    }
+  }
+
+  .results-info {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #666;
+    font-size: 0.95rem;
+  }
+
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .blog-card {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+
+      &:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+      }
+
+      igx-card-header {
+        .card-title {
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: #2c3e50;
+          line-height: 1.4;
+          margin-bottom: 0.5rem;
+        }
+
+        .card-subtitle {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.9rem;
+          color: #7f8c8d;
+
+          .date-icon {
+            font-size: 1rem;
+          }
+        }
+      }
+
+      igx-card-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+
+        .card-description {
+          color: #555;
+          line-height: 1.6;
+          margin-bottom: 1rem;
+          flex: 1;
+        }
+
+        .tags-container {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          margin-top: auto;
+
+          .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+
+            &:hover {
+              transform: scale(1.05);
+              box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
+            }
+
+            &:active {
+              transform: scale(0.98);
+            }
+          }
+        }
+      }
+
+      igx-card-actions {
+        .read-more-btn {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: #667eea;
+          font-weight: 600;
+          transition: gap 0.2s;
+
+          &:hover {
+            gap: 0.75rem;
+          }
+        }
+      }
+    }
+  }
+
+  .no-results,
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #666;
+
+    .no-results-icon,
+    .empty-icon {
+      font-size: 4rem;
+      color: #bdc3c7;
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    button {
+      margin-top: 1rem;
+    }
+  }
+}
+
+// Dark theme support
+:host-context(.dark-theme) .blog-list-container {
+  .blog-header {
+    .blog-title {
+      color: #ffffff;
+    }
+
+    .blog-subtitle {
+      color: #b0b0b0;
+    }
+  }
+
+  .results-info {
+    color: #b0b0b0;
+  }
+
+  .blog-grid .blog-card {
+    igx-card-header {
+      .card-title {
+        color: #ffffff;
+      }
+
+      .card-subtitle {
+        color: #b0b0b0;
+      }
+    }
+
+    igx-card-content .card-description {
+      color: #d0d0d0;
+    }
+  }
+
+  .no-results,
+  .empty-state {
+    color: #b0b0b0;
+
+    h3 {
+      color: #ffffff;
+    }
+
+    p {
+      color: #b0b0b0;
+    }
+  }
+}

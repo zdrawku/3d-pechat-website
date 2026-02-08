@@ -7,6 +7,7 @@ import { PortfolioPageComponent } from './portfolio-page/portfolio-page.componen
 import { PricesPageComponent } from './prices-page/prices-page.component';
 import { ProductsPageComponent } from './products-page/products-page.component';
 import { ContactMePageComponent } from './contact-me-page/contact-me-page.component';
+import { BlogListPageComponent } from './blog-list-page/blog-list-page.component';
 import { HowToMakeMoneyWith3dPrinting } from './blog/how-to-make-money-with3d-printing/how-to-make-money-with3d-printing';
 
 export const routes: Routes = [
@@ -16,6 +17,12 @@ export const routes: Routes = [
   { path: 'products', component: ProductsPageComponent, data: { text: 'Products' } },
   { path: 'prices', component: PricesPageComponent, data: { text: 'Prices' } },
   { path: 'contact', component: ContactMePageComponent, data: { text: 'Contact' } },
-  { path: 'how-to-make-money-3d-printing', component: HowToMakeMoneyWith3dPrinting },
+  {
+    path: 'blog',
+    children: [
+      { path: '', component: BlogListPageComponent, data: { text: 'Blog' } },
+      { path: 'how-to-make-money-3d-printing', component: HowToMakeMoneyWith3dPrinting }
+    ]
+  },
   { path: '**', component: PageNotFoundComponent } // must always be last
 ];

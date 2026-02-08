@@ -1,0 +1,88 @@
+<div class="blog-list-container">
+  <div class="blog-header">
+    <h1 class="blog-title">Блог за 3D Принтиране</h1>
+    <p class="blog-subtitle">Научете всичко за 3D принтирането от нашите експертни статии</p>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-container">
+    <igx-input-group type="search" class="search-input">
+      <input 
+        igxInput 
+        type="text" 
+        [(ngModel)]="searchText"
+        (input)="onSearch()"
+        placeholder="Търсене в блога..."
+      />
+      <igx-prefix>
+        <igx-icon>search</igx-icon>
+      </igx-prefix>
+      <igx-suffix *ngIf="searchText">
+        <igx-icon (click)="clearSearch()" class="clear-icon">clear</igx-icon>
+      </igx-suffix>
+    </igx-input-group>
+  </div>
+
+  <!-- Results Count -->
+  <div class="results-info" *ngIf="searchText">
+    <p>Намерени {{ filteredBlogs.length }} {{ filteredBlogs.length === 1 ? 'статия' : 'статии' }}</p>
+  </div>
+
+  <!-- Blog Cards Grid -->
+  <div class="blog-grid" *ngIf="filteredBlogs.length > 0">
+    <igx-card 
+      *ngFor="let blog of filteredBlogs" 
+      class="blog-card"
+      [routerLink]="blog.route"
+    >
+      <igx-card-header>
+        <h3 igxCardHeaderTitle class="card-title">{{ blog.title }}</h3>
+        <h5 igxCardHeaderSubtitle class="card-subtitle">
+          <igx-icon class="date-icon">calendar_today</igx-icon>
+          {{ formatDate(blog.date) }}
+        </h5>
+      </igx-card-header>
+
+      <igx-card-content>
+        <p class="card-description">{{ blog.description }}</p>
+        
+        <div class="tags-container" *ngIf="blog.tags && blog.tags.length > 0">
+          <span 
+            class="tag" 
+            *ngFor="let tag of blog.tags"
+            (click)="searchByTag($event, tag)"
+          >{{ tag }}</span>
+        </div>
+      </igx-card-content>
+
+      <igx-card-actions>
+        <button 
+          igxButton="flat" 
+          igxRipple
+          [routerLink]="blog.route"
+          class="read-more-btn"
+        >
+          <igx-icon>article</igx-icon>
+          <span>Прочети повече</span>
+        </button>
+      </igx-card-actions>
+    </igx-card>
+  </div>
+
+  <!-- No Results Message -->
+  <div class="no-results" *ngIf="filteredBlogs.length === 0 && searchText">
+    <igx-icon class="no-results-icon">search_off</igx-icon>
+    <h3>Няма намерени резултати</h3>
+    <p>Опитайте с други ключови думи</p>
+    <button igxButton="outlined" igxRipple (click)="clearSearch()">
+      Изчисти търсенето
+    </button>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="allBlogs.length === 0">
+    <igx-icon class="empty-icon">article</igx-icon>
+    <h3>Скоро идват нови статии</h3>
+    <p>Очаквайте интересно съдържание за 3D принтирането</p>
+  </div>
+</div>
