@@ -14,9 +14,9 @@ import { MarkdownModule } from 'ngx-markdown';
 export class HowToMakeMoneyWith3dPrinting implements OnInit{
   postContent = '';
   constructor(private meta: Meta, private title: Title, private blogService: BlogService, private route: ActivatedRoute) {
-    this.title.setTitle('Как да печелите пари с 3D принтер - Пълен гайд 2025');
+    this.title.setTitle('Как да печелите пари с 3D принтер - Пълен гайд 2026');
     this.meta.addTags([
-      { name: 'description', content: 'Научете как да печелите пари с вашия 3D принтер, как да продавате 3D принтирани продукти легално и безопасно. Пълен гайд за 2025.' },
+      { name: 'description', content: 'Научете как да печелите пари с вашия 3D принтер, как да продавате 3D принтирани продукти легално и безопасно. Пълен гайд за 2026.' },
       { name: 'keywords', content: '3D принтиране, печелене на пари, 3D принтер, продажба на 3D принтирани продукти, лицензиране, CE маркировка' }
     ]);
   }
