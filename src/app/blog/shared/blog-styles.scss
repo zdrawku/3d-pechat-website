@@ -11,16 +11,20 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
 // Main Container
 .blog-container {
-  max-width: 1200px;       // Prevents lines from being too long to read
-  margin: 2rem auto;      // Centers the blog post
-  padding: 0 1.5rem;      // Adds side padding for mobile
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
   font-family: $font-family;
   color: $text-color;
-  line-height: 1.8;       // Improves readability significantly
+  line-height: 1.8;
 
-  // We use ::ng-deep to target elements created by ngx-markdown
+  @media (max-width: 768px) {
+    margin: 1rem auto;
+    padding: 0 1rem;
+    line-height: 1.6;
+  }
+
   ::ng-deep {
-
     // 1. HEADINGS
     h1 {
       font-size: 2.5rem;
@@ -29,6 +33,12 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       margin-bottom: 0.5rem;
       margin-top: 0;
       line-height: 1.2;
+
+      @media (max-width: 768px) {
+        font-size: 1.75rem;
+        line-height: 1.3;
+        margin-bottom: 1rem;
+      }
     }
 
     h2 {
@@ -39,6 +49,12 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       margin-bottom: 1rem;
       border-bottom: 2px solid $border-color;
       padding-bottom: 0.5rem;
+
+      @media (max-width: 768px) {
+        font-size: 1.4rem;
+        margin-top: 2rem;
+        margin-bottom: 0.75rem;
+      }
     }
 
     h3 {
@@ -47,6 +63,12 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       margin-top: 2rem;
       margin-bottom: 0.8rem;
       color: lighten($primary-color, 10%);
+
+      @media (max-width: 768px) {
+        font-size: 1.2rem;
+        margin-top: 1.5rem;
+        margin-bottom: 0.6rem;
+      }
     }
 
     h4 {
@@ -55,6 +77,11 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       margin-top: 1.5rem;
       margin-bottom: 0.6rem;
       color: lighten($primary-color, 15%);
+
+      @media (max-width: 768px) {
+        font-size: 1.1rem;
+        margin-top: 1.25rem;
+      }
     }
 
     h5 {
@@ -63,6 +90,10 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       margin-top: 1.2rem;
       margin-bottom: 0.5rem;
       color: lighten($primary-color, 20%);
+
+      @media (max-width: 768px) {
+        font-size: 1rem;
+      }
     }
 
     h6 {
@@ -71,20 +102,29 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       margin-top: 1rem;
       margin-bottom: 0.4rem;
       color: lighten($primary-color, 25%);
+
+      @media (max-width: 768px) {
+        font-size: 0.95rem;
+      }
     }
 
     // 2. PARAGRAPHS & STRONG
     p {
       margin-bottom: 1.5rem;
       font-size: 1.1rem;
+
+      @media (max-width: 768px) {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+      }
     }
 
     strong {
-      color: darken($primary-color, 20%); // Makes bold text pop slightly more
+      color: darken($primary-color, 20%);
       font-weight: 700;
     }
 
-    // 3. BLOCKQUOTES (The "Real Example" box)
+    // 3. BLOCKQUOTES
     blockquote {
       background: $bg-light;
       border-left: 5px solid $accent-color;
@@ -94,21 +134,36 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       color: #555;
       border-radius: 0 8px 8px 0;
       
+      @media (max-width: 768px) {
+        margin: 1.5rem -0.5rem;
+        padding: 1rem;
+        font-size: 0.95rem;
+      }
+      
       p {
-        margin-bottom: 0; // Remove margin from the p inside blockquote
+        margin-bottom: 0;
       }
     }
 
-    // 4. LISTS (The Checkmarks and Bullets)
+    // 4. LISTS
     ul, ol {
       margin-bottom: 1.5rem;
       padding-left: 1.5rem;
+
+      @media (max-width: 768px) {
+        padding-left: 1.25rem;
+        margin-bottom: 1rem;
+      }
 
       li {
         margin-bottom: 0.5rem;
         padding-left: 0.5rem;
         
-        // Optional: Make the "Check/Cross" emojis bigger if they are text
+        @media (max-width: 768px) {
+          margin-bottom: 0.4rem;
+          font-size: 0.95rem;
+        }
+        
         &::marker {
           color: $accent-color;
         }
@@ -127,7 +182,7 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       }
     }
 
-    // 6. TABLES (The License Table)
+    // 6. TABLES - Optimized for mobile
     table {
       width: 100%;
       border-collapse: collapse;
@@ -138,6 +193,17 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       border-radius: 8px;
       overflow: hidden;
 
+      @media (max-width: 768px) {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 1.5rem -1rem;
+        width: calc(100% + 2rem);
+        border-radius: 0;
+        font-size: 0.8rem;
+        box-shadow: none;
+      }
+
       thead {
         background-color: $primary-color;
         color: #fff;
@@ -146,6 +212,13 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
           padding: 1rem;
           text-align: left;
           font-weight: 600;
+          white-space: nowrap;
+
+          @media (max-width: 768px) {
+            padding: 0.6rem 0.4rem;
+            font-size: 0.75rem;
+            min-width: 80px;
+          }
         }
       }
 
@@ -158,7 +231,7 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
           }
 
           &:nth-child(even) {
-            background-color: $bg-light; // Zebra striping
+            background-color: $bg-light;
           }
 
           &:hover {
@@ -168,12 +241,19 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
           td {
             padding: 1rem;
             vertical-align: top;
+
+            @media (max-width: 768px) {
+              padding: 0.6rem 0.4rem;
+              font-size: 0.75rem;
+              min-width: 80px;
+              word-wrap: break-word;
+            }
           }
         }
       }
     }
 
-    // 7. CODE BLOCKS (The Formula)
+    // 7. CODE BLOCKS
     pre {
       background: #282c34;
       color: #abb2bf;
@@ -182,20 +262,33 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       overflow-x: auto;
       margin: 1.5rem 0;
       border: 1px solid #3a3f4b;
+
+      @media (max-width: 768px) {
+        padding: 1rem;
+        margin: 1rem -0.5rem;
+        font-size: 0.8rem;
+        border-radius: 4px;
+      }
       
       code {
         font-family: 'Consolas', 'Monaco', monospace;
         font-size: 0.95rem;
+
+        @media (max-width: 768px) {
+          font-size: 0.8rem;
+        }
       }
     }
     
-    // Inline code (e.g. `material + tok`)
+    // Inline code
     p > code, li > code {
-       background: rgba(0,0,0,0.05);
-       padding: 0.2rem 0.4rem;
-       border-radius: 4px;
-       font-family: 'Consolas', monospace;
-       color: #e83e8c; // Pinkish color often used for code
+      background: rgba(0,0,0,0.05);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: 'Consolas', monospace;
+      color: #e83e8c;
+      font-size: 0.9em;
+      word-break: break-word;
     }
 
     // 8. IMAGES
@@ -205,14 +298,24 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       border-radius: 8px;
       margin: 1.5rem 0;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+      @media (max-width: 768px) {
+        margin: 1rem -0.5rem;
+        width: calc(100% + 1rem);
+        border-radius: 4px;
+      }
     }
     
-    // 9. Customizing the "Reading Time" (assuming it's bold at top)
+    // 9. Reading Time
     p:first-of-type strong {
-       font-size: 0.9rem;
-       text-transform: uppercase;
-       color: #888;
-       letter-spacing: 1px;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      color: #888;
+      letter-spacing: 1px;
+
+      @media (max-width: 768px) {
+        font-size: 0.75rem;
+      }
     }
 
     // 10. HORIZONTAL RULES
@@ -220,6 +323,10 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       border: none;
       border-top: 2px solid $border-color;
       margin: 2.5rem 0;
+
+      @media (max-width: 768px) {
+        margin: 1.5rem 0;
+      }
     }
   }
 }
@@ -229,7 +336,6 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   color: #e0e0e0;
 
   ::ng-deep {
-    // Headings in dark mode
     h1, h2, h3, h4, h5, h6 {
       color: #ffffff;
     }
@@ -238,17 +344,14 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       border-bottom-color: #444;
     }
 
-    // Paragraphs and text
     p {
       color: #d0d0d0;
     }
 
-    // Strong text
     strong {
       color: #ffffff;
     }
 
-    // Links
     a {
       color: #5dade2;
 
@@ -257,21 +360,18 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       }
     }
 
-    // Lists
     ul, ol {
       li {
         color: #d0d0d0;
       }
     }
 
-    // Blockquotes
     blockquote {
       background: rgba(255, 255, 255, 0.05);
       border-left-color: #5dade2;
       color: #d0d0d0;
     }
 
-    // Tables
     table {
       background: rgba(255, 255, 255, 0.02);
 
@@ -296,7 +396,6 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       }
     }
 
-    // Code blocks
     pre {
       background: rgba(0, 0, 0, 0.3);
       border-color: #444;
@@ -306,18 +405,15 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       }
     }
 
-    // Inline code
     code {
       background: rgba(255, 255, 255, 0.1);
       color: #ff79c6;
     }
 
-    // Reading time
     p:first-of-type strong {
       color: #b0b0b0;
     }
 
-    // Horizontal rules
     hr {
       border-top-color: #444;
     }
