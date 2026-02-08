@@ -25,6 +25,15 @@ export class BlogService {
       route: '/blog/what-is-3d-printing',
       date: new Date('2026-02-08'),
       tags: ['3D принтиране', '3D принтер', 'технология', 'адитивно производство'],
+      author: '3D Печат България'    },
+    {
+      id: '3',
+      title: '3D принтиране в София: Защо да изберете локални услуги за вашия проект?',
+      description: '3D принтиране в София с бърза доставка и професионално изпълнение. Открийте предимствата на локалните услуги спрямо онлайн платформите.',
+      slug: '3d-printing-in-sofia-for-your-project',
+      route: '/blog/3d-printing-in-sofia-for-your-project',
+      date: new Date('2026-02-02'),
+      tags: ['3D принтиране София', '3D печат', 'локални услуги', 'експресна доставка', 'архитектурен макет'],
       author: '3D Печат България'    }
     // Add more blog posts here as you create them
   ];
