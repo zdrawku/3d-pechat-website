@@ -129,3 +129,28 @@ html, body {
 .outer-wrapper > *:not(router-outlet) {
   width: 100%;
 }
+
+// Blog container image styling (extracted from portfolio)
+.blog-container {
+  img {
+    object-fit: cover;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    
+    &:hover {
+      transform: scale(1.02);
+    }
+    
+    @media (max-width: 768px) {
+      max-width: 220px;
+    }
+    
+    @media (max-width: 480px) {
+      max-width: 100%;
+    }
+  }
+}
