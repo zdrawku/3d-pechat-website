@@ -84,7 +84,7 @@ private addStructuredData(): void {
       "name": "3D Печат България",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://3dpechat.bg/assets/logo.png"
+        "url": "http://3dpechat.bg/assets/og-image.png"
       }
     }
   });

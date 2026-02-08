@@ -1,35 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Main Pages -->
   <url>
     <loc>https://3dpechat.bg/</loc>
-    <lastmod>2026-01-12T10:00:00+01:00</lastmod>
+    <lastmod>2026-02-08T10:00:00+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://3dpechat.bg/portfolio</loc>
-    <lastmod>2026-01-12T10:00:00+01:00</lastmod>
+    <lastmod>2026-02-08T10:00:00+01:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>1</priority>
   </url>
   <url>
     <loc>https://3dpechat.bg/products</loc>
-    <lastmod>2026-01-12T10:00:00+01:00</lastmod>
+    <lastmod>2026-02-08T10:00:00+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://3dpechat.bg/prices</loc>
-    <lastmod>2026-01-12T10:00:00+01:00</lastmod>
+    <lastmod>2026-02-08T10:00:00+01:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://3dpechat.bg/contact</loc>
-    <lastmod>2026-01-12T10:00:00+01:00</lastmod>
+    <lastmod>2026-02-08T10:00:00+01:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
+  
   <!-- Blog Pages -->
   <url>
     <loc>https://3dpechat.bg/blog</loc>
@@ -39,7 +41,7 @@
   </url>
   <url>
     <loc>https://3dpechat.bg/blog/how-to-make-money-3d-printing</loc>
-    <lastmod>2025-01-15T10:00:00+01:00</lastmod>
+    <lastmod>2026-01-15T10:00:00+01:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
