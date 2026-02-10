@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IGX_CARD_DIRECTIVES, IGX_INPUT_GROUP_DIRECTIVES, IGX_SELECT_DIRECTIVES, IgxAvatarComponent, IgxIconComponent } from 'igniteui-angular';
+import { SeoService } from '../services/seo.service';
 
 @Component({
   selector: 'app-prices-page',
@@ -11,6 +12,17 @@ import { IGX_CARD_DIRECTIVES, IGX_INPUT_GROUP_DIRECTIVES, IGX_SELECT_DIRECTIVES,
 export class PricesPageComponent {
   public value = 100;
   public value1 = '0.80';
+
+  constructor(private seoService: SeoService) {
+    this.seoService.updateSeo({
+      title: 'Цени за 3D печат - 3D Печат България',
+      description: 'Вижте нашите цени за 3D печат услуги. Калкулатор за изчисляване на цена на 3D принтиране по грамаж и материал.',
+      keywords: '3D печат цени, цена 3D принтиране, калкулатор 3D печат, PLA цена, ABS цена, PETG цена',
+      url: 'https://3dpechat.bg/prices',
+      type: 'website'
+    });
+    this.seoService.removeStructuredData();
+  }
 
   // Calculate the total price based on the formula: (grams / 10) * price
   get totalPrice(): string {

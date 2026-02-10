@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { Meta, Title } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { IgxCardModule, IgxButtonModule, IgxRippleModule, IgxIconModule, IgxInputGroupModule } from 'igniteui-angular';
 import { BlogService } from '../services/blog.service';
 import { BlogPost } from '../models/blog-post.model';
+import { SeoService } from '../services/seo.service';
 
 @Component({
   selector: 'app-blog-list-page',
@@ -30,14 +30,16 @@ export class BlogListPageComponent implements OnInit {
 
   constructor(
     private blogService: BlogService,
-    private meta: Meta,
-    private title: Title
+    private seoService: SeoService
   ) {
-    this.title.setTitle('Блог - 3D Печат България');
-    this.meta.addTags([
-      { name: 'description', content: 'Научете всичко за 3D принтирането - ръководства, съвети и трикове от експерти. Блог за 3D принтиране в България.' },
-      { name: 'keywords', content: '3D принтиране, блог, ръководства, съвети, 3D принтер, България' }
-    ]);
+    this.seoService.updateSeo({
+      title: 'Блог - 3D Печат България',
+      description: 'Научете всичко за 3D принтирането - ръководства, съвети и трикове от експерти. Блог за 3D принтиране в България.',
+      keywords: '3D принтиране, блог, ръководства, съвети, 3D принтер, България',
+      url: 'https://3dpechat.bg/blog',
+      type: 'website'
+    });
+    this.seoService.removeStructuredData();
   }
 
   ngOnInit(): void {
@@ -53,7 +55,7 @@ export class BlogListPageComponent implements OnInit {
 
   onSearch(): void {
     const searchLower = this.searchText.toLowerCase().trim();
-    
+
     if (!searchLower) {
       this.filteredBlogs = [...this.allBlogs];
       return;

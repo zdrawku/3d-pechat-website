@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
+import { SeoService } from '../services/seo.service';
 
 @Component({
   selector: 'app-contact-me-page',
@@ -21,7 +22,15 @@ export class ContactMePageComponent implements OnInit {
   instagramUrl = 'https://www.instagram.com/3dpechat.bg';
   tiktokUrl = 'https://www.tiktok.com/@3dpechat.bg';
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private seoService: SeoService) {
+    this.seoService.updateSeo({
+      title: 'Контакти - 3D Печат България',
+      description: 'Свържете се с нас за 3D печат услуги. Телефон, имейл, Viber, Instagram и TikTok. Бързо и лесно поръчайте вашия 3D принтиран продукт.',
+      keywords: '3D печат контакти, поръчка 3D печат, 3D принтиране поръчка, свържете се с нас',
+      url: 'https://3dpechat.bg/contact',
+      type: 'website'
+    });
+    this.seoService.removeStructuredData();
     // Check if navigation state contains prefilled message
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras?.state) {

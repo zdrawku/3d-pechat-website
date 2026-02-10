@@ -1,10 +1,9 @@
-import { Component, OnInit, Renderer2, Inject } from '@angular/core';
-import { Meta, Title } from '@angular/platform-browser';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BlogService } from '../../services/blog.service';
 import { MarkdownModule } from 'ngx-markdown';
 import { IgxButtonModule, IgxIconModule } from 'igniteui-angular';
-import { DOCUMENT } from '@angular/common';
+import { SeoService } from '../../services/seo.service';
 
 @Component({
   selector: 'app-3d-printing-in-sofia-for-your-project',
@@ -15,74 +14,37 @@ import { DOCUMENT } from '@angular/common';
 })
 export class ThreeDPrintingInSofiaForYourProjectComponent implements OnInit {
   postContent = '';
-  
+
   constructor(
-    private meta: Meta,
-    private title: Title,
     private blogService: BlogService,
-    private route: ActivatedRoute,
     private router: Router,
-    private renderer: Renderer2,
-    @Inject(DOCUMENT) private document: Document
+    private seoService: SeoService
   ) {
     // SEO Title
-    this.title.setTitle('3D принтиране в София: Защо да изберете локални услуги - 3D Печат България');
-    
-    // Meta Tags for SEO and Social Sharing
-    this.meta.addTags([
-      // Basic SEO
-      { name: 'description', content: '3D принтиране в София с бърза доставка и професионално изпълнение. Открийте предимствата на локалните услуги за вашия проект.' },
-      { name: 'keywords', content: '3D принтиране София, 3D печат София, 3D принтиране услуги, локални 3D принтиране услуги, архитектурен макет, прототип, експресно 3D принтиране' },
-      
-      // Canonical URL
-      { rel: 'canonical', href: 'https://3dpechat.bg/blog/3d-printing-in-sofia-for-your-project' },
-      
-      // Open Graph Tags (Facebook, LinkedIn)
-      { property: 'og:type', content: 'article' },
-      { property: 'og:title', content: '3D принтиране в София: Защо да изберете локални услуги за вашия проект?' },
-      { property: 'og:description', content: '3D принтиране в София с бърза доставка и професионално изпълнение. Открийте предимствата на локалните услуги за вашия проект.' },
-      { property: 'og:url', content: 'https://3dpechat.bg/blog/3d-printing-in-sofia-for-your-project' },
-      { property: 'og:image', content: 'https://3dpechat.bg/assets/real-images/20250517_164324.jpg' },
-      
-      // Twitter Card Tags
-      { name: 'twitter:card', content: 'summary_large_image' },
-      { name: 'twitter:title', content: '3D принтиране в София: Защо да изберете локални услуги' },
-      { name: 'twitter:description', content: '3D принтиране в София с бърза доставка и професионално изпълнение. Открийте предимствата на локалните услуги.' },
-      { name: 'twitter:image', content: 'https://3dpechat.bg/assets/real-images/20250517_164324.jpg' }
-    ]);
-    
-    // Add structured data for rich snippets
-    this.addStructuredData();
-  }
-
-  ngOnInit() {
-    // Load markdown content
-    this.blogService.getPost("3d-printing-in-sofia-for-your-project").subscribe(data => {
-      this.postContent = data;
+    this.seoService.updateSeo({
+      title: '3D принтиране в София: Защо да изберете локални услуги - 3D Печат България',
+      description: '3D принтиране в София с бърза доставка и професионално изпълнение. Открийте предимствата на локалните услуги за вашия проект.',
+      keywords: '3D принтиране София, 3D печат София, 3D принтиране услуги, локални 3D принтиране услуги, архитектурен макет, прототип, експресно 3D принтиране',
+      url: 'https://3dpechat.bg/blog/3d-printing-in-sofia-for-your-project',
+      image: 'https://3dpechat.bg/assets/real-images/20250517_164324.jpg',
+      type: 'article',
+      author: '3D Печат България',
+      publishedDate: new Date('2026-02-02').toISOString(),
+      modifiedDate: new Date('2026-02-02').toISOString()
     });
-  }
 
-  goBack(): void {
-    this.router.navigate(['/blog']);
-  }
-
-  private addStructuredData(): void {
-    const blogPost = this.blogService.getPostByRoute('/blog/3d-printing-in-sofia-for-your-project');
-    if (!blogPost) return;
-
-    const script = this.renderer.createElement('script');
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify({
+    // Add structured data for rich snippets
+    this.seoService.setStructuredData({
       "@context": "https://schema.org",
       "@type": "BlogPosting",
-      "headline": blogPost.title,
-      "description": blogPost.description,
+      "headline": "3D принтиране в София: Защо да изберете локални услуги за вашия проект?",
+      "description": "3D принтиране в София с бърза доставка и професионално изпълнение. Открийте предимствата на локалните услуги спрямо онлайн платформите.",
       "author": {
         "@type": "Organization",
-        "name": blogPost.author || "3D Печат България"
+        "name": "3D Печат България"
       },
-      "datePublished": blogPost.date.toISOString(),
-      "dateModified": blogPost.date.toISOString(),
+      "datePublished": "2026-02-02T00:00:00.000Z",
+      "dateModified": "2026-02-02T00:00:00.000Z",
       "image": "https://3dpechat.bg/assets/real-images/20250517_164324.jpg",
       "publisher": {
         "@type": "Organization",
@@ -94,10 +56,20 @@ export class ThreeDPrintingInSofiaForYourProjectComponent implements OnInit {
       },
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": `https://3dpechat.bg${blogPost.route}`
+        "@id": "https://3dpechat.bg/blog/3d-printing-in-sofia-for-your-project"
       },
-      "keywords": blogPost.tags?.join(', ') || ''
+      "keywords": "3D принтиране София, 3D печат, локални услуги, експресна доставка, архитектурен макет"
     });
-    this.renderer.appendChild(this.document.head, script);
+  }
+
+  ngOnInit() {
+    // Load markdown content
+    this.blogService.getPost("3d-printing-in-sofia-for-your-project").subscribe(data => {
+      this.postContent = data;
+    });
+  }
+
+  goBack(): void {
+    this.router.navigate(['/blog']);
   }
 }

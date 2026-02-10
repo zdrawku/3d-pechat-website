@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { IgxButtonDirective, IgxIconModule } from 'igniteui-angular';
 import { CommonModule } from '@angular/common';
 import { ProductGridComponent } from '../shared/product-grid/product-grid.component';
+import { SeoService } from '../services/seo.service';
 
 interface ProductVariant {
   id: number;
@@ -148,7 +149,16 @@ export class ProductsPageComponent {
     }
   ];
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private seoService: SeoService) {
+    this.seoService.updateSeo({
+      title: 'Продукти - 3D Печат България',
+      description: 'Разгледайте нашите 3D принтирани продукти - монетни карти с българско знаме, стойки за слушалки и персонализирани продукти по поръчка.',
+      keywords: '3D принтирани продукти, монетни карти, стойки за слушалки, персонализирани продукти, 3D печат по поръчка',
+      url: 'https://3dpechat.bg/products',
+      type: 'website'
+    });
+    this.seoService.removeStructuredData();
+  }
 
   public navigateToContact(): void {
     this.router.navigate(['/contact']);
