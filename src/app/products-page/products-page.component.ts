@@ -37,7 +37,7 @@ export class ProductsPageComponent {
   public productVariants: ProductVariant[] = [
     {
       id: 1,
-      name: 'Къде се срещнахме?',
+      name: 'Къде се срещнахме? Романтичен подарък за вашият партньор!',
       description: 'Романтичен подарък, който посочва мястото с координати на запознанството с партньора ви.',
       frontImage: '/assets/real-images/where-we-met.png',
       backImage: '/assets/real-images/where-we-met-1.png',
