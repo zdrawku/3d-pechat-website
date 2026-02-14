@@ -8,6 +8,7 @@ export interface Product {
   description: string;
   frontImage?: string;
   backImage?: string;
+  hasImagePadding?: boolean;
   showFront: boolean;
   customContent?: {
     show: boolean;
@@ -25,7 +26,7 @@ export interface Product {
 export class ProductGridComponent {
   @Input() products: any[] = [];
   @Output() productAction = new EventEmitter<any>();
-  
+
   public toggleToPrevious(product: any, event: Event): void {
     event.stopPropagation();
     product.showFront = !product.showFront;
@@ -35,7 +36,7 @@ export class ProductGridComponent {
     event.stopPropagation();
     product.showFront = !product.showFront;
   }
-  
+
   public handleAction(product: any): void {
     this.productAction.emit(product);
   }

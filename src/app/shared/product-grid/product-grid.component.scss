@@ -75,6 +75,12 @@
   display: block;
 }
 
+.card-image.padded-image {
+  object-fit: contain;
+  padding: 2px;
+  background-color: var(--ig-surface-500);
+}
+
 .front-image {
   z-index: 2;
 }
@@ -136,7 +142,7 @@
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.5);
   transition: background-color 0.3s ease, transform 0.2s ease;
-  
+
   &.active {
     background-color: var(--ig-primary-500); // Orange
     transform: scale(1.2);

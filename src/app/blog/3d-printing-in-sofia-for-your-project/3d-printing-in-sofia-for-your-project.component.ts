@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { BlogService } from '../../services/blog.service';
 import { MarkdownModule } from 'ngx-markdown';
 import { IgxButtonModule, IgxIconModule } from 'igniteui-angular';
