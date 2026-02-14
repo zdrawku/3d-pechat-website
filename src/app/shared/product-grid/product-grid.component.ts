@@ -44,10 +44,12 @@ export class ProductGridComponent {
 
   public copySectionLink(sectionId: string): void {
     // 1. Construct the URL
-    const newUrl = `${window.location.origin}${window.location.pathname}#${sectionId}`;
+    const url = new URL(window.location.href);
+    url.hash = sectionId;
+    const newUrl = url.href;
 
     // 2. Update Browser URL (Visual only, no reload)
-    window.history.pushState(null, '', `#${sectionId}`);
+    window.history.pushState(null, '', newUrl);
 
     // 3. Smooth Scroll to the Section
     const element = document.getElementById(sectionId);

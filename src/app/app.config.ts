@@ -1,5 +1,5 @@
 import { ApplicationConfig, ErrorHandler, Provider, importProvidersFrom } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { BrowserModule, HammerModule } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 // Uncomment after installing @angular/service-worker
@@ -16,7 +16,10 @@ import { provideHttpClient } from '@angular/common/http';
 // to override the default settings of the HammerModule
 // { provide: HAMMER_GESTURE_CONFIG, useClass: MyHammerConfig }
 const providers: Provider = [
-  provideRouter(routes),
+  provideRouter(routes, withInMemoryScrolling({
+    anchorScrolling: 'enabled',
+    scrollPositionRestoration: 'enabled'
+  })),
   importProvidersFrom(BrowserModule, HammerModule),
   provideHttpClient(),
   provideMarkdown(),

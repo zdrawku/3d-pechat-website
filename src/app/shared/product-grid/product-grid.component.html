@@ -1,6 +1,6 @@
 <div class="products-grid">
   <!-- Product Card for each variant -->
-  <igx-card *ngFor="let product of products" class="product-card">
+  <igx-card *ngFor="let product of products" class="product-card" [id]="product.linkId">
     <igx-card-header class="card-header">
       <h3 class="ig-typography__h5 card-title">
         <span class="product-name" [igxTooltipTarget]="tooltipRef">{{ product.name }}</span>
