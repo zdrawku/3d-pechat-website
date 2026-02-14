@@ -3,7 +3,8 @@
   <igx-card *ngFor="let product of products" class="product-card">
     <igx-card-header class="card-header">
       <h3 class="ig-typography__h5 card-title">
-        {{ product.name }}
+        <span class="product-name" [igxTooltipTarget]="tooltipRef">{{ product.name }}</span>
+        <div #tooltipRef="tooltip" igxTooltip class="product-tooltip">{{ product.name }}</div>
 
         <button type="button" class="copy-link-btn" title="Копирай линк към секцията"
           (click)="copySectionLink(product.linkId)">

@@ -23,6 +23,7 @@ interface ProductVariant {
     title: string;
     items: string[];
   };
+  tags?: string[];
 }
 
 @Component({
@@ -49,7 +50,8 @@ export class ProductsPageComponent {
       hasOldCoins: false,
       hasEuroCoins: false,
       hasImagePadding: true,
-      showFront: true
+      showFront: true,
+      tags: ['подарък', 'Свети Валентин', 'Валентин', 'годишнина', 'карта', 'локация', 'романтика', 'любов']
     },
     {
       id: 2,
@@ -61,7 +63,8 @@ export class ProductsPageComponent {
       dateAdded: '2024-01-01',
       hasOldCoins: true,
       hasEuroCoins: true,
-      showFront: true
+      showFront: true,
+      tags: ['монетна карта', 'българия', 'знаме', 'колекция', 'подарък', 'монети']
     },
     {
       id: 4,
@@ -73,7 +76,8 @@ export class ProductsPageComponent {
       dateAdded: '2024-01-01',
       hasOldCoins: true,
       hasEuroCoins: true,
-      showFront: true
+      showFront: true,
+      tags: ['монетна карта', 'българия', 'знаме', 'колекция', 'подарък', 'монети']
     },
     {
       id: 6,
@@ -85,7 +89,8 @@ export class ProductsPageComponent {
       dateAdded: '2024-01-01',
       hasOldCoins: true,
       hasEuroCoins: true,
-      showFront: true
+      showFront: true,
+      tags: ['монетна карта', 'българия', 'знаме', 'колекция', 'подарък', 'монети']
     },
     {
       id: 7,
@@ -108,7 +113,8 @@ export class ProductsPageComponent {
           'Размер и брой слотове за монети',
           'Специални гравюри или текст'
         ]
-      }
+      },
+      tags: ['монетна карта', 'българия', 'знаме', 'колекция', 'подарък', 'монети']
     },
     {
       id: 8,
@@ -129,7 +135,8 @@ export class ProductsPageComponent {
           'Правоъгълна карта с наклонено знаме',
           'Правоъгълна монетна карта с наклонено българско знаме (45 градуса)'
         ]
-      }
+      },
+      tags: ['монетна карта', 'българия', 'знаме', 'колекция', 'подарък', 'монети', 'премиум']
     },
     {
       id: 9,
@@ -151,8 +158,23 @@ export class ProductsPageComponent {
           'Цвят по избор',
           'Отлично за бюро'
         ]
-      }
+      },
+      tags: ['слушалки', 'стойка', 'гейминг', 'офис', 'аксесоар', 'музика', 'премиум']
     }
+    // {
+    //   id: 10,
+    //   linkId: 'photo-frame',
+    //   name: 'Рамка за снимки!',
+    //   description: 'Романтичен подарък, който посочва мястото с координати на запознанството с партньора ви.',
+    //   frontImage: '/assets/real-images/where-we-met.png',
+    //   backImage: '/assets/real-images/where-we-met-1.png',
+    //   dateAdded: '2025-02-14',
+    //   hasOldCoins: false,
+    //   hasEuroCoins: false,
+    //   hasImagePadding: true,
+    //   showFront: true,
+    //   tags: ['подарък', 'Свети Валентин', 'Валентин', 'годишнина', 'карта', 'локация', 'романтика', 'любов']
+    // }
   ];
 
   public searchText = '';
@@ -179,8 +201,9 @@ export class ProductsPageComponent {
       const inDescription = product.description.toLowerCase().includes(search);
       const inCustomContentTitle = product.customContent?.title.toLowerCase().includes(search) || false;
       const inCustomContentItems = product.customContent?.items.some(item => item.toLowerCase().includes(search)) || false;
+      const inTags = product.tags?.some(tag => tag.toLowerCase().includes(search)) || false;
 
-      return inName || inDescription || inCustomContentTitle || inCustomContentItems;
+      return inName || inDescription || inCustomContentTitle || inCustomContentItems || inTags;
     });
 
     if (this.sortOrder === 'asc') {
