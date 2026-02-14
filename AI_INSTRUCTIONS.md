@@ -7,6 +7,7 @@ This file contains the definitive instructions and guidelines for the AI assista
 2. **Sitemap**: Always run `npm run generate-sitemap` after adding routes or blog posts.
 3. **Images**: Always use `assets/` (no leading slash) for image paths in markdown or HTML to ensure they load correctly in all environments. Use kebab-case for filenames.
 4. **Styles**: Prefer using shared styles (e.g., `src/app/blog/shared/blog-styles.scss`) over ad-hoc styling.
+5. **Component Library**: Always use **Ignite UI for Angular** components (`igx-card`, `igx-input-group`, etc.) instead of native HTML elements or other libraries whenever possible.
 
 ---
 

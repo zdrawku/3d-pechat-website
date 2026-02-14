@@ -7,24 +7,22 @@
 @include typography($font-family: "Roboto");
 
 // Light theme palette
-$light-palette: palette(
-  $primary: #FF5722,
-  $secondary: #4CAF50,
-  $surface: #F5F5F5,
-  $error: #F44336,
-  $success: #8BC34A,
-  $warn: #FFC107,
-  $info: #2196F3);
+$light-palette: palette($primary: #FF5722,
+    $secondary: #4CAF50,
+    $surface: #F5F5F5,
+    $error: #F44336,
+    $success: #8BC34A,
+    $warn: #FFC107,
+    $info: #2196F3);
 
 // Dark theme palette
-$dark-palette: palette(
-  $primary: #FF7043,
-  $secondary: #66BB6A,
-  $surface: #1E1E1E,
-  $error: #EF5350,
-  $success: #9CCC65,
-  $warn: #FFCA28,
-  $info: #42A5F5);
+$dark-palette: palette($primary: #FF7043,
+    $secondary: #66BB6A,
+    $surface: #1E1E1E,
+    $error: #EF5350,
+    $success: #9CCC65,
+    $warn: #FFCA28,
+    $info: #42A5F5);
 
 // Apply light theme by default
 @include theme($palette: $light-palette, $schema: $light-material-schema, $roundness: 0);
@@ -39,35 +37,35 @@ $dark-palette: palette(
   --ig-surface-200: #424242;
   --ig-surface-150: #4E4E4E;
   --ig-surface-100: #5A5A5A;
-  
+
   // Primary colors
   --ig-primary-500: #FF7043;
   --ig-primary-500-contrast: #FFFFFF;
   --ig-primary-400: #FF8A65;
   --ig-primary-600: #F4511E;
-  
+
   // Secondary colors
   --ig-secondary-500: #66BB6A;
   --ig-secondary-500-contrast: #000000;
   --ig-secondary-400: #81C784;
   --ig-secondary-600: #4CAF50;
-  
+
   // Error colors
   --ig-error-500: #EF5350;
   --ig-error-500-contrast: #FFFFFF;
-  
+
   // Success colors
   --ig-success-500: #9CCC65;
   --ig-success-500-contrast: #000000;
-  
+
   // Warn colors
   --ig-warn-500: #FFCA28;
   --ig-warn-500-contrast: #000000;
-  
+
   // Info colors
   --ig-info-500: #42A5F5;
   --ig-info-500-contrast: #FFFFFF;
-  
+
   // Gray colors for dark mode
   --ig-gray-100: #5A5A5A;
   --ig-gray-200: #666666;
@@ -95,18 +93,21 @@ $dark-palette: palette(
 }
 
 // Reduce heading sizes globally
-h1, .ig-typography h1 {
-  font-size: 2rem !important;  // 32px, was typically 48px
+h1,
+.ig-typography h1 {
+  font-size: 2rem !important; // 32px, was typically 48px
   line-height: 1.3;
 }
 
-h2, .ig-typography h2 {
-  font-size: 1.5rem !important;  // 24px, was typically 36px
+h2,
+.ig-typography h2 {
+  font-size: 1.5rem !important; // 24px, was typically 36px
   line-height: 1.4;
 }
 
-h3, .ig-typography h3 {
-  font-size: 1.25rem !important;  // 20px, was typically 28px
+h3,
+.ig-typography h3 {
+  font-size: 1.25rem !important; // 20px, was typically 28px
   line-height: 1.4;
 }
 
@@ -116,17 +117,26 @@ body {
   --ig-size: var(--ig-size-medium);
 }
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
 .ig-typography {
-  h1, h2, h3, h4, h5, h6, p, .ig-typography__body-1 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  .ig-typography__body-1 {
     margin: 0;
   }
 }
 
-.outer-wrapper > *:not(router-outlet) {
+.outer-wrapper>*:not(router-outlet) {
   width: 100%;
 }
 
@@ -140,15 +150,15 @@ html, body {
     height: auto;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
-    
+
     &:hover {
       transform: scale(1.02);
     }
-    
+
     @media (max-width: 768px) {
       max-width: 220px;
     }
-    
+
     @media (max-width: 480px) {
       max-width: 100%;
     }
@@ -159,10 +169,35 @@ html, body {
     align-items: center;
     gap: 8px;
     margin-bottom: 2rem;
-    
+
     igx-icon {
       display: flex;
       align-items: center;
     }
+  }
+}
+
+// Global utility class for copy link buttons
+.copy-link-btn {
+  // background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ig-gray-600);
+  /* Use theme variable */
+  transition: all 0.2s ease-in-out;
+  opacity: 0.6;
+
+  /* Reset button default line-height to ensure icon centers */
+  line-height: 0;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--ig-gray-900);
+    opacity: 1;
   }
 }

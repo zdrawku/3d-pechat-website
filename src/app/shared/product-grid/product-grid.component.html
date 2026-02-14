@@ -4,6 +4,11 @@
     <igx-card-header class="card-header">
       <h3 class="ig-typography__h5 card-title">
         {{ product.name }}
+
+        <button type="button" class="copy-link-btn" title="Копирай линк към секцията"
+          (click)="copySectionLink(product.linkId)">
+          <igx-icon family="material">link</igx-icon>
+        </button>
       </h3>
     </igx-card-header>
 
