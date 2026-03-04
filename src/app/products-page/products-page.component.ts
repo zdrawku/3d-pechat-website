@@ -141,7 +141,7 @@ export class ProductsPageComponent {
     {
       id: 9,
       linkId: 'headphone-stand',
-      name: 'Стойка за слушалки',
+      name: 'Стойка за слушалки 20 см',
       description: '3D принтирана стойка за слушалки с опция за отвор за касичка.',
       frontImage: '/assets/real-images/headphoneStand-back.png',
       backImage: '/assets/real-images/headphoneStand-front-2.png',
@@ -160,25 +160,62 @@ export class ProductsPageComponent {
         ]
       },
       tags: ['слушалки', 'стойка', 'гейминг', 'офис', 'аксесоар', 'музика', 'премиум']
+    },
+    {
+      id: 10,
+      linkId: 'headphone-stand-big',
+      name: 'Стойка за слушалки 25 см',
+      description: '3D принтирана стойка за слушалки с опция за отвор за касичка, 25 см. височина.',
+      frontImage: '/assets/real-images/headphoneStand-front-3.png',
+      backImage: '/assets/real-images/headphoneStand-front-4.png',
+      dateAdded: '2026-03-04',
+      hasOldCoins: false,
+      hasEuroCoins: false,
+      showFront: true,
+      customContent: {
+        show: true,
+        title: '✨ Можете да персонализирате всеки аспект:',
+        items: [
+          'Големина на стойката до 25 см височина',
+          'Стойката може да има отвор отгоре за касичка',
+          'Цвят по избор',
+          'Отлично за бюро'
+        ]
+      },
+      tags: ['слушалки', 'стойка', 'гейминг', 'офис', 'аксесоар', 'музика', 'премиум']
+    },
+    {
+      id: 11,
+      linkId: 'photo-frame',
+      name: 'Поставка/Рамка за снимки!',
+      description: 'Елегантна 3D принтирана поставка за снимки — идеален подарък за съхранение на скъпи спомени с близките ви.',
+      frontImage: '/assets/real-images/ramka-1.png',
+      backImage: '/assets/real-images/ramka-2.png',
+      dateAdded: '2026-03-04',
+      hasOldCoins: false,
+      hasEuroCoins: false,
+      hasImagePadding: true,
+      showFront: true,
+      tags: ['подарък', 'Свети Валентин', 'Валентин', 'годишнина', 'карта', 'локация', 'романтика', 'любов']
+    },
+    {
+      id: 12,
+      linkId: 'photo-frame',
+      name: 'Стенна рамка за снимки!',
+      description: 'Романтичен подарък, стенна рамка за снимки внасяща уют във всеки дом.',
+      frontImage: '/assets/real-images/ramka.png',
+      dateAdded: '2026-01-01',
+      hasOldCoins: false,
+      hasEuroCoins: false,
+      hasImagePadding: true,
+      showFront: true,
+      tags: ['подарък', 'Свети Валентин', 'Валентин', 'годишнина', 'карта', 'локация', 'романтика', 'любов']
     }
-    // {
-    //   id: 10,
-    //   linkId: 'photo-frame',
-    //   name: 'Рамка за снимки!',
-    //   description: 'Романтичен подарък, който посочва мястото с координати на запознанството с партньора ви.',
-    //   frontImage: '/assets/real-images/where-we-met.png',
-    //   backImage: '/assets/real-images/where-we-met-1.png',
-    //   dateAdded: '2025-02-14',
-    //   hasOldCoins: false,
-    //   hasEuroCoins: false,
-    //   hasImagePadding: true,
-    //   showFront: true,
-    //   tags: ['подарък', 'Свети Валентин', 'Валентин', 'годишнина', 'карта', 'локация', 'романтика', 'любов']
-    // }
   ];
 
   public searchText = '';
-  public sortOrder = 'default';
+  // The initial selection is set here
+  public sortOrder = 'newest'; 
 
   public get isSearchOrSortActive(): boolean {
     return this.searchText.length > 0 || this.sortOrder !== 'default';
