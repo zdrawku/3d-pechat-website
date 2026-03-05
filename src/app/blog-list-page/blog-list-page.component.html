@@ -35,6 +35,13 @@
       class="blog-card"
       [routerLink]="blog.route"
     >
+      <div class="card-image-wrapper" *ngIf="blog.imageUrl">
+        <img [src]="blog.imageUrl" [alt]="blog.title" class="card-cover-image" loading="lazy" />
+      </div>
+      <div class="card-image-wrapper card-image-wrapper--placeholder" *ngIf="!blog.imageUrl">
+        <igx-icon class="placeholder-icon">view_in_ar</igx-icon>
+      </div>
+
       <igx-card-header>
         <h3 igxCardHeaderTitle class="card-title">{{ blog.title }}</h3>
         <h5 igxCardHeaderSubtitle class="card-subtitle">
@@ -57,7 +64,7 @@
 
       <igx-card-actions>
         <button 
-          igxButton="flat" 
+          igxButton="outlined" 
           igxRipple
           [routerLink]="blog.route"
           class="read-more-btn"

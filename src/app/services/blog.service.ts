@@ -15,6 +15,7 @@ export class BlogService {
       slug: 'how-to-make-money',
       route: '/blog/how-to-make-money-3d-printing',
       date: new Date('2026-01-15'),
+      imageUrl: 'assets/blogs/images/hero-image-how-to-make-money.png',
       tags: ['3D принтиране', 'бизнес', 'печалба', 'легалност'],
       author: '3D Печат България'    },
     {
@@ -24,6 +25,7 @@ export class BlogService {
       slug: 'what-is-3d-printing',
       route: '/blog/what-is-3d-printing',
       date: new Date('2026-02-08'),
+      imageUrl: 'assets/blogs/images/additive-printing.png',
       tags: ['3D принтиране', '3D принтер', 'технология', 'адитивно производство'],
       author: '3D Печат България'    },
     {
@@ -33,6 +35,7 @@ export class BlogService {
       slug: '3d-printing-in-sofia-for-your-project',
       route: '/blog/3d-printing-in-sofia-for-your-project',
       date: new Date('2026-02-02'),
+      imageUrl: 'assets/blogs/images/design-is-from-question.png',
       tags: ['3D принтиране София', '3D печат', 'локални услуги', 'експресна доставка', 'архитектурен макет'],
       author: '3D Печат България'    },
     {
@@ -42,6 +45,7 @@ export class BlogService {
       slug: '3d-printing-technologies',
       route: '/blog/3d-printing-technologies',
       date: new Date('2026-03-05'),
+      imageUrl: 'assets/blogs/images/SLA.png',
       tags: ['3d принтиране', '3d принтиране технологии', 'FDM', 'SLA', 'SLS', 'DLP', 'материали', 'адитивно производство'],
       author: '3D Печат България'
     }
