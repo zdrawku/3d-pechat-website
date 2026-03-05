@@ -11,6 +11,7 @@ import { BlogListPageComponent } from './blog-list-page/blog-list-page.component
 import { HowToMakeMoneyWith3dPrinting } from './blog/how-to-make-money-with3d-printing/how-to-make-money-with3d-printing';
 import { WhatIs3dPrintingComponent } from './blog/what-is-3d-printing/what-is-3d-printing.component';
 import { ThreeDPrintingInSofiaForYourProjectComponent } from './blog/3d-printing-in-sofia-for-your-project/3d-printing-in-sofia-for-your-project.component';
+import { ThreeDPrintingTechnologiesComponent } from './blog/3d-printing-technologies/3d-printing-technologies.component';
 
 export const routes: Routes = [
   { path: '', component: MainPageComponent, data: { text: 'Home' } },
@@ -25,7 +26,8 @@ export const routes: Routes = [
       { path: '', component: BlogListPageComponent, data: { text: 'Blog' } },
       { path: 'how-to-make-money-3d-printing', component: HowToMakeMoneyWith3dPrinting },
       { path: 'what-is-3d-printing', component: WhatIs3dPrintingComponent },
-      { path: '3d-printing-in-sofia-for-your-project', component: ThreeDPrintingInSofiaForYourProjectComponent }
+      { path: '3d-printing-in-sofia-for-your-project', component: ThreeDPrintingInSofiaForYourProjectComponent },
+      { path: '3d-printing-technologies', component: ThreeDPrintingTechnologiesComponent }
     ]
   },
   { path: '**', component: PageNotFoundComponent } // must always be last

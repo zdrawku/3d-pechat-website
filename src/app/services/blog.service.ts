@@ -34,7 +34,17 @@ export class BlogService {
       route: '/blog/3d-printing-in-sofia-for-your-project',
       date: new Date('2026-02-02'),
       tags: ['3D принтиране София', '3D печат', 'локални услуги', 'експресна доставка', 'архитектурен макет'],
-      author: '3D Печат България'    }
+      author: '3D Печат България'    },
+    {
+      id: '4',
+      title: 'Технологии за 3D принтиране: FDM vs SLA vs SLS — Кое за какво?',
+      description: 'Разберете разликите между FDM, SLA, SLS и другите 3D принтиране технологии. Кога коя е по-подходяща, какви материали се използват и как да изберете правилно.',
+      slug: '3d-printing-technologies',
+      route: '/blog/3d-printing-technologies',
+      date: new Date('2026-03-05'),
+      tags: ['3d принтиране', '3d принтиране технологии', 'FDM', 'SLA', 'SLS', 'DLP', 'материали', 'адитивно производство'],
+      author: '3D Печат България'
+    }
     // Add more blog posts here as you create them
   ];
 
