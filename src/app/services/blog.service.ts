@@ -27,7 +27,8 @@ export class BlogService {
       date: new Date('2026-02-08'),
       imageUrl: 'assets/blogs/images/additive-printing.png',
       tags: ['3D принтиране', '3D принтер', 'технология', 'адитивно производство'],
-      author: '3D Печат България'    },
+      author: '3D Печат България'    
+    },
     {
       id: '3',
       title: '3D принтиране в София: Защо да изберете локални услуги за вашия проект?',
