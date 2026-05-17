@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { IGX_CAROUSEL_DIRECTIVES, IgxButtonDirective } from 'igniteui-angular';
-import { CommonModule } from '@angular/common';
+
 import { carouselImages } from './carousel-images';
 import { SeoService } from '../services/seo.service';
 
 @Component({
   selector: 'app-main-page',
-  imports: [IGX_CAROUSEL_DIRECTIVES, IgxButtonDirective, CommonModule],
+  imports: [IGX_CAROUSEL_DIRECTIVES, IgxButtonDirective],
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.scss']
 })

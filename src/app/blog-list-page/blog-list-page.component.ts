@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IgxCardModule, IgxButtonModule, IgxRippleModule, IgxIconModule, IgxInputGroupModule } from 'igniteui-angular';
@@ -11,7 +11,6 @@ import { SeoService } from '../services/seo.service';
   selector: 'app-blog-list-page',
   standalone: true,
   imports: [
-    CommonModule,
     RouterModule,
     FormsModule,
     IgxCardModule,
@@ -19,7 +18,7 @@ import { SeoService } from '../services/seo.service';
     IgxRippleModule,
     IgxIconModule,
     IgxInputGroupModule
-  ],
+],
   templateUrl: './blog-list-page.component.html',
   styleUrls: ['./blog-list-page.component.scss']
 })

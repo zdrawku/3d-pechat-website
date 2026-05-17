@@ -19,7 +19,9 @@
       <igx-input-group type="search" class="search-input">
         <igx-icon igxPrefix>search</igx-icon>
         <input igxInput name="search" type="text" [(ngModel)]="searchText" placeholder="Търсене на продукти..." />
-        <igx-icon igxSuffix *ngIf="searchText.length > 0" (click)="searchText = ''">clear</igx-icon>
+        @if (searchText.length > 0) {
+          <igx-icon igxSuffix (click)="searchText = ''">clear</igx-icon>
+        }
       </igx-input-group>
 
       <igx-select [(ngModel)]="sortOrder" class="sort-select" placeholder="Сортиране">
@@ -30,21 +32,27 @@
     </div>
 
     <!-- Global Search Results -->
-    <div *ngIf="isSearchOrSortActive" class="column-layout products-section">
-      <h2 class="ig-typography__h4 section-title" *ngIf="searchText">Резултати за "{{searchText}}"</h2>
-      <h2 class="ig-typography__h4 section-title" *ngIf="!searchText">Всички продукти</h2>
-      <app-product-grid [products]="allFilteredProducts" (productAction)="orderProduct($event)">
-      </app-product-grid>
-    </div>
+    @if (isSearchOrSortActive) {
+      <div class="column-layout products-section">
+        @if (searchText) {
+          <h2 class="ig-typography__h4 section-title">Резултати за "{{searchText}}"</h2>
+        }
+        @if (!searchText) {
+          <h2 class="ig-typography__h4 section-title">Всички продукти</h2>
+        }
+        <app-product-grid [products]="allFilteredProducts" (productAction)="orderProduct($event)">
+        </app-product-grid>
+      </div>
+    }
 
     <!-- Default Sectional View -->
-    <ng-container *ngIf="!isSearchOrSortActive">
+    @if (!isSearchOrSortActive) {
       <!-- Products Grid Section -->
       <div class="column-layout products-section">
         <app-product-grid [products]="filteredProductVariants" (productAction)="orderProduct($event)">
         </app-product-grid>
       </div>
-    </ng-container>
+    }
 
     <!-- Features Section -->
     <div class="column-layout features-section">

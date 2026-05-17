@@ -11,9 +11,11 @@
     <div class="row-layout row_layout_3">
       <igx-carousel [vertical]="false" animationType="slide" [interval]="2000" indicatorsOrientation="end"
         class="carousel_1">
-        <igx-slide *ngFor="let image of carouselImages; let i = index" class="row-layout carousel_slide_1">
-          <img [src]="image" [alt]="'3D печат проект ' + (i + 1)" class="image_1" loading="lazy" />
-        </igx-slide>
+        @for (image of carouselImages; track image; let i = $index) {
+          <igx-slide class="row-layout carousel_slide_1">
+            <img [src]="image" [alt]="'3D печат проект ' + (i + 1)" class="image_1" loading="lazy" />
+          </igx-slide>
+        }
       </igx-carousel>
     </div>
   </div>

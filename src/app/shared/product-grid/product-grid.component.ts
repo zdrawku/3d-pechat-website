@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { IgxButtonDirective, IGX_CARD_DIRECTIVES, IgxIconComponent, IgxIconButtonDirective, IgxTooltipModule } from 'igniteui-angular';
 
 export interface Product {
@@ -20,7 +20,7 @@ export interface Product {
 
 @Component({
   selector: 'app-product-grid',
-  imports: [CommonModule, IgxButtonDirective, IGX_CARD_DIRECTIVES, IgxIconComponent, IgxIconButtonDirective, IgxTooltipModule],
+  imports: [IgxButtonDirective, IGX_CARD_DIRECTIVES, IgxIconComponent, IgxIconButtonDirective, IgxTooltipModule],
   templateUrl: './product-grid.component.html',
   styleUrls: ['./product-grid.component.scss']
 })

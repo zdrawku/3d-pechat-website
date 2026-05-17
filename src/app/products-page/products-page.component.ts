@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IgxButtonDirective, IgxIconModule, IgxInputGroupModule, IgxSelectModule } from 'igniteui-angular';
-import { CommonModule } from '@angular/common';
+
 import { ProductGridComponent } from '../shared/product-grid/product-grid.component';
 import { SeoService } from '../services/seo.service';
 
@@ -28,7 +28,7 @@ interface ProductVariant {
 
 @Component({
   selector: 'app-products-page',
-  imports: [CommonModule, FormsModule, IgxButtonDirective, ProductGridComponent, IgxIconModule, IgxInputGroupModule, IgxSelectModule],
+  imports: [FormsModule, IgxButtonDirective, ProductGridComponent, IgxIconModule, IgxInputGroupModule, IgxSelectModule],
   templateUrl: './products-page.component.html',
   styleUrls: ['./products-page.component.scss']
 })

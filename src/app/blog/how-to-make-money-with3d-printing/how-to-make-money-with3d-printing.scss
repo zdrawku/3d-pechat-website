@@ -1,4 +1,4 @@
-// Import shared blog styles
-@import '../shared/blog-styles.scss';
+// Use shared blog styles
+@use '../shared/blog-styles';
 
 // Add any component-specific styles below if needed
