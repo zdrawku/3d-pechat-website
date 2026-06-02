@@ -157,7 +157,7 @@ function updateBlogService(slug, seo, coverImageAssetPath) {
   const nextId = String((ids.length ? Math.max(...ids) : 0) + 1);
 
   const tagsLiteral = `[${seo.tags.map(t => `'${escapeForSingleQuotes(t)}'`).join(', ')}]`;
-  const entry = `    ,{
+  const entry = `    {
       id: '${nextId}',
       title: '${escapeForSingleQuotes(seo.title)}',
       description: '${escapeForSingleQuotes(seo.description)}',
@@ -174,9 +174,10 @@ function updateBlogService(slug, seo, coverImageAssetPath) {
   const marker = '// Add more blog posts here';
   let updated;
   if (src.includes(marker)) {
-    updated = src.replace(marker, `${entry}\n    ${marker}`);
+    // Append a comma to the closing brace of the previous entry, then insert new entry
+    updated = src.replace(/(})(\s*\n\s*\/\/ Add more blog posts here)/, `$1,\n    ${entry}$2`);
   } else {
-    updated = src.replace(/(\n\s*)\];/, `\n${entry}$1];`);
+    updated = src.replace(/(\n\s*)\];/, `\n    ${entry}$1];`);
   }
   if (updated === src) throw new Error('Could not insert blog entry into blog.service.ts');
   fs.writeFileSync(SERVICE_FILE, updated, 'utf8');
@@ -224,10 +225,10 @@ function scaffoldArticle(article, coverImagePath) {
   const pascalName = pascalCaseFromSlug(slug);
   const seo = article.seo;
 
-  const mdPath = writeMarkdown(slug, article.markdown);
-  const compDir = writeComponent(slug, pascalName, seo, coverAsset);
   const { assetPath } = require('./generate-image');
   const coverAsset = coverImagePath ? assetPath(slug) : 'assets/real-images/main-images/3dprinting-hero.jpg';
+  const mdPath = writeMarkdown(slug, article.markdown);
+  const compDir = writeComponent(slug, pascalName, seo, coverAsset);
   const id = updateBlogService(slug, seo, coverAsset);
   updateRoutes(slug, pascalName);
 

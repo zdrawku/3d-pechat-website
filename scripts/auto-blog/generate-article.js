@@ -85,7 +85,7 @@ async function generateArticle(topicObj) {
     throw new Error('@anthropic-ai/sdk is not installed. Run: npm install --save-dev @anthropic-ai/sdk');
   }
 
-  const client = new Anthropic.default ? new Anthropic.default({ apiKey }) : new Anthropic({ apiKey });
+  const client = Anthropic.default ? new Anthropic.default({ apiKey }) : new Anthropic({ apiKey });
   const prompt = buildPrompt(topicObj);
 
   console.log(`[generate-article] requesting article from ${MODEL}…`);
