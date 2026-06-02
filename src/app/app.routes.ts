@@ -14,6 +14,7 @@ import { ThreeDPrintingInSofiaForYourProjectComponent } from './blog/3d-printing
 import { ThreeDPrintingTechnologiesComponent } from './blog/3d-printing-technologies/3d-printing-technologies.component';
 import { ThreeDPrintiraniObuvkiComponent } from './blog/3d-printirani-obuvki/3d-printirani-obuvki.component';
 import { IzglazhdaneNaPlaPri3dPrintiraneRaboteshtiMetodiZaGladakFinishComponent } from './blog/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish.component';
+import { ThreeDPrintiraneNaWarhammerNayGotiniteFigurkiTerenIAksesoariComponent } from './blog/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari.component';
 
 export const routes: Routes = [
   { path: '', component: MainPageComponent, data: { text: 'Home' } },
@@ -31,7 +32,8 @@ export const routes: Routes = [
       { path: '3d-printing-in-sofia-for-your-project', component: ThreeDPrintingInSofiaForYourProjectComponent },
       { path: '3d-printing-technologies', component: ThreeDPrintingTechnologiesComponent },
       { path: '3d-printirani-obuvki', component: ThreeDPrintiraniObuvkiComponent },
-      { path: 'izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish', component: IzglazhdaneNaPlaPri3dPrintiraneRaboteshtiMetodiZaGladakFinishComponent }
+      { path: 'izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish', component: IzglazhdaneNaPlaPri3dPrintiraneRaboteshtiMetodiZaGladakFinishComponent },
+      { path: '3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari', component: ThreeDPrintiraneNaWarhammerNayGotiniteFigurkiTerenIAksesoariComponent }
     ]
   },
   { path: '**', component: PageNotFoundComponent } // must always be last
