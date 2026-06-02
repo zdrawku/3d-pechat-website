@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BlogService } from '../../services/blog.service';
 import { MarkdownModule } from 'ngx-markdown';
@@ -12,7 +12,7 @@ import { SeoService } from '../../services/seo.service';
   templateUrl: './izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish.component.html',
   styleUrls: ['./izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish.component.scss'],
 })
-export class IzglazhdaneNaPlaPri3dPrintiraneRaboteshtiMetodiZaGladakFinishComponent implements OnInit, OnDestroy {
+export class IzglazhdaneNaPlaPri3dPrintiraneRaboteshtiMetodiZaGladakFinishComponent implements OnInit {
   postContent = '';
 
   constructor(
