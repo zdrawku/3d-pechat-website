@@ -35,7 +35,18 @@ jobs:
           MANUAL_TOPIC: ${{ github.event.inputs.topic }}
         run: node scripts/auto-blog/index.js
 
+      - name: Check for changes
+        id: changes
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No new files generated, skipping PR creation."
+          fi
+
       - name: Create Pull Request
+        if: steps.changes.outputs.has_changes == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}

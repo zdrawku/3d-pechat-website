@@ -60,6 +60,17 @@ export class BlogService {
       imageUrl: 'assets/blogs/images/3d-printirani-obuvki-cover-3.png',
       author: '3D Печат България',
       tags: ['3D принтирани обувки', '3D печат обувки', 'персонализирани обувки', 'TPU', 'SLS', 'обувна индустрия']
+    },
+        {
+      id: '6',
+      title: 'Изглаждане на PLA при 3D принтиране: 7 работещи метода',
+      description: 'Научете как да постигнете перфектно гладък финиш на PLA отпечатъци. Практично ръководство с работещи методи за изглаждане при 3D принтиране в домашни условия.',
+      slug: 'izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish',
+      route: '/blog/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish',
+      date: new Date('2026-06-02'),
+      imageUrl: 'assets/blogs/images/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish-cover.jpg',
+      tags: ['PLA филамент', 'постобработка', 'изглаждане', '3D принтиране', 'финиш', 'туториал', 'съвети', 'техники'],
+      author: '3D Печат България'
     }
     // Add more blog posts here as you create them
   ];
