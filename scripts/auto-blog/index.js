@@ -59,6 +59,12 @@ async function main() {
   console.log('[sitemap] regenerated successfully');
   console.log('::endgroup::');
 
+  console.log('::group::Generate llms.txt');
+  const llmsScript = path.resolve(__dirname, '../generate-llms.js');
+  execSync(`node "${llmsScript}"`, { stdio: 'inherit', cwd: path.resolve(__dirname, '../..') });
+  console.log('[llms] regenerated successfully');
+  console.log('::endgroup::');
+
   // Emit summary for GitHub Actions step outputs / job summary.
   const summary = [
     `Created blog post: ${result.slug}`,
