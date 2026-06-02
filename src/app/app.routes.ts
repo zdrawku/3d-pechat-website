@@ -13,6 +13,7 @@ import { WhatIs3dPrintingComponent } from './blog/what-is-3d-printing/what-is-3d
 import { ThreeDPrintingInSofiaForYourProjectComponent } from './blog/3d-printing-in-sofia-for-your-project/3d-printing-in-sofia-for-your-project.component';
 import { ThreeDPrintingTechnologiesComponent } from './blog/3d-printing-technologies/3d-printing-technologies.component';
 import { ThreeDPrintiraniObuvkiComponent } from './blog/3d-printirani-obuvki/3d-printirani-obuvki.component';
+import { IzglazhdaneNaPlaPri3dPrintiraneRaboteshtiMetodiZaGladakFinishComponent } from './blog/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish.component';
 
 export const routes: Routes = [
   { path: '', component: MainPageComponent, data: { text: 'Home' } },
@@ -29,7 +30,8 @@ export const routes: Routes = [
       { path: 'what-is-3d-printing', component: WhatIs3dPrintingComponent },
       { path: '3d-printing-in-sofia-for-your-project', component: ThreeDPrintingInSofiaForYourProjectComponent },
       { path: '3d-printing-technologies', component: ThreeDPrintingTechnologiesComponent },
-      { path: '3d-printirani-obuvki', component: ThreeDPrintiraniObuvkiComponent }
+      { path: '3d-printirani-obuvki', component: ThreeDPrintiraniObuvkiComponent },
+      { path: 'izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish', component: IzglazhdaneNaPlaPri3dPrintiraneRaboteshtiMetodiZaGladakFinishComponent }
     ]
   },
   { path: '**', component: PageNotFoundComponent } // must always be last

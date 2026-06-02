@@ -69,4 +69,10 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://3dpechat.bg/blog/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish</loc>
+    <lastmod>2026-06-02T10:00:00+01:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>
