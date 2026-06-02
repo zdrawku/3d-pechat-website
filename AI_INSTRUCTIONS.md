@@ -13,18 +13,36 @@ This file contains the definitive instructions and guidelines for the AI assista
 
 ## 📝 Content Management (Blog)
 
-### Adding New Articles
-- **Workflow**:
-    1. Create markdown file in `src/assets/blogs/your-slug.md`.
-    2. Create images in `src/assets/blogs/images/`.
-    3. Generate component in `src/app/blog/your-slug/` (TS, HTML, SCSS).
-    4. Register in `src/app/services/blog.service.ts`.
-    5. Add route in `src/app/app.routes.ts`.
-    6. Run `npm run generate-sitemap`.
+### Automated Blog Generation (Preferred)
+Run `npm run generate-blog` to fully automate article creation:
+1. **Picks a topic** — scrapes Bulgarian 3D printing sites or falls back to `scripts/auto-blog/fallback-topics.js`.
+2. **Generates article** — calls Anthropic Claude API (Bulgarian, SEO-optimised). Requires `ANTHROPIC_API_KEY` in `.env`.
+3. **Generates cover image** — 1200×630 via Pollinations.ai (free, no key); saved to `src/assets/blogs/images/{slug}-cover.png`.
+4. **Scaffolds all Angular files** — component TS/HTML/SCSS in `src/app/blog/{slug}/`.
+5. **Registers** the post in `BlogService` and `app.routes.ts`.
+6. **Regenerates sitemap** automatically.
+
+Override topic: set `MANUAL_TOPIC=your topic here` in `.env` before running.
+
+**GitHub Actions** (`.github/workflows/auto-blog.yml`): runs automatically Mon/Thu 9AM UTC and supports `workflow_dispatch` with an optional `topic` input. Requires `ANTHROPIC_API_KEY` repo secret.
+
+**Important conventions enforced by the generator** (maintain these manually too):
+- Article markdown must **not** contain inline images (`![...](...)`). Images are added manually after review.
+- Cover image asset path: `assets/blogs/images/{slug}-cover.png` (relative, no leading slash).
+- `BlogService` entry must include a `tags` array (used for card display).
+
+### Adding Articles Manually
+Only do this if the automated flow is unavailable:
+1. Create `src/assets/blogs/your-slug.md` — no inline images in body.
+2. Place cover image at `src/assets/blogs/images/your-slug-cover.png`.
+3. Generate component in `src/app/blog/your-slug/` (TS, HTML, SCSS).
+4. Register in `src/app/services/blog.service.ts` — **include `tags` array**.
+5. Add route in `src/app/app.routes.ts`.
+6. Run `npm run generate-sitemap`.
 
 - **Naming Conventions**:
-    - Slug: `kebab-case` (e.g., `best-3d-printers`).
-    - Component: `PascalCase` matching slug.
+    - Slug: `kebab-case` (e.g., `best-3d-printers`). Slugs starting with `3d-` generate a `ThreeD` component prefix.
+    - Component class: `PascalCase` matching slug (e.g., `ThreeDPrintiraniObuvkiComponent`).
     - Images: `descriptive-kebab-case.extension`.
 
 - **SEO Requirements**:
@@ -32,7 +50,7 @@ This file contains the definitive instructions and guidelines for the AI assista
     - **Description**: 150-160 chars.
     - **Canonical URL**: Always add `rel='canonical'`.
     - **Open Graph**: content type `article`, absolute URLs for images.
-    - **Structured Data**: Use `addStructuredData()` method pattern in component.
+    - **Structured Data**: Use `setStructuredData()` in component constructor.
 
 *(Reference: `ARTICLE_CREATION_GUIDE.md` and `SEO_GUIDE.md`)*
 
@@ -79,9 +97,12 @@ Home page carousel images are dynamic.
 - **Start Dev**: `npm start`
 - **Build Prod**: `npm run build`
 - **Generate Sitemap**: `npm run generate-sitemap`
+- **Generate Blog Post**: `npm run generate-blog` (requires `ANTHROPIC_API_KEY` in `.env`)
 - **Lint**: `npm run lint`
 
-### key Directories
+### Key Directories
 - `src/assets/blogs/` - Markdown content
+- `src/assets/blogs/images/` - Cover images (`{slug}-cover.png`)
 - `src/app/blog/shared/` - Shared styles
 - `scripts/` - Maintenance scripts (sitemap, image generation)
+- `scripts/auto-blog/` - Automated blog generation pipeline

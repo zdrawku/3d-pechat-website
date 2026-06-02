@@ -50,6 +50,17 @@ export class BlogService {
       tags: ['3d принтиране', '3d принтиране технологии', 'FDM', 'SLA', 'SLS', 'DLP', 'материали', 'адитивно производство'],
       author: '3D Печат България'
     }
+        ,{
+      id: '5',
+      title: '3D Принтирани Обувки – Бъдещето на Обувната Индустрия',
+      description: 'Открийте как 3D принтирането революционизира производството на обувки. Технологии, предимства, приложения и възможности за персонализация в България.',
+      slug: '3d-printirani-obuvki',
+      route: '/blog/3d-printirani-obuvki',
+      date: new Date('2026-06-02'),
+      imageUrl: 'assets/blogs/images/3d-printirani-obuvki-cover-3.png',
+      author: '3D Печат България',
+      tags: ['3D принтирани обувки', '3D печат обувки', 'персонализирани обувки', 'TPU', 'SLS', 'обувна индустрия']
+    }
     // Add more blog posts here as you create them
   ];
 

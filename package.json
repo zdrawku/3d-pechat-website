@@ -5,6 +5,7 @@
     "ng": "ng",
     "generate-images": "node scripts/generate-carousel-images.js",
     "generate-sitemap": "node scripts/generate-sitemap.js",
+    "generate-blog": "node scripts/auto-blog/index.js",
     "prestart": "npm run generate-images",
     "start": "ng serve -o",
     "prebuild": "npm run generate-images && npm run generate-sitemap",
@@ -45,9 +46,11 @@
     "@angular/build": "^21.2.11",
     "@angular/cli": "~21.2.11",
     "@angular/compiler-cli": "~21.2.13",
+    "@anthropic-ai/sdk": "^0.32.1",
     "@igniteui/angular-schematics": "^21.2.1510",
     "@types/jasmine": "^6.0.0",
     "angular-eslint": "^21.4.0",
+    "cheerio": "^1.0.0",
     "eslint": "^10.3.0",
     "jasmine-core": "^6.2.0",
     "karma": "~6.4.4",
@@ -55,7 +58,7 @@
     "karma-coverage": "~2.2.1",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "^2.2.0",
-    "typescript": "^6.0.3",
+    "typescript": "~5.9.3",
     "typescript-eslint": "^8.59.3"
   }
 }

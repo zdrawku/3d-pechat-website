@@ -171,6 +171,18 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       }
     }
 
+    ul {
+      list-style-type: disc;
+
+      ul {
+        list-style-type: circle;
+      }
+    }
+
+    ol {
+      list-style-type: decimal;
+    }
+
     // 5. LINKS
     a {
       color: $accent-color;
