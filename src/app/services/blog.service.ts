@@ -71,6 +71,17 @@ export class BlogService {
       imageUrl: 'assets/blogs/images/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish-cover.jpg',
       tags: ['PLA филамент', 'постобработка', 'изглаждане', '3D принтиране', 'финиш', 'туториал', 'съвети', 'техники'],
       author: '3D Печат България'
+    },
+        {
+      id: '7',
+      title: '3D принтиране на Warhammer фигурки и терен 2024',
+      description: 'Открийте как да принтирате Warhammer фигурки, терен и аксесоари с 3D принтер. Практичен гид с препоръки за модели, материали и настройки за печат.',
+      slug: '3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari',
+      route: '/blog/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari',
+      date: new Date('2026-06-02'),
+      imageUrl: 'assets/blogs/images/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari-cover.jpg',
+      tags: ['Warhammer', '3D принтиране', 'Миниатюри', 'Настолни игри', 'Resin печат', 'Фигурки', 'Терен', 'Аксесоари'],
+      author: '3D Печат България'
     }
     // Add more blog posts here as you create them
   ];
