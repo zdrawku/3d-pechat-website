@@ -82,6 +82,17 @@ export class BlogService {
       imageUrl: 'assets/blogs/images/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari-cover.jpg',
       tags: ['Warhammer', '3D принтиране', 'Миниатюри', 'Настолни игри', 'Resin печат', 'Фигурки', 'Терен', 'Аксесоари'],
       author: '3D Печат България'
+    },
+        {
+      id: '8',
+      title: 'PLA, PLA+, PLA Pro и PLN: разлики и избор за 3D печат',
+      description: 'Научете всичко за различните типове PLA филамент – PLA, PLA+, PLA Pro и PLN. Практично ръководство за избор на правилния материал за вашия 3D принтер.',
+      slug: 'pla-pla-pla-pro-i-pln-razliki-i-izbor',
+      route: '/blog/pla-pla-pla-pro-i-pln-razliki-i-izbor',
+      date: new Date('2026-06-04'),
+      imageUrl: 'assets/real-images/main-images/3dprinting-hero.jpg',
+      tags: ['PLA', 'филамент', '3D печат', 'материали', 'ръководство', 'PLA+', 'PLA Pro', 'PLN'],
+      author: '3D Печат България'
     }
     // Add more blog posts here as you create them
   ];
