@@ -82,6 +82,17 @@ export class BlogService {
       imageUrl: 'assets/blogs/images/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari-cover.jpg',
       tags: ['Warhammer', '3D принтиране', 'Миниатюри', 'Настолни игри', 'Resin печат', 'Фигурки', 'Терен', 'Аксесоари'],
       author: '3D Печат България'
+    },
+        {
+      id: '8',
+      title: '3D принтер за начинаещи: детско хоби става семеен проект',
+      description: 'Вдъхновяваща история как 12-годишно дете откри 3D принтирането и превърна хобито в семеен проект. Практични съвети за начинаещи и избор на първи принтер.',
+      slug: '3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt',
+      route: '/blog/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt',
+      date: new Date('2026-06-11'),
+      imageUrl: 'assets/real-images/main-images/3dprinting-hero.jpg',
+      tags: ['начинаещи', 'деца', 'семейни проекти', 'образование', 'хоби', 'първи принтер', 'съвети', 'история'],
+      author: '3D Печат България'
     }
     // Add more blog posts here as you create them
   ];
