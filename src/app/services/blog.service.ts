@@ -82,9 +82,20 @@ export class BlogService {
       imageUrl: 'assets/blogs/images/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari-cover.jpg',
       tags: ['Warhammer', '3D принтиране', 'Миниатюри', 'Настолни игри', 'Resin печат', 'Фигурки', 'Терен', 'Аксесоари'],
       author: '3D Печат България'
-    },
-        {
+    }, 
+    {
       id: '8',
+      title: 'PLA, PLA+, PLA Pro и PLN: разлики и избор за 3D печат',
+      description: 'Научете всичко за различните типове PLA филамент – PLA, PLA+, PLA Pro и PLN. Практично ръководство за избор на правилния материал за вашия 3D принтер.',
+      slug: 'pla-pla-pla-pro-i-pln-razliki-i-izbor',
+      route: '/blog/pla-pla-pla-pro-i-pln-razliki-i-izbor',
+      date: new Date('2026-06-04'),
+      imageUrl: 'assets/real-images/general-images/20250201_145113.jpg',
+      tags: ['PLA', 'филамент', '3D печат', 'материали', 'ръководство', 'PLA+', 'PLA Pro', 'PLN'],
+      author: '3D Печат България'
+    },
+    {
+      id: '9',
       title: 'Литофан с 3D принтиране: превърни снимка в светещ модел',
       description: 'Научи как да създадеш уникален литофан с 3D принтер. Пълно ръководство за превръщане на любима снимка в светещ 3D модел – стъпка по стъпка инструкции.',
       slug: 'litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model',
