@@ -74,11 +74,11 @@ export class BlogService {
     },
         {
       id: '7',
-      title: '3D принтиране на Warhammer фигурки и терен 2024',
+      title: '3D принтиране на Warhammer фигурки',
       description: 'Открийте как да принтирате Warhammer фигурки, терен и аксесоари с 3D принтер. Практичен гид с препоръки за модели, материали и настройки за печат.',
       slug: '3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari',
       route: '/blog/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari',
-      date: new Date('2026-06-02'),
+      date: new Date('2026-06-03'),
       imageUrl: 'assets/blogs/images/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari-cover.jpg',
       tags: ['Warhammer', '3D принтиране', 'Миниатюри', 'Настолни игри', 'Resin печат', 'Фигурки', 'Терен', 'Аксесоари'],
       author: '3D Печат България'

@@ -21,7 +21,7 @@ export class ThreeDPrintiraneNaWarhammerNayGotiniteFigurkiTerenIAksesoariCompone
     private seoService: SeoService
   ) {
     this.seoService.updateSeo({
-      title: '3D принтиране на Warhammer фигурки и терен 2024 | 3D Печат България',
+      title: '3D принтиране на Warhammer фигурки | 3D Печат България',
       description: 'Открийте как да принтирате Warhammer фигурки, терен и аксесоари с 3D принтер. Практичен гид с препоръки за модели, материали и настройки за печат.',
       keywords: '3D принтиране, Warhammer, 3D принтер, фигурки Warhammer, 3D печат, resin принтер, терен за Warhammer, миниатюри, tabletop gaming, 3dpechat',
       url: 'https://3dpechat.bg/blog/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari',
@@ -35,7 +35,7 @@ export class ThreeDPrintiraneNaWarhammerNayGotiniteFigurkiTerenIAksesoariCompone
     this.seoService.setStructuredData({
       "@context": "https://schema.org",
       "@type": "BlogPosting",
-      "headline": "3D принтиране на Warhammer фигурки и терен 2024",
+      "headline": "3D принтиране на Warhammer фигурки",
       "description": "Открийте как да принтирате Warhammer фигурки, терен и аксесоари с 3D принтер. Практичен гид с препоръки за модели, материали и настройки за печат.",
       "author": {
         "@type": "Organization",
