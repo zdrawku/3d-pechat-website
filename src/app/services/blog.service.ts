@@ -90,7 +90,7 @@ export class BlogService {
       slug: 'pla-pla-pla-pro-i-pln-razliki-i-izbor',
       route: '/blog/pla-pla-pla-pro-i-pln-razliki-i-izbor',
       date: new Date('2026-06-04'),
-      imageUrl: 'assets/real-images/main-images/3dprinting-hero.jpg',
+      imageUrl: 'assets/real-images/general-images/20250201_145113.jpg',
       tags: ['PLA', 'филамент', '3D печат', 'материали', 'ръководство', 'PLA+', 'PLA Pro', 'PLN'],
       author: '3D Печат България'
     },
