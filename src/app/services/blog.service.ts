@@ -82,6 +82,17 @@ export class BlogService {
       imageUrl: 'assets/blogs/images/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari-cover.jpg',
       tags: ['Warhammer', '3D принтиране', 'Миниатюри', 'Настолни игри', 'Resin печат', 'Фигурки', 'Терен', 'Аксесоари'],
       author: '3D Печат България'
+    },
+        {
+      id: '8',
+      title: 'Литофан с 3D принтиране: превърни снимка в светещ модел',
+      description: 'Научи как да създадеш уникален литофан с 3D принтер. Пълно ръководство за превръщане на любима снимка в светещ 3D модел – стъпка по стъпка инструкции.',
+      slug: 'litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model',
+      route: '/blog/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model',
+      date: new Date('2026-06-02'),
+      imageUrl: 'assets/blogs/images/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model-cover.jpg',
+      tags: ['литофан', '3D принтиране', 'подаръци', 'DIY проекти', 'персонализирани модели', '3D модели', 'уроци', 'начинаещи'],
+      author: '3D Печат България'
     }
     // Add more blog posts here as you create them
   ];
