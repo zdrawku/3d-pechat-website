@@ -28,6 +28,7 @@ Before starting, ensure you have:
 - [ ] SEO title and description (under 160 chars for description)
 - [ ] Keywords/tags identified
 - [ ] Hero image prepared
+- [ ] At least 2 relevant internal blog links selected
 
 ---
 
@@ -110,6 +111,7 @@ Final thoughts...
 - Use `###` for subsections (H3)
 - Always include alt text for images
 - Use relative paths for images starting with `assets/`
+- Add at least 2 contextual internal links to other blog posts using root-relative URLs like `/blog/what-is-3d-printing`
 - Keep paragraphs short for readability (2-4 sentences)
 
 ---

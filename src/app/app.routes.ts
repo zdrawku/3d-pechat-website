@@ -18,6 +18,7 @@ import { ThreeDPrintiraneNaWarhammerNayGotiniteFigurkiTerenIAksesoariComponent }
 import { KakDaPechelimOt3dPrintiranetoComponent } from './blog/kak-da-pechelim-ot-3d-printiraneto/kak-da-pechelim-ot-3d-printiraneto.component';
 import { PlaPlaPlaProIPlnRazlikiIIzborComponent } from './blog/pla-pla-pla-pro-i-pln-razliki-i-izbor/pla-pla-pla-pro-i-pln-razliki-i-izbor.component';
 import { LitofanS3dPrintiraneKakDaPrevarneshSnimkaVSveteshtModelComponent } from './blog/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model.component';
+import { ThreeDPrinterBambuLabX2dPodrobnoRevyuFunktsiiIIzborComponent } from './blog/3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor/3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor.component';
 
 export const routes: Routes = [
   { path: '', component: MainPageComponent, data: { text: 'Home' } },
@@ -39,7 +40,8 @@ export const routes: Routes = [
       { path: '3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari', component: ThreeDPrintiraneNaWarhammerNayGotiniteFigurkiTerenIAksesoariComponent },
       { path: 'kak-da-pechelim-ot-3d-printiraneto', component: KakDaPechelimOt3dPrintiranetoComponent },
       { path: 'pla-pla-pla-pro-i-pln-razliki-i-izbor', component: PlaPlaPlaProIPlnRazlikiIIzborComponent },
-      { path: 'litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model', component: LitofanS3dPrintiraneKakDaPrevarneshSnimkaVSveteshtModelComponent }
+      { path: 'litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model', component: LitofanS3dPrintiraneKakDaPrevarneshSnimkaVSveteshtModelComponent },
+      { path: '3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor', component: ThreeDPrinterBambuLabX2dPodrobnoRevyuFunktsiiIIzborComponent }
     ]
   },
   { path: '**', component: PageNotFoundComponent } // must always be last

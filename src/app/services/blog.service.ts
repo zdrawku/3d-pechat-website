@@ -117,6 +117,17 @@ export class BlogService {
       imageUrl: 'assets/blogs/images/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model-cover.jpg',
       tags: ['литофан', '3D принтиране', 'подаръци', 'DIY проекти', 'персонализирани модели', '3D модели', 'уроци', 'начинаещи'],
       author: '3D Печат България'
+    },
+        {
+      id: '10',
+      title: '3D принтер Bambu Lab X2D: Ревю, функции и избор',
+      description: 'Подробно ревю на 3D принтера Bambu Lab X2D. Характеристики, предимства, недостатъци и съвети за избор. Всичко за високоскоростното 3D принтиране.',
+      slug: '3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor',
+      route: '/blog/3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor',
+      date: new Date('2026-06-15'),
+      imageUrl: 'assets/blogs/images/Bambu-Lab-X2D.jpg',
+      tags: ['Bambu Lab', '3D принтери', 'Ревюта', 'CoreXY', 'Високоскоростен печат', '3D печат', 'Технологии'],
+      author: '3D Печат България'
     }
     // Add more blog posts here as you create them
   ];

@@ -99,4 +99,10 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://3dpechat.bg/blog/3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor</loc>
+    <lastmod>2026-06-15T10:00:00+01:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>
