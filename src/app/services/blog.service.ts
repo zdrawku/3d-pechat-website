@@ -125,7 +125,7 @@ export class BlogService {
       slug: '3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor',
       route: '/blog/3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor',
       date: new Date('2026-06-15'),
-      imageUrl: 'assets/real-images/main-images/3dprinting-hero.jpg',
+      imageUrl: 'assets/blogs/images/Bambu-Lab-X2D.jpg',
       tags: ['Bambu Lab', '3D принтери', 'Ревюта', 'CoreXY', 'Високоскоростен печат', '3D печат', 'Технологии'],
       author: '3D Печат България'
     }

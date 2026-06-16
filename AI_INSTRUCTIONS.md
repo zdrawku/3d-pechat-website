@@ -30,10 +30,12 @@ Override topic: set `MANUAL_TOPIC=your topic here` in `.env` before running.
 - Article markdown must **not** contain inline images (`![...](...)`). Images are added manually after review.
 - Cover image asset path: `assets/blogs/images/{slug}-cover.png` (relative, no leading slash).
 - `BlogService` entry must include a `tags` array (used for card display).
+- Every blog article must include at least 2 relevant internal links to other blog posts using root-relative paths such as `/blog/what-is-3d-printing`.
 
 ### Adding Articles Manually
 Only do this if the automated flow is unavailable:
 1. Create `src/assets/blogs/your-slug.md` — no inline images in body.
+1.5 Add at least 2 relevant internal links to other blog posts in the markdown body using root-relative blog URLs.
 2. Place cover image at `src/assets/blogs/images/your-slug-cover.png`.
 3. Generate component in `src/app/blog/your-slug/` (TS, HTML, SCSS).
 4. Register in `src/app/services/blog.service.ts` — **include `tags` array**.
