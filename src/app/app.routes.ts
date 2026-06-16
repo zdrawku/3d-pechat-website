@@ -15,6 +15,7 @@ import { ThreeDPrintingTechnologiesComponent } from './blog/3d-printing-technolo
 import { ThreeDPrintiraniObuvkiComponent } from './blog/3d-printirani-obuvki/3d-printirani-obuvki.component';
 import { IzglazhdaneNaPlaPri3dPrintiraneRaboteshtiMetodiZaGladakFinishComponent } from './blog/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish.component';
 import { ThreeDPrintiraneNaWarhammerNayGotiniteFigurkiTerenIAksesoariComponent } from './blog/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari.component';
+import { KakDaPechelimOt3dPrintiranetoComponent } from './blog/kak-da-pechelim-ot-3d-printiraneto/kak-da-pechelim-ot-3d-printiraneto.component';
 import { PlaPlaPlaProIPlnRazlikiIIzborComponent } from './blog/pla-pla-pla-pro-i-pln-razliki-i-izbor/pla-pla-pla-pro-i-pln-razliki-i-izbor.component';
 import { LitofanS3dPrintiraneKakDaPrevarneshSnimkaVSveteshtModelComponent } from './blog/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model.component';
 
@@ -36,6 +37,7 @@ export const routes: Routes = [
       { path: '3d-printirani-obuvki', component: ThreeDPrintiraniObuvkiComponent },
       { path: 'izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish', component: IzglazhdaneNaPlaPri3dPrintiraneRaboteshtiMetodiZaGladakFinishComponent },
       { path: '3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari', component: ThreeDPrintiraneNaWarhammerNayGotiniteFigurkiTerenIAksesoariComponent },
+      { path: 'kak-da-pechelim-ot-3d-printiraneto', component: KakDaPechelimOt3dPrintiranetoComponent },
       { path: 'pla-pla-pla-pro-i-pln-razliki-i-izbor', component: PlaPlaPlaProIPlnRazlikiIIzborComponent },
       { path: 'litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model', component: LitofanS3dPrintiraneKakDaPrevarneshSnimkaVSveteshtModelComponent }
     ]
