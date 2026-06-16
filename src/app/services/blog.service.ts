@@ -92,7 +92,7 @@ export class BlogService {
       slug: 'kak-da-pechelim-ot-3d-printiraneto',
       route: '/blog/kak-da-pechelim-ot-3d-printiraneto',
       date: new Date('2026-06-08'),
-      imageUrl: 'assets/real-images/main-images/3dprinting-hero.jpg',
+      imageUrl: 'assets/real-images/general-images/1.png',
       tags: ['3D принтиране', 'бизнес', 'печалба', '3D принтер', 'услуги', 'предприемачество', 'технологии', 'пари'],
       author: '3D Печат България'
     },
