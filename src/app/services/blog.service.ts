@@ -128,6 +128,17 @@ export class BlogService {
       imageUrl: 'assets/blogs/images/Bambu-Lab-X2D.jpg',
       tags: ['Bambu Lab', '3D принтери', 'Ревюта', 'CoreXY', 'Високоскоростен печат', '3D печат', 'Технологии'],
       author: '3D Печат България'
+    },
+        {
+      id: '11',
+      title: '3D принтер за начинаещи: детско хоби → семеен бизнес',
+      description: 'Вдъхновяваща история как 12-годишно дете превърна 3D принтирането в семеен проект. Практични съвети за избор на първи 3D принтер и стартиране.',
+      slug: '3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt',
+      route: '/blog/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt',
+      date: new Date('2026-06-22'),
+      imageUrl: 'assets/blogs/images/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt-cover.jpg',
+      tags: ['3D принтер', 'начинаещи', 'семеен проект', 'деца и 3D печат', 'хоби', 'практични съвети', 'история на успеха', 'избор на принтер'],
+      author: '3D Печат България'
     }
     // Add more blog posts here as you create them
   ];
