@@ -20,6 +20,7 @@ import { PlaPlaPlaProIPlnRazlikiIIzborComponent } from './blog/pla-pla-pla-pro-i
 import { LitofanS3dPrintiraneKakDaPrevarneshSnimkaVSveteshtModelComponent } from './blog/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model.component';
 import { ThreeDPrinterBambuLabX2dPodrobnoRevyuFunktsiiIIzborComponent } from './blog/3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor/3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor.component';
 import { ThreeDPrinterZaNachinaeshtiKakEdnoDetePrevarnaHobiVSemeenProektComponent } from './blog/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt.component';
+import { InfillPri3dPechatPlatnostZdravinaIFilamentComponent } from './blog/infill-pri-3d-pechat-platnost-zdravina-i-filament/infill-pri-3d-pechat-platnost-zdravina-i-filament.component';
 
 export const routes: Routes = [
   { path: '', component: MainPageComponent, data: { text: 'Home' } },
@@ -43,7 +44,8 @@ export const routes: Routes = [
       { path: 'pla-pla-pla-pro-i-pln-razliki-i-izbor', component: PlaPlaPlaProIPlnRazlikiIIzborComponent },
       { path: 'litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model', component: LitofanS3dPrintiraneKakDaPrevarneshSnimkaVSveteshtModelComponent },
       { path: '3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor', component: ThreeDPrinterBambuLabX2dPodrobnoRevyuFunktsiiIIzborComponent },
-      { path: '3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt', component: ThreeDPrinterZaNachinaeshtiKakEdnoDetePrevarnaHobiVSemeenProektComponent }
+      { path: '3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt', component: ThreeDPrinterZaNachinaeshtiKakEdnoDetePrevarnaHobiVSemeenProektComponent },
+      { path: 'infill-pri-3d-pechat-platnost-zdravina-i-filament', component: InfillPri3dPechatPlatnostZdravinaIFilamentComponent }
     ]
   },
   { path: '**', component: PageNotFoundComponent } // must always be last
