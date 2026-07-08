@@ -139,6 +139,17 @@ export class BlogService {
       imageUrl: 'assets/blogs/images/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt-cover.jpg',
       tags: ['3D принтер', 'начинаещи', 'семеен проект', 'деца и 3D печат', 'хоби', 'практични съвети', 'история на успеха', 'избор на принтер'],
       author: '3D Печат България'
+    },
+        {
+      id: '12',
+      title: 'Infill при 3D печат: плътност, здравина и филамент',
+      description: 'Научете как infill плътността влияе върху здравината, теглото и разхода на филамент при 3D принтиране. Практически съвети за избор на правилните настройки.',
+      slug: 'infill-pri-3d-pechat-platnost-zdravina-i-filament',
+      route: '/blog/infill-pri-3d-pechat-platnost-zdravina-i-filament',
+      date: new Date('2026-07-06'),
+      imageUrl: 'assets/blogs/images/infill-pri-3d-pechat-platnost-zdravina-i-filament-cover.jpg',
+      tags: ['Infill', '3D печат', 'Настройки', 'Филамент', 'Здравина', 'Оптимизация', 'Практически съвети', 'Качество'],
+      author: '3D Печат България'
     }
     // Add more blog posts here as you create them
   ];
