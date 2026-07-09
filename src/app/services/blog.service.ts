@@ -1,8 +1,8 @@
 // blog.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { BlogPost } from '../models/blog-post.model';
+import { BLOG_CONTENT } from './blog-content.generated';
 
 @Injectable({ providedIn: 'root' })
 export class BlogService {
@@ -154,11 +154,16 @@ export class BlogService {
     // Add more blog posts here as you create them
   ];
 
-  constructor(private http: HttpClient) { }
 
   getPost(slug: string): Observable<string> {
-    // Fetches the text file from your assets folder
-    return this.http.get(`/assets/blogs/${slug}.md`, { responseType: 'text' });
+    // Content is bundled at build time so it's available during prerendering.
+    // A missing slug throws so the error fails the prerender build instead of
+    // shipping a silently empty article page.
+    const content = BLOG_CONTENT[slug];
+    if (content === undefined) {
+      throw new Error(`No blog content for slug "${slug}". Check the filename in src/assets/blogs and rerun "npm run generate-blog-content".`);
+    }
+    return of(content);
   }
 
   getAllPosts(): Observable<BlogPost[]> {

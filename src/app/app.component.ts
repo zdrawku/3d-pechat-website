@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, PLATFORM_ID, ViewChild, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { IsActiveMatchOptions, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { IGX_NAVBAR_DIRECTIVES, IGX_NAVIGATION_DRAWER_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxIconComponent, IgxNavigationDrawerComponent, IgxToggleActionDirective, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
 
@@ -16,7 +17,13 @@ export class AppComponent implements OnInit {
     public router: Router,
   ) {}
 
+  private readonly platformId = inject(PLATFORM_ID);
+
   ngOnInit(): void {
+    // Theme detection needs localStorage/matchMedia — skip during prerendering
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     // Check if user has a saved theme preference
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {

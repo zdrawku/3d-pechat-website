@@ -20,6 +20,11 @@
             "outputPath": "dist/dprinting-services-website",
             "index": "src/index.html",
             "browser": "src/main.ts",
+            "server": "src/main.server.ts",
+            "outputMode": "static",
+            "loader": {
+              ".md": "text"
+            },
             "polyfills": [
               "zone.js"
             ],
