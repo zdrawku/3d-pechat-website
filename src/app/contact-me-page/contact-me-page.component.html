@@ -35,23 +35,23 @@
         Гледайте видеа от нашите 3D печат проекти в TikTok
       </div>
     </div>
-    <div class="column-layout contact_form_inputs">
+    <form class="column-layout contact_form_inputs" #contactForm="ngForm">
       <igx-input-group type="border" class="user-input">
-        <input type="text" [(ngModel)]="value" placeholder="Вашето име" required="true" igxInput #igxInput />
+        <input type="text" [(ngModel)]="value" name="value" placeholder="Вашето име" required="true" igxInput #igxInput />
         <label igxLabel>Име</label>
         @if (igxInput.validity?.valueMissing) {
           <igx-hint>Това поле е задължително</igx-hint>
         }
       </igx-input-group>
       <igx-input-group type="border" class="user-input">
-        <input type="email" [(ngModel)]="value1" placeholder="Вашият имейл" required="true" igxInput #igxInput1 />
+        <input type="email" [(ngModel)]="value1" name="value1" placeholder="Вашият имейл" required="true" igxInput #igxInput1 />
         <label igxLabel>Email адрес</label>
         @if (igxInput1.validity?.valueMissing) {
           <igx-hint>Това поле е задължително</igx-hint>
         }
       </igx-input-group>
       <igx-input-group type="border" class="user-input">
-        <input type="text" [(ngModel)]="value2" placeholder="Тема на съобщението" required="true" igxInput #igxInput2 />
+        <input type="text" [(ngModel)]="value2" name="value2" placeholder="Тема на съобщението" required="true" igxInput #igxInput2 />
         <label igxLabel>Тема</label>
         @if (igxInput2.validity?.valueMissing) {
           <igx-hint>Това поле е задължително</igx-hint>
@@ -59,12 +59,12 @@
       </igx-input-group>
       <igx-input-group type="border" class="user-input">
         <label igxLabel>Съобщение</label>
-        <textarea [(ngModel)]="message" placeholder="Вашето съобщение..." required="true" igxInput #igxTextarea></textarea>
+        <textarea [(ngModel)]="message" name="message" placeholder="Вашето съобщение..." required="true" igxInput #igxTextarea></textarea>
         @if (igxTextarea.validity?.valueMissing) {
           <igx-hint>Това поле е задължително</igx-hint>
         }
       </igx-input-group>
-      <button igxButton="contained" type="button" class="button_send_message" (click)="sendEmail()"
+      <button igxButton="contained" type="button" class="button_send_message" (click)="sendEmail(contactForm)"
               [disabled]="isSubmitting">
         {{ isSubmitting ? 'Изпращане...' : 'Изпрати съобщение' }}
       </button>
@@ -83,6 +83,6 @@
           Моля, попълнете всички полета.
         </p>
       }
-    </div>
+    </form>
   </div>
 </div>

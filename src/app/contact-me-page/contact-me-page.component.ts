@@ -1,7 +1,7 @@
 import { Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
 import { SeoService } from '../services/seo.service';
 import { environment } from '../../environments/environment';
@@ -79,7 +79,7 @@ export class ContactMePageComponent implements OnInit {
     window.open(this.tiktokUrl, '_blank');
   }
 
-  async sendEmail(): Promise<void> {
+  async sendEmail(form: NgForm): Promise<void> {
     // Validate required fields
     if (!this.value || !this.value1 || !this.value2 || !this.message) {
       this.submitStatus = 'missing-fields';
@@ -109,10 +109,7 @@ export class ContactMePageComponent implements OnInit {
       const result = await response.json();
       if (result.success) {
         this.submitStatus = 'success';
-        this.value = undefined;
-        this.value1 = undefined;
-        this.value2 = undefined;
-        this.message = undefined;
+        form.resetForm();
       } else {
         this.submitStatus = 'error';
       }
