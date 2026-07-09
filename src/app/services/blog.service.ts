@@ -1,8 +1,8 @@
 // blog.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { BlogPost } from '../models/blog-post.model';
+import { BLOG_CONTENT } from './blog-content.generated';
 
 @Injectable({ providedIn: 'root' })
 export class BlogService {
@@ -154,11 +154,10 @@ export class BlogService {
     // Add more blog posts here as you create them
   ];
 
-  constructor(private http: HttpClient) { }
 
   getPost(slug: string): Observable<string> {
-    // Fetches the text file from your assets folder
-    return this.http.get(`/assets/blogs/${slug}.md`, { responseType: 'text' });
+    // Content is bundled at build time so it's available during prerendering
+    return of(BLOG_CONTENT[slug] ?? '');
   }
 
   getAllPosts(): Observable<BlogPost[]> {
