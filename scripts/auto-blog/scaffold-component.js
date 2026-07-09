@@ -45,7 +45,7 @@ function buildComponentTs(slug, pascalName, seo, coverImageAssetPath) {
   const headline = seo.title.replace(/'/g, "\\'");
   const description = seo.description.replace(/'/g, "\\'");
   const keywords = seo.keywords.replace(/'/g, "\\'");
-  const coverImageUrl = `https://3dpechat.bg/${coverImageAssetPath || 'assets/real-images/main-images/3dprinting-hero.jpg'}`;
+  const coverImageUrl = `https://3dpechat.bg/${coverImageAssetPath || 'assets/og-image.png'}`;
   return `import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BlogService } from '../../services/blog.service';
@@ -164,7 +164,7 @@ function updateBlogService(slug, seo, coverImageAssetPath) {
       slug: '${slug}',
       route: '/blog/${slug}',
       date: new Date('${seo.publishDate}'),
-      imageUrl: '${coverImageAssetPath || 'assets/real-images/main-images/3dprinting-hero.jpg'}',
+      imageUrl: '${coverImageAssetPath || 'assets/og-image.png'}',
       tags: ${tagsLiteral},
       author: '3D Печат България'
     }`;
@@ -226,7 +226,7 @@ function scaffoldArticle(article, coverImagePath) {
   const seo = article.seo;
 
   const { assetPath } = require('./generate-image');
-  const coverAsset = coverImagePath ? assetPath(slug) : 'assets/real-images/main-images/3dprinting-hero.jpg';
+  const coverAsset = coverImagePath ? assetPath(slug) : 'assets/og-image.png';
   const mdPath = writeMarkdown(slug, article.markdown);
   const compDir = writeComponent(slug, pascalName, seo, coverAsset);
   const id = updateBlogService(slug, seo, coverAsset);

@@ -14,21 +14,21 @@
       Кликнете за директен чат във Viber
     </div>
     <p class="content">
-      E-mail: 3dpechat.bg@gmail.com
+      E-mail: 3dpechat.bg&#64;gmail.com
     </p>
     <div class="social-media-buttons">
-      <button igxButton="outlined" type="button" class="social_button" (click)="openInstagram()" 
+      <button igxButton="outlined" type="button" class="social_button" (click)="openInstagram()"
               [igxTooltipTarget]="instagramTooltip">
-        <igx-icon>photo_camera</igx-icon>
+        <igx-icon family="imx-icons" name="instagram"></igx-icon>
         Instagram
       </button>
       <div igxTooltip #instagramTooltip="tooltip">
         Последвайте ни в Instagram за снимки на нашите проекти
       </div>
-      
+
       <button igxButton="outlined" type="button" class="social_button" (click)="openTikTok()"
               [igxTooltipTarget]="tiktokTooltip">
-        <igx-icon>music_note</igx-icon>
+        <igx-icon family="imx-icons" name="tiktok"></igx-icon>
         TikTok
       </button>
       <div igxTooltip #tiktokTooltip="tooltip">
@@ -39,34 +39,50 @@
       <igx-input-group type="border" class="user-input">
         <input type="text" [(ngModel)]="value" placeholder="Вашето име" required="true" igxInput #igxInput />
         <label igxLabel>Име</label>
-        @if (igxInput.validity.valueMissing) {
+        @if (igxInput.validity?.valueMissing) {
           <igx-hint>Това поле е задължително</igx-hint>
         }
       </igx-input-group>
       <igx-input-group type="border" class="user-input">
         <input type="email" [(ngModel)]="value1" placeholder="Вашият имейл" required="true" igxInput #igxInput1 />
         <label igxLabel>Email адрес</label>
-        @if (igxInput1.validity.valueMissing) {
+        @if (igxInput1.validity?.valueMissing) {
           <igx-hint>Това поле е задължително</igx-hint>
         }
       </igx-input-group>
       <igx-input-group type="border" class="user-input">
         <input type="text" [(ngModel)]="value2" placeholder="Тема на съобщението" required="true" igxInput #igxInput2 />
         <label igxLabel>Тема</label>
-        @if (igxInput2.validity.valueMissing) {
+        @if (igxInput2.validity?.valueMissing) {
           <igx-hint>Това поле е задължително</igx-hint>
         }
       </igx-input-group>
       <igx-input-group type="border" class="user-input">
         <label igxLabel>Съобщение</label>
         <textarea [(ngModel)]="message" placeholder="Вашето съобщение..." required="true" igxInput #igxTextarea></textarea>
-        @if (igxTextarea.validity.valueMissing) {
+        @if (igxTextarea.validity?.valueMissing) {
           <igx-hint>Това поле е задължително</igx-hint>
         }
       </igx-input-group>
-      <button igxButton="contained" type="button" class="button_send_message" (click)="sendEmail()">
-        Изпрати съобщение
+      <button igxButton="contained" type="button" class="button_send_message" (click)="sendEmail()"
+              [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Изпращане...' : 'Изпрати съобщение' }}
       </button>
+      @if (submitStatus === 'success') {
+        <p class="form-status form-status--success">
+          Благодарим ви! Съобщението е изпратено успешно. Ще се свържем с вас възможно най-скоро.
+        </p>
+      }
+      @if (submitStatus === 'error') {
+        <p class="form-status form-status--error">
+          Възникна грешка при изпращането. Моля, опитайте отново или ни пишете директно на 3dpechat.bg&#64;gmail.com.
+        </p>
+      }
+      @if (submitStatus === 'missing-fields') {
+        <p class="form-status form-status--error">
+          Моля, попълнете всички полета.
+        </p>
+      }
     </div>
   </div>
 </div>

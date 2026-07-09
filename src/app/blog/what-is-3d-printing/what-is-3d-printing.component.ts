@@ -25,7 +25,7 @@ export class WhatIs3dPrintingComponent implements OnInit {
       description: 'Научете всичко за 3D принтирането - как работи, какви са видовете технологии, приложения и бъдещето на адитивното производство.',
       keywords: '3D принтиране, 3D принтер, адитивно производство, FDM, SLA, технология, производство',
       url: 'https://3dpechat.bg/blog/what-is-3d-printing',
-      image: 'https://3dpechat.bg/assets/real-images/main-images/3dprinting-hero.jpg',
+      image: 'https://3dpechat.bg/assets/og-image.png',
       type: 'article',
       author: '3D Печат България',
       publishedDate: new Date('2026-02-08').toISOString(),
@@ -43,7 +43,7 @@ export class WhatIs3dPrintingComponent implements OnInit {
       },
       "datePublished": "2026-02-08T00:00:00.000Z",
       "dateModified": "2026-02-08T00:00:00.000Z",
-      "image": "https://3dpechat.bg/assets/real-images/main-images/3dprinting-hero.jpg",
+      "image": "https://3dpechat.bg/assets/og-image.png",
       "publisher": {
         "@type": "Organization",
         "name": "3D Печат България",

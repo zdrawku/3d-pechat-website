@@ -1,7 +1,8 @@
 import { Component, OnInit, PLATFORM_ID, ViewChild, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { IsActiveMatchOptions, Router, RouterLink, RouterOutlet } from '@angular/router';
-import { IGX_NAVBAR_DIRECTIVES, IGX_NAVIGATION_DRAWER_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxIconComponent, IgxNavigationDrawerComponent, IgxToggleActionDirective, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
+import { IGX_NAVBAR_DIRECTIVES, IGX_NAVIGATION_DRAWER_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxIconComponent, IgxIconService, IgxNavigationDrawerComponent, IgxToggleActionDirective, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
+import { instagram, tiktok } from '@igniteui/material-icons-extended';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,11 @@ export class AppComponent implements OnInit {
 
   constructor(
     public router: Router,
-  ) {}
+    private iconService: IgxIconService,
+  ) {
+    this.iconService.addSvgIconFromText(instagram.name, instagram.value, 'imx-icons');
+    this.iconService.addSvgIconFromText(tiktok.name, tiktok.value, 'imx-icons');
+  }
 
   private readonly platformId = inject(PLATFORM_ID);
 

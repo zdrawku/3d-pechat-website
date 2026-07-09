@@ -25,7 +25,7 @@ export class KakDaPechelimOt3dPrintiranetoComponent implements OnInit {
       description: 'Открийте 7-те най-печеливши начина да превърнете 3D принтера си в източник на доход. Практични съвети, реални примери и стратегии за успех в България.',
       keywords: '3D принтиране, как да печелим от 3D принтер, 3D печат бизнес, 3D принтер доход, печалба от 3D принтиране, 3D печат услуги, 3D принтиране България',
       url: 'https://3dpechat.bg/blog/kak-da-pechelim-ot-3d-printiraneto',
-      image: 'https://3dpechat.bg/assets/real-images/main-images/3dprinting-hero.jpg',
+      image: 'https://3dpechat.bg/assets/og-image.png',
       type: 'article',
       author: '3D Печат България',
       publishedDate: new Date('2026-06-08').toISOString(),
@@ -43,7 +43,7 @@ export class KakDaPechelimOt3dPrintiranetoComponent implements OnInit {
       },
       "datePublished": "2026-06-08T00:00:00.000Z",
       "dateModified": "2026-06-08T00:00:00.000Z",
-      "image": "https://3dpechat.bg/assets/real-images/main-images/3dprinting-hero.jpg",
+      "image": "https://3dpechat.bg/assets/og-image.png",
       "publisher": {
         "@type": "Organization",
         "name": "3D Печат България",

@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
 import { SeoService } from '../services/seo.service';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-contact-me-page',
@@ -16,6 +18,9 @@ export class ContactMePageComponent implements OnInit {
   public value1?: string;
   public value2?: string;
   public message?: string;
+
+  public isSubmitting = false;
+  public submitStatus: 'idle' | 'success' | 'error' | 'missing-fields' = 'idle';
 
   phoneNumber = '+359883310616';
   email = '3dpechat.bg@gmail.com';
@@ -44,7 +49,13 @@ export class ContactMePageComponent implements OnInit {
     }
   }
 
+  private readonly platformId = inject(PLATFORM_ID);
+
   ngOnInit(): void {
+    // history is browser-only — skip during prerendering
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     // Also check for state from history in case component is already initialized
     const state = history.state;
     if (state && state['prefilledMessage'] && !this.message) {
@@ -68,23 +79,47 @@ export class ContactMePageComponent implements OnInit {
     window.open(this.tiktokUrl, '_blank');
   }
 
-  sendEmail(): void {
+  async sendEmail(): Promise<void> {
     // Validate required fields
     if (!this.value || !this.value1 || !this.value2 || !this.message) {
-      alert('Моля, попълнете всички полета');
+      this.submitStatus = 'missing-fields';
       return;
     }
 
-    // Construct the email
-    const to = this.email;
-    const subject = encodeURIComponent(this.value2);
-    const body = encodeURIComponent(
-      `Име: ${this.value}\n` +
-      `Email: ${this.value1}\n\n` +
-      `Съобщение:\n${this.message}`
-    );
+    this.isSubmitting = true;
+    this.submitStatus = 'idle';
 
-    // Open email client
-    window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          access_key: environment.web3formsAccessKey,
+          name: this.value,
+          email: this.value1,
+          subject: this.value2,
+          message: this.message,
+          from_name: '3dpechat.bg контактна форма'
+        })
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        this.submitStatus = 'success';
+        this.value = undefined;
+        this.value1 = undefined;
+        this.value2 = undefined;
+        this.message = undefined;
+      } else {
+        this.submitStatus = 'error';
+      }
+    } catch {
+      this.submitStatus = 'error';
+    } finally {
+      this.isSubmitting = false;
+    }
   }
 }

@@ -25,7 +25,7 @@ export class ThreeDPrintingTechnologiesComponent implements OnInit {
       description: 'Разберете разликите между FDM, SLA, SLS и другите 3D принтиране технологии. Кога коя е по-подходяща, какви материали се използват и как да изберете правилно.',
       keywords: '3d принтиране, 3d принтиране технологии, FDM, SLA, SLS, DLP, MSLA, MJF, 3D принтер, адитивно производство',
       url: 'https://3dpechat.bg/blog/3d-printing-technologies',
-      image: 'https://3dpechat.bg/assets/real-images/main-images/3dprinting-hero.jpg',
+      image: 'https://3dpechat.bg/assets/og-image.png',
       type: 'article',
       author: '3D Печат България',
       publishedDate: new Date('2026-03-04').toISOString(),
@@ -43,7 +43,7 @@ export class ThreeDPrintingTechnologiesComponent implements OnInit {
       },
       "datePublished": "2026-03-04T00:00:00.000Z",
       "dateModified": "2026-03-04T00:00:00.000Z",
-      "image": "https://3dpechat.bg/assets/real-images/main-images/3dprinting-hero.jpg",
+      "image": "https://3dpechat.bg/assets/og-image.png",
       "publisher": {
         "@type": "Organization",
         "name": "3D Печат България",
