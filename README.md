@@ -10,6 +10,10 @@ Run `npm start` to build the application, start a web server and open the applic
 
 Run `npm run build` to build the application into an output directory.
 
+## Testing the prerendered (SSR) build
+
+Run `npm run build` followed by `npm run serve:ssr` to serve the static prerendered output at `http://localhost:8080`. This is the closest match to what GitHub Pages actually serves, since `ng serve` (used by `npm start`) does not prerender routes.
+
 ## Running unit tests
 
 Run `npm test` to execute the unit tests via [Karma](https://karma-runner.github.io). Runs all `.spec.ts` files under `./src` folder.
