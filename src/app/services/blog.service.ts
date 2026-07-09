@@ -156,8 +156,14 @@ export class BlogService {
 
 
   getPost(slug: string): Observable<string> {
-    // Content is bundled at build time so it's available during prerendering
-    return of(BLOG_CONTENT[slug] ?? '');
+    // Content is bundled at build time so it's available during prerendering.
+    // A missing slug throws so the error fails the prerender build instead of
+    // shipping a silently empty article page.
+    const content = BLOG_CONTENT[slug];
+    if (content === undefined) {
+      throw new Error(`No blog content for slug "${slug}". Check the filename in src/assets/blogs and rerun "npm run generate-blog-content".`);
+    }
+    return of(content);
   }
 
   getAllPosts(): Observable<BlogPost[]> {
