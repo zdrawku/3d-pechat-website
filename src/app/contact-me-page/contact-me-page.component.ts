@@ -1,8 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
 import { SeoService } from '../services/seo.service';
+import { environment } from '../../environments/environment';
+
+declare const hcaptcha: {
+  render(container: string | HTMLElement, options: Record<string, unknown>): string;
+  reset(widgetId: string): void;
+};
+
+const HCAPTCHA_CALLBACK = 'onHcaptchaLoad';
 
 @Component({
   selector: 'app-contact-me-page',
@@ -11,11 +20,17 @@ import { SeoService } from '../services/seo.service';
   styleUrls: ['./contact-me-page.component.scss']
 })
 
-export class ContactMePageComponent implements OnInit {
+export class ContactMePageComponent implements OnInit, OnDestroy {
   public value?: string;
   public value1?: string;
   public value2?: string;
   public message?: string;
+
+  public isSubmitting = false;
+  public submitStatus: 'idle' | 'success' | 'error' | 'missing-fields' | 'missing-captcha' = 'idle';
+
+  private hcaptchaWidgetId?: string;
+  private hcaptchaToken = '';
 
   phoneNumber = '+359883310616';
   email = '3dpechat.bg@gmail.com';
@@ -44,7 +59,13 @@ export class ContactMePageComponent implements OnInit {
     }
   }
 
+  private readonly platformId = inject(PLATFORM_ID);
+
   ngOnInit(): void {
+    // history/hCaptcha are browser-only — skip during prerendering
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     // Also check for state from history in case component is already initialized
     const state = history.state;
     if (state && state['prefilledMessage'] && !this.message) {
@@ -53,6 +74,47 @@ export class ContactMePageComponent implements OnInit {
     if (state && state['productName'] && !this.value2) {
       this.value2 = `Поръчка за ${state['productName']}`;
     }
+
+    this.loadHcaptcha();
+  }
+
+  private loadHcaptcha(): void {
+    if (typeof hcaptcha !== 'undefined') {
+      this.renderHcaptcha();
+      return;
+    }
+
+    (window as unknown as Record<string, unknown>)[HCAPTCHA_CALLBACK] = () => this.renderHcaptcha();
+
+    const script = document.createElement('script');
+    script.src = `https://js.hcaptcha.com/1/api.js?onload=${HCAPTCHA_CALLBACK}&render=explicit`;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+  }
+
+  private renderHcaptcha(): void {
+    this.hcaptchaWidgetId = hcaptcha.render('hcaptcha-container', {
+      sitekey: environment.hcaptchaSiteKey,
+      callback: (token: string) => this.hcaptchaToken = token,
+      'expired-callback': () => this.hcaptchaToken = '',
+      'error-callback': () => this.hcaptchaToken = ''
+    });
+  }
+
+  private resetHcaptcha(): void {
+    this.hcaptchaToken = '';
+    if (this.hcaptchaWidgetId !== undefined) {
+      hcaptcha.reset(this.hcaptchaWidgetId);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    this.resetHcaptcha();
+    delete (window as unknown as Record<string, unknown>)[HCAPTCHA_CALLBACK];
   }
 
   openViber(): void {
@@ -68,23 +130,51 @@ export class ContactMePageComponent implements OnInit {
     window.open(this.tiktokUrl, '_blank');
   }
 
-  sendEmail(): void {
+  async sendEmail(form: NgForm): Promise<void> {
     // Validate required fields
     if (!this.value || !this.value1 || !this.value2 || !this.message) {
-      alert('Моля, попълнете всички полета');
+      this.submitStatus = 'missing-fields';
       return;
     }
 
-    // Construct the email
-    const to = this.email;
-    const subject = encodeURIComponent(this.value2);
-    const body = encodeURIComponent(
-      `Име: ${this.value}\n` +
-      `Email: ${this.value1}\n\n` +
-      `Съобщение:\n${this.message}`
-    );
+    if (!this.hcaptchaToken) {
+      this.submitStatus = 'missing-captcha';
+      return;
+    }
 
-    // Open email client
-    window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+    this.isSubmitting = true;
+    this.submitStatus = 'idle';
+
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          access_key: environment.web3formsAccessKey,
+          name: this.value,
+          email: this.value1,
+          subject: this.value2,
+          message: this.message,
+          from_name: '3dpechat.bg контактна форма',
+          'h-captcha-response': this.hcaptchaToken
+        })
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        this.submitStatus = 'success';
+        form.resetForm();
+      } else {
+        this.submitStatus = 'error';
+      }
+    } catch {
+      this.submitStatus = 'error';
+    } finally {
+      this.isSubmitting = false;
+      this.resetHcaptcha();
+    }
   }
 }

@@ -12,6 +12,7 @@
     "start": "ng serve -o",
     "prebuild": "npm run generate-images && npm run generate-sitemap && npm run generate-llms && npm run generate-blog-content",
     "build": "ng build",
+    "serve:ssr": "http-server dist/dprinting-services-website/browser -p 8080",
     "watch": "ng build --watch --configuration development",
     "test": "node --max-old-space-size=8192 ./node_modules/@angular/cli/bin/ng test",
     "lint": "ng lint"
@@ -57,12 +58,14 @@
     "angular-eslint": "^21.4.0",
     "cheerio": "^1.0.0",
     "eslint": "^10.3.0",
+    "http-server": "^14.1.1",
     "jasmine-core": "^6.2.0",
     "karma": "~6.4.4",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.1",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "^2.2.0",
+    "sharp": "^0.35.3",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.59.3"
   }

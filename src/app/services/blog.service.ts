@@ -92,7 +92,7 @@ export class BlogService {
       slug: 'kak-da-pechelim-ot-3d-printiraneto',
       route: '/blog/kak-da-pechelim-ot-3d-printiraneto',
       date: new Date('2026-06-08'),
-      imageUrl: 'assets/real-images/general-images/1.png',
+      imageUrl: 'assets/real-images/general-images/1.webp',
       tags: ['3D принтиране', 'бизнес', 'печалба', '3D принтер', 'услуги', 'предприемачество', 'технологии', 'пари'],
       author: '3D Печат България'
     },
@@ -103,7 +103,7 @@ export class BlogService {
       slug: 'pla-pla-pla-pro-i-pln-razliki-i-izbor',
       route: '/blog/pla-pla-pla-pro-i-pln-razliki-i-izbor',
       date: new Date('2026-06-04'),
-      imageUrl: 'assets/real-images/general-images/20250201_145113.jpg',
+      imageUrl: 'assets/real-images/general-images/20250201_145113.webp',
       tags: ['PLA', 'филамент', '3D печат', 'материали', 'ръководство', 'PLA+', 'PLA Pro', 'PLN'],
       author: '3D Печат България'
     },
