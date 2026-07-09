@@ -64,6 +64,7 @@
           <igx-hint>Това поле е задължително</igx-hint>
         }
       </igx-input-group>
+      <div id="hcaptcha-container"></div>
       <button igxButton="contained" type="button" class="button_send_message" (click)="sendEmail(contactForm)"
               [disabled]="isSubmitting">
         {{ isSubmitting ? 'Изпращане...' : 'Изпрати съобщение' }}
@@ -81,6 +82,11 @@
       @if (submitStatus === 'missing-fields') {
         <p class="form-status form-status--error">
           Моля, попълнете всички полета.
+        </p>
+      }
+      @if (submitStatus === 'missing-captcha') {
+        <p class="form-status form-status--error">
+          Моля, потвърдете, че не сте робот.
         </p>
       }
     </form>

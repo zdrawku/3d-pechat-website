@@ -1,10 +1,17 @@
-import { Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
 import { IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
 import { SeoService } from '../services/seo.service';
 import { environment } from '../../environments/environment';
+
+declare const hcaptcha: {
+  render(container: string | HTMLElement, options: Record<string, unknown>): string;
+  reset(widgetId: string): void;
+};
+
+const HCAPTCHA_CALLBACK = 'onHcaptchaLoad';
 
 @Component({
   selector: 'app-contact-me-page',
@@ -13,14 +20,17 @@ import { environment } from '../../environments/environment';
   styleUrls: ['./contact-me-page.component.scss']
 })
 
-export class ContactMePageComponent implements OnInit {
+export class ContactMePageComponent implements OnInit, OnDestroy {
   public value?: string;
   public value1?: string;
   public value2?: string;
   public message?: string;
 
   public isSubmitting = false;
-  public submitStatus: 'idle' | 'success' | 'error' | 'missing-fields' = 'idle';
+  public submitStatus: 'idle' | 'success' | 'error' | 'missing-fields' | 'missing-captcha' = 'idle';
+
+  private hcaptchaWidgetId?: string;
+  private hcaptchaToken = '';
 
   phoneNumber = '+359883310616';
   email = '3dpechat.bg@gmail.com';
@@ -52,7 +62,7 @@ export class ContactMePageComponent implements OnInit {
   private readonly platformId = inject(PLATFORM_ID);
 
   ngOnInit(): void {
-    // history is browser-only — skip during prerendering
+    // history/hCaptcha are browser-only — skip during prerendering
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
@@ -64,6 +74,47 @@ export class ContactMePageComponent implements OnInit {
     if (state && state['productName'] && !this.value2) {
       this.value2 = `Поръчка за ${state['productName']}`;
     }
+
+    this.loadHcaptcha();
+  }
+
+  private loadHcaptcha(): void {
+    if (typeof hcaptcha !== 'undefined') {
+      this.renderHcaptcha();
+      return;
+    }
+
+    (window as unknown as Record<string, unknown>)[HCAPTCHA_CALLBACK] = () => this.renderHcaptcha();
+
+    const script = document.createElement('script');
+    script.src = `https://js.hcaptcha.com/1/api.js?onload=${HCAPTCHA_CALLBACK}&render=explicit`;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+  }
+
+  private renderHcaptcha(): void {
+    this.hcaptchaWidgetId = hcaptcha.render('hcaptcha-container', {
+      sitekey: environment.hcaptchaSiteKey,
+      callback: (token: string) => this.hcaptchaToken = token,
+      'expired-callback': () => this.hcaptchaToken = '',
+      'error-callback': () => this.hcaptchaToken = ''
+    });
+  }
+
+  private resetHcaptcha(): void {
+    this.hcaptchaToken = '';
+    if (this.hcaptchaWidgetId !== undefined) {
+      hcaptcha.reset(this.hcaptchaWidgetId);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    this.resetHcaptcha();
+    delete (window as unknown as Record<string, unknown>)[HCAPTCHA_CALLBACK];
   }
 
   openViber(): void {
@@ -86,6 +137,11 @@ export class ContactMePageComponent implements OnInit {
       return;
     }
 
+    if (!this.hcaptchaToken) {
+      this.submitStatus = 'missing-captcha';
+      return;
+    }
+
     this.isSubmitting = true;
     this.submitStatus = 'idle';
 
@@ -102,7 +158,8 @@ export class ContactMePageComponent implements OnInit {
           email: this.value1,
           subject: this.value2,
           message: this.message,
-          from_name: '3dpechat.bg контактна форма'
+          from_name: '3dpechat.bg контактна форма',
+          'h-captcha-response': this.hcaptchaToken
         })
       });
 
@@ -117,6 +174,7 @@ export class ContactMePageComponent implements OnInit {
       this.submitStatus = 'error';
     } finally {
       this.isSubmitting = false;
+      this.resetHcaptcha();
     }
   }
 }
