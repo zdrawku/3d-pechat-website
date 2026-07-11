@@ -152,9 +152,9 @@ $exclude-components: (
 
   // Hero: two soft brand glows over a diagonal paper gradient
   --bg-hero:
-    radial-gradient(120% 90% at 85% -10%, color-mix(in srgb, #FF5722 22%, transparent), transparent 55%),
-    radial-gradient(90% 80% at 0% 120%, color-mix(in srgb, #2196F3 14%, transparent), transparent 50%),
-    linear-gradient(160deg, var(--bg-paper-2), var(--bg-alt));
+    radial-gradient(130% 100% at 88% -15%, color-mix(in srgb, #FF5722 32%, transparent), transparent 58%),
+    radial-gradient(100% 90% at -5% 120%, color-mix(in srgb, #2196F3 20%, transparent), transparent 55%),
+    linear-gradient(155deg, var(--bg-paper-2), var(--bg-alt));
 
   // Section: brand dot grid painted over a solid base.
   // Apply as: background-color: var(--bg-section-base);
@@ -196,9 +196,9 @@ $exclude-components: (
   --bg-card: var(--bg-paper-2);
 
   --bg-hero:
-    radial-gradient(120% 90% at 85% -10%, color-mix(in srgb, #FF5722 30%, transparent), transparent 55%),
-    radial-gradient(90% 80% at 0% 120%, color-mix(in srgb, #2196F3 20%, transparent), transparent 50%),
-    linear-gradient(160deg, var(--bg-paper-2), var(--bg-alt));
+    radial-gradient(130% 100% at 88% -15%, color-mix(in srgb, #FF5722 42%, transparent), transparent 58%),
+    radial-gradient(100% 90% at -5% 120%, color-mix(in srgb, #2196F3 28%, transparent), transparent 55%),
+    linear-gradient(155deg, var(--bg-paper-2), var(--bg-alt));
 
   --bg-section-base: var(--bg-paper);
   --bg-section: radial-gradient(color-mix(in srgb, #FF5722 34%, transparent) 1px, transparent 1.4px);
@@ -207,6 +207,89 @@ $exclude-components: (
   --seam: linear-gradient(to bottom, rgba(0, 0, 0, 0.35), transparent 14px);
 
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 34px rgba(0, 0, 0, 0.5);
+}
+
+// ===========================================================================
+// Shared page-header banner — a slim full-width gradient strip holding a page's
+// title (+ optional subtitle) on the left and controls (search, count) on the
+// right, all on one row. Replaces the old tall centered headers that pushed
+// content below the fold and wasted horizontal space. Reused across list pages.
+//
+// Markup:
+//   <header class="page-banner">
+//     <div class="page-banner__titles">
+//       <h1 class="page-banner__title">…</h1>
+//       <p class="page-banner__subtitle">…</p>   (optional)
+//     </div>
+//     <div class="page-banner__actions"> … search / count … </div>
+//   </header>
+// ---------------------------------------------------------------------------
+.page-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 16px 32px;
+  background: var(--bg-hero);
+  border-bottom: 1px solid var(--line, var(--ig-gray-300));
+
+  @media (max-width: 768px) {
+    padding: 14px 20px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+}
+
+.page-banner__titles {
+  min-width: 0;
+}
+
+.page-banner__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--ig-primary-500);
+  margin: 0 0 4px;
+}
+
+.page-banner__title {
+  font-size: 1.4rem !important;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ig-gray-900);
+  margin: 0;
+  text-wrap: balance;
+
+  @media (max-width: 480px) {
+    font-size: 1.2rem !important;
+  }
+}
+
+.page-banner__subtitle {
+  font-size: 0.85rem;
+  color: var(--ig-gray-700);
+  margin: 3px 0 0;
+
+  @media (max-width: 600px) {
+    display: none; // keep the banner slim on phones
+  }
+}
+
+.page-banner__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  @media (max-width: 600px) {
+    width: 100%;
+  }
 }
 
 // Reduce heading sizes globally

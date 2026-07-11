@@ -1,11 +1,9 @@
-<div class="blog-list-container">
-  <div class="blog-header">
-    <h1 class="blog-title">Блог за 3D Принтиране</h1>
-    <p class="blog-subtitle">Научете всичко за 3D принтирането от нашите експертни статии</p>
+<header class="page-banner">
+  <div class="page-banner__titles">
+    <h1 class="page-banner__title">Блог за 3D Принтиране</h1>
+    <p class="page-banner__subtitle">Научете всичко за 3D принтирането от нашите експертни статии</p>
   </div>
-
-  <!-- Search Bar -->
-  <div class="search-container">
+  <div class="page-banner__actions">
     <igx-input-group type="search" class="search-input">
       <input
         igxInput
@@ -23,23 +21,20 @@
           </igx-suffix>
         }
       </igx-input-group>
-    </div>
-
-    <!-- Results Count -->
-    @if (searchText) {
-      <div class="results-info">
-        <p>Намерени {{ filteredBlogs.length }} {{ filteredBlogs.length === 1 ? 'статия' : 'статии' }}</p>
-      </div>
+    @if (allBlogs.length > 0) {
+      <p class="results-info">
+        Показани <strong>{{ resultCount }}</strong> от <strong>{{ totalCount }}</strong> статии
+      </p>
     }
+  </div>
+</header>
 
+<div class="blog-list-container">
     <!-- Blog Cards Grid -->
     @if (filteredBlogs.length > 0) {
       <div class="blog-grid">
         @for (blog of filteredBlogs; track blog; let i = $index) {
-          <igx-card
-            class="blog-card"
-            [routerLink]="blog.route"
-            >
+          <a class="blog-card" [routerLink]="blog.route">
             @if (blog.imageUrl) {
               <div class="card-image-wrapper">
                 @if (i === 0) {
@@ -68,38 +63,26 @@
                 <igx-icon class="placeholder-icon">view_in_ar</igx-icon>
               </div>
             }
-            <igx-card-header>
-              <h2 igxCardHeaderTitle class="card-title">{{ blog.title }}</h2>
-              <span igxCardHeaderSubtitle class="card-subtitle">
+            <div class="card-body">
+              <span class="card-date">
                 <igx-icon class="date-icon">calendar_today</igx-icon>
                 {{ formatDate(blog.date) }}
               </span>
-            </igx-card-header>
-            <igx-card-content>
+              <h2 class="card-title">{{ blog.title }}</h2>
               <p class="card-description">{{ blog.description }}</p>
               @if (blog.tags && blog.tags.length > 0) {
                 <div class="tags-container">
-                  @for (tag of blog.tags; track tag) {
-                    <span
-                      class="tag"
-                      (click)="searchByTag($event, tag)"
-                    >{{ tag }}</span>
+                  @for (tag of blog.tags.slice(0, 3); track tag) {
+                    <span class="tag" (click)="searchByTag($event, tag)">{{ tag }}</span>
                   }
                 </div>
               }
-            </igx-card-content>
-            <igx-card-actions>
-              <button
-                igxButton="outlined"
-                igxRipple
-                [routerLink]="blog.route"
-                class="read-more-btn"
-                >
-                <igx-icon>article</igx-icon>
-                <span>Прочети повече</span>
-              </button>
-            </igx-card-actions>
-          </igx-card>
+              <span class="read-more">
+                Прочети повече
+                <igx-icon>arrow_forward</igx-icon>
+              </span>
+            </div>
+          </a>
         }
       </div>
     }

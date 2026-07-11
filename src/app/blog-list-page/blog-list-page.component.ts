@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IgxCardModule, IgxButtonModule, IgxRippleModule, IgxIconModule, IgxInputGroupModule } from 'igniteui-angular';
+import { IgxButtonModule, IgxRippleModule, IgxIconModule, IgxInputGroupModule } from 'igniteui-angular';
 import { BlogService } from '../services/blog.service';
 import { BlogPost } from '../models/blog-post.model';
 import { SeoService } from '../services/seo.service';
@@ -15,7 +15,6 @@ import { SeoService } from '../services/seo.service';
     RouterModule,
     NgOptimizedImage,
     FormsModule,
-    IgxCardModule,
     IgxButtonModule,
     IgxRippleModule,
     IgxIconModule,
@@ -80,6 +79,14 @@ export class BlogListPageComponent implements OnInit {
   clearSearch(): void {
     this.searchText = '';
     this.onSearch();
+  }
+
+  get resultCount(): number {
+    return this.filteredBlogs.length;
+  }
+
+  get totalCount(): number {
+    return this.allBlogs.length;
   }
 
   searchByTag(event: Event, tag: string): void {

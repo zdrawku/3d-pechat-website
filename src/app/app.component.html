@@ -35,12 +35,15 @@
     Гледайте ни в TikTok
   </div>
   
-  <button class="theme-toggle-button" (click)="toggleTheme()" aria-label="Toggle theme"
-          [igxTooltipTarget]="themeTooltip">
-    <div class="theme-toggle-circle">
-      <div class="theme-half light-half"></div>
-      <div class="theme-half dark-half"></div>
-    </div>
+  <button class="theme-switch" [class.is-dark]="isDarkTheme" (click)="toggleTheme()"
+          aria-label="Смени тема" [igxTooltipTarget]="themeTooltip">
+    <span class="theme-switch-track">
+      <igx-icon class="theme-switch-end theme-switch-end--sun">light_mode</igx-icon>
+      <igx-icon class="theme-switch-end theme-switch-end--moon">dark_mode</igx-icon>
+      <span class="theme-switch-knob">
+        <igx-icon class="theme-switch-knob-ic">{{ isDarkTheme ? 'dark_mode' : 'light_mode' }}</igx-icon>
+      </span>
+    </span>
   </button>
   <div igxTooltip #themeTooltip="tooltip">
     Смени тема

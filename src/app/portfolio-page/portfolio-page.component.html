@@ -1,13 +1,12 @@
-<div class="row-layout image_gallery_section_template_toys_hand_painting">
+<header class="page-banner">
+  <div class="page-banner__titles">
+    <h1 class="page-banner__title">Продукти и проекти моделирани за 3D печат</h1>
+    <p class="page-banner__subtitle">3D принтирани решения</p>
+  </div>
+</header>
+
+<div class="row-layout image_gallery_section_template_toys_hand_painting portfolio-first-section">
   <div class="column-layout column_layout_4">
-    <div class="column-layout column_layout_5">
-      <h1 class="title_3">
-        Продукти и проекти моделирани за 3D печат
-      </h1>
-      <h2 class="title_4">
-        3D принтирани решения
-      </h2>
-    </div>
     <div class="masonry-gallery">
       @for (image of carouselImages; track image; let i = $index) {
         <div class="masonry-item">

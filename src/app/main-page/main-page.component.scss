@@ -17,14 +17,14 @@
 .home_section {
   position: relative;
   width: 100%;
-  padding: 64px 32px;
+  padding: 17px 32px;
 
   @media (max-width: 768px) {
-    padding: 48px 20px;
+    padding: 32px 20px;
   }
 
   @media (max-width: 480px) {
-    padding: 40px 16px;
+    padding: 28px 16px;
   }
 }
 
@@ -77,16 +77,16 @@
   position: relative;
   background: var(--bg-hero);
   border-bottom: 1px solid var(--line, var(--ig-gray-300));
-  padding: 72px 32px;
+  padding: 40px 32px 21px;
   width: 100%;
   overflow-x: hidden;
 
   @media (max-width: 768px) {
-    padding: 48px 20px;
+    padding: 32px 20px;
   }
 
   @media (max-width: 480px) {
-    padding: 36px 16px;
+    padding: 24px 16px;
   }
 }
 
@@ -372,16 +372,16 @@
   background-color: var(--bg-section-base);
   background-image: var(--bg-section);
   background-size: var(--bg-section-size);
-  padding: 64px 32px;
+  padding: 40px 32px;
   width: 100%;
   overflow: hidden;
 
   @media (max-width: 768px) {
-    padding: 48px 20px;
+    padding: 32px 20px;
   }
 
   @media (max-width: 480px) {
-    padding: 40px 16px;
+    padding: 28px 16px;
   }
 }
 

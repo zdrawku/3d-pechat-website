@@ -28,6 +28,12 @@
   flex-shrink: 0;
 }
 
+// First section sits right under the banner — trim its top padding so the
+// masonry grid starts high on the page instead of after a big gap.
+.portfolio-first-section {
+  padding-top: 24px;
+}
+
 .column-layout {
   display: flex;
   flex-direction: column;

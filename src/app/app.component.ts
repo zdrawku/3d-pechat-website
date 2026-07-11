@@ -12,7 +12,7 @@ import { instagram, tiktok } from '@igniteui/material-icons-extended';
 })
 export class AppComponent implements OnInit {
   @ViewChild('navigationdrawer1', { static: true }) public drawer!: IgxNavigationDrawerComponent;
-  private isDarkTheme = false;
+  public isDarkTheme = false;
 
   constructor(
     public router: Router,

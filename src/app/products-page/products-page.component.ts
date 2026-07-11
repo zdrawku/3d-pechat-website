@@ -293,40 +293,4 @@ export class ProductsPageComponent {
       }
     });
   }
-
-  public copySectionLink(sectionId: string): void {
-    // 1. Construct the URL
-    const url = new URL(window.location.href);
-    url.hash = sectionId;
-    const newUrl = url.href;
-
-    // 2. Update Browser URL (Visual only, no reload)
-    window.history.pushState(null, '', newUrl);
-
-    // 3. Smooth Scroll to the Section
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',   // Aligns the top of the element with the top of the viewport
-        inline: 'nearest'
-      });
-    }
-
-    // 4. Copy to Clipboard
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(newUrl).then(() => {
-        // Optional: Add a toast notification here
-        console.log('Link copied and scrolled!');
-      });
-    } else {
-      // Fallback for older browsers
-      const tempInput = document.createElement('input');
-      tempInput.value = newUrl;
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      document.execCommand('copy');
-      document.body.removeChild(tempInput);
-    }
-  }
 }

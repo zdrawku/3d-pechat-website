@@ -425,69 +425,84 @@
   height: 24px;
 }
 
-// Theme chooser button
-$chooser-size: 34px;
-
-@mixin theme-chooser-item($foreground, $background) {
-  position: relative;
-  width: $chooser-size;
-  height: $chooser-size;
-  border-radius: $chooser-size * 0.5;
-  overflow: hidden;
-  transform: rotate(45deg);
-  border: 2px solid var(--ig-surface-500-contrast);
-  cursor: pointer;
-  transition: box-shadow 0.25s ease-out, transform 0.2s ease;
-
-  &::before,
-  &::after {
-    position: absolute;
-    content: '';
-    width: 50%;
-    top: 0;
-    bottom: 0;
-  }
-
-  &::before {
-    left: 0;
-    background: $foreground;
-  }
-
-  &::after {
-    right: 0;
-    background: $background;
-  }
-
-  &:hover {
-    box-shadow: 0 0 2px 3px rgba(0, 0, 0, 0.24);
-    transform: rotate(45deg) scale(1.1);
-  }
-
-  &:active {
-    transform: rotate(45deg) scale(0.95);
-  }
-}
-
-.theme-toggle-button {
+// Theme switch — a sliding sun/moon toggle. The knob shows the CURRENT theme's
+// icon and slides across on click. Faint end icons sit behind it for affordance.
+// Slide state is driven by the .is-dark class (bound to isDarkTheme) so it does
+// not depend on the global theme class reaching into scoped styles.
+.theme-switch {
   background: transparent;
   border: none;
   padding: 0;
   margin-left: 8px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
   cursor: pointer;
 }
 
-.theme-toggle-circle {
-  // Default: Light theme is active, show dark theme colors (what clicking will activate)
-  @include theme-chooser-item(#FF7043, #000000);
+.theme-switch-track {
+  position: relative;
+  width: 54px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--bg-alt);
+  border: 1px solid var(--ig-gray-300);
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
-// When dark theme is active, show light theme colors (what clicking will activate)
-:root.dark-theme .theme-toggle-circle {
-  @include theme-chooser-item(#FF5722, #4CAF50);
-  border-color: var(--ig-surface-500-contrast);
+.theme-switch:hover .theme-switch-track {
+  border-color: var(--ig-primary-500);
+}
+
+// Faint end icons, absolutely positioned at each end, behind the knob.
+.theme-switch-end {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  --size: 14px;
+  font-size: 14px !important;
+  width: 14px !important;
+  height: 14px !important;
+  color: var(--ig-gray-600);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.theme-switch-end--sun {
+  left: 7px;
+}
+
+.theme-switch-end--moon {
+  right: 7px;
+}
+
+// The sliding knob.
+.theme-switch-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+
+.theme-switch-knob-ic {
+  --size: 13px;
+  font-size: 13px !important;
+  width: 13px !important;
+  height: 13px !important;
+  color: #fff;
+}
+
+// Slide the knob to the right end when dark theme is active.
+.theme-switch.is-dark .theme-switch-knob {
+  transform: translateX(26px);
 }
 
 .content {
