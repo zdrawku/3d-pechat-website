@@ -252,6 +252,158 @@
   }
 }
 
+// ===================== FILE UPLOAD =====================
+.file-field {
+  gap: 8px;
+}
+
+.file-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ig-gray-900);
+
+  span {
+    font-weight: 400;
+    color: var(--ig-gray-700);
+    font-size: 0.72rem;
+  }
+}
+
+// Info icon next to the label — explains the single-file limit on hover/tap,
+// before the user opens the file picker (see file-info-tooltip below).
+.file-info-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: none;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--ig-primary-500) 14%, transparent);
+  color: var(--ig-primary-500);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease;
+
+  igx-icon {
+    font-size: 12px !important;
+    width: 12px !important;
+    height: 12px !important;
+  }
+
+  &:hover {
+    background: color-mix(in srgb, var(--ig-primary-500) 24%, transparent);
+  }
+}
+
+// Tooltip content renders in a global overlay outside this component, so it
+// needs ::ng-deep (same reason as .custom-tooltip in product-grid.component.scss).
+::ng-deep .file-info-tooltip {
+  max-width: 220px;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.file-dropzone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  border: 1.5px dashed var(--ig-gray-400);
+  border-radius: 12px;
+  background: var(--bg-body);
+  color: var(--ig-gray-700);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+
+  igx-icon {
+    font-size: 20px !important;
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  &:hover {
+    border-color: var(--ig-primary-500);
+    color: var(--ig-primary-500);
+    background: color-mix(in srgb, var(--ig-primary-500) 5%, var(--bg-body));
+  }
+
+  &:focus-within {
+    outline: 2px solid var(--ig-primary-500);
+    outline-offset: 2px;
+  }
+}
+
+.file-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.file-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--ig-gray-300);
+  font-size: 0.78rem;
+
+  > igx-icon {
+    font-size: 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+    color: var(--ig-secondary-500);
+    flex-shrink: 0;
+  }
+
+  .file-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--ig-gray-900);
+  }
+}
+
+.file-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ig-gray-700);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease, color 0.2s ease;
+
+  igx-icon {
+    font-size: 15px !important;
+    width: 15px !important;
+    height: 15px !important;
+  }
+
+  &:hover {
+    background: color-mix(in srgb, var(--ig-error-500) 14%, transparent);
+    color: var(--ig-error-500);
+  }
+}
+
 .form-status {
   margin: 12px 0 0;
   padding: 12px 16px;

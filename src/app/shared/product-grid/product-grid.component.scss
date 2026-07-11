@@ -269,42 +269,51 @@
 }
 
 // Custom-content tooltip (personalization details), shown via the info icon.
+// The tooltip renders in a GLOBAL overlay outside this component, so every
+// inner rule needs ::ng-deep to reach it — otherwise the note/list lose their
+// styling and the default tooltip layout breaks (narrow, two-column wrapping).
 ::ng-deep .custom-tooltip {
+  width: 240px;
+  max-width: 240px;
   background-color: var(--ig-warn-100) !important;
   border-left: 3px solid var(--ig-warn-500);
   border-radius: 8px !important;
   padding: 12px 14px !important;
-  max-width: 260px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
+  white-space: normal;
+  text-align: left;
 
-.custom-note {
-  color: var(--ig-warn-700); // Dark orange
-  margin: 0 0 8px 0;
-  font-weight: 600;
-  font-size: 0.75rem;
-}
+  .custom-note {
+    color: var(--ig-warn-700);
+    margin: 0 0 8px 0;
+    font-weight: 600;
+    font-size: 0.75rem;
+    line-height: 1.35;
+  }
 
-.custom-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  .custom-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 
-  li {
-    color: var(--ig-gray-800);
-    font-size: 0.7rem;
-    padding-left: 16px;
-    position: relative;
+    li {
+      color: var(--ig-gray-800);
+      font-size: 0.72rem;
+      line-height: 1.35;
+      padding-left: 18px;
+      position: relative;
 
-    &::before {
-      content: "✓";
-      position: absolute;
-      left: 0;
-      color: var(--ig-warn-700); // Orange
-      font-weight: bold;
+      &::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        top: 0;
+        color: var(--ig-warn-700);
+        font-weight: bold;
+      }
     }
   }
 }

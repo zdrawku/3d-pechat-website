@@ -8,7 +8,7 @@
 
 // Light theme palette
 $light-palette: palette($primary: #FF5722,
-    $secondary: #4CAF50,
+    $secondary: #0EA5A5,
     $surface: #F5F5F5,
     $error: #F44336,
     $success: #8BC34A,
@@ -17,7 +17,7 @@ $light-palette: palette($primary: #FF5722,
 
 // Dark theme palette
 $dark-palette: palette($primary: #FF7043,
-    $secondary: #66BB6A,
+    $secondary: #2DD4BF,
     $surface: #1E1E1E,
     $error: #EF5350,
     $success: #9CCC65,
@@ -92,11 +92,11 @@ $exclude-components: (
   --ig-primary-400: #FF8A65;
   --ig-primary-600: #F4511E;
 
-  // Secondary colors
-  --ig-secondary-500: #66BB6A;
-  --ig-secondary-500-contrast: #000000;
-  --ig-secondary-400: #81C784;
-  --ig-secondary-600: #4CAF50;
+  // Secondary colors (teal)
+  --ig-secondary-500: #2DD4BF;
+  --ig-secondary-500-contrast: #00201D;
+  --ig-secondary-400: #5EEAD4;
+  --ig-secondary-600: #14B8A6;
 
   // Error colors
   --ig-error-500: #EF5350;

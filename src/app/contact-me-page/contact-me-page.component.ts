@@ -27,7 +27,16 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
   public message?: string;
 
   public isSubmitting = false;
-  public submitStatus: 'idle' | 'success' | 'error' | 'missing-fields' | 'missing-captcha' = 'idle';
+  public submitStatus: 'idle' | 'success' | 'error' | 'missing-fields' | 'missing-captcha' | 'invalid-file' = 'idle';
+
+  // Attached image (optional, single file only). Web3Forms accepts file
+  // attachments via multipart/form-data — see
+  // https://docs.web3forms.com/getting-started/examples/file-upload-form
+  // NOTE: multiple attachments require a paid Web3Forms plan; the free tier
+  // only delivers one, so the UI is deliberately limited to a single file
+  // (with an inline notice) rather than silently dropping extras.
+  public attachedFile: File | null = null;
+  private readonly maxFileSizeBytes = 5 * 1024 * 1024; // 5 MB
 
   private hcaptchaWidgetId?: string;
   private hcaptchaToken = '';
@@ -140,6 +149,38 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
     window.open(this.tiktokUrl, '_blank');
   }
 
+  // Called by the hidden <input type="file"> in the template (see .file-dropzone
+  // in the HTML). Only a single file is accepted — the free Web3Forms plan
+  // only delivers one attachment, so the input doesn't even have `multiple`.
+  // Validates size before setting attachedFile, which the template renders as
+  // a removable chip (.file-chip / removeFile()).
+  onFilesSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    // Size limit (maxFileSizeBytes above).
+    if (file.size > this.maxFileSizeBytes) {
+      this.submitStatus = 'invalid-file';
+      input.value = '';
+      return;
+    }
+
+    this.attachedFile = file;
+    if (this.submitStatus === 'invalid-file') {
+      this.submitStatus = 'idle';
+    }
+    // Clear the input value so re-selecting the same filename fires 'change' again.
+    input.value = '';
+  }
+
+  // Removes the attached file (X button on the .file-chip).
+  removeFile(): void {
+    this.attachedFile = null;
+  }
+
   async sendEmail(form: NgForm): Promise<void> {
     // Validate required fields
     if (!this.value || !this.value1 || !this.value2 || !this.message) {
@@ -156,27 +197,32 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
     this.submitStatus = 'idle';
 
     try {
+      // FormData (multipart) instead of JSON so a file attachment is supported
+      // — Web3Forms reads a field as a file attachment when its value is a
+      // File/Blob. Single file only (see attachedFile above).
+      const formData = new FormData();
+      formData.append('access_key', environment.web3formsAccessKey);
+      formData.append('name', this.value);
+      formData.append('email', this.value1);
+      formData.append('subject', this.value2);
+      formData.append('message', this.message);
+      formData.append('from_name', '3dpechat.bg контактна форма');
+      formData.append('h-captcha-response', this.hcaptchaToken);
+      if (this.attachedFile) {
+        formData.append('attachment', this.attachedFile, this.attachedFile.name);
+      }
+
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          access_key: environment.web3formsAccessKey,
-          name: this.value,
-          email: this.value1,
-          subject: this.value2,
-          message: this.message,
-          from_name: '3dpechat.bg контактна форма',
-          'h-captcha-response': this.hcaptchaToken
-        })
+        headers: { 'Accept': 'application/json' },
+        body: formData
       });
 
       const result = await response.json();
       if (result.success) {
         this.submitStatus = 'success';
         form.resetForm();
+        this.attachedFile = null;
       } else {
         this.submitStatus = 'error';
       }

@@ -103,8 +103,8 @@
 .drawer_chip {
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 6px 9px;
+  gap: 10px;
+  padding: 8px 10px;
   border-radius: 10px;
   background: var(--bg-body);
   border: 1px solid var(--ig-gray-300);
@@ -142,10 +142,11 @@
   }
 }
 
+// Icon tile size — bump width/height/font-size together to resize.
 .drawer_chip_tile {
-  width: 24px;
-  height: 24px;
-  border-radius: 7px;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
   background: var(--bg-alt);
   color: var(--ig-gray-700);
   display: flex;
@@ -154,26 +155,28 @@
   flex-shrink: 0;
 
   igx-icon {
-    font-size: 14px !important;
-    width: 14px !important;
-    height: 14px !important;
+    font-size: 16px !important;
+    width: 16px !important;
+    height: 16px !important;
   }
 }
 
+// Nav item text — `b` is the label (e.g. "Начало"), `span` is the subtitle
+// (e.g. "Общ преглед"). Edit these two font-sizes to change drawer text size.
 .drawer_chip_txt {
   display: flex;
   flex-direction: column;
-  line-height: 1.15;
+  line-height: 1.2;
   min-width: 0;
 
   b {
-    font-size: 12px;
+    font-size: 14px; // nav item label size
     font-weight: 650;
     color: var(--ig-gray-900);
   }
 
   span {
-    font-size: 9px;
+    font-size: 10.5px; // nav item subtitle size
     color: var(--ig-gray-700);
   }
 }
@@ -501,6 +504,8 @@
 }
 
 // Slide the knob to the right end when dark theme is active.
+// 26px = track width (54px) - knob width (22px) - 2*offset (2px each side).
+// If you resize .theme-switch-track or .theme-switch-knob, recompute this.
 .theme-switch.is-dark .theme-switch-knob {
   transform: translateX(26px);
 }
@@ -508,23 +513,19 @@
 .content {
   height: max-content;
   min-width: min-content;
-  
+
   .short-text {
     display: none;
   }
-  
+
   .full-text {
     display: inline;
   }
-  
-  @media (max-width: 480px) {
-    .short-text {
-      display: inline;
-    }
-    
-    .full-text {
-      display: none;
-    }
+
+  // Below 600px the "Меню" pill + CTA + socials + theme switch need the room —
+  // hide the wordmark entirely (the logo/brand is still in the drawer).
+  @media (max-width: 600px) {
+    display: none;
   }
 }
 .icon {

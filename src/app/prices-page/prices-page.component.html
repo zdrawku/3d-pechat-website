@@ -9,10 +9,6 @@
 <div class="prices-page">
   <!-- Pricing Tiers -->
   <div class="section-block">
-    <h2 class="section-heading">
-      Тарифи <span class="section-heading-note">— цена за 10гр PLA материал</span>
-    </h2>
-
     <div class="tiers-grid">
       @for (tier of tiers; track tier.id) {
         <div class="tier-card" [class]="tier.colorClass" [class.featured]="tier.featured">

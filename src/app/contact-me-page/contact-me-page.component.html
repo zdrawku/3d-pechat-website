@@ -91,6 +91,47 @@
               <igx-hint>Това поле е задължително</igx-hint>
             }
           </igx-input-group>
+
+          <!-- Optional single file attachment (Web3Forms file upload,
+            multipart/form-data). Limited to ONE file because the free
+            Web3Forms plan only delivers a single attachment — the info
+            icon below explains this to the user before they pick a file.
+            onFilesSelected() in the .ts validates size. To change the
+            size limit, edit maxFileSizeBytes in contact-me-page.component.ts. -->
+          <div class="field field-full file-field">
+            <label class="file-label">
+              Прикачи файл <span>(по избор, макс. 5MB)</span>
+              <button type="button" class="file-info-btn" [igxTooltipTarget]="fileInfoTooltip"
+                      aria-label="Информация за прикачване на файл">
+                <igx-icon>info</igx-icon>
+              </button>
+              <div #fileInfoTooltip="tooltip" igxTooltip class="file-info-tooltip">
+                Може да прикачите само 1 файл (до 5MB). Ако имате повече файлове за показване,
+                добавете линк към тях в съобщението.
+              </div>
+            </label>
+
+            @if (!attachedFile) {
+              <label class="file-dropzone">
+                <igx-icon>attach_file</igx-icon>
+                <span>Избери файл</span>
+                <input type="file" (change)="onFilesSelected($event)" hidden />
+              </label>
+            }
+
+            <!-- Selected file renders as a removable chip -->
+            @if (attachedFile) {
+              <ul class="file-list">
+                <li class="file-chip">
+                  <igx-icon>description</igx-icon>
+                  <span class="file-name">{{ attachedFile.name }}</span>
+                  <button type="button" class="file-remove" (click)="removeFile()" aria-label="Премахни файла">
+                    <igx-icon>close</igx-icon>
+                  </button>
+                </li>
+              </ul>
+            }
+          </div>
         </div>
 
         <div id="hcaptcha-container"></div>
@@ -121,6 +162,11 @@
         @if (submitStatus === 'missing-captcha') {
           <p class="form-status form-status--error">
             Моля, потвърдете, че не сте робот.
+          </p>
+        }
+        @if (submitStatus === 'invalid-file') {
+          <p class="form-status form-status--error">
+            Файлът е твърде голям (макс. 5MB). Моля, изберете друг файл.
           </p>
         }
       </form>
