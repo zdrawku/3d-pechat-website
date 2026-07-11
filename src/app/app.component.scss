@@ -77,26 +77,127 @@
   );
 }
 
+// Grouped chip navigation (Option 2): each destination is a bordered card with
+// an icon tile + one-line subtitle, grouped under small section labels.
+// Replaces the old flat igxDrawerItem icon+text rows.
+.drawer_group_label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ig-gray-700);
+  padding: 10px 14px 4px;
+}
+
+.drawer_chip_list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 10px;
+}
+
+.drawer_chip_list_first {
+  padding-top: 10px;
+}
+
+.drawer_chip {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 9px;
+  border-radius: 10px;
+  background: var(--bg-body);
+  border: 1px solid var(--ig-gray-300);
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+
+  &:hover {
+    border-color: var(--ig-primary-500);
+    transform: translateX(2px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ig-primary-500);
+    outline-offset: 2px;
+  }
+
+  &.active {
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--ig-primary-500) 18%, transparent),
+      color-mix(in srgb, var(--ig-primary-500) 8%, transparent)
+    );
+    border-color: var(--ig-primary-500);
+
+    .drawer_chip_tile {
+      background: var(--ig-primary-500);
+      color: #fff;
+    }
+
+    .drawer_chip_txt b {
+      color: var(--ig-primary-500);
+    }
+  }
+}
+
+.drawer_chip_tile {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  background: var(--bg-alt);
+  color: var(--ig-gray-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  igx-icon {
+    font-size: 14px !important;
+    width: 14px !important;
+    height: 14px !important;
+  }
+}
+
+.drawer_chip_txt {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  min-width: 0;
+
+  b {
+    font-size: 12px;
+    font-weight: 650;
+    color: var(--ig-gray-900);
+  }
+
+  span {
+    font-size: 9px;
+    color: var(--ig-gray-700);
+  }
+}
+
 .drawer_brand_card {
   margin-top: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 16px 14px 20px;
+  gap: 6px;
+  padding: 12px 14px 14px;
   border-top: 1px solid var(--ig-gray-300);
 
   img {
-    width: 150px;
+    width: 96px;
     max-width: 100%;
     height: auto;
-    border-radius: 10px;
+    border-radius: 8px;
     display: block;
   }
 }
 
 .drawer_brand_tag {
-  font-size: 11px;
+  font-size: 10px;
   line-height: 1.3;
   text-align: center;
   color: var(--ig-gray-700);
@@ -116,14 +217,78 @@
 .row-layout {
   display: flex;
 }
-.row_layout_1 {
-  justify-content: flex-start;
+// Menu trigger (Trigger B): gradient pill button with an animated hamburger
+// glyph + "Меню" label — replaces the old bare hamburger-icon-plus-text row.
+.menu-trigger {
+  display: inline-flex;
   align-items: center;
-  align-content: flex-start;
   gap: 8px;
+  border: none;
+  border-radius: 999px;
+  padding: 7px 14px 7px 11px;
+  background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500) 75%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  font-family: inherit;
+  cursor: pointer;
+  flex-shrink: 0;
+  // No box-shadow: the 56px navbar is too short to contain any soft elevation
+  // shadow without visibly clipping it against the bar's bottom edge. The
+  // gradient fill + pill shape already read as clickable on their own.
+  transition: transform 0.2s ease, filter 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ig-primary-500);
+    outline-offset: 2px;
+  }
+}
+
+.menu-trigger-bars {
+  width: 16px;
+  height: 11px;
   position: relative;
-  min-width: 50px;
-  min-height: 50px;
+  flex-shrink: 0;
+
+  span {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    border-radius: 2px;
+    background: #fff;
+    transition: transform 0.2s ease, width 0.2s ease;
+
+    &:nth-child(1) {
+      top: 0;
+    }
+
+    &:nth-child(2) {
+      top: 4.5px;
+      width: 70%;
+    }
+
+    &:nth-child(3) {
+      top: 9px;
+    }
+  }
+}
+
+.menu-trigger:hover .menu-trigger-bars span:nth-child(2) {
+  width: 100%;
+}
+
+.menu-trigger-label {
+  white-space: nowrap;
 }
 .horizontal_group_1 {
   justify-content: flex-start;
@@ -435,51 +600,6 @@ $chooser-size: 34px;
     color: var(--ig-primary-500);
     text-decoration: underline;
   }
-}
-.button_home {
-  --ig-size: var(--ig-size-medium);
-  height: max-content;
-  // Darken the flat-button text from the theme green (#4CAF50, 2.54:1 on the
-  // #F5F5F5 surface) to #2E7D32 (~4.7:1) for WCAG AA contrast.
-  --foreground: #2E7D32;
-  color: #2E7D32;
-  border-radius: 8px;
-  transition: background-color 0.2s ease, color 0.2s ease;
-
-  // Soft warm pill on hover.
-  &:hover {
-    background-color: color-mix(in srgb, var(--ig-primary-500) 10%, transparent);
-  }
-
-  // The 6-button row + logo + social icons + theme toggle + the "Заяви оферта"
-  // CTA needs ~1080px to fit without wrapping/overflowing; hide the link row
-  // before that (the drawer hamburger + CTA remain available) rather than let
-  // the navbar overflow.
-  @media (max-width: 1080px) {
-    display: none;
-  }
-}
-
-// Active-page pill: orange fill + orange text, matching the drawer's active
-// item. routerLinkActive stamps .nav-link-active on the current route's button.
-.button_home.nav-link-active {
-  --foreground: var(--ig-primary-500);
-  color: var(--ig-primary-500);
-  background-color: color-mix(in srgb, var(--ig-primary-500) 14%, transparent);
-  font-weight: 600;
-}
-
-// Dark theme: #2E7D32 would be too dark on the #1E1E1E surface, so use a
-// lighter green (#81C784, ~7:1 on dark) instead.
-:host-context(.dark-theme) .button_home {
-  --foreground: #81C784;
-  color: #81C784;
-}
-
-:host-context(.dark-theme) .button_home.nav-link-active {
-  --foreground: var(--ig-primary-400);
-  color: var(--ig-primary-400);
-  background-color: color-mix(in srgb, var(--ig-primary-500) 22%, transparent);
 }
 
 // "Заяви оферта" call-to-action — a filled orange pill leading to the contact
