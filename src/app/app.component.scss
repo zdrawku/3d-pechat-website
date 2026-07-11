@@ -636,8 +636,6 @@
 
   &:hover {
     transform: translateY(-1px);
-    filter: brightness(1.05);
-    box-shadow: 0 6px 18px color-mix(in srgb, var(--ig-primary-500) 45%, transparent);
     text-decoration: none;
   }
 

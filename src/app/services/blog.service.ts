@@ -119,7 +119,7 @@ export class BlogService {
       author: '3D Печат България'
     },
         {
-      id: '10',
+      id: '11',
       title: '3D принтер Bambu Lab X2D: Ревю, функции и избор',
       description: 'Подробно ревю на 3D принтера Bambu Lab X2D. Характеристики, предимства, недостатъци и съвети за избор. Всичко за високоскоростното 3D принтиране.',
       slug: '3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor',
@@ -130,7 +130,7 @@ export class BlogService {
       author: '3D Печат България'
     },
         {
-      id: '11',
+      id: '12',
       title: '3D принтер за начинаещи: от детско хоби в семеен бизнес',
       description: 'Вдъхновяваща история как 12-годишно дете превърна 3D принтирането в семеен проект. Практични съвети за избор на първи 3D принтер и стартиране.',
       slug: '3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt',
@@ -141,7 +141,7 @@ export class BlogService {
       author: '3D Печат България'
     },
         {
-      id: '12',
+      id: '13',
       title: 'Infill при 3D печат: плътност, здравина и филамент',
       description: 'Научете как infill плътността влияе върху здравината, теглото и разхода на филамент при 3D принтиране. Практически съвети за избор на правилните настройки.',
       slug: 'infill-pri-3d-pechat-platnost-zdravina-i-filament',
