@@ -133,11 +133,80 @@ $exclude-components: (
   --ig-gray-900: #1A1A1A;
 }
 
+// ===========================================================================
+// Background system (light) — replaces flat --ig-surface-* section fills with
+// warm-tinted gradients, a faint brand dot texture, and soft section seams.
+// Tune intensity here in one place; both themes stay in sync. All accent use
+// is via color-mix at low opacity so text on top stays WCAG-safe.
+// Dark overrides live in the .dark-theme block below.
+// ---------------------------------------------------------------------------
+:root {
+  // Warm neutrals (a hair of orange bias vs sterile grey)
+  --bg-paper:   #F8F5F1;   // base body
+  --bg-paper-2: #FBF9F6;   // raised cards / surfaces on top of body
+  --bg-alt:     #F4F0EA;   // alternate/section base
+
+  // Composed background tokens
+  --bg-body: var(--bg-paper);
+  --bg-card: var(--bg-paper-2);
+
+  // Hero: two soft brand glows over a diagonal paper gradient
+  --bg-hero:
+    radial-gradient(120% 90% at 85% -10%, color-mix(in srgb, #FF5722 22%, transparent), transparent 55%),
+    radial-gradient(90% 80% at 0% 120%, color-mix(in srgb, #2196F3 14%, transparent), transparent 50%),
+    linear-gradient(160deg, var(--bg-paper-2), var(--bg-alt));
+
+  // Section: brand dot grid painted over a solid base.
+  // Apply as: background-color: var(--bg-section-base);
+  //           background-image: var(--bg-section);
+  //           background-size: var(--bg-section-size);
+  --bg-section-base: var(--bg-paper);
+  --bg-section: radial-gradient(color-mix(in srgb, #FF5722 26%, transparent) 1px, transparent 1.4px);
+  --bg-section-size: 22px 22px;
+
+  // Whole-page texture: same dot grid but fainter, meant to sit under a page's
+  // default body so no page reads as a dead-flat fill. Apply on a page :host as:
+  //   background-color: var(--bg-body);
+  //   background-image: var(--bg-body-texture);
+  //   background-size: var(--bg-section-size);
+  --bg-body-texture: radial-gradient(color-mix(in srgb, #FF5722 14%, transparent) 1px, transparent 1.4px);
+
+  // Soft shadow-fade for section boundaries (apply on a 0-height ::before/::after)
+  --seam: linear-gradient(to bottom, color-mix(in srgb, #211D18 6%, transparent), transparent 14px);
+
+  // Consistent soft elevation so cards lift off the new backgrounds
+  --shadow-card: 0 1px 2px rgba(33, 29, 24, 0.05), 0 10px 30px rgba(33, 29, 24, 0.07);
+}
+
 // Dark mode gray overrides
 .dark-theme {
   --ig-gray-700: #B0B0B0;
   --ig-gray-800: #D0D0D0;
   --ig-gray-900: #E5E5E5;
+}
+
+// Background system (dark) — warm near-black instead of blue-black; brand
+// glows/dots pushed slightly stronger to stay visible on the darker ground.
+.dark-theme {
+  --bg-paper:   #16130F;
+  --bg-paper-2: #1E1A15;
+  --bg-alt:     #191510;
+
+  --bg-body: var(--bg-paper);
+  --bg-card: var(--bg-paper-2);
+
+  --bg-hero:
+    radial-gradient(120% 90% at 85% -10%, color-mix(in srgb, #FF5722 30%, transparent), transparent 55%),
+    radial-gradient(90% 80% at 0% 120%, color-mix(in srgb, #2196F3 20%, transparent), transparent 50%),
+    linear-gradient(160deg, var(--bg-paper-2), var(--bg-alt));
+
+  --bg-section-base: var(--bg-paper);
+  --bg-section: radial-gradient(color-mix(in srgb, #FF5722 34%, transparent) 1px, transparent 1.4px);
+  --bg-body-texture: radial-gradient(color-mix(in srgb, #FF5722 20%, transparent) 1px, transparent 1.4px);
+
+  --seam: linear-gradient(to bottom, rgba(0, 0, 0, 0.35), transparent 14px);
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 34px rgba(0, 0, 0, 0.5);
 }
 
 // Reduce heading sizes globally
@@ -160,9 +229,25 @@ h3,
 }
 
 body {
-  background: var(--ig-surface-500);
+  background: var(--bg-body);
   color: var(--ig-surface-500-contrast);
   --ig-size: var(--ig-size-medium);
+}
+
+// Reusable soft transition between two stacked sections. Put on the lower
+// section (or a thin divider element) to fade the seam instead of a hard edge.
+.section-seam {
+  position: relative;
+}
+.section-seam::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 16px;
+  background: var(--seam);
+  pointer-events: none;
 }
 
 html,

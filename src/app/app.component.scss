@@ -9,13 +9,32 @@
 }
 .navigation_bar_1 {
   --igx-navbar-text-color: var(--ig-surface-500-contrast);
-  --igx-navbar-background: var(--ig-surface-500);
+  --igx-navbar-background: transparent;
+  // Navbar A: warm brand gradient flowing left -> right, glowing harder.
+  // Set on the element (the --igx-navbar-background var only takes a solid).
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--ig-primary-500) 16%, var(--bg-card)) 0%,
+    var(--bg-card) 55%,
+    var(--bg-card) 100%
+  );
+  border-bottom: 1px solid var(--line, var(--ig-gray-300));
   z-index: 10000;
   position: fixed;
   top: 0;
   width: 100%;
   min-width: 100%;
   max-width: 100%;
+}
+
+// Dark theme gets a touch more punch so the glow stays visible on near-black.
+:host-context(.dark-theme) .navigation_bar_1 {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--ig-primary-500) 24%, var(--bg-card)) 0%,
+    var(--bg-card) 55%,
+    var(--bg-card) 100%
+  );
 }
 .navigation_drawer_1 {
   min-width: min-content;
@@ -43,6 +62,47 @@
     }
   }
 }
+// Brand card pinned to the bottom of the nav drawer (Option A).
+// The igxDrawer template projects directly into .igx-nav-drawer__aside. Make
+// that aside a full-height flex column so the card's margin-top:auto pushes it
+// past the menu items into the space that used to be empty.
+::ng-deep .navigation_drawer_1 .igx-nav-drawer__aside {
+  display: flex;
+  flex-direction: column;
+  // Faint warm tint that ties the drawer to the brand card at its base.
+  background: linear-gradient(
+    180deg,
+    var(--bg-card),
+    color-mix(in srgb, var(--ig-primary-500) 6%, var(--bg-card))
+  );
+}
+
+.drawer_brand_card {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 14px 20px;
+  border-top: 1px solid var(--ig-gray-300);
+
+  img {
+    width: 150px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    display: block;
+  }
+}
+
+.drawer_brand_tag {
+  font-size: 11px;
+  line-height: 1.3;
+  text-align: center;
+  color: var(--ig-gray-700);
+  letter-spacing: 0.02em;
+}
+
 .main_view_container_2 {
   overflow: auto;
   position: relative;
@@ -90,7 +150,11 @@
   flex-basis: 0;
 }
 .footer_section {
-  background-color: var(--ig-surface-150);
+  background: linear-gradient(
+    180deg,
+    var(--bg-alt),
+    color-mix(in srgb, var(--ig-gray-900) 4%, var(--bg-alt))
+  );
   justify-content: flex-start;
   align-items: stretch;
   align-content: flex-start;
@@ -339,6 +403,26 @@ $chooser-size: 34px;
 :host-context(.dark-theme) .icon_mail_footer {
   color: var(--ig-gray-600);
 }
+.footer_link {
+  color: var(--ig-gray-700);
+  height: max-content;
+  min-width: min-content;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: var(--ig-primary-500);
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ig-primary-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
 .link_customer_support_footer {
   color: var(--ig-gray-700);
   height: max-content;
@@ -359,13 +443,30 @@ $chooser-size: 34px;
   // #F5F5F5 surface) to #2E7D32 (~4.7:1) for WCAG AA contrast.
   --foreground: #2E7D32;
   color: #2E7D32;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, color 0.2s ease;
 
-  // The 6-button row + logo + social icons + theme toggle needs ~950px to
-  // fit without wrapping/overflowing; hide the row before that (the drawer
-  // hamburger remains available) rather than let the navbar overflow.
-  @media (max-width: 950px) {
+  // Soft warm pill on hover.
+  &:hover {
+    background-color: color-mix(in srgb, var(--ig-primary-500) 10%, transparent);
+  }
+
+  // The 6-button row + logo + social icons + theme toggle + the "Заяви оферта"
+  // CTA needs ~1080px to fit without wrapping/overflowing; hide the link row
+  // before that (the drawer hamburger + CTA remain available) rather than let
+  // the navbar overflow.
+  @media (max-width: 1080px) {
     display: none;
   }
+}
+
+// Active-page pill: orange fill + orange text, matching the drawer's active
+// item. routerLinkActive stamps .nav-link-active on the current route's button.
+.button_home.nav-link-active {
+  --foreground: var(--ig-primary-500);
+  color: var(--ig-primary-500);
+  background-color: color-mix(in srgb, var(--ig-primary-500) 14%, transparent);
+  font-weight: 600;
 }
 
 // Dark theme: #2E7D32 would be too dark on the #1E1E1E surface, so use a
@@ -373,6 +474,56 @@ $chooser-size: 34px;
 :host-context(.dark-theme) .button_home {
   --foreground: #81C784;
   color: #81C784;
+}
+
+:host-context(.dark-theme) .button_home.nav-link-active {
+  --foreground: var(--ig-primary-400);
+  color: var(--ig-primary-400);
+  background-color: color-mix(in srgb, var(--ig-primary-500) 22%, transparent);
+}
+
+// "Заяви оферта" call-to-action — a filled orange pill leading to the contact
+// form. Kept visible on small screens (unlike the nav links) since it's the
+// primary action; the drawer hamburger still covers navigation.
+.nav_cta_button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: max-content;
+  padding: 9px 18px;
+  margin-left: 4px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500) 70%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  text-decoration: none;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--ig-primary-500) 35%, transparent);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--ig-primary-500) 45%, transparent);
+    text-decoration: none;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ig-primary-500);
+    outline-offset: 2px;
+  }
+
+  // Shrink to just the essentials on tight widths so it doesn't overflow.
+  @media (max-width: 480px) {
+    padding: 8px 12px;
+    font-size: 0.8125rem;
+  }
 }
 .icon_button_5 {
   --foreground: var(--ig-surface-500-contrast);

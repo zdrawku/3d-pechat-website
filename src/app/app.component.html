@@ -9,25 +9,36 @@
         <span class="short-text">3D Печат</span>
       </p>
     </div>
-    <button igxButton="flat" type="button" [routerLink]="[`/`]" class="button_home">
+    <button igxButton="flat" type="button" [routerLink]="[`/`]"
+            routerLinkActive="nav-link-active" [routerLinkActiveOptions]="{ exact: true }"
+            class="button_home">
       Начало
     </button>
-    <button igxButton="flat" type="button" [routerLink]="[`/portfolio`]" class="button_home">
+    <button igxButton="flat" type="button" [routerLink]="[`/portfolio`]"
+            routerLinkActive="nav-link-active" class="button_home">
       Портфолио
     </button>
-    <button igxButton="flat" type="button" [routerLink]="[`/products`]" class="button_home">
+    <button igxButton="flat" type="button" [routerLink]="[`/products`]"
+            routerLinkActive="nav-link-active" class="button_home">
       Продукти
     </button>
-    <button igxButton="flat" type="button" [routerLink]="[`/prices`]" class="button_home">
+    <button igxButton="flat" type="button" [routerLink]="[`/prices`]"
+            routerLinkActive="nav-link-active" class="button_home">
       Цени
     </button>
-    <button igxButton="flat" type="button" [routerLink]="[`/contact`]" class="button_home">
+    <button igxButton="flat" type="button" [routerLink]="[`/contact`]"
+            routerLinkActive="nav-link-active" class="button_home">
       Обадете се
     </button>
-    <button igxButton="flat" type="button" [routerLink]="[`/blog`]" class="button_home">
+    <button igxButton="flat" type="button" [routerLink]="[`/blog`]"
+            routerLinkActive="nav-link-active" class="button_home">
       Блог
     </button>
   </igx-navbar-title>
+
+  <a [routerLink]="[`/contact`]" class="nav_cta_button">
+    Заяви оферта
+  </a>
   <a href="https://www.instagram.com/3dpechat.bg" target="_blank" rel="noopener noreferrer" 
      igxIconButton="flat" class="icon_button_5" aria-label="Instagram профил"
      [igxTooltipTarget]="instagramNavTooltip">
@@ -97,6 +108,12 @@
         </igx-icon>
         <span>Блог</span>
       </div>
+
+      <div class="drawer_brand_card">
+        <img src="assets/logo-drawer.webp" alt="3DPechat.bg лого"
+             width="150" height="150" loading="lazy" decoding="async" />
+        <span class="drawer_brand_tag">Направено в София · от 2025</span>
+      </div>
     </ng-template>
   </igx-nav-drawer>
   <div class="column-layout group">
@@ -138,41 +155,41 @@
           </div>
           <div class="column-layout column_layout">
             <p class="ig-typography__subtitle-2 content">
-              Quick Links
+              Бързи връзки
             </p>
-            <a class="ig-typography__body-2 content_2">
-              About Us
+            <a [routerLink]="['/']" class="ig-typography__body-2 footer_link">
+              Начало
             </a>
-            <a class="ig-typography__body-2 content_2">
-              Our Fleet
+            <a [routerLink]="['/portfolio']" class="ig-typography__body-2 footer_link">
+              Портфолио
             </a>
-            <a class="ig-typography__body-2 content_2">
-              Pricing
+            <a [routerLink]="['/prices']" class="ig-typography__body-2 footer_link">
+              Цени
             </a>
-            <a class="ig-typography__body-2 content_2">
-              FAQ
+            <a [routerLink]="['/blog']" class="ig-typography__body-2 footer_link">
+              Блог
             </a>
           </div>
           <div class="column-layout column_layout">
             <p class="ig-typography__subtitle-2 content">
-              Legal
+              Услуги
             </p>
-            <a class="ig-typography__body-2 content_2">
-              Privacy Policy
+            <a [routerLink]="['/products']" class="ig-typography__body-2 footer_link">
+              Продукти
             </a>
-            <a class="ig-typography__body-2 content_2">
-              Terms of Service
+            <a [routerLink]="['/prices']" class="ig-typography__body-2 footer_link">
+              Ценоразпис
             </a>
-            <a class="ig-typography__body-2 content_2">
-              Cookie Policy
+            <a [routerLink]="['/contact']" class="ig-typography__body-2 footer_link">
+              Заяви оферта
             </a>
-            <a class="ig-typography__body-2 content_2">
-              User Agreement
+            <a href="viber://chat?number=%2B359883310616" class="ig-typography__body-2 footer_link">
+              Пиши във Viber
             </a>
           </div>
           <div class="column-layout column_layout_-3">
             <p class="ig-typography__subtitle-2 content">
-              Contact Us
+              Контакти
             </p>
             <div class="row-layout row_layout_-2">
               <igx-icon class="icon_mail_footer">

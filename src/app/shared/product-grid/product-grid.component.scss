@@ -7,9 +7,10 @@
 }
 
 .product-card {
-  background-color: var(--ig-surface-500);
+  background-color: var(--bg-card);
   border-radius: 8px;
   overflow: hidden;
+  box-shadow: var(--shadow-card);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
@@ -100,7 +101,7 @@
 .card-image.padded-image {
   object-fit: contain;
   padding: 1px;
-  background-color: var(--ig-surface-500);
+  background-color: var(--bg-card);
 }
 
 .front-image {

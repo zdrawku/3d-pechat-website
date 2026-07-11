@@ -6,7 +6,7 @@
   position: relative;
   min-width: 50px;
   min-height: 50px;
-  background-color: var(--ig-surface-50);
+  background-color: var(--bg-body);
   max-width: 100%;
   overflow-x: hidden;
 
@@ -15,8 +15,8 @@
     justify-content: flex-start;
     align-items: center;
     gap: 32px;
-    padding: 48px 24px;
-    background-color: var(--ig-surface-150);
+    padding: 48px 0px;
+    background: var(--bg-hero);
     border-radius: 8px;
     max-width: 100%;
     box-sizing: border-box;
@@ -113,8 +113,10 @@
     align-items: stretch;
     gap: 32px;
     padding: 24px;
-    background-color: var(--ig-surface-150);
-    border-radius: 8px;
+    background-color: var(--bg-section-base);
+    background-image: var(--bg-section);
+    background-size: var(--bg-section-size);
+    // border-radius: 8px;
   }
 
   .section-title {
@@ -129,9 +131,11 @@
     justify-content: flex-start;
     align-items: stretch;
     gap: 32px;
-    padding: 48px 24px;
-    background-color: var(--ig-surface-150);
-    border-radius: 8px;
+    padding: 48px 0px;
+    background-color: var(--bg-section-base);
+    background-image: var(--bg-section);
+    background-size: var(--bg-section-size);
+    // border-radius: 8px;
   }
 
   .features-grid {
@@ -148,9 +152,10 @@
     text-align: center;
     gap: 12px;
     padding: 24px;
-    background-color: var(--ig-surface-500);
+    background-color: var(--bg-card);
     border-radius: 8px;
     border: 1px solid var(--ig-gray-300);
+    box-shadow: var(--shadow-card);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 
     &:hover {

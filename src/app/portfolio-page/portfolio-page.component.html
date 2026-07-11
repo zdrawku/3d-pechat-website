@@ -8,15 +8,12 @@
         3D принтирани решения
       </h2>
     </div>
-    <div class="row-layout row_layout_3">
-      <igx-carousel [vertical]="false" animationType="slide" [interval]="2000" indicatorsOrientation="end"
-        class="carousel_1">
-        @for (image of carouselImages; track image; let i = $index) {
-          <igx-slide class="row-layout carousel_slide_1">
-            <img [src]="image" [alt]="'3D печат проект ' + (i + 1)" class="image_1" loading="lazy" />
-          </igx-slide>
-        }
-      </igx-carousel>
+    <div class="masonry-gallery">
+      @for (image of carouselImages; track image; let i = $index) {
+        <div class="masonry-item">
+          <img [src]="image" [alt]="'3D печат проект ' + (i + 1)" class="masonry-image" loading="lazy" />
+        </div>
+      }
     </div>
   </div>
 </div>

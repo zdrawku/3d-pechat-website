@@ -8,7 +8,9 @@
   gap: 0;
   overflow-x: hidden;
   max-width: 100%;
-  background-color: var(--ig-surface-50);
+  background-color: var(--bg-body);
+  background-image: var(--bg-body-texture);
+  background-size: var(--bg-section-size);
 }
 .column-layout {
   display: flex;

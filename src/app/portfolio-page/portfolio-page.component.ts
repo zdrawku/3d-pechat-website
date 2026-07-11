@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
-import { IGX_CAROUSEL_DIRECTIVES } from 'igniteui-angular';
 
 import { carouselImages } from './carousel-images';
 import { SeoService } from '../services/seo.service';
 
 @Component({
   selector: 'app-portfolio-page',
-  imports: [IGX_CAROUSEL_DIRECTIVES],
+  imports: [],
   templateUrl: './portfolio-page.component.html',
   styleUrls: ['./portfolio-page.component.scss']
 })

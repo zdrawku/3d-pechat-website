@@ -6,7 +6,9 @@
   align-items: stretch;
   align-content: flex-start;
   gap: 0;
-  background-color: var(--ig-surface-50);
+  background-color: var(--bg-body);
+  background-image: var(--bg-body-texture);
+  background-size: var(--bg-section-size);
 }
 .row-layout {
   display: flex;
@@ -162,4 +164,19 @@
 .form-status--error {
   color: #b71c1c;
   background-color: rgba(244, 67, 54, 0.12);
+}
+
+// Dark theme: the light-theme dark-green/dark-red text (#1b5e20/#b71c1c) is
+// nearly unreadable against the dark surface background. Swap to lighter
+// tints with sufficient contrast, mirroring the palette's dark-theme colors.
+:host-context(.dark-theme) {
+  .form-status--success {
+    color: #a5d6a7;
+    background-color: rgba(76, 175, 80, 0.2);
+  }
+
+  .form-status--error {
+    color: #ef9a9a;
+    background-color: rgba(244, 67, 54, 0.2);
+  }
 }

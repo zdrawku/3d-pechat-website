@@ -1,3 +1,10 @@
+:host {
+  display: block;
+  background-color: var(--bg-body);
+  background-image: var(--bg-body-texture);
+  background-size: var(--bg-section-size);
+}
+
 .blog-list-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -12,7 +19,7 @@
     .blog-title {
       font-size: 2.5rem;
       font-weight: 700;
-      color: #333;
+      color: var(--ig-gray-900);
       margin-bottom: 0.5rem;
 
       @media (max-width: 768px) {
@@ -22,7 +29,7 @@
 
     .blog-subtitle {
       font-size: 1.1rem;
-      color: #666;
+      color: var(--ig-gray-700);
       margin: 0;
     }
   }
