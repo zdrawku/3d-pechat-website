@@ -239,15 +239,10 @@
   // No box-shadow: the 56px navbar is too short to contain any soft elevation
   // shadow without visibly clipping it against the bar's bottom edge. The
   // gradient fill + pill shape already read as clickable on their own.
-  transition: transform 0.2s ease, filter 0.2s ease;
+  transition: filter 0.2s ease;
 
   &:hover {
-    transform: translateY(-1px);
     filter: brightness(1.05);
-  }
-
-  &:active {
-    transform: translateY(0);
   }
 
   &:focus-visible {
