@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { IgxButtonDirective, IgxIconModule, IgxInputGroupModule, IgxSelectModule } from 'igniteui-angular';
+import { IgxButtonDirective, IgxIconModule, IgxInputGroupModule } from 'igniteui-angular';
 
 import { ProductGridComponent } from '../shared/product-grid/product-grid.component';
 import { SeoService } from '../services/seo.service';
@@ -28,7 +28,7 @@ interface ProductVariant {
 
 @Component({
   selector: 'app-products-page',
-  imports: [FormsModule, IgxButtonDirective, ProductGridComponent, IgxIconModule, IgxInputGroupModule, IgxSelectModule],
+  imports: [FormsModule, IgxButtonDirective, ProductGridComponent, IgxIconModule, IgxInputGroupModule],
   templateUrl: './products-page.component.html',
   styleUrls: ['./products-page.component.scss']
 })
@@ -217,17 +217,21 @@ export class ProductsPageComponent {
   // The initial selection is set here
   public sortOrder = 'newest'; 
 
-  public get isSearchOrSortActive(): boolean {
-    return this.searchText.length > 0 || this.sortOrder !== 'default';
-  }
-
   public get allFilteredProducts(): ProductVariant[] {
     const allProducts = [...this.productVariants];
     return this.filterAndSortProducts(allProducts);
   }
 
-  public get filteredProductVariants(): ProductVariant[] {
-    return this.filterAndSortProducts(this.productVariants);
+  public get resultCount(): number {
+    return this.allFilteredProducts.length;
+  }
+
+  public get totalCount(): number {
+    return this.productVariants.length;
+  }
+
+  public setSortOrder(order: string): void {
+    this.sortOrder = order;
   }
 
 
@@ -269,7 +273,7 @@ export class ProductsPageComponent {
       title: 'Продукти - 3D Печат България',
       description: 'Разгледайте нашите 3D принтирани продукти - монетни карти с българско знаме, стойки за слушалки и персонализирани продукти по поръчка.',
       keywords: '3D принтирани продукти, монетни карти, стойки за слушалки, персонализирани продукти, 3D печат по поръчка',
-      url: 'https://3dpechat.bg/products',
+      url: 'https://3dpechat.bg/products/',
       type: 'website'
     });
     this.seoService.removeStructuredData();
@@ -288,41 +292,5 @@ export class ProductsPageComponent {
         productName: product.name
       }
     });
-  }
-
-  public copySectionLink(sectionId: string): void {
-    // 1. Construct the URL
-    const url = new URL(window.location.href);
-    url.hash = sectionId;
-    const newUrl = url.href;
-
-    // 2. Update Browser URL (Visual only, no reload)
-    window.history.pushState(null, '', newUrl);
-
-    // 3. Smooth Scroll to the Section
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',   // Aligns the top of the element with the top of the viewport
-        inline: 'nearest'
-      });
-    }
-
-    // 4. Copy to Clipboard
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(newUrl).then(() => {
-        // Optional: Add a toast notification here
-        console.log('Link copied and scrolled!');
-      });
-    } else {
-      // Fallback for older browsers
-      const tempInput = document.createElement('input');
-      tempInput.value = newUrl;
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      document.execCommand('copy');
-      document.body.removeChild(tempInput);
-    }
   }
 }

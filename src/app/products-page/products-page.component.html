@@ -1,58 +1,67 @@
+<header class="page-banner" id="monetni-karti">
+  <div class="page-banner__titles">
+    <h1 class="page-banner__title">
+      3D принтирани продукти
+    </h1>
+    <p class="page-banner__subtitle">
+      Открийте нашата колекция от 3D принтирани продукти, изработени с прецизност и внимание към детайлите.
+    </p>
+  </div>
+  <div class="page-banner__actions">
+    <igx-input-group type="search" class="search-input">
+      <igx-icon igxPrefix>search</igx-icon>
+      <input igxInput name="search" type="text" [(ngModel)]="searchText" placeholder="Търсене на продукти..." />
+      @if (searchText.length > 0) {
+        <igx-icon igxSuffix (click)="searchText = ''">clear</igx-icon>
+      }
+    </igx-input-group>
+
+    <!-- Lightweight segmented sort control (replaces the heavy igx-select) -->
+    <div class="sort-segmented" role="group" aria-label="Сортиране на продуктите">
+      <button type="button" class="sort-option" [class.active]="sortOrder === 'newest'"
+        (click)="setSortOrder('newest')">
+        Най-нови
+      </button>
+      <button type="button" class="sort-option" [class.active]="sortOrder === 'oldest'"
+        (click)="setSortOrder('oldest')">
+        Най-стари
+      </button>
+      <button type="button" class="sort-option" [class.active]="sortOrder === 'asc'"
+        (click)="setSortOrder('asc')">
+        А-Я
+      </button>
+    </div>
+
+    <p class="result-count">
+      Показани <strong>{{ resultCount }}</strong> от <strong>{{ totalCount }}</strong> продукта
+    </p>
+  </div>
+</header>
+
 <div class="column-layout products-page">
-  <!-- Hero Section -->
-  <div class="column-layout hero-section" id="monetni-karti">
-    <div class="column-layout hero-content">
-      <h1 class="ig-typography__h1 page-title">
-        3D принтирани продукти
-        <button type="button" class="copy-link-btn" title="Копирай линк към секцията"
-          (click)="copySectionLink('monetni-karti')">
-          <igx-icon family="material">link</igx-icon>
-        </button>
-      </h1>
-      <p class="ig-typography__body-1 hero-description">
-        Открийте нашата колекция от 3D принтирани продукти, всеки изработен с прецизност и внимание към детайлите.
-      </p>
-    </div>
+  <div class="products-inner">
+    <!-- Products Grid Section -->
+    <div class="column-layout products-section">
+      @if (searchText) {
+        <h2 class="ig-typography__h4 section-title">Резултати за "{{searchText}}"</h2>
+      }
 
-    <!-- Search and Sort Controls -->
-    <div class="controls-section">
-      <igx-input-group type="search" class="search-input">
-        <igx-icon igxPrefix>search</igx-icon>
-        <input igxInput name="search" type="text" [(ngModel)]="searchText" placeholder="Търсене на продукти..." />
-        @if (searchText.length > 0) {
-          <igx-icon igxSuffix (click)="searchText = ''">clear</igx-icon>
-        }
-      </igx-input-group>
-
-      <igx-select [(ngModel)]="sortOrder" class="sort-select" placeholder="Сортиране">
-        <igx-select-item value="default">Сортиране</igx-select-item>
-        <igx-select-item value="newest">Най-нови</igx-select-item>
-        <igx-select-item value="oldest">Най-стари</igx-select-item>
-      </igx-select>
-    </div>
-
-    <!-- Global Search Results -->
-    @if (isSearchOrSortActive) {
-      <div class="column-layout products-section">
-        @if (searchText) {
-          <h2 class="ig-typography__h4 section-title">Резултати за "{{searchText}}"</h2>
-        }
-        @if (!searchText) {
-          <h2 class="ig-typography__h4 section-title">Всички продукти</h2>
-        }
+      @if (resultCount > 0) {
         <app-product-grid [products]="allFilteredProducts" (productAction)="orderProduct($event)">
         </app-product-grid>
-      </div>
-    }
-
-    <!-- Default Sectional View -->
-    @if (!isSearchOrSortActive) {
-      <!-- Products Grid Section -->
-      <div class="column-layout products-section">
-        <app-product-grid [products]="filteredProductVariants" (productAction)="orderProduct($event)">
-        </app-product-grid>
-      </div>
-    }
+      } @else {
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <igx-icon>search_off</igx-icon>
+          </div>
+          <p class="empty-state-title">Няма намерени продукти за "{{ searchText }}"</p>
+          <p class="empty-state-text">Опитайте с друга дума или разгледайте пълния каталог.</p>
+          <button igxButton="outlined" type="button" class="empty-state-reset" (click)="searchText = ''">
+            Изчисти търсенето
+          </button>
+        </div>
+      }
+    </div>
 
     <!-- Features Section -->
     <div class="column-layout features-section">

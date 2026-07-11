@@ -46,39 +46,39 @@ const sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://3dpechat.bg/portfolio</loc>
+    <loc>https://3dpechat.bg/portfolio/</loc>
     <lastmod>${new Date().toISOString().split('T')[0]}T10:00:00+01:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>1</priority>
   </url>
   <url>
-    <loc>https://3dpechat.bg/products</loc>
+    <loc>https://3dpechat.bg/products/</loc>
     <lastmod>${new Date().toISOString().split('T')[0]}T10:00:00+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://3dpechat.bg/prices</loc>
+    <loc>https://3dpechat.bg/prices/</loc>
     <lastmod>${new Date().toISOString().split('T')[0]}T10:00:00+01:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://3dpechat.bg/contact</loc>
+    <loc>https://3dpechat.bg/contact/</loc>
     <lastmod>${new Date().toISOString().split('T')[0]}T10:00:00+01:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
-  
+
   <!-- Blog Pages -->
   <url>
-    <loc>https://3dpechat.bg/blog</loc>
+    <loc>https://3dpechat.bg/blog/</loc>
     <lastmod>${new Date().toISOString().split('T')[0]}T10:00:00+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 ${routes.map(blog => `  <url>
-    <loc>https://3dpechat.bg${blog.route}</loc>
+    <loc>https://3dpechat.bg${blog.route}/</loc>
     <lastmod>${blog.date}T10:00:00+01:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

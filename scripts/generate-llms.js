@@ -9,13 +9,15 @@ const ROOT = path.resolve(__dirname, '..');
 const SERVICE_FILE = path.join(ROOT, 'src/app/services/blog.service.ts');
 const OUT_FILE = path.join(ROOT, 'src/llms.txt');
 
+// Trailing slashes match the canonical URLs (GitHub Pages 301-redirects the
+// non-slash directory routes to the slash form).
 const MAIN_PAGES = [
   { url: 'https://3dpechat.bg/', label: 'Начало', desc: 'Услуги за 3D принтиране — прототипиране, малки серии, персонализирани изделия.' },
-  { url: 'https://3dpechat.bg/portfolio', label: 'Портфолио', desc: 'Реализирани проекти и примери от нашата работа.' },
-  { url: 'https://3dpechat.bg/products', label: 'Продукти', desc: 'Готови 3D принтирани продукти за директна покупка.' },
-  { url: 'https://3dpechat.bg/prices', label: 'Цени', desc: 'Ценоразпис за 3D принтиране по материал и технология.' },
-  { url: 'https://3dpechat.bg/contact', label: 'Контакти', desc: 'Форма за запитване и контактна информация.' },
-  { url: 'https://3dpechat.bg/blog', label: 'Блог', desc: 'Статии за 3D принтиране на български език.' },
+  { url: 'https://3dpechat.bg/portfolio/', label: 'Портфолио', desc: 'Реализирани проекти и примери от нашата работа.' },
+  { url: 'https://3dpechat.bg/products/', label: 'Продукти', desc: 'Готови 3D принтирани продукти за директна покупка.' },
+  { url: 'https://3dpechat.bg/prices/', label: 'Цени', desc: 'Ценоразпис за 3D принтиране по материал и технология.' },
+  { url: 'https://3dpechat.bg/contact/', label: 'Контакти', desc: 'Форма за запитване и контактна информация.' },
+  { url: 'https://3dpechat.bg/blog/', label: 'Блог', desc: 'Статии за 3D принтиране на български език.' },
 ];
 
 function parseBlogPosts(src) {
@@ -29,7 +31,7 @@ function parseBlogPosts(src) {
     const route = (block[0].match(/route:\s*'([^']*)'/) || [])[1];
     if (title && route) {
       posts.push({
-        url: `https://3dpechat.bg${route}`,
+        url: `https://3dpechat.bg${route}/`,
         title: title.replace(/\\'/g, "'"),
         desc: description ? description.replace(/\\'/g, "'") : '',
       });

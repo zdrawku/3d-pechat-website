@@ -21,11 +21,11 @@ export class ThreeDPrinterZaNachinaeshtiKakEdnoDetePrevarnaHobiVSemeenProektComp
     private seoService: SeoService
   ) {
     this.seoService.updateSeo({
-      title: '3D принтер за начинаещи: детско хоби → семеен бизнес | 3D Печат България',
+      title: '3D принтер за начинаещи: от детско хоби в семеен бизнес | 3D Печат България',
       description: 'Вдъхновяваща история как 12-годишно дете превърна 3D принтирането в семеен проект. Практични съвети за избор на първи 3D принтер и стартиране.',
       keywords: '3D принтер за начинаещи, 3D принтиране, детски проект 3D печат, първи 3D принтер, семеен бизнес 3D, как да започна 3D принтиране, 3D печат за деца',
-      url: 'https://3dpechat.bg/blog/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt',
-      image: 'https://3dpechat.bg/assets/blogs/images/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt-cover.jpg',
+      url: 'https://3dpechat.bg/blog/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt/',
+      image: 'https://3dpechat.bg/assets/blogs/images/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt-cover.webp',
       type: 'article',
       author: '3D Печат България',
       publishedDate: new Date('2026-06-22').toISOString(),
@@ -35,7 +35,7 @@ export class ThreeDPrinterZaNachinaeshtiKakEdnoDetePrevarnaHobiVSemeenProektComp
     this.seoService.setStructuredData({
       "@context": "https://schema.org",
       "@type": "BlogPosting",
-      "headline": "3D принтер за начинаещи: детско хоби → семеен бизнес",
+      "headline": "3D принтер за начинаещи: от детско хоби в семеен бизнес",
       "description": "Вдъхновяваща история как 12-годишно дете превърна 3D принтирането в семеен проект. Практични съвети за избор на първи 3D принтер и стартиране.",
       "author": {
         "@type": "Organization",
@@ -43,7 +43,7 @@ export class ThreeDPrinterZaNachinaeshtiKakEdnoDetePrevarnaHobiVSemeenProektComp
       },
       "datePublished": "2026-06-22T00:00:00.000Z",
       "dateModified": "2026-06-22T00:00:00.000Z",
-      "image": "https://3dpechat.bg/assets/blogs/images/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt-cover.jpg",
+      "image": "https://3dpechat.bg/assets/blogs/images/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt-cover.webp",
       "publisher": {
         "@type": "Organization",
         "name": "3D Печат България",
@@ -54,7 +54,7 @@ export class ThreeDPrinterZaNachinaeshtiKakEdnoDetePrevarnaHobiVSemeenProektComp
       },
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://3dpechat.bg/blog/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt"
+        "@id": "https://3dpechat.bg/blog/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt/"
       },
       "keywords": "3D принтер за начинаещи, 3D принтиране, детски проект 3D печат, първи 3D принтер, семеен бизнес 3D, как да започна 3D принтиране, 3D печат за деца"
     });

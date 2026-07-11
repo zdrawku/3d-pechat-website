@@ -1,146 +1,415 @@
 :host {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: stretch;
-  align-content: flex-start;
-  gap: 0;
-  background-color: var(--ig-surface-50);
+  display: block;
+  background-color: var(--bg-body);
+  background-image: var(--bg-body-texture);
+  background-size: var(--bg-section-size);
 }
-.row-layout {
-  display: flex;
-}
-.row_layout_contact {
-  justify-content: center;
-  align-items: center;
-  align-content: flex-start;
-  gap: 32px;
-  position: relative;
-  padding: 48px 32px;
-  min-width: 50px;
-  min-height: 50px;
-  flex-grow: 1;
-  flex-shrink: 0;
-  
+
+.contact-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 48px 32px 64px;
+
   @media (max-width: 768px) {
-    padding: 32px 16px;
-    gap: 24px;
+    padding: 32px 20px 48px;
   }
-  
+
   @media (max-width: 480px) {
-    padding: 24px 12px;
-    gap: 16px;
+    padding: 24px 16px 40px;
   }
 }
-.column-layout {
+
+// ===================== SHELL =====================
+.contact-shell {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  border: 1px solid var(--ig-gray-300);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+
+  @media (max-width: 820px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ===================== INFO PANEL =====================
+.contact-info {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(160deg, var(--ig-primary-500) 0%, var(--ig-primary-400) 55%, #E64A19 100%);
+  color: #fff;
+  padding: 36px 30px;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(60% 100% at 100% 0%, rgba(255, 255, 255, 0.18), transparent 60%);
+    pointer-events: none;
+  }
+
+  @media (max-width: 480px) {
+    padding: 28px 22px;
+  }
+}
+
+.info-title {
+  font-size: 1.35rem;
+  font-weight: 750;
+  margin: 0 0 8px;
+  position: relative;
+}
+
+.info-lead {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.85rem;
+  margin: 0 0 26px;
+  position: relative;
+}
+
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 18px;
+  position: relative;
+}
+
+.info-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #fff;
+}
+
+.info-text {
   display: flex;
   flex-direction: column;
-}
-.column_layout_contact_form {
-  justify-content: center;
-  align-items: stretch;
-  align-content: flex-start;
-  gap: 32px;
-  position: relative;
-  min-width: 320px;
-  min-height: 50px;
-  max-width: 700px;
-  flex-grow: 1;
-  flex-basis: 0;
-  
-  @media (max-width: 480px) {
-    min-width: 280px;
-    gap: 24px;
+  font-size: 0.8125rem;
+  padding-top: 4px;
+
+  b {
+    display: block;
+    font-size: 0.85rem;
+    margin-bottom: 2px;
   }
-  
-  @media (max-width: 390px) {
-    min-width: 100%;
-    gap: 20px;
+
+  a {
+    color: #fff;
+    text-decoration: underline;
+    text-decoration-color: rgba(255, 255, 255, 0.5);
   }
-}
-.contact_form_inputs {
-  justify-content: flex-start;
-  align-items: stretch;
-  align-content: flex-start;
-  gap: 24px;
-  position: relative;
-  min-width: 50px;
-  min-height: 50px;
-  flex-shrink: 0;
-}
-.content {
-  text-align: center;
-  height: max-content;
-  min-width: min-content;
-  max-width: 100%;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  
-  &:first-child {
-    // This targets the h3 title "Свържете се с нас"
-    @media (max-width: 768px) {
-      font-size: 1.5rem;
-    }
-    
-    @media (max-width: 480px) {
-      font-size: 1.25rem;
-    }
-    
-    @media (max-width: 390px) {
-      font-size: 1.125rem;
-    }
-  }
-}
-.user-input {
-  height: max-content;
-  min-width: min-content;
-}
-.button_send_message {
-  --ig-size: var(--ig-size-medium);
-  height: max-content;
 }
 
-.social-media-buttons {
+.viber-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff !important;
+  color: #E64A19 !important;
+  --foreground: #E64A19;
+  font-weight: 700;
+  font-size: 0.7rem;
+  padding: 6px 12px !important;
+  border-radius: 999px;
+  margin-top: 6px;
+  width: fit-content;
+  height: max-content;
+
+  igx-icon {
+    font-size: 14px !important;
+    width: 14px !important;
+    height: 14px !important;
+  }
+}
+
+.social-row {
   display: flex;
-  gap: 16px;
-  justify-content: center;
+  gap: 10px;
+  margin-top: 24px;
+  position: relative;
   flex-wrap: wrap;
-  
-  @media (max-width: 480px) {
-    gap: 12px;
+}
+
+.social-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff !important;
+  --foreground: #fff;
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 8px 14px !important;
+  border-radius: 999px;
+  height: max-content;
+
+  igx-icon {
+    font-size: 16px !important;
+    width: 16px !important;
+    height: 16px !important;
   }
 }
 
-.social_button {
+.response-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 28px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.85);
+  position: relative;
+
+  igx-icon {
+    font-size: 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+  }
+}
+
+// ===================== FORM PANEL =====================
+.contact-form-wrap {
+  background: var(--bg-card);
+  padding: 36px 34px;
+
+  @media (max-width: 480px) {
+    padding: 26px 20px;
+  }
+}
+
+.form-title {
+  margin: 0 0 20px;
+  font-size: 1rem;
+  font-weight: 750;
+  color: var(--ig-gray-900);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 6px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.field {
+  height: max-content;
+  min-width: 0;
+}
+
+.field-full {
+  grid-column: 1 / 3;
+
+  @media (max-width: 480px) {
+    grid-column: 1;
+  }
+}
+
+.submit-btn {
   --ig-size: var(--ig-size-medium);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 18px;
+  --background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500) 70%);
+  background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500) 70%);
+  --foreground: #fff;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 999px;
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--ig-primary-500) 38%, transparent);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+
+  igx-icon {
+    font-size: 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+    box-shadow: 0 8px 22px color-mix(in srgb, var(--ig-primary-500) 46%, transparent);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+// ===================== FILE UPLOAD =====================
+.file-field {
+  gap: 8px;
+}
+
+.file-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ig-gray-900);
+
+  span {
+    font-weight: 400;
+    color: var(--ig-gray-700);
+    font-size: 0.72rem;
+  }
+}
+
+// Info icon next to the label — explains the single-file limit on hover/tap,
+// before the user opens the file picker (see file-info-tooltip below).
+.file-info-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: none;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--ig-primary-500) 14%, transparent);
+  color: var(--ig-primary-500);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease;
+
+  igx-icon {
+    font-size: 12px !important;
+    width: 12px !important;
+    height: 12px !important;
+  }
+
+  &:hover {
+    background: color-mix(in srgb, var(--ig-primary-500) 24%, transparent);
+  }
+}
+
+// Tooltip content renders in a global overlay outside this component, so it
+// needs ::ng-deep (same reason as .custom-tooltip in product-grid.component.scss).
+::ng-deep .file-info-tooltip {
+  max-width: 220px;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.file-dropzone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  border: 1.5px dashed var(--ig-gray-400);
+  border-radius: 12px;
+  background: var(--bg-body);
+  color: var(--ig-gray-700);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+
+  igx-icon {
+    font-size: 20px !important;
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  &:hover {
+    border-color: var(--ig-primary-500);
+    color: var(--ig-primary-500);
+    background: color-mix(in srgb, var(--ig-primary-500) 5%, var(--bg-body));
+  }
+
+  &:focus-within {
+    outline: 2px solid var(--ig-primary-500);
+    outline-offset: 2px;
+  }
+}
+
+.file-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.file-chip {
   display: flex;
   align-items: center;
   gap: 8px;
-  
-  igx-icon {
-    font-size: 20px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--ig-gray-300);
+  font-size: 0.78rem;
+
+  > igx-icon {
+    font-size: 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+    color: var(--ig-secondary-500);
+    flex-shrink: 0;
   }
-  
-  @media (max-width: 480px) {
-    font-size: 0.875rem;
-    padding: 8px 12px;
-    
-    igx-icon {
-      font-size: 18px;
-    }
+
+  .file-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--ig-gray-900);
   }
 }
 
-.viber_button {
-  margin-left: 8px;
+.file-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ig-gray-700);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease, color 0.2s ease;
+
+  igx-icon {
+    font-size: 15px !important;
+    width: 15px !important;
+    height: 15px !important;
+  }
+
+  &:hover {
+    background: color-mix(in srgb, var(--ig-error-500) 14%, transparent);
+    color: var(--ig-error-500);
+  }
 }
 
 .form-status {
-  margin: 0;
+  margin: 12px 0 0;
   padding: 12px 16px;
-  border-radius: 4px;
+  border-radius: 8px;
   text-align: center;
+  font-size: 0.85rem;
 }
 
 .form-status--success {
@@ -151,4 +420,19 @@
 .form-status--error {
   color: #b71c1c;
   background-color: rgba(244, 67, 54, 0.12);
+}
+
+// Dark theme: the light-theme dark-green/dark-red text (#1b5e20/#b71c1c) is
+// nearly unreadable against the dark surface background. Swap to lighter
+// tints with sufficient contrast, mirroring the palette's dark-theme colors.
+:host-context(.dark-theme) {
+  .form-status--success {
+    color: #a5d6a7;
+    background-color: rgba(76, 175, 80, 0.2);
+  }
+
+  .form-status--error {
+    color: #ef9a9a;
+    background-color: rgba(244, 67, 54, 0.2);
+  }
 }

@@ -24,7 +24,7 @@ FDM е най-разпространената и достъпна 3D принт
 
 Нишката се подава към нагрята глава (екструдер), която я разтопява и „рисува" всеки слой върху платформата. След като един слой се охлади, платформата се спуска и се нанася следващият.
 
-![Fused Deposition Modeling](assets/blogs/images/fused-deposition-modeling.png)
+![Fused Deposition Modeling](assets/blogs/images/fused-deposition-modeling.webp)
 
 ### Материали при FDM
 
@@ -58,7 +58,7 @@ SLA е една от най-старите 3D принтиране технол�
 
 Лазерен лъч сканира повърхността на течната смола, втвърдявайки точно определени зони. Платформата се издига нагоре (или надолу, при DLP вариантите), а следващият слой се обработва от лазера.
 
-![Stereolithography](assets/blogs/images/SLA.png)
+![Stereolithography](assets/blogs/images/SLA.webp)
 
 ### Материали при SLA
 
@@ -85,7 +85,7 @@ SLA е една от най-старите 3D принтиране технол�
 
 DLP е много близо до SLA, но вместо лазер използва цял UV проектор, който осветява целия слой наведнъж. Резултатът е по-бърза обработка при почти идентично качество.
 
-![Digital Light Processing](assets/blogs/images/DLP.png)
+![Digital Light Processing](assets/blogs/images/DLP.webp)
 
 ### FDM vs SLA vs DLP — бързо сравнение
 
@@ -104,7 +104,7 @@ DLP е много близо до SLA, но вместо лазер използ
 
 SLS е технологията на индустриалното 3D принтиране. Вместо пластмасова нишка или смола, SLS използва прах (най-често найлон/полиамид), който се синтерова (спича) от мощен лазер.
 
-![Selective Laser Sintering](assets/blogs/images/SLS.png)
+![Selective Laser Sintering](assets/blogs/images/SLS.webp)
 
 ### Предимства на SLS
 
@@ -127,7 +127,7 @@ MSLA (известна и като LCD принтиране) е по-достъ�
 * **Качество** — сравнимо с SLA/DLP за малки обекти
 * **Популярност** — табла за игри, [фигурки](https://3dpechat.bg/blog/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari), бижута
 
-![Masked Stereolithography](assets/blogs/images/MSLA.png)
+![Masked Stereolithography](assets/blogs/images/MSLA.webp)
 
 ## MJF — Multi Jet Fusion (HP технология)
 
@@ -137,7 +137,7 @@ MJF е технология разработена от HP, която комб�
 * Популярна в автомобилостроенето и потребителски стоки
 * Достъпна само като услуга (не за домашна употреба)
 
-![Multi Jet Fusion](assets/blogs/images/MJF.png)
+![Multi Jet Fusion](assets/blogs/images/MJF.webp)
 
 ## Как да изберем правилната технология?
 

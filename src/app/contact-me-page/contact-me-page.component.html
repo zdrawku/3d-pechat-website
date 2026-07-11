@@ -1,94 +1,175 @@
-<div class="row-layout row_layout_contact">
-  <div class="column-layout column_layout_contact_form">
-    <h3 class="content">
-      Свържете се с нас
-    </h3>
-    <p class="content">
-      Телфон +359883310616
-      <button igxButton="text" type="button" class="viber_button" (click)="openViber()"
-              [igxTooltipTarget]="viberTooltip">
-        Отвори във Viber
-      </button>
-    </p>
-    <div igxTooltip #viberTooltip="tooltip">
-      Кликнете за директен чат във Viber
-    </div>
-    <p class="content">
-      E-mail: 3dpechat.bg&#64;gmail.com
-    </p>
-    <div class="social-media-buttons">
-      <button igxButton="outlined" type="button" class="social_button" (click)="openInstagram()"
-              [igxTooltipTarget]="instagramTooltip">
-        <igx-icon family="imx-icons" name="instagram"></igx-icon>
-        Instagram
-      </button>
-      <div igxTooltip #instagramTooltip="tooltip">
-        Последвайте ни в Instagram за снимки на нашите проекти
+<div class="contact-page">
+  <div class="contact-shell">
+    <!-- Info panel -->
+    <div class="contact-info">
+      <h2 class="info-title">Свържете се с нас</h2>
+      <p class="info-lead">Отговаряме бързо — изберете начина, който ви е най-удобен.</p>
+
+      <div class="info-row">
+        <igx-icon class="info-icon">call</igx-icon>
+        <div class="info-text">
+          <b>Телефон</b>
+          <span>+359 883 310 616</span>
+          <button igxButton="flat" type="button" class="viber-pill" (click)="openViber()"
+                  [igxTooltipTarget]="viberTooltip">
+            <igx-icon>chat</igx-icon>
+            Отвори във Viber
+          </button>
+          <div igxTooltip #viberTooltip="tooltip">
+            Кликнете за директен чат във Viber
+          </div>
+        </div>
       </div>
 
-      <button igxButton="outlined" type="button" class="social_button" (click)="openTikTok()"
-              [igxTooltipTarget]="tiktokTooltip">
-        <igx-icon family="imx-icons" name="tiktok"></igx-icon>
-        TikTok
-      </button>
-      <div igxTooltip #tiktokTooltip="tooltip">
-        Гледайте видеа от нашите 3D печат проекти в TikTok
+      <div class="info-row">
+        <igx-icon class="info-icon">mail</igx-icon>
+        <div class="info-text">
+          <b>Email</b>
+          <a href="mailto:3dpechat.bg@gmail.com">3dpechat.bg&#64;gmail.com</a>
+        </div>
       </div>
+
+      <div class="social-row">
+        <button igxButton="flat" type="button" class="social-pill" (click)="openInstagram()"
+                [igxTooltipTarget]="instagramTooltip">
+          <igx-icon family="imx-icons" name="instagram"></igx-icon>
+          Instagram
+        </button>
+        <div igxTooltip #instagramTooltip="tooltip">
+          Последвайте ни в Instagram за снимки на нашите проекти
+        </div>
+
+        <button igxButton="flat" type="button" class="social-pill" (click)="openTikTok()"
+                [igxTooltipTarget]="tiktokTooltip">
+          <igx-icon family="imx-icons" name="tiktok"></igx-icon>
+          TikTok
+        </button>
+        <div igxTooltip #tiktokTooltip="tooltip">
+          Гледайте видеа от нашите 3D печат проекти в TikTok
+        </div>
+      </div>
+
+      <p class="response-note">
+        <igx-icon>check_circle</igx-icon>
+        Обичайно отговаряме до 24 часа
+      </p>
     </div>
-    <form class="column-layout contact_form_inputs" #contactForm="ngForm">
-      <igx-input-group type="border" class="user-input">
-        <input type="text" [(ngModel)]="value" name="value" placeholder="Вашето име" required="true" igxInput #igxInput />
-        <label igxLabel>Име</label>
-        @if (igxInput.validity?.valueMissing) {
-          <igx-hint>Това поле е задължително</igx-hint>
+
+    <!-- Form panel -->
+    <div class="contact-form-wrap">
+      <h3 class="form-title">Изпратете съобщение</h3>
+      <form class="contact-form" #contactForm="ngForm" (focusin)="onFormInteraction()">
+        <div class="form-grid">
+          <igx-input-group type="border" class="field">
+            <input type="text" [(ngModel)]="value" name="value" placeholder="Вашето име" required="true" igxInput #igxInput />
+            <label igxLabel>Име</label>
+            @if (igxInput.validity?.valueMissing) {
+              <igx-hint>Това поле е задължително</igx-hint>
+            }
+          </igx-input-group>
+
+          <igx-input-group type="border" class="field">
+            <input type="email" [(ngModel)]="value1" name="value1" placeholder="Вашият имейл" required="true" igxInput #igxInput1 />
+            <label igxLabel>Email адрес</label>
+            @if (igxInput1.validity?.valueMissing) {
+              <igx-hint>Това поле е задължително</igx-hint>
+            }
+          </igx-input-group>
+
+          <igx-input-group type="border" class="field field-full">
+            <input type="text" [(ngModel)]="value2" name="value2" placeholder="Тема на съобщението" required="true" igxInput #igxInput2 />
+            <label igxLabel>Тема</label>
+            @if (igxInput2.validity?.valueMissing) {
+              <igx-hint>Това поле е задължително</igx-hint>
+            }
+          </igx-input-group>
+
+          <igx-input-group type="border" class="field field-full">
+            <label igxLabel>Съобщение</label>
+            <textarea [(ngModel)]="message" name="message" placeholder="Вашето съобщение..." required="true" igxInput #igxTextarea></textarea>
+            @if (igxTextarea.validity?.valueMissing) {
+              <igx-hint>Това поле е задължително</igx-hint>
+            }
+          </igx-input-group>
+
+          <!-- Optional single file attachment (Web3Forms file upload,
+            multipart/form-data). Limited to ONE file because the free
+            Web3Forms plan only delivers a single attachment — the info
+            icon below explains this to the user before they pick a file.
+            onFilesSelected() in the .ts validates size. To change the
+            size limit, edit maxFileSizeBytes in contact-me-page.component.ts. -->
+          <div class="field field-full file-field">
+            <label class="file-label">
+              Прикачи файл <span>(по избор, макс. 5MB)</span>
+              <button type="button" class="file-info-btn" [igxTooltipTarget]="fileInfoTooltip"
+                      aria-label="Информация за прикачване на файл">
+                <igx-icon>info</igx-icon>
+              </button>
+              <div #fileInfoTooltip="tooltip" igxTooltip class="file-info-tooltip">
+                Може да прикачите само 1 файл (до 5MB). Ако имате повече файлове за показване,
+                добавете линк към тях в съобщението.
+              </div>
+            </label>
+
+            @if (!attachedFile) {
+              <label class="file-dropzone">
+                <igx-icon>attach_file</igx-icon>
+                <span>Избери файл</span>
+                <input type="file" (change)="onFilesSelected($event)" hidden />
+              </label>
+            }
+
+            <!-- Selected file renders as a removable chip -->
+            @if (attachedFile) {
+              <ul class="file-list">
+                <li class="file-chip">
+                  <igx-icon>description</igx-icon>
+                  <span class="file-name">{{ attachedFile.name }}</span>
+                  <button type="button" class="file-remove" (click)="removeFile()" aria-label="Премахни файла">
+                    <igx-icon>close</igx-icon>
+                  </button>
+                </li>
+              </ul>
+            }
+          </div>
+        </div>
+
+        <div id="hcaptcha-container"></div>
+
+        <button igxButton="contained" type="button" class="submit-btn" (click)="sendEmail(contactForm)"
+                [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Изпращане...' : 'Изпрати съобщение' }}
+          @if (!isSubmitting) {
+            <igx-icon>arrow_forward</igx-icon>
+          }
+        </button>
+
+        @if (submitStatus === 'success') {
+          <p class="form-status form-status--success">
+            Благодарим ви! Съобщението е изпратено успешно. Ще се свържем с вас възможно най-скоро.
+          </p>
         }
-      </igx-input-group>
-      <igx-input-group type="border" class="user-input">
-        <input type="email" [(ngModel)]="value1" name="value1" placeholder="Вашият имейл" required="true" igxInput #igxInput1 />
-        <label igxLabel>Email адрес</label>
-        @if (igxInput1.validity?.valueMissing) {
-          <igx-hint>Това поле е задължително</igx-hint>
+        @if (submitStatus === 'error') {
+          <p class="form-status form-status--error">
+            Възникна грешка при изпращането. Моля, опитайте отново или ни пишете директно на 3dpechat.bg&#64;gmail.com.
+          </p>
         }
-      </igx-input-group>
-      <igx-input-group type="border" class="user-input">
-        <input type="text" [(ngModel)]="value2" name="value2" placeholder="Тема на съобщението" required="true" igxInput #igxInput2 />
-        <label igxLabel>Тема</label>
-        @if (igxInput2.validity?.valueMissing) {
-          <igx-hint>Това поле е задължително</igx-hint>
+        @if (submitStatus === 'missing-fields') {
+          <p class="form-status form-status--error">
+            Моля, попълнете всички полета.
+          </p>
         }
-      </igx-input-group>
-      <igx-input-group type="border" class="user-input">
-        <label igxLabel>Съобщение</label>
-        <textarea [(ngModel)]="message" name="message" placeholder="Вашето съобщение..." required="true" igxInput #igxTextarea></textarea>
-        @if (igxTextarea.validity?.valueMissing) {
-          <igx-hint>Това поле е задължително</igx-hint>
+        @if (submitStatus === 'missing-captcha') {
+          <p class="form-status form-status--error">
+            Моля, потвърдете, че не сте робот.
+          </p>
         }
-      </igx-input-group>
-      <div id="hcaptcha-container"></div>
-      <button igxButton="contained" type="button" class="button_send_message" (click)="sendEmail(contactForm)"
-              [disabled]="isSubmitting">
-        {{ isSubmitting ? 'Изпращане...' : 'Изпрати съобщение' }}
-      </button>
-      @if (submitStatus === 'success') {
-        <p class="form-status form-status--success">
-          Благодарим ви! Съобщението е изпратено успешно. Ще се свържем с вас възможно най-скоро.
-        </p>
-      }
-      @if (submitStatus === 'error') {
-        <p class="form-status form-status--error">
-          Възникна грешка при изпращането. Моля, опитайте отново или ни пишете директно на 3dpechat.bg&#64;gmail.com.
-        </p>
-      }
-      @if (submitStatus === 'missing-fields') {
-        <p class="form-status form-status--error">
-          Моля, попълнете всички полета.
-        </p>
-      }
-      @if (submitStatus === 'missing-captcha') {
-        <p class="form-status form-status--error">
-          Моля, потвърдете, че не сте робот.
-        </p>
-      }
-    </form>
+        @if (submitStatus === 'invalid-file') {
+          <p class="form-status form-status--error">
+            Файлът е твърде голям (макс. 5MB). Моля, изберете друг файл.
+          </p>
+        }
+      </form>
+    </div>
   </div>
 </div>

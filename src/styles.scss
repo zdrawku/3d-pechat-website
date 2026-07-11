@@ -8,7 +8,7 @@
 
 // Light theme palette
 $light-palette: palette($primary: #FF5722,
-    $secondary: #4CAF50,
+    $secondary: #0EA5A5,
     $surface: #F5F5F5,
     $error: #F44336,
     $success: #8BC34A,
@@ -17,15 +17,63 @@ $light-palette: palette($primary: #FF5722,
 
 // Dark theme palette
 $dark-palette: palette($primary: #FF7043,
-    $secondary: #66BB6A,
+    $secondary: #2DD4BF,
     $surface: #1E1E1E,
     $error: #EF5350,
     $success: #9CCC65,
     $warn: #FFCA28,
     $info: #42A5F5);
 
+// Components actually used across the app (see grep of Igx*Module/Component
+// imports). Everything else is excluded so the theme mixin doesn't emit ~600 KB
+// of unused component styles. Keep this list in sync when adding new Ignite UI
+// components — if a component's styling looks broken, remove it from $exclude.
+$exclude-components: (
+  "igx-action-strip",
+  "igx-badge",
+  "igx-banner",
+  "igx-bottom-nav",
+  "igx-button-group",
+  "igx-calendar",
+  "igx-checkbox",
+  "igx-chip",
+  "igx-circular-bar",
+  "igx-column-actions",
+  "igx-combo",
+  "igx-date-picker",
+  "igx-date-range-picker",
+  "igx-dialog",
+  "igx-divider",
+  "igx-expansion-panel",
+  "igx-file-input",
+  "igx-grid",
+  "igx-grid-summary",
+  "igx-grid-toolbar",
+  "igx-highlight",
+  "igx-linear-bar",
+  "igx-list",
+  "igx-paginator",
+  "igx-pivot-data-selector",
+  "igx-query-builder",
+  "igx-radio",
+  "igx-slider",
+  "igx-snackbar",
+  "igx-splitter",
+  "igx-stepper",
+  "igx-switch",
+  "igx-tabs",
+  "igx-time-picker",
+  "igx-toast",
+  "igx-tree"
+);
+
 // Apply light theme by default
-@include theme($palette: $light-palette, $schema: $light-material-schema, $roundness: 0);
+@include theme(
+  $palette: $light-palette,
+  $schema: $light-material-schema,
+  $roundness: 0,
+  $exclude: $exclude-components
+);
 
 // Dark theme CSS variable overrides
 .dark-theme {
@@ -44,11 +92,11 @@ $dark-palette: palette($primary: #FF7043,
   --ig-primary-400: #FF8A65;
   --ig-primary-600: #F4511E;
 
-  // Secondary colors
-  --ig-secondary-500: #66BB6A;
-  --ig-secondary-500-contrast: #000000;
-  --ig-secondary-400: #81C784;
-  --ig-secondary-600: #4CAF50;
+  // Secondary colors (teal)
+  --ig-secondary-500: #2DD4BF;
+  --ig-secondary-500-contrast: #00201D;
+  --ig-secondary-400: #5EEAD4;
+  --ig-secondary-600: #14B8A6;
 
   // Error colors
   --ig-error-500: #EF5350;
@@ -85,11 +133,163 @@ $dark-palette: palette($primary: #FF7043,
   --ig-gray-900: #1A1A1A;
 }
 
+// ===========================================================================
+// Background system (light) — replaces flat --ig-surface-* section fills with
+// warm-tinted gradients, a faint brand dot texture, and soft section seams.
+// Tune intensity here in one place; both themes stay in sync. All accent use
+// is via color-mix at low opacity so text on top stays WCAG-safe.
+// Dark overrides live in the .dark-theme block below.
+// ---------------------------------------------------------------------------
+:root {
+  // Warm neutrals (a hair of orange bias vs sterile grey)
+  --bg-paper:   #F8F5F1;   // base body
+  --bg-paper-2: #FBF9F6;   // raised cards / surfaces on top of body
+  --bg-alt:     #F4F0EA;   // alternate/section base
+
+  // Composed background tokens
+  --bg-body: var(--bg-paper);
+  --bg-card: var(--bg-paper-2);
+
+  // Hero: two soft brand glows over a diagonal paper gradient
+  --bg-hero:
+    radial-gradient(130% 100% at 88% -15%, color-mix(in srgb, #FF5722 32%, transparent), transparent 58%),
+    radial-gradient(100% 90% at -5% 120%, color-mix(in srgb, #2196F3 20%, transparent), transparent 55%),
+    linear-gradient(155deg, var(--bg-paper-2), var(--bg-alt));
+
+  // Section: brand dot grid painted over a solid base.
+  // Apply as: background-color: var(--bg-section-base);
+  //           background-image: var(--bg-section);
+  //           background-size: var(--bg-section-size);
+  --bg-section-base: var(--bg-paper);
+  --bg-section: radial-gradient(color-mix(in srgb, #FF5722 26%, transparent) 1px, transparent 1.4px);
+  --bg-section-size: 22px 22px;
+
+  // Whole-page texture: same dot grid but fainter, meant to sit under a page's
+  // default body so no page reads as a dead-flat fill. Apply on a page :host as:
+  //   background-color: var(--bg-body);
+  //   background-image: var(--bg-body-texture);
+  //   background-size: var(--bg-section-size);
+  --bg-body-texture: radial-gradient(color-mix(in srgb, #FF5722 14%, transparent) 1px, transparent 1.4px);
+
+  // Soft shadow-fade for section boundaries (apply on a 0-height ::before/::after)
+  --seam: linear-gradient(to bottom, color-mix(in srgb, #211D18 6%, transparent), transparent 14px);
+
+  // Consistent soft elevation so cards lift off the new backgrounds
+  --shadow-card: 0 1px 2px rgba(33, 29, 24, 0.05), 0 10px 30px rgba(33, 29, 24, 0.07);
+}
+
 // Dark mode gray overrides
 .dark-theme {
   --ig-gray-700: #B0B0B0;
   --ig-gray-800: #D0D0D0;
   --ig-gray-900: #E5E5E5;
+}
+
+// Background system (dark) — warm near-black instead of blue-black; brand
+// glows/dots pushed slightly stronger to stay visible on the darker ground.
+.dark-theme {
+  --bg-paper:   #16130F;
+  --bg-paper-2: #1E1A15;
+  --bg-alt:     #191510;
+
+  --bg-body: var(--bg-paper);
+  --bg-card: var(--bg-paper-2);
+
+  --bg-hero:
+    radial-gradient(130% 100% at 88% -15%, color-mix(in srgb, #FF5722 42%, transparent), transparent 58%),
+    radial-gradient(100% 90% at -5% 120%, color-mix(in srgb, #2196F3 28%, transparent), transparent 55%),
+    linear-gradient(155deg, var(--bg-paper-2), var(--bg-alt));
+
+  --bg-section-base: var(--bg-paper);
+  --bg-section: radial-gradient(color-mix(in srgb, #FF5722 34%, transparent) 1px, transparent 1.4px);
+  --bg-body-texture: radial-gradient(color-mix(in srgb, #FF5722 20%, transparent) 1px, transparent 1.4px);
+
+  --seam: linear-gradient(to bottom, rgba(0, 0, 0, 0.35), transparent 14px);
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 34px rgba(0, 0, 0, 0.5);
+}
+
+// ===========================================================================
+// Shared page-header banner — a slim full-width gradient strip holding a page's
+// title (+ optional subtitle) on the left and controls (search, count) on the
+// right, all on one row. Replaces the old tall centered headers that pushed
+// content below the fold and wasted horizontal space. Reused across list pages.
+//
+// Markup:
+//   <header class="page-banner">
+//     <div class="page-banner__titles">
+//       <h1 class="page-banner__title">…</h1>
+//       <p class="page-banner__subtitle">…</p>   (optional)
+//     </div>
+//     <div class="page-banner__actions"> … search / count … </div>
+//   </header>
+// ---------------------------------------------------------------------------
+.page-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 16px 32px;
+  background: var(--bg-hero);
+  border-bottom: 1px solid var(--line, var(--ig-gray-300));
+
+  @media (max-width: 768px) {
+    padding: 14px 20px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+}
+
+.page-banner__titles {
+  min-width: 0;
+}
+
+.page-banner__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--ig-primary-500);
+  margin: 0 0 4px;
+}
+
+.page-banner__title {
+  font-size: 1.4rem !important;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ig-gray-900);
+  margin: 0;
+  text-wrap: balance;
+
+  @media (max-width: 480px) {
+    font-size: 1.2rem !important;
+  }
+}
+
+.page-banner__subtitle {
+  font-size: 0.85rem;
+  color: var(--ig-gray-700);
+  margin: 3px 0 0;
+
+  @media (max-width: 600px) {
+    display: none; // keep the banner slim on phones
+  }
+}
+
+.page-banner__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  @media (max-width: 600px) {
+    width: 100%;
+  }
 }
 
 // Reduce heading sizes globally
@@ -112,9 +312,25 @@ h3,
 }
 
 body {
-  background: var(--ig-surface-500);
+  background: var(--bg-body);
   color: var(--ig-surface-500-contrast);
   --ig-size: var(--ig-size-medium);
+}
+
+// Reusable soft transition between two stacked sections. Put on the lower
+// section (or a thin divider element) to fade the seam instead of a hard edge.
+.section-seam {
+  position: relative;
+}
+.section-seam::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 16px;
+  background: var(--seam);
+  pointer-events: none;
 }
 
 html,

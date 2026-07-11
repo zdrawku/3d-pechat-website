@@ -2,16 +2,6 @@
   <!-- Product Card for each variant -->
   @for (product of products; track product) {
     <igx-card class="product-card" [id]="product.linkId">
-      <igx-card-header class="card-header">
-        <h3 class="ig-typography__h5 card-title">
-          <span class="product-name" [igxTooltipTarget]="tooltipRef">{{ product.name }}</span>
-          <div #tooltipRef="tooltip" igxTooltip class="product-tooltip">{{ product.name }}</div>
-          <button type="button" class="copy-link-btn" title="Копирай линк към секцията"
-            (click)="copySectionLink(product.linkId)">
-            <igx-icon family="material">link</igx-icon>
-          </button>
-        </h3>
-      </igx-card-header>
       <!-- Image Carousel Section -->
       <div class="card-image-section">
         <div class="image-container">
@@ -20,51 +10,82 @@
             <div class="product-image front-image">
               <img [src]="product.frontImage" [alt]="product.name + ' - Лице'" class="card-image"
                 [class.padded-image]="product.hasImagePadding" loading="lazy" />
-              </div>
-              <div class="product-image back-image">
-                <img [src]="product.backImage" [alt]="product.name + ' - Гръб'" class="card-image"
-                  [class.padded-image]="product.hasImagePadding" loading="lazy" />
-                </div>
-              </div>
-              <!-- Carousel Navigation Buttons -->
-              <button igxIconButton="flat" class="carousel-nav prev-btn" (click)="toggleToPrevious(product, $event)"
-                aria-label="Обърни картата">
-                <igx-icon>chevron_left</igx-icon>
-              </button>
-              <button igxIconButton="flat" class="carousel-nav next-btn" (click)="toggleToNext(product, $event)"
-                aria-label="Обърни картата">
-                <igx-icon>chevron_right</igx-icon>
-              </button>
-              <!-- Side Indicator -->
-              <div class="side-indicator">
-                <span class="indicator-dot" [class.active]="product.showFront"></span>
-                <span class="indicator-dot" [class.active]="!product.showFront"></span>
-              </div>
+            </div>
+            <div class="product-image back-image">
+              <img [src]="product.backImage" [alt]="product.name + ' - Гръб'" class="card-image"
+                [class.padded-image]="product.hasImagePadding" loading="lazy" />
             </div>
           </div>
-          <igx-card-content class="card-content">
-            <p class="ig-typography__body-1 product-description">
-              {{ product.description }}
-            </p>
-            <!-- Custom content section (optional) -->
-            @if (product.customContent?.show) {
-              <div class="custom-options">
-                <p class="ig-typography__body-2 custom-note">
-                  {{ product.customContent.title }}
-                </p>
-                <ul class="custom-list">
-                  @for (item of product.customContent.items; track item) {
-                    <li>{{ item }}</li>
-                  }
-                </ul>
+          @if (product.backImage) {
+            <!-- Carousel Navigation Buttons (revealed on hover/focus) -->
+            <button igxIconButton="flat" class="carousel-nav prev-btn" (click)="toggleToPrevious(product, $event)"
+              aria-label="Обърни картата">
+              <igx-icon>chevron_left</igx-icon>
+            </button>
+            <button igxIconButton="flat" class="carousel-nav next-btn" (click)="toggleToNext(product, $event)"
+              aria-label="Обърни картата">
+              <igx-icon>chevron_right</igx-icon>
+            </button>
+            <!-- Flip hint badge -->
+            <span class="flip-hint">⟲ обърни</span>
+            <!-- Side Indicator -->
+            <div class="side-indicator">
+              <span class="indicator-dot" [class.active]="product.showFront"></span>
+              <span class="indicator-dot" [class.active]="!product.showFront"></span>
+            </div>
+          }
+        </div>
+      </div>
+      <igx-card-content class="card-content">
+        <div class="card-top-row">
+          <h3 class="ig-typography__h6 card-title">
+            <span class="product-name" [igxTooltipTarget]="nameTooltipRef">{{ product.name }}</span>
+            <div #nameTooltipRef="tooltip" igxTooltip class="product-tooltip">{{ product.name }}</div>
+          </h3>
+          @if (product.customContent?.show) {
+            <button type="button" class="info-btn" title="Още информация"
+              [igxTooltipTarget]="infoTooltipRef" aria-label="Още информация за персонализация">
+              <igx-icon family="material">info</igx-icon>
+            </button>
+            <div #infoTooltipRef="tooltip" igxTooltip class="custom-tooltip">
+              <p class="custom-note">{{ product.customContent.title }}</p>
+              <ul class="custom-list">
+                @for (item of product.customContent.items; track item) {
+                  <li>{{ item }}</li>
+                }
+              </ul>
+            </div>
+          }
+          <button type="button" class="copy-link-btn" title="Копирай линк към секцията"
+            (click)="copySectionLink(product.linkId)">
+            <igx-icon family="material">link</igx-icon>
+          </button>
+        </div>
+        <p class="ig-typography__body-2 product-description">
+          {{ product.description }}
+        </p>
+        @if (product.tags?.length) {
+          <div class="product-tags">
+            @for (tag of product.tags.slice(0, 3); track tag) {
+              <span class="product-tag">{{ tag }}</span>
+            }
+            @if (product.tags.length > 3) {
+              <span class="product-tag product-tag-more" [igxTooltipTarget]="tagsTooltipRef">
+                +{{ product.tags.length - 3 }}
+              </span>
+              <div #tagsTooltipRef="tooltip" igxTooltip class="tags-tooltip">
+                {{ product.tags.join(', ') }}
               </div>
             }
-          </igx-card-content>
-          <igx-card-actions class="card-actions">
-            <button igxButton="outlined" type="button" (click)="handleAction(product)" class="contact-button">
-              Поръчайте сега
-            </button>
-          </igx-card-actions>
-        </igx-card>
-      }
-    </div>
+          </div>
+        }
+      </igx-card-content>
+      <igx-card-actions class="card-actions">
+        <button igxButton="contained" type="button" (click)="handleAction(product)" class="contact-button">
+          Поръчайте сега
+          <igx-icon family="material">arrow_forward</igx-icon>
+        </button>
+      </igx-card-actions>
+    </igx-card>
+  }
+</div>

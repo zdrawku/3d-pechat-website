@@ -1,3 +1,90 @@
+:host {
+  display: block;
+  background-color: var(--bg-body);
+  background-image: var(--bg-body-texture);
+  background-size: var(--bg-section-size);
+}
+
+// Keep the title + copy-link icon on one line (inline-flex overrides the
+// global .copy-link-btn's display:flex, which was forcing a wrap).
+.page-banner__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.page-banner__title .copy-link-btn {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: 4px;
+
+  igx-icon {
+    font-size: 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+  }
+}
+
+// Search box inside the banner actions.
+.page-banner .search-input {
+  width: 240px;
+  max-width: 100%;
+
+  @media (max-width: 600px) {
+    width: 100%;
+  }
+
+  // Round to match the pill-shaped controls used across the site.
+  ::ng-deep .igx-input-group__bundle {
+    border-radius: 999px !important;
+    overflow: hidden;
+  }
+}
+
+// Segmented sort control — a lightweight pill group (lives in the banner).
+.sort-segmented {
+  display: inline-flex;
+  background: var(--bg-card);
+  border: 1px solid var(--ig-gray-300);
+  border-radius: 999px;
+  padding: 3px;
+  box-shadow: var(--shadow-card);
+  flex-shrink: 0;
+}
+
+.sort-option {
+  border: 0;
+  background: none;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ig-gray-700);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, color 0.2s ease;
+
+  &:hover:not(.active) {
+    color: var(--ig-primary-500);
+  }
+
+  &.active {
+    background: var(--ig-primary-500);
+    color: #fff;
+  }
+}
+
+.result-count {
+  font-size: 0.8125rem;
+  color: var(--ig-gray-700);
+  margin: 0;
+  white-space: nowrap;
+
+  strong {
+    color: var(--ig-gray-900);
+  }
+}
+
 .products-page {
   justify-content: flex-start;
   align-items: stretch;
@@ -6,105 +93,68 @@
   position: relative;
   min-width: 50px;
   min-height: 50px;
-  background-color: var(--ig-surface-50);
   max-width: 100%;
   overflow-x: hidden;
 
-  // Hero Section
-  .hero-section {
-    justify-content: flex-start;
-    align-items: center;
-    gap: 32px;
-    padding: 48px 24px;
-    background-color: var(--ig-surface-150);
-    border-radius: 8px;
-    max-width: 100%;
-    box-sizing: border-box;
-  }
-
-  .hero-content {
-    justify-content: flex-start;
-    align-items: center;
-    text-align: center;
-    gap: 16px;
-    max-width: 900px;
+  // Constrain the page body while the banner above stays full-bleed.
+  .products-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    max-width: 1200px;
     width: 100%;
     margin: 0 auto;
+    padding: 16px 32px 64px;
     box-sizing: border-box;
-  }
-
-  .page-title {
-    color: var(--ig-gray-900);
-    margin: 0;
-    font-weight: 700;
-    line-height: 1.3;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    /* Tighter gap for smaller icon */
-    justify-content: center;
-    /* Since parent is centered */
 
     @media (max-width: 768px) {
-      flex-wrap: wrap;
+      padding: 12px 20px 48px;
+      gap: 32px;
+    }
+
+    @media (max-width: 480px) {
+      padding: 12px 16px 40px;
     }
   }
 
-
-
-  /* Target the Ignite UI Icon directly */
-  igx-icon {
-    /* This controls the size of the icon font */
-    font-size: 18px !important;
-    width: 18px !important;
-    height: 18px !important;
-
-    /* Ensure it doesn't look 'fat' */
-    --ig-icon-size: 18px;
-  }
-
-  .page-subtitle {
-    color: var(--ig-primary-300); // Primary orange
-    margin: 0;
-    font-weight: 600;
-  }
-
-  .hero-description {
-    color: var(--ig-gray-700);
-    line-height: 1.8;
-    margin: 0;
-    max-width: 800px;
-  }
-
-  .controls-section {
+  // Empty search state
+  .empty-state {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    margin-bottom: 24px;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-top: 10px;
+    text-align: center;
+    gap: 6px;
+    padding: 48px 24px;
+  }
 
-    igx-input-group {
-      width: 400px;
-      max-width: 100%;
+  .empty-state-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--ig-primary-500) 12%, transparent);
+    color: var(--ig-primary-500);
+    margin-bottom: 8px;
+
+    igx-icon {
+      font-size: 28px !important;
+      width: 28px !important;
+      height: 28px !important;
     }
+  }
 
-    igx-select {
-      width: 200px;
-    }
+  .empty-state-title {
+    font-weight: 700;
+    color: var(--ig-gray-900);
+    margin: 0;
+  }
 
-    @media (max-width: 600px) {
-      flex-direction: column;
-      align-items: stretch;
-
-      igx-input-group,
-      igx-select {
-        width: 100%;
-      }
-    }
+  .empty-state-text {
+    color: var(--ig-gray-700);
+    margin: 0 0 12px;
+    font-size: 0.875rem;
   }
 
   // Products Section
@@ -113,8 +163,10 @@
     align-items: stretch;
     gap: 32px;
     padding: 24px;
-    background-color: var(--ig-surface-150);
-    border-radius: 8px;
+    background-color: var(--bg-section-base);
+    background-image: var(--bg-section);
+    background-size: var(--bg-section-size);
+    // border-radius: 8px;
   }
 
   .section-title {
@@ -129,15 +181,17 @@
     justify-content: flex-start;
     align-items: stretch;
     gap: 32px;
-    padding: 48px 24px;
-    background-color: var(--ig-surface-150);
-    border-radius: 8px;
+    padding: 48px 0px;
+    background-color: var(--bg-section-base);
+    background-image: var(--bg-section);
+    background-size: var(--bg-section-size);
+    // border-radius: 8px;
   }
 
   .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
     width: 100%;
   }
 
@@ -146,11 +200,12 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 12px;
-    padding: 24px;
-    background-color: var(--ig-surface-500);
+    gap: 8px;
+    padding: 16px;
+    background-color: var(--bg-card);
     border-radius: 8px;
     border: 1px solid var(--ig-gray-300);
+    box-shadow: var(--shadow-card);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 
     &:hover {
@@ -161,20 +216,22 @@
   }
 
   .feature-icon {
-    font-size: 48px;
-    margin-bottom: 8px;
+    font-size: 28px;
+    margin-bottom: 2px;
   }
 
   .feature-title {
     color: var(--ig-gray-900);
     margin: 0;
     font-weight: 600;
+    font-size: 0.9rem;
   }
 
   .feature-item p {
     color: var(--ig-gray-700);
     margin: 0;
-    line-height: 1.6;
+    line-height: 1.5;
+    font-size: 0.8rem;
   }
 
   // CTA Section

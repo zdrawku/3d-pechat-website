@@ -24,8 +24,8 @@ export class LitofanS3dPrintiraneKakDaPrevarneshSnimkaVSveteshtModelComponent im
       title: 'Литофан с 3D принтиране: превърни снимка в светещ модел | 3D Печат България',
       description: 'Научи как да създадеш уникален литофан с 3D принтер. Пълно ръководство за превръщане на любима снимка в светещ 3D модел – стъпка по стъпка инструкции.',
       keywords: 'литофан, 3D принтиране, 3D принтер, литофан 3D печат, 3D модел от снимка, светещ 3D модел, lithophane, 3D печат България',
-      url: 'https://3dpechat.bg/blog/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model',
-      image: 'https://3dpechat.bg/assets/blogs/images/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model-cover.jpg',
+      url: 'https://3dpechat.bg/blog/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model/',
+      image: 'https://3dpechat.bg/assets/blogs/images/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model-cover.webp',
       type: 'article',
       author: '3D Печат България',
       publishedDate: new Date('2026-06-02').toISOString(),
@@ -43,7 +43,7 @@ export class LitofanS3dPrintiraneKakDaPrevarneshSnimkaVSveteshtModelComponent im
       },
       "datePublished": "2026-06-02T00:00:00.000Z",
       "dateModified": "2026-06-02T00:00:00.000Z",
-      "image": "https://3dpechat.bg/assets/blogs/images/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model-cover.jpg",
+      "image": "https://3dpechat.bg/assets/blogs/images/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model-cover.webp",
       "publisher": {
         "@type": "Organization",
         "name": "3D Печат България",
@@ -54,7 +54,7 @@ export class LitofanS3dPrintiraneKakDaPrevarneshSnimkaVSveteshtModelComponent im
       },
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://3dpechat.bg/blog/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model"
+        "@id": "https://3dpechat.bg/blog/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model/"
       },
       "keywords": "литофан, 3D принтиране, 3D принтер, литофан 3D печат, 3D модел от снимка, светещ 3D модел, lithophane, 3D печат България"
     });

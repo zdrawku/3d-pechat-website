@@ -24,7 +24,7 @@ export class PlaPlaPlaProIPlnRazlikiIIzborComponent implements OnInit {
       title: 'PLA, PLA+, PLA Pro и PLN: разлики и избор за 3D печат | 3D Печат България',
       description: 'Научете всичко за различните типове PLA филамент – PLA, PLA+, PLA Pro и PLN. Практично ръководство за избор на правилния материал за вашия 3D принтер.',
       keywords: 'PLA филамент, PLA+, PLA Pro, PLN, 3D принтиране, 3D печат, 3D принтер, филамент за 3D принтер, материали за 3D печат',
-      url: 'https://3dpechat.bg/blog/pla-pla-pla-pro-i-pln-razliki-i-izbor',
+      url: 'https://3dpechat.bg/blog/pla-pla-pla-pro-i-pln-razliki-i-izbor/',
       image: 'https://3dpechat.bg/assets/og-image.png',
       type: 'article',
       author: '3D Печат България',
@@ -54,7 +54,7 @@ export class PlaPlaPlaProIPlnRazlikiIIzborComponent implements OnInit {
       },
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://3dpechat.bg/blog/pla-pla-pla-pro-i-pln-razliki-i-izbor"
+        "@id": "https://3dpechat.bg/blog/pla-pla-pla-pro-i-pln-razliki-i-izbor/"
       },
       "keywords": "PLA филамент, PLA+, PLA Pro, PLN, 3D принтиране, 3D печат, 3D принтер, филамент за 3D принтер, материали за 3D печат"
     });

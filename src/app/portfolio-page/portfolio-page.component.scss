@@ -6,7 +6,9 @@
   align-items: stretch;
   align-content: flex-start;
   gap: 0;
-  background-color: var(--ig-surface-100);
+  background-color: var(--bg-body);
+  background-image: var(--bg-body-texture);
+  background-size: var(--bg-section-size);
 }
 
 .row-layout {
@@ -24,6 +26,12 @@
   min-height: 50px;
   flex-grow: 1;
   flex-shrink: 0;
+}
+
+// First section sits right under the banner — trim its top padding so the
+// masonry grid starts high on the page instead of after a big gap.
+.portfolio-first-section {
+  padding-top: 24px;
 }
 
 .column-layout {
@@ -109,47 +117,45 @@
   }
 }
 
-.column_layout_2 {
-  justify-content: flex-start;
-  align-items: stretch;
-  align-content: flex-start;
-  gap: 32px;
-  position: relative;
-  min-width: 50px;
-  min-height: 50px;
-  flex-grow: 1;
-  flex-basis: 0;
-}
-
-.carousel_1 {
+// Masonry wall — replaces the old auto-sliding carousel. CSS multi-column
+// layout keeps each photo's natural proportions and shows many at once.
+.masonry-gallery {
   width: 100%;
-  max-width: 900px;
-  height: 500px;
-  min-height: 400px;
+  max-width: 1100px;
   margin: 0 auto;
-  
+  column-count: 3;
+  column-gap: 16px;
+
   @media (max-width: 768px) {
-    height: 450px;
-    min-height: 300px;
+    column-count: 2;
+    column-gap: 12px;
   }
-  
-  @media (max-width: 480px) {
-    height: 350px;
-    min-height: 250px;
+
+  @media (max-width: 420px) {
+    column-count: 1;
   }
 }
 
-.image_1 {
-  object-fit: scale-down;
-  border-radius: 8px;
-  min-width: 320px;
-  min-height: 0;
-  flex-grow: 1;
-  flex-basis: 0;
-  
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 16px;
+
   @media (max-width: 768px) {
-    object-fit: contain;
-    min-width: 200px;
+    margin-bottom: 12px;
+  }
+}
+
+.masonry-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: scale(1.02);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
   }
 }
 

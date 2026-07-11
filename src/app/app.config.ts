@@ -1,6 +1,6 @@
-import { ApplicationConfig, ErrorHandler, Provider, importProvidersFrom } from '@angular/core';
+import { ApplicationConfig, ErrorHandler, Provider } from '@angular/core';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
-import { BrowserModule, HammerModule } from '@angular/platform-browser';
+import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 // Uncomment after installing @angular/service-worker
 // import { provideServiceWorker } from '@angular/service-worker';
@@ -10,18 +10,15 @@ import { routes } from './app.routes';
 import { GlobalErrorHandlerService } from './error-routing/error/global-error-handler.service';
 import { environment } from '../environments/environment';
 import { provideMarkdown } from 'ngx-markdown';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 
-// provide the HAMMER_GESTURE_CONFIG token
-// to override the default settings of the HammerModule
-// { provide: HAMMER_GESTURE_CONFIG, useClass: MyHammerConfig }
 const providers: Provider = [
   provideRouter(routes, withInMemoryScrolling({
     anchorScrolling: 'enabled',
     scrollPositionRestoration: 'enabled'
   })),
-  importProvidersFrom(BrowserModule, HammerModule),
-  provideHttpClient(),
+  provideClientHydration(withEventReplay()),
+  provideHttpClient(withFetch()),
   provideMarkdown(),
   provideAnimations(),
   // Uncomment after installing @angular/service-worker with: npm install @angular/service-worker --save

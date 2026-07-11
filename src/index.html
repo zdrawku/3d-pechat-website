@@ -15,14 +15,19 @@
                  object-src 'none';
                  base-uri 'self';">
 
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YBR644GQL9"></script>
+  <!-- Google tag (gtag.js) — loaded after window 'load' so it doesn't compete
+       for bandwidth during the initial render (improves SI/LCP on slow links). -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-YBR644GQL9');
+    window.addEventListener('load', function () {
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-YBR644GQL9';
+      document.head.appendChild(s);
+    });
   </script>
 
   <meta charset="utf-8">
@@ -54,8 +59,10 @@
   <meta property="og:locale" content="bg_BG">
   <meta property="og:locale:alternate" content="en_US">
 
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;600;700" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body class="ig-typography ig-scrollbar">

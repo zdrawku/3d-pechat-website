@@ -1,18 +1,18 @@
 import { Component, OnInit, PLATFORM_ID, ViewChild, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { IsActiveMatchOptions, Router, RouterLink, RouterOutlet } from '@angular/router';
-import { IGX_NAVBAR_DIRECTIVES, IGX_NAVIGATION_DRAWER_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxIconComponent, IgxIconService, IgxNavigationDrawerComponent, IgxToggleActionDirective, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { IGX_NAVBAR_DIRECTIVES, IGX_NAVIGATION_DRAWER_DIRECTIVES, IgxIconButtonDirective, IgxIconComponent, IgxIconService, IgxNavigationDrawerComponent, IgxToggleActionDirective, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
 import { instagram, tiktok } from '@igniteui/material-icons-extended';
 
 @Component({
   selector: 'app-root',
-  imports: [IGX_NAVIGATION_DRAWER_DIRECTIVES, IGX_NAVBAR_DIRECTIVES, IgxIconButtonDirective, IgxToggleActionDirective, IgxIconComponent, IgxButtonDirective, IgxTooltipDirective, IgxTooltipTargetDirective, RouterOutlet, RouterLink],
+  imports: [IGX_NAVIGATION_DRAWER_DIRECTIVES, IGX_NAVBAR_DIRECTIVES, IgxIconButtonDirective, IgxToggleActionDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective, RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
   @ViewChild('navigationdrawer1', { static: true }) public drawer!: IgxNavigationDrawerComponent;
-  private isDarkTheme = false;
+  public isDarkTheme = false;
 
   constructor(
     public router: Router,
@@ -60,19 +60,9 @@ export class AppComponent implements OnInit {
   }
 
 
-  public isActive(path: string): boolean {
-    const exactMatch: IsActiveMatchOptions = {
-        paths: 'exact',
-        matrixParams: 'ignored',
-        queryParams: 'ignored',
-        fragment: 'ignored'
-    }
-    return this.router.isActive(path, exactMatch);
-  }
-
-  public navigate(path: string): void {
-    this.router.navigate([path]);
-    // Close drawer on small screens after navigation
+  // Drawer chips use [routerLink] directly (for native keyboard/focus support);
+  // this only handles closing the drawer overlay on small screens afterwards.
+  public closeDrawerOnMobile(): void {
     if (this.drawer && !this.drawer.pin) {
       this.drawer.close();
     }

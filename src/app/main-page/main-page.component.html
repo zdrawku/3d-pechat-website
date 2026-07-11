@@ -1,39 +1,105 @@
-<div class="row-layout row_layout_main_hero">
-  <div class="row-layout row_layout_main_hero_content">
-    <div class="column-layout column_layout_hero_text">
-      <h1 class="content">
+<!-- HERO -->
+<section class="row_layout_main_hero">
+  <div class="hero_inner">
+    <div class="hero_copy">
+      <div class="hero_chips">
+        <span class="hero_chip"><span class="chip_dot"></span>София, България</span>
+        <span class="hero_chip"><span class="chip_dot"></span>Бързи срокове</span>
+        <span class="hero_chip"><span class="chip_dot"></span>Качествени материали</span>
+      </div>
+      <h1 class="hero_title">
         Професионален 3D печат и 3D принтиране по поръчка
       </h1>
-      <p class="content">
-        Предлагаме професионален 3D печат и 3D принтиране по поръчка за прототипи, функционални детайли и малки серии. Работим с прецизност, качествени материали и кратки срокове, подходящи както за индивидуални клиенти, така и за бизнес проекти. Независимо дали имате готов модел или идея, която искате да реализирате, ние ще ви съдействаме на всеки етап от процеса.
+      <p class="hero_desc">
+        Изработваме прототипи, функционални детайли и малки серии с прецизност и внимание към детайла — за индивидуални клиенти и за бизнес. Имате готов модел или само идея? Съдействаме на всеки етап от процеса.
       </p>
-      <div class="column-layout hero_action_buttons">
-        <div class="row-layout hero_buttons_row">
-          <button igxButton="contained" type="button" class="main_action_button" (click)="navigateToPortfolio()">
-            Разгледайте портфолиото
-          </button>
-          <button igxButton="outlined" type="button" class="main_action_button" (click)="navigateToContact()">
-            Свържете се с нас
-          </button>
-        </div>
-        <p class="hero_engage_statement">
-          Нека ви асистираме за вашият проект днес, вижте идеите си да оживяват.
-        </p>
+      <div class="hero_cta_row">
+        <button igxButton="contained" type="button" class="btn_primary" (click)="navigateToContact()">
+          Заяви оферта →
+        </button>
+        <button igxButton="outlined" type="button" class="btn_ghost" (click)="navigateToPortfolio()">
+          Разгледай портфолиото
+        </button>
+      </div>
+      <p class="hero_note">✓ Безплатна консултация&nbsp;&nbsp;·&nbsp;&nbsp;✓ Отговор до 24ч&nbsp;&nbsp;·&nbsp;&nbsp;✓ Viber &amp; Instagram</p>
+    </div>
+    <div class="hero_media">
+      <img src="/assets/real-images/main-images/initial-3d-image-small.webp"
+           alt="3D печат услуги - професионално 3D принтиране"
+           class="hero_image_main" loading="eager" fetchpriority="high" />
+      <div class="hero_stat">
+        <span class="hero_stat_n">500+</span>
+        <span class="hero_stat_l">принтирани проекта</span>
       </div>
     </div>
-    <img src="/assets/real-images/main-images/initial-3d-image-small.webp" alt="3D печат услуги - професионално 3D принтиране" class="hero_image_main" loading="eager" fetchpriority="high" />
   </div>
-</div>
-<div class="row-layout image_gallery_section_template_1">
-  <div class="row-layout column_layout_2">
-    <igx-carousel [vertical]="false" animationType="slide" [interval]="2000" indicatorsOrientation="end" class="carousel_1">
-      @for (image of carouselImages; track image; let i = $index) {
-        <igx-slide class="row-layout carousel_slide_1">
-          <img [src]="image" [alt]="'3D печат проект ' + (i + 1)" class="image_1" loading="lazy" />
-        </igx-slide>
-      }
-    </igx-carousel>
-    <div class="column-layout column_layout_3">
+</section>
+
+<!-- VALUE PROPS -->
+<section class="home_section props_section">
+  <div class="section_inner">
+    <p class="section_eyebrow">Защо да изберете нас</p>
+    <h2 class="section_heading">Всичко за вашия проект, на едно място</h2>
+    <div class="props_grid">
+      <div class="prop_card">
+        <div class="prop_icon">🎯</div>
+        <h3 class="prop_title">Прецизност</h3>
+        <p class="prop_text">Точни размери и чист финиш при всеки детайл, независимо от сложността.</p>
+      </div>
+      <div class="prop_card">
+        <div class="prop_icon">⚡</div>
+        <h3 class="prop_title">Бързи срокове</h3>
+        <p class="prop_text">Кратко време за изработка — от прототип до готова малка серия.</p>
+      </div>
+      <div class="prop_card">
+        <div class="prop_icon">🧩</div>
+        <h3 class="prop_title">Всякаква форма</h3>
+        <p class="prop_text">Свобода при геометрията — сложни модели, които други методи не позволяват.</p>
+      </div>
+      <div class="prop_card">
+        <div class="prop_icon">💬</div>
+        <h3 class="prop_title">Съдействие</h3>
+        <p class="prop_text">Помагаме от идеята до готовия модел, на всеки етап от процеса.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="home_section process_section">
+  <div class="section_inner">
+    <p class="section_eyebrow">Как работим</p>
+    <h2 class="section_heading">От идея до готов детайл за 4 стъпки</h2>
+    <ol class="process_steps">
+      <li class="process_step">
+        <span class="step_num">1</span>
+        <h3 class="step_title">Изпратете идея</h3>
+        <p class="step_text">Модел, скица или описание — през формата, Viber или Instagram.</p>
+      </li>
+      <li class="process_step">
+        <span class="step_num">2</span>
+        <h3 class="step_title">Оферта</h3>
+        <p class="step_text">Уточняваме материал, цвят и срок и получавате ясна цена.</p>
+      </li>
+      <li class="process_step">
+        <span class="step_num">3</span>
+        <h3 class="step_title">Печат</h3>
+        <p class="step_text">Изработваме детайла с качествени материали и контрол на качеството.</p>
+      </li>
+      <li class="process_step">
+        <span class="step_num">4</span>
+        <h3 class="step_title">Доставка</h3>
+        <p class="step_text">Получавате готовия продукт — с грижа за всеки детайл.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ABOUT + GALLERY -->
+<section class="row-layout image_gallery_section_template_1">
+  <div class="about_inner">
+    <div class="about_text">
+      <p class="section_eyebrow">За технологията</p>
       <h2 class="title_1">
         Каквo представлява 3D печатът?
       </h2>
@@ -46,6 +112,38 @@
       <p class="title_2">
         Едно от основните предимства на 3D принтирането е свободата при формите – възможно е изработването на детайли с почти неограничена геометрия и разнообразни размери. Предлагаме 3D печат на малки серии, прототипи и функционални части с високо качество.
       </p>
+      <div class="hero_cta_row about_cta">
+        <button igxButton="contained" type="button" class="btn_primary" (click)="navigateToContact()">
+          Заяви оферта →
+        </button>
+      </div>
+    </div>
+    <div class="about_media">
+      <igx-carousel [vertical]="false" animationType="slide" [interval]="2000" indicatorsOrientation="end" class="carousel_1">
+        @for (image of carouselImages; track image; let i = $index) {
+          <igx-slide class="row-layout carousel_slide_1">
+            <img [src]="image" [alt]="'3D печат проект ' + (i + 1)" class="image_1" loading="lazy" />
+          </igx-slide>
+        }
+      </igx-carousel>
     </div>
   </div>
-</div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final_cta_section">
+  <div class="final_cta_band">
+    <h2 class="final_cta_title">Готови да реализирате вашата идея?</h2>
+    <p class="final_cta_desc">
+      Свържете се с нас днес — ще ви помогнем да изберете най-доброто решение за вашия проект.
+    </p>
+    <div class="hero_cta_row final_cta_row">
+      <button igxButton="contained" type="button" class="btn_solid" (click)="navigateToContact()">
+        Заяви оферта
+      </button>
+      <a href="tel:+359883310616" class="btn_line">
+        Обади се сега
+      </a>
+    </div>
+  </div>
+</section>

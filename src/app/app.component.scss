@@ -9,13 +9,32 @@
 }
 .navigation_bar_1 {
   --igx-navbar-text-color: var(--ig-surface-500-contrast);
-  --igx-navbar-background: var(--ig-surface-500);
+  --igx-navbar-background: transparent;
+  // Navbar A: warm brand gradient flowing left -> right, glowing harder.
+  // Set on the element (the --igx-navbar-background var only takes a solid).
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--ig-primary-500) 16%, var(--bg-card)) 0%,
+    var(--bg-card) 55%,
+    var(--bg-card) 100%
+  );
+  border-bottom: 1px solid var(--line, var(--ig-gray-300));
   z-index: 10000;
   position: fixed;
   top: 0;
   width: 100%;
   min-width: 100%;
   max-width: 100%;
+}
+
+// Dark theme gets a touch more punch so the glow stays visible on near-black.
+:host-context(.dark-theme) .navigation_bar_1 {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--ig-primary-500) 24%, var(--bg-card)) 0%,
+    var(--bg-card) 55%,
+    var(--bg-card) 100%
+  );
 }
 .navigation_drawer_1 {
   min-width: min-content;
@@ -43,6 +62,151 @@
     }
   }
 }
+// Brand card pinned to the bottom of the nav drawer (Option A).
+// The igxDrawer template projects directly into .igx-nav-drawer__aside. Make
+// that aside a full-height flex column so the card's margin-top:auto pushes it
+// past the menu items into the space that used to be empty.
+::ng-deep .navigation_drawer_1 .igx-nav-drawer__aside {
+  display: flex;
+  flex-direction: column;
+  // Faint warm tint that ties the drawer to the brand card at its base.
+  background: linear-gradient(
+    180deg,
+    var(--bg-card),
+    color-mix(in srgb, var(--ig-primary-500) 6%, var(--bg-card))
+  );
+}
+
+// Grouped chip navigation (Option 2): each destination is a bordered card with
+// an icon tile + one-line subtitle, grouped under small section labels.
+// Replaces the old flat igxDrawerItem icon+text rows.
+.drawer_group_label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ig-gray-700);
+  padding: 10px 14px 4px;
+}
+
+.drawer_chip_list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 10px;
+}
+
+.drawer_chip_list_first {
+  padding-top: 10px;
+}
+
+.drawer_chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--bg-body);
+  border: 1px solid var(--ig-gray-300);
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+
+  &:hover {
+    border-color: var(--ig-primary-500);
+    transform: translateX(2px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ig-primary-500);
+    outline-offset: 2px;
+  }
+
+  &.active {
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--ig-primary-500) 18%, transparent),
+      color-mix(in srgb, var(--ig-primary-500) 8%, transparent)
+    );
+    border-color: var(--ig-primary-500);
+
+    .drawer_chip_tile {
+      background: var(--ig-primary-500);
+      color: #fff;
+    }
+
+    .drawer_chip_txt b {
+      color: var(--ig-primary-500);
+    }
+  }
+}
+
+// Icon tile size — bump width/height/font-size together to resize.
+.drawer_chip_tile {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--bg-alt);
+  color: var(--ig-gray-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  igx-icon {
+    font-size: 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+  }
+}
+
+// Nav item text — `b` is the label (e.g. "Начало"), `span` is the subtitle
+// (e.g. "Общ преглед"). Edit these two font-sizes to change drawer text size.
+.drawer_chip_txt {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  min-width: 0;
+
+  b {
+    font-size: 14px; // nav item label size
+    font-weight: 650;
+    color: var(--ig-gray-900);
+  }
+
+  span {
+    font-size: 10.5px; // nav item subtitle size
+    color: var(--ig-gray-700);
+  }
+}
+
+.drawer_brand_card {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 14px 14px;
+  border-top: 1px solid var(--ig-gray-300);
+
+  img {
+    width: 96px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    display: block;
+  }
+}
+
+.drawer_brand_tag {
+  font-size: 10px;
+  line-height: 1.3;
+  text-align: center;
+  color: var(--ig-gray-700);
+  letter-spacing: 0.02em;
+}
+
 .main_view_container_2 {
   overflow: auto;
   position: relative;
@@ -56,14 +220,73 @@
 .row-layout {
   display: flex;
 }
-.row_layout_1 {
-  justify-content: flex-start;
+// Menu trigger (Trigger B): gradient pill button with an animated hamburger
+// glyph + "Меню" label — replaces the old bare hamburger-icon-plus-text row.
+.menu-trigger {
+  display: inline-flex;
   align-items: center;
-  align-content: flex-start;
   gap: 8px;
+  border: none;
+  border-radius: 999px;
+  padding: 7px 14px 7px 11px;
+  background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500) 75%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  font-family: inherit;
+  cursor: pointer;
+  flex-shrink: 0;
+  // No box-shadow: the 56px navbar is too short to contain any soft elevation
+  // shadow without visibly clipping it against the bar's bottom edge. The
+  // gradient fill + pill shape already read as clickable on their own.
+  transition: filter 0.2s ease;
+
+  &:hover {
+    filter: brightness(1.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ig-primary-500);
+    outline-offset: 2px;
+  }
+}
+
+.menu-trigger-bars {
+  width: 16px;
+  height: 11px;
   position: relative;
-  min-width: 50px;
-  min-height: 50px;
+  flex-shrink: 0;
+
+  span {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    border-radius: 2px;
+    background: #fff;
+    transition: transform 0.2s ease, width 0.2s ease;
+
+    &:nth-child(1) {
+      top: 0;
+    }
+
+    &:nth-child(2) {
+      top: 4.5px;
+      width: 70%;
+    }
+
+    &:nth-child(3) {
+      top: 9px;
+    }
+  }
+}
+
+.menu-trigger:hover .menu-trigger-bars span:nth-child(2) {
+  width: 100%;
+}
+
+.menu-trigger-label {
+  white-space: nowrap;
 }
 .horizontal_group_1 {
   justify-content: flex-start;
@@ -90,7 +313,11 @@
   flex-basis: 0;
 }
 .footer_section {
-  background-color: var(--ig-surface-150);
+  background: linear-gradient(
+    180deg,
+    var(--bg-alt),
+    color-mix(in srgb, var(--ig-gray-900) 4%, var(--bg-alt))
+  );
   justify-content: flex-start;
   align-items: stretch;
   align-content: flex-start;
@@ -196,91 +423,104 @@
   height: 24px;
 }
 
-// Theme chooser button
-$chooser-size: 34px;
-
-@mixin theme-chooser-item($foreground, $background) {
-  position: relative;
-  width: $chooser-size;
-  height: $chooser-size;
-  border-radius: $chooser-size * 0.5;
-  overflow: hidden;
-  transform: rotate(45deg);
-  border: 2px solid var(--ig-surface-500-contrast);
-  cursor: pointer;
-  transition: box-shadow 0.25s ease-out, transform 0.2s ease;
-
-  &::before,
-  &::after {
-    position: absolute;
-    content: '';
-    width: 50%;
-    top: 0;
-    bottom: 0;
-  }
-
-  &::before {
-    left: 0;
-    background: $foreground;
-  }
-
-  &::after {
-    right: 0;
-    background: $background;
-  }
-
-  &:hover {
-    box-shadow: 0 0 2px 3px rgba(0, 0, 0, 0.24);
-    transform: rotate(45deg) scale(1.1);
-  }
-
-  &:active {
-    transform: rotate(45deg) scale(0.95);
-  }
-}
-
-.theme-toggle-button {
+// Theme switch — a sliding sun/moon toggle. The knob shows the CURRENT theme's
+// icon and slides across on click. Faint end icons sit behind it for affordance.
+// Slide state is driven by the .is-dark class (bound to isDarkTheme) so it does
+// not depend on the global theme class reaching into scoped styles.
+.theme-switch {
   background: transparent;
   border: none;
   padding: 0;
   margin-left: 8px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
   cursor: pointer;
 }
 
-.theme-toggle-circle {
-  // Default: Light theme is active, show dark theme colors (what clicking will activate)
-  @include theme-chooser-item(#FF7043, #000000);
+.theme-switch-track {
+  position: relative;
+  width: 54px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--bg-alt);
+  border: 1px solid var(--ig-gray-300);
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
-// When dark theme is active, show light theme colors (what clicking will activate)
-:root.dark-theme .theme-toggle-circle {
-  @include theme-chooser-item(#FF5722, #4CAF50);
-  border-color: var(--ig-surface-500-contrast);
+.theme-switch:hover .theme-switch-track {
+  border-color: var(--ig-primary-500);
+}
+
+// Faint end icons, absolutely positioned at each end, behind the knob.
+.theme-switch-end {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  --size: 14px;
+  font-size: 14px !important;
+  width: 14px !important;
+  height: 14px !important;
+  color: var(--ig-gray-600);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.theme-switch-end--sun {
+  left: 7px;
+}
+
+.theme-switch-end--moon {
+  right: 7px;
+}
+
+// The sliding knob.
+.theme-switch-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+
+.theme-switch-knob-ic {
+  --size: 13px;
+  font-size: 13px !important;
+  width: 13px !important;
+  height: 13px !important;
+  color: #fff;
+}
+
+// Slide the knob to the right end when dark theme is active.
+// 26px = track width (54px) - knob width (22px) - 2*offset (2px each side).
+// If you resize .theme-switch-track or .theme-switch-knob, recompute this.
+.theme-switch.is-dark .theme-switch-knob {
+  transform: translateX(26px);
 }
 
 .content {
   height: max-content;
   min-width: min-content;
-  
+
   .short-text {
     display: none;
   }
-  
+
   .full-text {
     display: inline;
   }
-  
-  @media (max-width: 480px) {
-    .short-text {
-      display: inline;
-    }
-    
-    .full-text {
-      display: none;
-    }
+
+  // Below 600px the "Меню" pill + CTA + socials + theme switch need the room —
+  // hide the wordmark entirely (the logo/brand is still in the drawer).
+  @media (max-width: 600px) {
+    display: none;
   }
 }
 .icon {
@@ -332,8 +572,33 @@ $chooser-size: 34px;
   font-size: 18px;
   width: 18px;
   height: 18px;
+  // #666666 (~5.3:1 on #F5F5F5) instead of the ~#8A8A8A gray-600 (3.16:1).
+  color: #666666;
+}
+
+:host-context(.dark-theme) .icon_mail_footer {
   color: var(--ig-gray-600);
 }
+.footer_link {
+  color: var(--ig-gray-700);
+  height: max-content;
+  min-width: min-content;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: var(--ig-primary-500);
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ig-primary-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
 .link_customer_support_footer {
   color: var(--ig-gray-700);
   height: max-content;
@@ -347,12 +612,46 @@ $chooser-size: 34px;
     text-decoration: underline;
   }
 }
-.button_home {
-  --ig-size: var(--ig-size-medium);
+
+// "Заяви оферта" call-to-action — a filled orange pill leading to the contact
+// form. Kept visible on small screens (unlike the nav links) since it's the
+// primary action; the drawer hamburger still covers navigation.
+.nav_cta_button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   height: max-content;
-  
-  @media (max-width: 568px) {
-    display: none;
+  padding: 9px 18px;
+  margin-left: 4px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500) 70%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  text-decoration: none;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--ig-primary-500) 35%, transparent);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    text-decoration: none;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ig-primary-500);
+    outline-offset: 2px;
+  }
+
+  // Shrink to just the essentials on tight widths so it doesn't overflow.
+  @media (max-width: 480px) {
+    padding: 8px 12px;
+    font-size: 0.8125rem;
   }
 }
 .icon_button_5 {

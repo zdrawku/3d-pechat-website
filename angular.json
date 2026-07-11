@@ -37,7 +37,6 @@
               "src/llms.txt",
               "src/sitemap.xml",
               "src/404.html",
-              "src/.htaccess",
               {
                 "glob": "CNAME",
                 "input": "public",
@@ -47,9 +46,7 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": [
-              "./node_modules/hammerjs/hammer.min.js"
-            ],
+            "scripts": [],
             "stylePreprocessorOptions": {
               "includePaths": [
                 "node_modules"
@@ -79,7 +76,11 @@
                 },
                 "fonts": true
               },
-              "sourceMap": false,
+              "sourceMap": {
+                "scripts": true,
+                "styles": false,
+                "hidden": true
+              },
               "extractLicenses": true,
               "namedChunks": false
             },

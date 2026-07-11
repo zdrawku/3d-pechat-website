@@ -1,33 +1,22 @@
 <igx-navbar class="navigation_bar_1">
   <igx-navbar-title class="navbar-content">
-    <div [igxToggleAction]="navigationdrawer1" class="row-layout row_layout_1">
-      <igx-icon class="icon_12">
-        menu
-      </igx-icon>
-      <p class="content">
-        <span class="full-text">3D Печат услуги</span>
-        <span class="short-text">3D Печат</span>
-      </p>
-    </div>
-    <button igxButton="flat" type="button" [routerLink]="[`/`]" class="button_home">
-      Начало
+    <button type="button" [igxToggleAction]="navigationdrawer1" class="menu-trigger" aria-label="Отвори менюто">
+      <span class="menu-trigger-bars">
+        <span></span>
+        <span></span>
+        <span></span>
+      </span>
+      <span class="menu-trigger-label">Меню</span>
     </button>
-    <button igxButton="flat" type="button" [routerLink]="[`/portfolio`]" class="button_home">
-      Портфолио
-    </button>
-    <button igxButton="flat" type="button" [routerLink]="[`/products`]" class="button_home">
-      Продукти
-    </button>
-    <button igxButton="flat" type="button" [routerLink]="[`/prices`]" class="button_home">
-      Цени
-    </button>
-    <button igxButton="flat" type="button" [routerLink]="[`/contact`]" class="button_home">
-      Обадете се
-    </button>
-    <button igxButton="flat" type="button" [routerLink]="[`/blog`]" class="button_home">
-      Блог
-    </button>
+    <p class="content">
+      <span class="full-text">3D Печат услуги</span>
+      <span class="short-text">3D Печат</span>
+    </p>
   </igx-navbar-title>
+
+  <a [routerLink]="[`/contact`]" class="nav_cta_button">
+    Заяви оферта
+  </a>
   <a href="https://www.instagram.com/3dpechat.bg" target="_blank" rel="noopener noreferrer" 
      igxIconButton="flat" class="icon_button_5" aria-label="Instagram профил"
      [igxTooltipTarget]="instagramNavTooltip">
@@ -46,12 +35,15 @@
     Гледайте ни в TikTok
   </div>
   
-  <button class="theme-toggle-button" (click)="toggleTheme()" aria-label="Toggle theme"
-          [igxTooltipTarget]="themeTooltip">
-    <div class="theme-toggle-circle">
-      <div class="theme-half light-half"></div>
-      <div class="theme-half dark-half"></div>
-    </div>
+  <button class="theme-switch" [class.is-dark]="isDarkTheme" (click)="toggleTheme()"
+          aria-label="Смени тема" [igxTooltipTarget]="themeTooltip">
+    <span class="theme-switch-track">
+      <igx-icon class="theme-switch-end theme-switch-end--sun">light_mode</igx-icon>
+      <igx-icon class="theme-switch-end theme-switch-end--moon">dark_mode</igx-icon>
+      <span class="theme-switch-knob">
+        <igx-icon class="theme-switch-knob-ic">{{ isDarkTheme ? 'dark_mode' : 'light_mode' }}</igx-icon>
+      </span>
+    </span>
   </button>
   <div igxTooltip #themeTooltip="tooltip">
     Смени тема
@@ -61,41 +53,78 @@
   <igx-nav-drawer [isOpen]="true" width="232px" #navigationdrawer1 class="navigation_drawer_1"
     [enableGestures]="true">
     <ng-template igxDrawer>
-      <div igxDrawerItem (click)="navigate('/')" [active]="isActive(`/`)">
-        <igx-icon class="icon_12">
-          home_work
-        </igx-icon>
-        <span>Начало</span>
+      <div class="drawer_group_label">Разгледай</div>
+      <div class="drawer_chip_list drawer_chip_list_first">
+        <a class="drawer_chip" [routerLink]="['/']" routerLinkActive="active"
+           [routerLinkActiveOptions]="{ exact: true }" (click)="closeDrawerOnMobile()">
+          <span class="drawer_chip_tile">
+            <igx-icon>home_work</igx-icon>
+          </span>
+          <span class="drawer_chip_txt">
+            <b>Начало</b>
+            <span>Общ преглед</span>
+          </span>
+        </a>
+        <a class="drawer_chip" [routerLink]="['/portfolio']" routerLinkActive="active"
+           (click)="closeDrawerOnMobile()">
+          <span class="drawer_chip_tile">
+            <igx-icon>co_present</igx-icon>
+          </span>
+          <span class="drawer_chip_txt">
+            <b>Портфолио</b>
+            <span>Проекти</span>
+          </span>
+        </a>
+        <a class="drawer_chip" [routerLink]="['/products']" routerLinkActive="active"
+           (click)="closeDrawerOnMobile()">
+          <span class="drawer_chip_tile">
+            <igx-icon>inventory_2</igx-icon>
+          </span>
+          <span class="drawer_chip_txt">
+            <b>Продукти</b>
+            <span>За поръчка</span>
+          </span>
+        </a>
+        <a class="drawer_chip" [routerLink]="['/prices']" routerLinkActive="active"
+           (click)="closeDrawerOnMobile()">
+          <span class="drawer_chip_tile">
+            <igx-icon>euro</igx-icon>
+          </span>
+          <span class="drawer_chip_txt">
+            <b>Цени</b>
+            <span>Тарифи</span>
+          </span>
+        </a>
       </div>
-      <div igxDrawerItem (click)="navigate('/portfolio')" [active]="isActive(`/portfolio`)">
-        <igx-icon class="icon_12">
-          co_present
-        </igx-icon>
-        <span>Портфолио</span>
+
+      <div class="drawer_group_label">Свържи се</div>
+      <div class="drawer_chip_list">
+        <a class="drawer_chip" [routerLink]="['/contact']" routerLinkActive="active"
+           (click)="closeDrawerOnMobile()">
+          <span class="drawer_chip_tile">
+            <igx-icon>call</igx-icon>
+          </span>
+          <span class="drawer_chip_txt">
+            <b>Свържете се</b>
+            <span>Форма</span>
+          </span>
+        </a>
+        <a class="drawer_chip" [routerLink]="['/blog']" routerLinkActive="active"
+           (click)="closeDrawerOnMobile()">
+          <span class="drawer_chip_tile">
+            <igx-icon>article</igx-icon>
+          </span>
+          <span class="drawer_chip_txt">
+            <b>Блог</b>
+            <span>Статии</span>
+          </span>
+        </a>
       </div>
-      <div igxDrawerItem (click)="navigate('/products')" [active]="isActive(`/products`)">
-        <igx-icon class="icon_12">
-          inventory_2
-        </igx-icon>
-        <span>Продукти</span>
-      </div>
-      <div igxDrawerItem (click)="navigate('/prices')" [active]="isActive(`/prices`)">
-        <igx-icon class="icon_12">
-          euro
-        </igx-icon>
-        <span>Цени</span>
-      </div>
-      <div igxDrawerItem (click)="navigate('/contact')" [active]="isActive(`/contact`)">
-        <igx-icon class="icon_12">
-          call
-        </igx-icon>
-        <span>Свържете се с нас</span>
-      </div>
-      <div igxDrawerItem  (click)="navigate('/blog')" [active]="isActive(`/blog`)">
-        <igx-icon class="icon_12">
-          article
-        </igx-icon>
-        <span>Блог</span>
+
+      <div class="drawer_brand_card">
+        <img src="assets/logo-drawer.webp" alt="3DPechat.bg лого"
+             width="96" height="96" loading="lazy" decoding="async" />
+        <span class="drawer_brand_tag">Направено в София · от 2025</span>
       </div>
     </ng-template>
   </igx-nav-drawer>
@@ -138,41 +167,41 @@
           </div>
           <div class="column-layout column_layout">
             <p class="ig-typography__subtitle-2 content">
-              Quick Links
+              Бързи връзки
             </p>
-            <a class="ig-typography__body-2 content_2">
-              About Us
+            <a [routerLink]="['/']" class="ig-typography__body-2 footer_link">
+              Начало
             </a>
-            <a class="ig-typography__body-2 content_2">
-              Our Fleet
+            <a [routerLink]="['/portfolio']" class="ig-typography__body-2 footer_link">
+              Портфолио
             </a>
-            <a class="ig-typography__body-2 content_2">
-              Pricing
+            <a [routerLink]="['/prices']" class="ig-typography__body-2 footer_link">
+              Цени
             </a>
-            <a class="ig-typography__body-2 content_2">
-              FAQ
+            <a [routerLink]="['/blog']" class="ig-typography__body-2 footer_link">
+              Блог
             </a>
           </div>
           <div class="column-layout column_layout">
             <p class="ig-typography__subtitle-2 content">
-              Legal
+              Услуги
             </p>
-            <a class="ig-typography__body-2 content_2">
-              Privacy Policy
+            <a [routerLink]="['/products']" class="ig-typography__body-2 footer_link">
+              Продукти
             </a>
-            <a class="ig-typography__body-2 content_2">
-              Terms of Service
+            <a [routerLink]="['/prices']" class="ig-typography__body-2 footer_link">
+              Ценоразпис
             </a>
-            <a class="ig-typography__body-2 content_2">
-              Cookie Policy
+            <a [routerLink]="['/contact']" class="ig-typography__body-2 footer_link">
+              Заяви оферта
             </a>
-            <a class="ig-typography__body-2 content_2">
-              User Agreement
+            <a href="viber://chat?number=%2B359883310616" class="ig-typography__body-2 footer_link">
+              Пиши във Viber
             </a>
           </div>
           <div class="column-layout column_layout_-3">
             <p class="ig-typography__subtitle-2 content">
-              Contact Us
+              Контакти
             </p>
             <div class="row-layout row_layout_-2">
               <igx-icon class="icon_mail_footer">
