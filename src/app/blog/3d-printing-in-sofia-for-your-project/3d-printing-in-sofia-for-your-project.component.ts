@@ -25,7 +25,7 @@ export class ThreeDPrintingInSofiaForYourProjectComponent implements OnInit {
       title: '3D принтиране в София: Защо да изберете локални услуги - 3D Печат България',
       description: '3D принтиране в София с бърза доставка и професионално изпълнение. Открийте предимствата на локалните услуги за вашия проект.',
       keywords: '3D принтиране София, 3D печат София, 3D принтиране услуги, локални 3D принтиране услуги, архитектурен макет, прототип, експресно 3D принтиране',
-      url: 'https://3dpechat.bg/blog/3d-printing-in-sofia-for-your-project',
+      url: 'https://3dpechat.bg/blog/3d-printing-in-sofia-for-your-project/',
       image: 'https://3dpechat.bg/assets/real-images/20250517_164324.jpg',
       type: 'article',
       author: '3D Печат България',
@@ -56,7 +56,7 @@ export class ThreeDPrintingInSofiaForYourProjectComponent implements OnInit {
       },
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://3dpechat.bg/blog/3d-printing-in-sofia-for-your-project"
+        "@id": "https://3dpechat.bg/blog/3d-printing-in-sofia-for-your-project/"
       },
       "keywords": "3D принтиране София, 3D печат, локални услуги, експресна доставка, архитектурен макет"
     });

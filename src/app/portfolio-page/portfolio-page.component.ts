@@ -18,7 +18,7 @@ export class PortfolioPageComponent {
       title: 'Портфолио - 3D Печат България',
       description: 'Разгледайте нашето портфолио от 3D принтирани проекти. Прототипи, детайли, макети и персонализирани продукти с високо качество.',
       keywords: '3D печат портфолио, 3D принтирани проекти, прототипи, макети, 3D печат примери',
-      url: 'https://3dpechat.bg/portfolio',
+      url: 'https://3dpechat.bg/portfolio/',
       type: 'website'
     });
     this.seoService.removeStructuredData();

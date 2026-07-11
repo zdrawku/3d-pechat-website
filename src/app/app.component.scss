@@ -332,6 +332,11 @@ $chooser-size: 34px;
   font-size: 18px;
   width: 18px;
   height: 18px;
+  // #666666 (~5.3:1 on #F5F5F5) instead of the ~#8A8A8A gray-600 (3.16:1).
+  color: #666666;
+}
+
+:host-context(.dark-theme) .icon_mail_footer {
   color: var(--ig-gray-600);
 }
 .link_customer_support_footer {
@@ -350,10 +355,24 @@ $chooser-size: 34px;
 .button_home {
   --ig-size: var(--ig-size-medium);
   height: max-content;
-  
-  @media (max-width: 568px) {
+  // Darken the flat-button text from the theme green (#4CAF50, 2.54:1 on the
+  // #F5F5F5 surface) to #2E7D32 (~4.7:1) for WCAG AA contrast.
+  --foreground: #2E7D32;
+  color: #2E7D32;
+
+  // The 6-button row + logo + social icons + theme toggle needs ~950px to
+  // fit without wrapping/overflowing; hide the row before that (the drawer
+  // hamburger remains available) rather than let the navbar overflow.
+  @media (max-width: 950px) {
     display: none;
   }
+}
+
+// Dark theme: #2E7D32 would be too dark on the #1E1E1E surface, so use a
+// lighter green (#81C784, ~7:1 on dark) instead.
+:host-context(.dark-theme) .button_home {
+  --foreground: #81C784;
+  color: #81C784;
 }
 .icon_button_5 {
   --foreground: var(--ig-surface-500-contrast);

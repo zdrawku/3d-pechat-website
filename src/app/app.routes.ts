@@ -1,52 +1,99 @@
 import { Routes } from '@angular/router';
 
-import { PageNotFoundComponent } from './error-routing/not-found/not-found.component';
-import { UncaughtErrorComponent } from './error-routing/error/uncaught-error.component';
-import { MainPageComponent } from './main-page/main-page.component';
-import { PortfolioPageComponent } from './portfolio-page/portfolio-page.component';
-import { PricesPageComponent } from './prices-page/prices-page.component';
-import { ProductsPageComponent } from './products-page/products-page.component';
-import { ContactMePageComponent } from './contact-me-page/contact-me-page.component';
-import { BlogListPageComponent } from './blog-list-page/blog-list-page.component';
-import { HowToMakeMoneyWith3dPrinting } from './blog/how-to-make-money-with3d-printing/how-to-make-money-with3d-printing';
-import { WhatIs3dPrintingComponent } from './blog/what-is-3d-printing/what-is-3d-printing.component';
-import { ThreeDPrintingInSofiaForYourProjectComponent } from './blog/3d-printing-in-sofia-for-your-project/3d-printing-in-sofia-for-your-project.component';
-import { ThreeDPrintingTechnologiesComponent } from './blog/3d-printing-technologies/3d-printing-technologies.component';
-import { ThreeDPrintiraniObuvkiComponent } from './blog/3d-printirani-obuvki/3d-printirani-obuvki.component';
-import { IzglazhdaneNaPlaPri3dPrintiraneRaboteshtiMetodiZaGladakFinishComponent } from './blog/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish.component';
-import { ThreeDPrintiraneNaWarhammerNayGotiniteFigurkiTerenIAksesoariComponent } from './blog/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari.component';
-import { KakDaPechelimOt3dPrintiranetoComponent } from './blog/kak-da-pechelim-ot-3d-printiraneto/kak-da-pechelim-ot-3d-printiraneto.component';
-import { PlaPlaPlaProIPlnRazlikiIIzborComponent } from './blog/pla-pla-pla-pro-i-pln-razliki-i-izbor/pla-pla-pla-pro-i-pln-razliki-i-izbor.component';
-import { LitofanS3dPrintiraneKakDaPrevarneshSnimkaVSveteshtModelComponent } from './blog/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model.component';
-import { ThreeDPrinterBambuLabX2dPodrobnoRevyuFunktsiiIIzborComponent } from './blog/3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor/3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor.component';
-import { ThreeDPrinterZaNachinaeshtiKakEdnoDetePrevarnaHobiVSemeenProektComponent } from './blog/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt.component';
-import { InfillPri3dPechatPlatnostZdravinaIFilamentComponent } from './blog/infill-pri-3d-pechat-platnost-zdravina-i-filament/infill-pri-3d-pechat-platnost-zdravina-i-filament.component';
-
 export const routes: Routes = [
-  { path: '', component: MainPageComponent, data: { text: 'Home' } },
-  { path: 'error', component: UncaughtErrorComponent },
-  { path: 'portfolio', component: PortfolioPageComponent, data: { text: 'Portfolio' } },
-  { path: 'products', component: ProductsPageComponent, data: { text: 'Products' } },
-  { path: 'prices', component: PricesPageComponent, data: { text: 'Prices' } },
-  { path: 'contact', component: ContactMePageComponent, data: { text: 'Contact' } },
+  {
+    path: '',
+    loadComponent: () => import('./main-page/main-page.component').then(m => m.MainPageComponent),
+    data: { text: 'Home' }
+  },
+  {
+    path: 'error',
+    loadComponent: () => import('./error-routing/error/uncaught-error.component').then(m => m.UncaughtErrorComponent)
+  },
+  {
+    path: 'portfolio',
+    loadComponent: () => import('./portfolio-page/portfolio-page.component').then(m => m.PortfolioPageComponent),
+    data: { text: 'Portfolio' }
+  },
+  {
+    path: 'products',
+    loadComponent: () => import('./products-page/products-page.component').then(m => m.ProductsPageComponent),
+    data: { text: 'Products' }
+  },
+  {
+    path: 'prices',
+    loadComponent: () => import('./prices-page/prices-page.component').then(m => m.PricesPageComponent),
+    data: { text: 'Prices' }
+  },
+  {
+    path: 'contact',
+    loadComponent: () => import('./contact-me-page/contact-me-page.component').then(m => m.ContactMePageComponent),
+    data: { text: 'Contact' }
+  },
   {
     path: 'blog',
     children: [
-      { path: '', component: BlogListPageComponent, data: { text: 'Blog' } },
-      { path: 'how-to-make-money-3d-printing', component: HowToMakeMoneyWith3dPrinting },
-      { path: 'what-is-3d-printing', component: WhatIs3dPrintingComponent },
-      { path: '3d-printing-in-sofia-for-your-project', component: ThreeDPrintingInSofiaForYourProjectComponent },
-      { path: '3d-printing-technologies', component: ThreeDPrintingTechnologiesComponent },
-      { path: '3d-printirani-obuvki', component: ThreeDPrintiraniObuvkiComponent },
-      { path: 'izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish', component: IzglazhdaneNaPlaPri3dPrintiraneRaboteshtiMetodiZaGladakFinishComponent },
-      { path: '3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari', component: ThreeDPrintiraneNaWarhammerNayGotiniteFigurkiTerenIAksesoariComponent },
-      { path: 'kak-da-pechelim-ot-3d-printiraneto', component: KakDaPechelimOt3dPrintiranetoComponent },
-      { path: 'pla-pla-pla-pro-i-pln-razliki-i-izbor', component: PlaPlaPlaProIPlnRazlikiIIzborComponent },
-      { path: 'litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model', component: LitofanS3dPrintiraneKakDaPrevarneshSnimkaVSveteshtModelComponent },
-      { path: '3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor', component: ThreeDPrinterBambuLabX2dPodrobnoRevyuFunktsiiIIzborComponent },
-      { path: '3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt', component: ThreeDPrinterZaNachinaeshtiKakEdnoDetePrevarnaHobiVSemeenProektComponent },
-      { path: 'infill-pri-3d-pechat-platnost-zdravina-i-filament', component: InfillPri3dPechatPlatnostZdravinaIFilamentComponent }
+      {
+        path: '',
+        loadComponent: () => import('./blog-list-page/blog-list-page.component').then(m => m.BlogListPageComponent),
+        data: { text: 'Blog' }
+      },
+      {
+        path: 'how-to-make-money-3d-printing',
+        loadComponent: () => import('./blog/how-to-make-money-with3d-printing/how-to-make-money-with3d-printing').then(m => m.HowToMakeMoneyWith3dPrinting)
+      },
+      {
+        path: 'what-is-3d-printing',
+        loadComponent: () => import('./blog/what-is-3d-printing/what-is-3d-printing.component').then(m => m.WhatIs3dPrintingComponent)
+      },
+      {
+        path: '3d-printing-in-sofia-for-your-project',
+        loadComponent: () => import('./blog/3d-printing-in-sofia-for-your-project/3d-printing-in-sofia-for-your-project.component').then(m => m.ThreeDPrintingInSofiaForYourProjectComponent)
+      },
+      {
+        path: '3d-printing-technologies',
+        loadComponent: () => import('./blog/3d-printing-technologies/3d-printing-technologies.component').then(m => m.ThreeDPrintingTechnologiesComponent)
+      },
+      {
+        path: '3d-printirani-obuvki',
+        loadComponent: () => import('./blog/3d-printirani-obuvki/3d-printirani-obuvki.component').then(m => m.ThreeDPrintiraniObuvkiComponent)
+      },
+      {
+        path: 'izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish',
+        loadComponent: () => import('./blog/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish.component').then(m => m.IzglazhdaneNaPlaPri3dPrintiraneRaboteshtiMetodiZaGladakFinishComponent)
+      },
+      {
+        path: '3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari',
+        loadComponent: () => import('./blog/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari.component').then(m => m.ThreeDPrintiraneNaWarhammerNayGotiniteFigurkiTerenIAksesoariComponent)
+      },
+      {
+        path: 'kak-da-pechelim-ot-3d-printiraneto',
+        loadComponent: () => import('./blog/kak-da-pechelim-ot-3d-printiraneto/kak-da-pechelim-ot-3d-printiraneto.component').then(m => m.KakDaPechelimOt3dPrintiranetoComponent)
+      },
+      {
+        path: 'pla-pla-pla-pro-i-pln-razliki-i-izbor',
+        loadComponent: () => import('./blog/pla-pla-pla-pro-i-pln-razliki-i-izbor/pla-pla-pla-pro-i-pln-razliki-i-izbor.component').then(m => m.PlaPlaPlaProIPlnRazlikiIIzborComponent)
+      },
+      {
+        path: 'litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model',
+        loadComponent: () => import('./blog/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model.component').then(m => m.LitofanS3dPrintiraneKakDaPrevarneshSnimkaVSveteshtModelComponent)
+      },
+      {
+        path: '3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor',
+        loadComponent: () => import('./blog/3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor/3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor.component').then(m => m.ThreeDPrinterBambuLabX2dPodrobnoRevyuFunktsiiIIzborComponent)
+      },
+      {
+        path: '3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt',
+        loadComponent: () => import('./blog/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt.component').then(m => m.ThreeDPrinterZaNachinaeshtiKakEdnoDetePrevarnaHobiVSemeenProektComponent)
+      },
+      {
+        path: 'infill-pri-3d-pechat-platnost-zdravina-i-filament',
+        loadComponent: () => import('./blog/infill-pri-3d-pechat-platnost-zdravina-i-filament/infill-pri-3d-pechat-platnost-zdravina-i-filament.component').then(m => m.InfillPri3dPechatPlatnostZdravinaIFilamentComponent)
+      }
     ]
   },
-  { path: '**', component: PageNotFoundComponent } // must always be last
+  {
+    path: '**',
+    loadComponent: () => import('./error-routing/not-found/not-found.component').then(m => m.PageNotFoundComponent)
+  } // must always be last
 ];

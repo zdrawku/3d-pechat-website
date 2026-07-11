@@ -269,7 +269,7 @@ export class ProductsPageComponent {
       title: 'Продукти - 3D Печат България',
       description: 'Разгледайте нашите 3D принтирани продукти - монетни карти с българско знаме, стойки за слушалки и персонализирани продукти по поръчка.',
       keywords: '3D принтирани продукти, монетни карти, стойки за слушалки, персонализирани продукти, 3D печат по поръчка',
-      url: 'https://3dpechat.bg/products',
+      url: 'https://3dpechat.bg/products/',
       type: 'website'
     });
     this.seoService.removeStructuredData();

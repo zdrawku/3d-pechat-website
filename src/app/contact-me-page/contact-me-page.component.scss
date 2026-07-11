@@ -117,7 +117,11 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  
+  // Darken the outlined-button text from the theme green (#4CAF50, 2.77:1 on
+  // white) to #2E7D32 (~4.7:1) for WCAG AA contrast — mirrors .button_home.
+  --foreground: #2E7D32;
+  color: #2E7D32;
+
   igx-icon {
     font-size: 20px;
   }
@@ -130,6 +134,13 @@
       font-size: 18px;
     }
   }
+}
+
+// Dark theme: #2E7D32 is too dark on the dark surface, use the lighter green
+// (#81C784, ~7:1 on dark) — mirrors .button_home.
+:host-context(.dark-theme) .social_button {
+  --foreground: #81C784;
+  color: #81C784;
 }
 
 .viber_button {

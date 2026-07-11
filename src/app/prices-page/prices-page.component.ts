@@ -18,7 +18,7 @@ export class PricesPageComponent {
       title: 'Цени за 3D печат - 3D Печат България',
       description: 'Вижте нашите цени за 3D печат услуги. Калкулатор за изчисляване на цена на 3D принтиране по грамаж и материал.',
       keywords: '3D печат цени, цена 3D принтиране, калкулатор 3D печат, PLA цена, ABS цена, PETG цена',
-      url: 'https://3dpechat.bg/prices',
+      url: 'https://3dpechat.bg/prices/',
       type: 'website'
     });
     this.seoService.removeStructuredData();

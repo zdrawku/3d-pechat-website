@@ -15,7 +15,7 @@ export class BlogService {
       slug: 'how-to-make-money',
       route: '/blog/how-to-make-money-3d-printing',
       date: new Date('2026-01-15'),
-      imageUrl: 'assets/blogs/images/hero-image-how-to-make-money.png',
+      imageUrl: 'assets/blogs/images/hero-image-how-to-make-money.webp',
       tags: ['3D принтиране', 'бизнес', 'печалба', 'легалност'],
       author: '3D Печат България'
     },
@@ -26,7 +26,7 @@ export class BlogService {
       slug: 'what-is-3d-printing',
       route: '/blog/what-is-3d-printing',
       date: new Date('2026-02-08'),
-      imageUrl: 'assets/blogs/images/additive-printing.png',
+      imageUrl: 'assets/blogs/images/additive-printing.webp',
       tags: ['3D принтиране', '3D принтер', 'технология', 'адитивно производство'],
       author: '3D Печат България'
     },
@@ -37,7 +37,7 @@ export class BlogService {
       slug: '3d-printing-in-sofia-for-your-project',
       route: '/blog/3d-printing-in-sofia-for-your-project',
       date: new Date('2026-02-02'),
-      imageUrl: 'assets/blogs/images/design-is-from-question.png',
+      imageUrl: 'assets/blogs/images/design-is-from-question.webp',
       tags: ['3D принтиране София', '3D печат', 'локални услуги', 'експресна доставка', 'архитектурен макет'],
       author: '3D Печат България'
     },
@@ -48,7 +48,7 @@ export class BlogService {
       slug: '3d-printing-technologies',
       route: '/blog/3d-printing-technologies',
       date: new Date('2026-03-05'),
-      imageUrl: 'assets/blogs/images/SLA.png',
+      imageUrl: 'assets/blogs/images/SLA.webp',
       tags: ['3d принтиране', '3d принтиране технологии', 'FDM', 'SLA', 'SLS', 'DLP', 'материали', 'адитивно производство'],
       author: '3D Печат България'
     },
@@ -59,7 +59,7 @@ export class BlogService {
       slug: '3d-printirani-obuvki',
       route: '/blog/3d-printirani-obuvki',
       date: new Date('2026-06-02'),
-      imageUrl: 'assets/blogs/images/3d-printirani-obuvki-cover-3.png',
+      imageUrl: 'assets/blogs/images/3d-printirani-obuvki-cover-3.webp',
       author: '3D Печат България',
       tags: ['3D принтирани обувки', '3D печат обувки', 'персонализирани обувки', 'TPU', 'SLS', 'обувна индустрия']
     },
@@ -70,7 +70,7 @@ export class BlogService {
       slug: 'izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish',
       route: '/blog/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish',
       date: new Date('2026-06-02'),
-      imageUrl: 'assets/blogs/images/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish-cover.jpg',
+      imageUrl: 'assets/blogs/images/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish-cover.webp',
       tags: ['PLA филамент', 'постобработка', 'изглаждане', '3D принтиране', 'финиш', 'туториал', 'съвети', 'техники'],
       author: '3D Печат България'
     },
@@ -81,7 +81,7 @@ export class BlogService {
       slug: '3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari',
       route: '/blog/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari',
       date: new Date('2026-06-03'),
-      imageUrl: 'assets/blogs/images/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari-cover.jpg',
+      imageUrl: 'assets/blogs/images/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari-cover.webp',
       tags: ['Warhammer', '3D принтиране', 'Миниатюри', 'Настолни игри', 'Resin печат', 'Фигурки', 'Терен', 'Аксесоари'],
       author: '3D Печат България'
     },
@@ -114,7 +114,7 @@ export class BlogService {
       slug: 'litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model',
       route: '/blog/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model',
       date: new Date('2026-06-02'),
-      imageUrl: 'assets/blogs/images/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model-cover.jpg',
+      imageUrl: 'assets/blogs/images/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model-cover.webp',
       tags: ['литофан', '3D принтиране', 'подаръци', 'DIY проекти', 'персонализирани модели', '3D модели', 'уроци', 'начинаещи'],
       author: '3D Печат България'
     },
@@ -125,18 +125,18 @@ export class BlogService {
       slug: '3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor',
       route: '/blog/3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor',
       date: new Date('2026-06-15'),
-      imageUrl: 'assets/blogs/images/Bambu-Lab-X2D.jpg',
+      imageUrl: 'assets/blogs/images/Bambu-Lab-X2D.webp',
       tags: ['Bambu Lab', '3D принтери', 'Ревюта', 'CoreXY', 'Високоскоростен печат', '3D печат', 'Технологии'],
       author: '3D Печат България'
     },
         {
       id: '11',
-      title: '3D принтер за начинаещи: детско хоби → семеен бизнес',
+      title: '3D принтер за начинаещи: от детско хоби в семеен бизнес',
       description: 'Вдъхновяваща история как 12-годишно дете превърна 3D принтирането в семеен проект. Практични съвети за избор на първи 3D принтер и стартиране.',
       slug: '3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt',
       route: '/blog/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt',
       date: new Date('2026-06-22'),
-      imageUrl: 'assets/blogs/images/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt-cover.jpg',
+      imageUrl: 'assets/blogs/images/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt-cover.webp',
       tags: ['3D принтер', 'начинаещи', 'семеен проект', 'деца и 3D печат', 'хоби', 'практични съвети', 'история на успеха', 'избор на принтер'],
       author: '3D Печат България'
     },
@@ -147,7 +147,7 @@ export class BlogService {
       slug: 'infill-pri-3d-pechat-platnost-zdravina-i-filament',
       route: '/blog/infill-pri-3d-pechat-platnost-zdravina-i-filament',
       date: new Date('2026-07-06'),
-      imageUrl: 'assets/blogs/images/infill-pri-3d-pechat-platnost-zdravina-i-filament-cover.jpg',
+      imageUrl: 'assets/blogs/images/infill-pri-3d-pechat-platnost-zdravina-i-filament-cover.webp',
       tags: ['Infill', '3D печат', 'Настройки', 'Филамент', 'Здравина', 'Оптимизация', 'Практически съвети', 'Качество'],
       author: '3D Печат България'
     }

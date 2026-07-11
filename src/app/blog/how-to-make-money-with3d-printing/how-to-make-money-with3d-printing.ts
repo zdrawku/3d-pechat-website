@@ -23,8 +23,8 @@ export class HowToMakeMoneyWith3dPrinting implements OnInit {
       title: 'Как да печелите пари с 3D принтер - Пълен гайд 2026',
       description: 'Научете как да печелите пари с вашия 3D принтер, как да продавате 3D принтирани продукти легално и безопасно. Пълен гайд за 2026.',
       keywords: '3D принтиране, печелене на пари, 3D принтер, продажба на 3D принтирани продукти, лицензиране, CE маркировка',
-      url: 'https://3dpechat.bg/blog/how-to-make-money-3d-printing',
-      image: 'https://3dpechat.bg/assets/blogs/images/design-is-from-question.png',
+      url: 'https://3dpechat.bg/blog/how-to-make-money-3d-printing/',
+      image: 'https://3dpechat.bg/assets/blogs/images/design-is-from-question.webp',
       type: 'article',
       author: '3D Печат България',
       publishedDate: new Date('2026-01-15').toISOString(),
@@ -42,7 +42,7 @@ export class HowToMakeMoneyWith3dPrinting implements OnInit {
       },
       "datePublished": "2026-01-15T00:00:00.000Z",
       "dateModified": "2026-01-15T00:00:00.000Z",
-      "image": "https://3dpechat.bg/assets/blogs/images/design-is-from-question.png",
+      "image": "https://3dpechat.bg/assets/blogs/images/design-is-from-question.webp",
       "publisher": {
         "@type": "Organization",
         "name": "3D Печат България",
@@ -53,7 +53,7 @@ export class HowToMakeMoneyWith3dPrinting implements OnInit {
       },
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://3dpechat.bg/blog/how-to-make-money-3d-printing"
+        "@id": "https://3dpechat.bg/blog/how-to-make-money-3d-printing/"
       },
       "keywords": "3D принтиране, бизнес, печалба, легалност"
     });

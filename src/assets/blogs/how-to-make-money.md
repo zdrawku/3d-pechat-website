@@ -3,7 +3,7 @@
 
 Пазарът на 3D принтиране надхвърля $30 милиарда през 2025 г., като растежът в сегмента на "micro-manufacturing" е над 20% годишно. Мнозина виждат в това възможност за бърза печалба, но реалността е, че без правилна стратегия и правна култура, начинанието често завършва със блокирани акаунти или съдебни искове.
 
-![Hero Image How to Make Money](assets/blogs/images/hero-image-how-to-make-money.png)
+![Hero Image How to Make Money](assets/blogs/images/hero-image-how-to-make-money.webp)
 
 ## Защо пазарът на 3D принтиране расте?
 
@@ -41,7 +41,7 @@
 
 Всеки 3D модел автоматично е защитен с авторско право – дори да е безплатен.
 
-![Initial Image](assets/blogs/images/design-is-from-question.png)
+![Initial Image](assets/blogs/images/design-is-from-question.webp)
 
 ### Какво означава това на практика?
 

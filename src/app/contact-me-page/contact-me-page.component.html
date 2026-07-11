@@ -35,7 +35,7 @@
         Гледайте видеа от нашите 3D печат проекти в TikTok
       </div>
     </div>
-    <form class="column-layout contact_form_inputs" #contactForm="ngForm">
+    <form class="column-layout contact_form_inputs" #contactForm="ngForm" (focusin)="onFormInteraction()">
       <igx-input-group type="border" class="user-input">
         <input type="text" [(ngModel)]="value" name="value" placeholder="Вашето име" required="true" igxInput #igxInput />
         <label igxLabel>Име</label>

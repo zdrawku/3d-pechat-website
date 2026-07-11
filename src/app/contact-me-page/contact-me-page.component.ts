@@ -42,7 +42,7 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
       title: 'Контакти - 3D Печат България',
       description: 'Свържете се с нас за 3D печат услуги. Телефон, имейл, Viber, Instagram и TikTok. Бързо и лесно поръчайте вашия 3D принтиран продукт.',
       keywords: '3D печат контакти, поръчка 3D печат, 3D принтиране поръчка, свържете се с нас',
-      url: 'https://3dpechat.bg/contact',
+      url: 'https://3dpechat.bg/contact/',
       type: 'website'
     });
     this.seoService.removeStructuredData();
@@ -74,7 +74,17 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
     if (state && state['productName'] && !this.value2) {
       this.value2 = `Поръчка за ${state['productName']}`;
     }
+    // hCaptcha (~1.3 MB incl. worker) is loaded lazily on first form
+    // interaction — see onFormInteraction() — to keep it off the LCP path.
+  }
 
+  private hcaptchaRequested = false;
+
+  onFormInteraction(): void {
+    if (this.hcaptchaRequested || !isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    this.hcaptchaRequested = true;
     this.loadHcaptcha();
   }
 

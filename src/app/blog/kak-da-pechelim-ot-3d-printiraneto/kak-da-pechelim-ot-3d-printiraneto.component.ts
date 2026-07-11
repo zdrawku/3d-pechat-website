@@ -24,7 +24,7 @@ export class KakDaPechelimOt3dPrintiranetoComponent implements OnInit {
       title: 'Как да печелим от 3D принтирането – Пълен наръчник | 3D Печат България',
       description: 'Открийте 7-те най-печеливши начина да превърнете 3D принтера си в източник на доход. Практични съвети, реални примери и стратегии за успех в България.',
       keywords: '3D принтиране, как да печелим от 3D принтер, 3D печат бизнес, 3D принтер доход, печалба от 3D принтиране, 3D печат услуги, 3D принтиране България',
-      url: 'https://3dpechat.bg/blog/kak-da-pechelim-ot-3d-printiraneto',
+      url: 'https://3dpechat.bg/blog/kak-da-pechelim-ot-3d-printiraneto/',
       image: 'https://3dpechat.bg/assets/og-image.png',
       type: 'article',
       author: '3D Печат България',
@@ -54,7 +54,7 @@ export class KakDaPechelimOt3dPrintiranetoComponent implements OnInit {
       },
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://3dpechat.bg/blog/kak-da-pechelim-ot-3d-printiraneto"
+        "@id": "https://3dpechat.bg/blog/kak-da-pechelim-ot-3d-printiraneto/"
       },
       "keywords": "3D принтиране, как да печелим от 3D принтер, 3D печат бизнес, 3D принтер доход, печалба от 3D принтиране, 3D печат услуги, 3D принтиране България"
     });

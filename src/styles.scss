@@ -24,8 +24,56 @@ $dark-palette: palette($primary: #FF7043,
     $warn: #FFCA28,
     $info: #42A5F5);
 
+// Components actually used across the app (see grep of Igx*Module/Component
+// imports). Everything else is excluded so the theme mixin doesn't emit ~600 KB
+// of unused component styles. Keep this list in sync when adding new Ignite UI
+// components — if a component's styling looks broken, remove it from $exclude.
+$exclude-components: (
+  "igx-action-strip",
+  "igx-badge",
+  "igx-banner",
+  "igx-bottom-nav",
+  "igx-button-group",
+  "igx-calendar",
+  "igx-checkbox",
+  "igx-chip",
+  "igx-circular-bar",
+  "igx-column-actions",
+  "igx-combo",
+  "igx-date-picker",
+  "igx-date-range-picker",
+  "igx-dialog",
+  "igx-divider",
+  "igx-expansion-panel",
+  "igx-file-input",
+  "igx-grid",
+  "igx-grid-summary",
+  "igx-grid-toolbar",
+  "igx-highlight",
+  "igx-linear-bar",
+  "igx-list",
+  "igx-paginator",
+  "igx-pivot-data-selector",
+  "igx-query-builder",
+  "igx-radio",
+  "igx-slider",
+  "igx-snackbar",
+  "igx-splitter",
+  "igx-stepper",
+  "igx-switch",
+  "igx-tabs",
+  "igx-time-picker",
+  "igx-toast",
+  "igx-tree"
+);
+
 // Apply light theme by default
-@include theme($palette: $light-palette, $schema: $light-material-schema, $roundness: 0);
+@include theme(
+  $palette: $light-palette,
+  $schema: $light-material-schema,
+  $roundness: 0,
+  $exclude: $exclude-components
+);
 
 // Dark theme CSS variable overrides
 .dark-theme {

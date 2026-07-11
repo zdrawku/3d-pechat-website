@@ -24,8 +24,8 @@ export class InfillPri3dPechatPlatnostZdravinaIFilamentComponent implements OnIn
       title: 'Infill при 3D печат: плътност, здравина и филамент | 3D Печат България',
       description: 'Научете как infill плътността влияе върху здравината, теглото и разхода на филамент при 3D принтиране. Практически съвети за избор на правилните настройки.',
       keywords: 'infill 3D печат, плътност 3D принтиране, здравина 3D печат, филамент разход, 3D принтер настройки, infill patterns, 3D печат България',
-      url: 'https://3dpechat.bg/blog/infill-pri-3d-pechat-platnost-zdravina-i-filament',
-      image: 'https://3dpechat.bg/assets/blogs/images/infill-pri-3d-pechat-platnost-zdravina-i-filament-cover.jpg',
+      url: 'https://3dpechat.bg/blog/infill-pri-3d-pechat-platnost-zdravina-i-filament/',
+      image: 'https://3dpechat.bg/assets/blogs/images/infill-pri-3d-pechat-platnost-zdravina-i-filament-cover.webp',
       type: 'article',
       author: '3D Печат България',
       publishedDate: new Date('2026-07-06').toISOString(),
@@ -43,7 +43,7 @@ export class InfillPri3dPechatPlatnostZdravinaIFilamentComponent implements OnIn
       },
       "datePublished": "2026-07-06T00:00:00.000Z",
       "dateModified": "2026-07-06T00:00:00.000Z",
-      "image": "https://3dpechat.bg/assets/blogs/images/infill-pri-3d-pechat-platnost-zdravina-i-filament-cover.jpg",
+      "image": "https://3dpechat.bg/assets/blogs/images/infill-pri-3d-pechat-platnost-zdravina-i-filament-cover.webp",
       "publisher": {
         "@type": "Organization",
         "name": "3D Печат България",
@@ -54,7 +54,7 @@ export class InfillPri3dPechatPlatnostZdravinaIFilamentComponent implements OnIn
       },
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://3dpechat.bg/blog/infill-pri-3d-pechat-platnost-zdravina-i-filament"
+        "@id": "https://3dpechat.bg/blog/infill-pri-3d-pechat-platnost-zdravina-i-filament/"
       },
       "keywords": "infill 3D печат, плътност 3D принтиране, здравина 3D печат, филамент разход, 3D принтер настройки, infill patterns, 3D печат България"
     });
