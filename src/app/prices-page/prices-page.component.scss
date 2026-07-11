@@ -1,323 +1,448 @@
 :host {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: stretch;
-  align-content: flex-start;
-  gap: 0;
-  overflow-x: hidden;
-  max-width: 100%;
+  display: block;
   background-color: var(--bg-body);
   background-image: var(--bg-body-texture);
   background-size: var(--bg-section-size);
 }
-.column-layout {
+
+.prices-page {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 48px 32px 64px;
+
+  @media (max-width: 768px) {
+    padding: 32px 20px 48px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 24px 16px 40px;
+  }
+}
+
+// ===================== HERO =====================
+.prices-hero {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--ig-primary-500);
+  margin: 0 0 10px;
+}
+
+.hero-title {
+  font-size: clamp(1.6rem, 4vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ig-gray-900);
+  margin: 0;
+  text-wrap: balance;
+}
+
+.hero-subtitle {
+  color: var(--ig-gray-700);
+  font-size: 0.95rem;
+  max-width: 56ch;
+  margin: 10px auto 0;
+}
+
+// ===================== SHARED SECTION HEADS =====================
+.section-block {
+  margin-top: 56px;
+}
+
+.section-heading {
+  text-align: center;
+  font-size: 1.35rem;
+  font-weight: 750;
+  letter-spacing: -0.01em;
+  color: var(--ig-gray-900);
+  margin: 0 0 4px;
+}
+
+.section-heading-note {
+  color: var(--ig-gray-700);
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+.section-note {
+  text-align: center;
+  color: var(--ig-gray-700);
+  font-size: 0.85rem;
+  max-width: 60ch;
+  margin: 0 auto 24px;
+}
+
+// ===================== PRICING TIERS =====================
+.tiers-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 28px;
+
+  @media (max-width: 860px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tier-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--ig-gray-300);
+  border-radius: 16px;
+  padding: 26px 20px;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.12);
+  }
+
+  &.featured {
+    border-color: var(--ig-primary-500);
+    background: linear-gradient(160deg, var(--bg-card), color-mix(in srgb, var(--ig-primary-500) 6%, var(--bg-card)));
+  }
+}
+
+.tier-badge {
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ig-primary-500);
+  color: #fff;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 4px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--ig-primary-500) 40%, transparent);
+}
+
+.tier-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+
+  igx-icon {
+    font-size: 20px !important;
+    width: 20px !important;
+    height: 20px !important;
+  }
+}
+
+// Alternating orange/green tile tints, mirroring the original card-color pairing.
+.tier-c1 .tier-icon {
+  background: color-mix(in srgb, var(--ig-primary-500) 16%, transparent);
+  color: var(--ig-primary-500);
+}
+
+.tier-c2 .tier-icon {
+  background: color-mix(in srgb, var(--ig-primary-500) 24%, transparent);
+  color: var(--ig-primary-500);
+}
+
+.tier-c3 .tier-icon {
+  background: color-mix(in srgb, var(--ig-secondary-500) 16%, transparent);
+  color: var(--ig-secondary-500);
+}
+
+.tier-c4 .tier-icon {
+  background: color-mix(in srgb, var(--ig-secondary-500) 24%, transparent);
+  color: var(--ig-secondary-500);
+}
+
+.tier-name {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 750;
+  color: var(--ig-gray-900);
+  margin: 0 0 8px;
+}
+
+.tier-price {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.tier-price-num {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ig-gray-900);
+}
+
+.tier-price-unit {
+  font-size: 0.75rem;
+  color: var(--ig-gray-700);
+  font-weight: 600;
+}
+
+.tier-desc {
+  font-size: 0.8rem;
+  color: var(--ig-gray-700);
+  margin: 0;
+  line-height: 1.55;
+}
+
+// ===================== CALCULATOR =====================
+.calculator-wrap {
+  margin-top: 56px;
+  border-radius: 22px;
+  padding: 2px;
+  background: linear-gradient(135deg, var(--ig-primary-500), var(--ig-info-500));
+}
+
+.calculator-card {
+  background: var(--bg-card);
+  border-radius: 20px;
+  padding: 36px 32px;
+
+  @media (max-width: 480px) {
+    padding: 28px 20px;
+  }
+}
+
+.calculator-head {
+  text-align: center;
+  margin-bottom: 26px;
+}
+
+.calculator-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--ig-primary-500) 14%, transparent);
+  color: var(--ig-primary-500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+
+  igx-icon {
+    font-size: 22px !important;
+    width: 22px !important;
+    height: 22px !important;
+  }
+}
+
+.calculator-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 750;
+  color: var(--ig-gray-900);
+}
+
+.calculator-subtitle {
+  margin: 6px 0 0;
+  font-size: 0.8125rem;
+  color: var(--ig-gray-700);
+}
+
+.calculator-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+
+  @media (max-width: 520px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.calculator-field {
   display: flex;
   flex-direction: column;
-}
-.price-page-main-column {
-  justify-content: center;
-  align-items: center;
-  align-content: flex-start;
-  gap: 23px;
-  position: relative;
-  padding: 48px 32px;
-  min-width: 50px;
-  min-height: 50px;
-  flex-grow: 1;
-  flex-shrink: 0;
-  
-  @media (max-width: 768px) {
-    padding: 32px 16px;
-  }
-  
-  @media (max-width: 480px) {
-    padding: 24px 12px;
-    gap: 16px;
+  gap: 6px;
+  min-width: 150px;
+
+  label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ig-gray-700);
   }
 }
-.row-layout {
+
+.calculator-input,
+.calculator-select {
+  border: 1px solid var(--ig-gray-300);
+  background: var(--bg-body);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 0.9375rem;
+  color: var(--ig-gray-900);
+  font-family: inherit;
+
+  &:focus {
+    outline: 2px solid var(--ig-primary-500);
+    outline-offset: 1px;
+  }
+}
+
+.calculator-op {
+  font-size: 1.25rem;
+  color: var(--ig-gray-700);
+  font-weight: 700;
+  padding-bottom: 12px;
+
+  @media (max-width: 520px) {
+    align-self: center;
+    padding-bottom: 0;
+  }
+}
+
+.calculator-result {
   display: flex;
-}
-.pricing-cards-row {
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: stretch;
-  align-content: center;
-  gap: 24px;
-  position: relative;
-  min-width: 50px;
-  min-height: 50px;
-  flex-shrink: 0;
-}
-.card-single-color-basic {
-  --header-text-color: var(--ig-primary-100-contrast);
-  --subtitle-text-color: var(--ig-primary-100-contrast);
-  --content-text-color: var(--ig-primary-100-contrast);
-  --actions-text-color: var(--ig-primary-100-contrast);
-  --background: var(--ig-primary-100);
-  height: max-content;
-  min-width: 240px;
-  max-width: 280px;
-  flex-grow: 1;
-  flex-basis: 0;
-}
-.column-single-color-basic {
-  justify-content: flex-start;
-  align-items: stretch;
-  align-content: flex-start;
-  gap: 8px;
-  position: relative;
-  min-width: 50px;
-  min-height: 50px;
-}
-.card-multi-color-basic {
-  --header-text-color: var(--ig-primary-100-contrast);
-  --subtitle-text-color: var(--ig-primary-100-contrast);
-  --content-text-color: var(--ig-primary-100-contrast);
-  --actions-text-color: var(--ig-primary-100-contrast);
-  --background: var(--ig-primary-200);
-  height: max-content;
-  min-width: 240px;
-  max-width: 280px;
-  flex-grow: 1;
-  flex-basis: 0;
-}
-.card-single-color-complex {
-  --header-text-color: var(--ig-secondary-50-contrast);
-  --subtitle-text-color: var(--ig-secondary-50-contrast);
-  --content-text-color: var(--ig-secondary-50-contrast);
-  --actions-text-color: var(--ig-secondary-50-contrast);
-  --background: var(--ig-secondary-50);
-  height: max-content;
-  min-width: 240px;
-  max-width: 280px;
-  flex-grow: 1;
-  flex-basis: 0;
-}
-.card-multi-color-complex {
-  --header-text-color: var(--ig-secondary-50-contrast);
-  --subtitle-text-color: var(--ig-secondary-50-contrast);
-  --content-text-color: var(--ig-secondary-50-contrast);
-  --actions-text-color: var(--ig-secondary-50-contrast);
-  --background: var(--ig-secondary-100);
-  height: max-content;
-  min-width: 240px;
-  max-width: 280px;
-  flex-grow: 1;
-  flex-basis: 0;
-}
-.divider-row {
-  background-color: var(--ig-gray-400);
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  align-content: flex-start;
-  gap: 0;
-  position: relative;
-  width: 100%;
-  height: 1px;
-  min-width: 100%;
-  min-height: 1px;
-  max-width: 100%;
-  max-height: 1px;
-  flex-shrink: 0;
+  gap: 2px;
+  background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500));
+  color: #fff;
+  border-radius: 14px;
+  padding: 12px 26px;
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--ig-primary-500) 35%, transparent);
 }
-.calculator-section {
-  justify-content: center;
-  align-items: center;
-  align-content: flex-start;
-  gap: 16px;
-  position: relative;
-  min-width: 50px;
-  min-height: 50px;
-  flex-shrink: 0;
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
-  
-  &.row-layout {
-    flex-wrap: wrap;
-    
-    @media (max-width: 768px) {
-      gap: 12px;
-    }
-    
-    @media (max-width: 464px) {
-      gap: 8px;
-      padding: 0 8px;
-    }
-  }
+
+.calculator-result-num {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
 }
-.weight-input-column {
-  justify-content: center;
-  align-items: center;
-  align-content: flex-start;
-  gap: 8px;
-  position: relative;
-  min-width: 120px;
-  min-height: 50px;
-  flex-shrink: 1;
-  
-  @media (max-width: 480px) {
-    min-width: 100px;
-  }
-  
-  @media (max-width: 464px) {
-    min-width: 80px;
-    gap: 4px;
-  }
+
+.calculator-result-label {
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.9;
 }
-.group {
-  justify-content: flex-end;
-  align-items: stretch;
-  align-content: flex-start;
-  gap: 8px;
-  position: relative;
-  height: 90px;
-  min-width: 50px;
-  min-height: 50px;
-  max-height: 90px;
-  
-  @media (max-width: 464px) {
-    min-width: 30px;
-    gap: 4px;
-  }
-}
-.group_1 {
-  justify-content: flex-start;
-  align-items: stretch;
-  align-content: flex-start;
-  gap: 8px;
-  position: relative;
-  
-  @media (max-width: 464px) {
-    gap: 4px;
-    
-    p {
-      font-size: 0.875rem;
-    }
-  }
-}
-.color-swatches-row {
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  align-content: flex-start;
-  gap: 16px;
-  position: relative;
-  min-width: 50px;
-  min-height: 50px;
-  flex-shrink: 0;
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
-  
-  @media (max-width: 480px) {
-    gap: 12px;
-  }
-  
-  @media (max-width: 464px) {
-    gap: 8px;
-    padding: 0 8px;
-  }
-}
-.content {
+
+.calculator-example {
   text-align: center;
-  height: max-content;
-  min-width: min-content;
-  max-width: 100%;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  
-  &:first-child {
-    // This targets the h2 title
-    @media (max-width: 768px) {
-      font-size: 1.75rem;
-    }
-    
-    @media (max-width: 480px) {
-      font-size: 1.5rem;
-    }
-    
-    @media (max-width: 390px) {
-      font-size: 1.25rem;
+  font-size: 0.75rem;
+  color: var(--ig-gray-700);
+  margin: 18px 0 0;
+}
+
+.calculator-cta {
+  text-align: center;
+  margin-top: 22px;
+}
+
+.btn-order-estimate {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500) 70%);
+  color: #fff;
+  border: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 12px 24px;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--ig-primary-500) 38%, transparent);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+
+  igx-icon {
+    font-size: 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+    box-shadow: 0 8px 22px color-mix(in srgb, var(--ig-primary-500) 46%, transparent);
+
+    igx-icon {
+      transform: translateX(2px);
     }
   }
 }
-.avatar-single-color-basic {
-  --ig-size: var(--ig-size-medium);
-  --igx-avatar-background: var(--ig-primary-300);
-}
-.icon {
-  color: var(--ig-primary-500-contrast);
-}
-.content_1 {
-  height: max-content;
-  min-width: min-content;
-  
-  @media (max-width: 464px) {
-    font-size: 0.875rem;
-  }
-}
-.avatar-multi-color-basic {
-  --ig-size: var(--ig-size-medium);
-  --igx-avatar-background: var(--ig-primary-400);
-}
-.avatar-single-color-complex {
-  --ig-size: var(--ig-size-medium);
-  --igx-avatar-background: var(--ig-secondary-300);
-}
-.icon_1 {
-  color: var(--ig-secondary-500-contrast);
-}
-.weight-icon {
-  --size: 36px;
-  font-size: 36px;
-  width: 36px;
-  height: 36px;
-  
-  @media (max-width: 464px) {
-    --size: 28px;
-    font-size: 28px;
-    width: 28px;
-    height: 28px;
-  }
-}
-.avatar-orange {
-  --ig-size: var(--ig-size-large);
-  --igx-avatar-background: transparent;
-}
-.avatar-single-color-basic_1::part(base) {
-  --igx-avatar-color: var(--ig-primary-500-contrast);
-}
-.avatar-multi-color-basic_1::part(base) {
-  --igx-avatar-color: var(--ig-primary-500-contrast);
-}
-.avatar-single-color-complex_1::part(base) {
-  --igx-avatar-color: var(--ig-secondary-500-contrast);
-}
-.avatar-single-color-complex_2::part(base) {
-  --igx-avatar-color: var(--ig-secondary-500-contrast);
-}
-.body-content {
-  min-width: 50px;
-  min-height: 50px;
-}
-.user-input {
-  height: max-content;
-  min-width: 120px;
-  width: 100%;
-  max-width: 180px;
-  
+
+// ===================== COLOR SWATCHES =====================
+.swatches-block {
+  background-color: var(--bg-section-base);
+  background-image: var(--bg-section);
+  background-size: var(--bg-section-size);
+  border-radius: 20px;
+  padding: 36px 28px;
+
   @media (max-width: 480px) {
-    min-width: 100px;
-    max-width: 140px;
+    padding: 28px 16px;
   }
-  
-  @media (max-width: 464px) {
-    min-width: 80px;
-    max-width: 100px;
-    font-size: 0.875rem;
+}
+
+.swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 14px;
+  margin-top: 8px;
+
+  @media (max-width: 860px) {
+    grid-template-columns: repeat(4, 1fr);
   }
+
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.swatch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.swatch-disc {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  border: 3px solid var(--bg-card);
+  transition: transform 0.25s ease;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.swatch:hover .swatch-disc {
+  transform: scale(1.08);
+}
+
+.swatch-name {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--ig-gray-800);
+  text-align: center;
 }
