@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { IgxButtonDirective, IgxIconModule, IgxInputGroupModule, IgxSelectModule } from 'igniteui-angular';
+import { IgxButtonDirective, IgxIconModule, IgxInputGroupModule } from 'igniteui-angular';
 
 import { ProductGridComponent } from '../shared/product-grid/product-grid.component';
 import { SeoService } from '../services/seo.service';
@@ -28,7 +28,7 @@ interface ProductVariant {
 
 @Component({
   selector: 'app-products-page',
-  imports: [FormsModule, IgxButtonDirective, ProductGridComponent, IgxIconModule, IgxInputGroupModule, IgxSelectModule],
+  imports: [FormsModule, IgxButtonDirective, ProductGridComponent, IgxIconModule, IgxInputGroupModule],
   templateUrl: './products-page.component.html',
   styleUrls: ['./products-page.component.scss']
 })
@@ -217,17 +217,21 @@ export class ProductsPageComponent {
   // The initial selection is set here
   public sortOrder = 'newest'; 
 
-  public get isSearchOrSortActive(): boolean {
-    return this.searchText.length > 0 || this.sortOrder !== 'default';
-  }
-
   public get allFilteredProducts(): ProductVariant[] {
     const allProducts = [...this.productVariants];
     return this.filterAndSortProducts(allProducts);
   }
 
-  public get filteredProductVariants(): ProductVariant[] {
-    return this.filterAndSortProducts(this.productVariants);
+  public get resultCount(): number {
+    return this.allFilteredProducts.length;
+  }
+
+  public get totalCount(): number {
+    return this.productVariants.length;
+  }
+
+  public setSortOrder(order: string): void {
+    this.sortOrder = order;
   }
 
 

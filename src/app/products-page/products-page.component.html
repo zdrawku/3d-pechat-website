@@ -24,35 +24,52 @@
         }
       </igx-input-group>
 
-      <igx-select [(ngModel)]="sortOrder" class="sort-select" placeholder="Сортиране">
-        <igx-select-item value="default">Сортиране</igx-select-item>
-        <igx-select-item value="newest">Най-нови</igx-select-item>
-        <igx-select-item value="oldest">Най-стари</igx-select-item>
-      </igx-select>
+      <!-- Lightweight segmented sort control (replaces the heavy igx-select) -->
+      <div class="sort-segmented" role="group" aria-label="Сортиране на продуктите">
+        <button type="button" class="sort-option" [class.active]="sortOrder === 'newest'"
+          (click)="setSortOrder('newest')">
+          Най-нови
+        </button>
+        <button type="button" class="sort-option" [class.active]="sortOrder === 'oldest'"
+          (click)="setSortOrder('oldest')">
+          Най-стари
+        </button>
+        <button type="button" class="sort-option" [class.active]="sortOrder === 'asc'"
+          (click)="setSortOrder('asc')">
+          А-Я
+        </button>
+      </div>
     </div>
 
-    <!-- Global Search Results -->
-    @if (isSearchOrSortActive) {
-      <div class="column-layout products-section">
-        @if (searchText) {
-          <h2 class="ig-typography__h4 section-title">Резултати за "{{searchText}}"</h2>
-        }
-        @if (!searchText) {
-          <h2 class="ig-typography__h4 section-title">Всички продукти</h2>
-        }
+    <p class="result-count">
+      Показани <strong>{{ resultCount }}</strong> от <strong>{{ totalCount }}</strong> продукта
+    </p>
+
+    <!-- Products Grid Section -->
+    <div class="column-layout products-section">
+      @if (searchText) {
+        <h2 class="ig-typography__h4 section-title">Резултати за "{{searchText}}"</h2>
+      }
+      @if (!searchText) {
+        <h2 class="ig-typography__h4 section-title">Всички продукти</h2>
+      }
+
+      @if (resultCount > 0) {
         <app-product-grid [products]="allFilteredProducts" (productAction)="orderProduct($event)">
         </app-product-grid>
-      </div>
-    }
-
-    <!-- Default Sectional View -->
-    @if (!isSearchOrSortActive) {
-      <!-- Products Grid Section -->
-      <div class="column-layout products-section">
-        <app-product-grid [products]="filteredProductVariants" (productAction)="orderProduct($event)">
-        </app-product-grid>
-      </div>
-    }
+      } @else {
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <igx-icon>search_off</igx-icon>
+          </div>
+          <p class="empty-state-title">Няма намерени продукти за "{{ searchText }}"</p>
+          <p class="empty-state-text">Опитайте с друга дума или разгледайте пълния каталог.</p>
+          <button igxButton="outlined" type="button" class="empty-state-reset" (click)="searchText = ''">
+            Изчисти търсенето
+          </button>
+        </div>
+      }
+    </div>
 
     <!-- Features Section -->
     <div class="column-layout features-section">

@@ -16,6 +16,7 @@ export interface Product {
     title: string;
     items: string[];
   };
+  tags?: string[];
 }
 
 @Component({

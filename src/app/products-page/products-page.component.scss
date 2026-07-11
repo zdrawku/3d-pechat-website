@@ -82,7 +82,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 8px;
     gap: 16px;
     flex-wrap: wrap;
     margin-top: 10px;
@@ -90,21 +90,116 @@
     igx-input-group {
       width: 400px;
       max-width: 100%;
-    }
 
-    igx-select {
-      width: 200px;
+      // Round to match the pill-shaped sort control beside it.
+      ::ng-deep .igx-input-group__bundle {
+        border-radius: 999px !important;
+        overflow: hidden;
+      }
     }
 
     @media (max-width: 600px) {
       flex-direction: column;
       align-items: stretch;
 
-      igx-input-group,
-      igx-select {
+      igx-input-group {
         width: 100%;
       }
     }
+  }
+
+  // Segmented sort control — a lightweight pill group replacing the heavy
+  // igx-select dropdown for a 3-option choice.
+  .sort-segmented {
+    display: inline-flex;
+    background: var(--bg-card);
+    border: 1px solid var(--ig-gray-300);
+    border-radius: 999px;
+    padding: 3px;
+    box-shadow: var(--shadow-card);
+    flex-shrink: 0;
+
+    @media (max-width: 600px) {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+
+  .sort-option {
+    border: 0;
+    background: none;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--ig-gray-700);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.2s ease, color 0.2s ease;
+
+    @media (max-width: 600px) {
+      flex: 1;
+    }
+
+    &:hover:not(.active) {
+      color: var(--ig-primary-500);
+    }
+
+    &.active {
+      background: var(--ig-primary-500);
+      color: #fff;
+    }
+  }
+
+  .result-count {
+    text-align: center;
+    font-size: 0.8125rem;
+    color: var(--ig-gray-700);
+    margin: 0 0 8px;
+
+    strong {
+      color: var(--ig-gray-900);
+    }
+  }
+
+  // Empty search state
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+    padding: 48px 24px;
+  }
+
+  .empty-state-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--ig-primary-500) 12%, transparent);
+    color: var(--ig-primary-500);
+    margin-bottom: 8px;
+
+    igx-icon {
+      font-size: 28px !important;
+      width: 28px !important;
+      height: 28px !important;
+    }
+  }
+
+  .empty-state-title {
+    font-weight: 700;
+    color: var(--ig-gray-900);
+    margin: 0;
+  }
+
+  .empty-state-text {
+    color: var(--ig-gray-700);
+    margin: 0 0 12px;
+    font-size: 0.875rem;
   }
 
   // Products Section
@@ -140,8 +235,8 @@
 
   .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
     width: 100%;
   }
 
@@ -150,8 +245,8 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 12px;
-    padding: 24px;
+    gap: 8px;
+    padding: 16px;
     background-color: var(--bg-card);
     border-radius: 8px;
     border: 1px solid var(--ig-gray-300);
@@ -166,20 +261,22 @@
   }
 
   .feature-icon {
-    font-size: 48px;
-    margin-bottom: 8px;
+    font-size: 28px;
+    margin-bottom: 2px;
   }
 
   .feature-title {
     color: var(--ig-gray-900);
     margin: 0;
     font-weight: 600;
+    font-size: 0.9rem;
   }
 
   .feature-item p {
     color: var(--ig-gray-700);
     margin: 0;
-    line-height: 1.6;
+    line-height: 1.5;
+    font-size: 0.8rem;
   }
 
   // CTA Section
