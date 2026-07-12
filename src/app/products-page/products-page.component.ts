@@ -129,7 +129,7 @@ export class ProductsPageComponent {
       showFront: true,
       customContent: {
         show: true,
-        title: '✨ Различни цветове на картата и кейса:',
+        title: 'Различни цветове на картата и кейса:',
         items: [
           'Зелен кейс, бордо червен или черен',
           'Правоъгълна карта с наклонено знаме',
@@ -186,7 +186,7 @@ export class ProductsPageComponent {
     },
     {
       id: 11,
-      linkId: 'photo-frame',
+      linkId: 'photo-frame-desktop',
       name: 'Поставка/Рамка за снимки!',
       description: 'Елегантна 3D принтирана поставка за снимки — идеален подарък за съхранение на скъпи спомени с близките ви.',
       frontImage: '/assets/real-images/ramka-1.webp',
@@ -200,7 +200,7 @@ export class ProductsPageComponent {
     },
     {
       id: 12,
-      linkId: 'photo-frame',
+      linkId: 'photo-frame-wall',
       name: 'Стенна рамка за снимки!',
       description: 'Романтичен подарък, стенна рамка за снимки внасяща уют във всеки дом.',
       frontImage: '/assets/real-images/ramka.webp',

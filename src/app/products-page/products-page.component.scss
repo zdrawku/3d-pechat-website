@@ -122,11 +122,21 @@
     display: flex;
     flex-direction: column;
     gap: 40px;
-    max-width: 1200px;
+    max-width: 1440px;
     width: 100%;
     margin: 0 auto;
     padding: 16px 32px 64px;
     box-sizing: border-box;
+
+    // Let the container grow on very large monitors so the 4/5-column grid
+    // gets genuinely wide cards instead of being squeezed into a fixed box.
+    @media (min-width: 1900px) {
+      max-width: 1800px;
+    }
+
+    @media (min-width: 2400px) {
+      max-width: 2200px;
+    }
 
     @media (max-width: 768px) {
       padding: 12px 20px 48px;
