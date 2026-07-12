@@ -125,7 +125,9 @@
     max-width: 1440px;
     width: 100%;
     margin: 0 auto;
-    padding: 16px 32px 64px;
+    // 16px side gutters (was 32px) so the grid gets the same card width as the
+    // blog grid, which sits in a 16px-padded container.
+    padding: 16px 16px 64px;
     box-sizing: border-box;
 
     // Let the container grow on very large monitors so the 4/5-column grid
@@ -188,12 +190,14 @@
     font-size: 0.875rem;
   }
 
-  // Products Section
+  // Products Section — no horizontal padding so the grid gets the same card
+  // width as the blog grid (which sits directly in a lightly-padded container).
+  // The outer .products-inner already provides the side gutters.
   .products-section {
     justify-content: flex-start;
     align-items: stretch;
     gap: 32px;
-    padding: 24px;
+    padding: 8px 0;
     background-color: var(--bg-section-base);
     background-image: var(--bg-section);
     background-size: var(--bg-section-size);
@@ -348,7 +352,7 @@
     }
 
     .products-section {
-      padding: 16px;
+      padding: 16px 0;
     }
 
     .features-grid {

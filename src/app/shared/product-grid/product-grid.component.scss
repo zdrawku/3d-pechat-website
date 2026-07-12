@@ -27,7 +27,7 @@
 
 .product-card {
   background-color: var(--bg-card);
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
   box-shadow: var(--shadow-card);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
@@ -36,8 +36,8 @@
   border: 1px solid var(--ig-gray-300);
 
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.14);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
   }
 }
 
@@ -195,17 +195,17 @@
 }
 
 .card-content {
-  padding: 14px 14px 10px;
+  padding: 14px 14px 12px;
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 
   // Wider cards on large screens have room to breathe — scale up padding
   // so content doesn't look lost in the card.
   @media (min-width: 1200px) {
-    padding: 20px 20px 14px;
-    gap: 10px;
+    padding: 20px 20px 16px;
+    gap: 8px;
   }
 }
 
@@ -215,26 +215,28 @@
   gap: 8px;
 }
 
+// Mirror the blog card title exactly: it's an <h2>, so the global
+// `h2 { font-size: 1.5rem !important; line-height: 1.4 }` rule in styles.scss
+// (plus Ignite's .ig-typography h2 weight/letter-spacing) drives its rendered
+// size — the same override the blog title gets. The declared font-size below is
+// the pre-override baseline; keep it in sync with .blog-card .card-title.
 .card-title {
   color: var(--ig-gray-900);
   margin: 0;
   font-weight: 700;
+  line-height: 1.3;
+  font-size: 0.85rem !important;
   flex: 1;
   min-width: 0;
-}
-
-.product-name {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1.3;
-  font-size: 0.85rem;
 
   @media (min-width: 1200px) {
-    font-size: 1.05rem;
+    font-size: 1.15rem !important;
   }
 }
 
@@ -290,14 +292,14 @@
   color: var(--ig-gray-700);
   line-height: 1.5;
   margin: 0;
-  font-size: 0.75rem;
+  font-size: 0.85rem !important;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 
   @media (min-width: 1200px) {
-    font-size: 0.85rem;
+    font-size: 0.85rem !important;
   }
 }
 

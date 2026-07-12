@@ -1,7 +1,7 @@
 <div class="products-grid">
   <!-- Product Card for each variant -->
   @for (product of products; track product; let i = $index) {
-    <igx-card class="product-card" [id]="product.linkId">
+    <igx-card class="product-card" [id]="product.linkId" data-testid="product-card">
       <!-- Image Carousel Section -->
       <div class="card-image-section">
         <div class="image-container">
@@ -43,7 +43,7 @@
       </div>
       <igx-card-content class="card-content">
         <div class="card-top-row">
-          <h3 class="ig-typography__h6 card-title">
+          <h3 class="card-title">
             <span class="product-name" [igxTooltipTarget]="nameTooltipRef">{{ product.name }}</span>
           </h3>
           <div #nameTooltipRef="tooltip" igxTooltip class="product-tooltip">{{ product.name }}</div>
@@ -87,7 +87,8 @@
         }
       </igx-card-content>
       <igx-card-actions class="card-actions">
-        <button igxButton="contained" type="button" (click)="handleAction(product)" class="contact-button">
+        <button igxButton="contained" type="button" (click)="handleAction(product)" class="contact-button"
+          data-testid="product-order-btn">
           Поръчайте сега
           <igx-icon family="material">arrow_forward</igx-icon>
         </button>
