@@ -36,7 +36,9 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
   // only delivers one, so the UI is deliberately limited to a single file
   // (with an inline notice) rather than silently dropping extras.
   public attachedFile: File | null = null;
-  private readonly maxFileSizeBytes = 5 * 1024 * 1024; // 5 MB
+  // Web3Forms rejects (400) attachments over 1 MB — see
+  // https://docs.web3forms.com/getting-started/examples/file-upload-form
+  private readonly maxFileSizeBytes = 1 * 1024 * 1024; // 1 MB
 
   private hcaptchaWidgetId?: string;
   private hcaptchaToken = '';
@@ -208,9 +210,11 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
       formData.append('message', this.message);
       formData.append('from_name', '3dpechat.bg контактна форма');
       formData.append('h-captcha-response', this.hcaptchaToken);
-      if (this.attachedFile) {
-        formData.append('attachment', this.attachedFile, this.attachedFile.name);
-      }
+      // File attachment disabled: Web3Forms file upload is a Pro-plan
+      // feature, not available on the current plan.
+      // if (this.attachedFile) {
+      //   formData.append('attachment', this.attachedFile, this.attachedFile.name);
+      // }
 
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',

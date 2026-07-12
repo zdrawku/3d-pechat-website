@@ -41,6 +41,27 @@
   }
 }
 
+// Clear-search button — real <button> with a ≥32×32 touch target (WCAG 2.5.8).
+.search-clear-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--ig-gray-700);
+  cursor: pointer;
+  border-radius: 50%;
+  transition: color 0.2s ease, background-color 0.2s ease;
+
+  &:hover {
+    color: var(--ig-gray-900);
+    background-color: color-mix(in srgb, var(--ig-gray-900) 8%, transparent);
+  }
+}
+
 // Segmented sort control — a lightweight pill group (lives in the banner).
 .sort-segmented {
   display: inline-flex;
@@ -70,7 +91,7 @@
 
   &.active {
     background: var(--ig-primary-500);
-    color: #fff;
+    color: var(--ig-primary-500-contrast);
   }
 }
 
@@ -101,11 +122,21 @@
     display: flex;
     flex-direction: column;
     gap: 40px;
-    max-width: 1200px;
+    max-width: 1440px;
     width: 100%;
     margin: 0 auto;
     padding: 16px 32px 64px;
     box-sizing: border-box;
+
+    // Let the container grow on very large monitors so the 4/5-column grid
+    // gets genuinely wide cards instead of being squeezed into a fixed box.
+    @media (min-width: 1900px) {
+      max-width: 1800px;
+    }
+
+    @media (min-width: 2400px) {
+      max-width: 2200px;
+    }
 
     @media (max-width: 768px) {
       padding: 12px 20px 48px;
@@ -269,7 +300,10 @@
     font-size: 18px;
     font-weight: 600;
     background-color: white;
-    color: var(--ig-primary-500); // Orange
+    // Accessible deep orange on the white pill (shared token) — matches the
+    // main-page and contact banner CTAs. Plain --ig-primary-500 reads muddy and
+    // #E64A19 fails contrast; --accent-on-light is the single vetted value.
+    color: var(--accent-on-light);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     max-width: 100%;
     box-sizing: border-box;

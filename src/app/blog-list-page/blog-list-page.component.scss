@@ -44,22 +44,51 @@
 }
 
 .blog-list-container {
-  max-width: 1200px;
+  max-width: 1440px;
   margin: 0 auto;
   padding: 1.5rem 1rem 3rem;
   min-height: calc(100vh - 200px);
+
+  // Let the container grow on very large monitors so the 4/5-column grid
+  // gets genuinely wide cards instead of being squeezed into a fixed box.
+  @media (min-width: 1900px) {
+    max-width: 1800px;
+  }
+
+  @media (min-width: 2400px) {
+    max-width: 2200px;
+  }
 
   // Denser grid: 240px min-width + shorter cards means several rows fit
   // above the fold instead of the previous 320px/2rem-gap layout showing 2-3.
   .blog-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(288px, 1fr));
+    gap: 22px;
     margin-bottom: 2rem;
 
+    // Lock to 3 wide columns through desktop and laptop widths — auto-fill was
+    // packing in a cramped 4th column here, squeezing cards until titles/tags
+    // wrapped badly. Stay at 3 all the way up to 1900px so cards keep room to
+    // breathe on common laptop/desktop screens.
+    @media (min-width: 900px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    // Only widen past 3 columns on large monitors.
+    @media (min-width: 1900px) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    // Roomy 5-across layout on very wide screens instead of stretching
+    // 4 columns thin across the extra width.
+    @media (min-width: 2400px) {
+      grid-template-columns: repeat(5, 1fr);
+    }
+
     @media (max-width: 480px) {
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
     }
 
     .blog-card {
@@ -93,9 +122,19 @@
       .card-image-wrapper {
         position: relative;
         width: 100%;
-        height: 130px;
+        height: 180px;
         overflow: hidden;
         flex-shrink: 0;
+
+        // Wider cards on large screens read as squashed at 180px — taller
+        // image keeps the card's proportions comfortable instead of dense.
+        @media (min-width: 1200px) {
+          height: 230px;
+        }
+
+        @media (max-width: 480px) {
+          height: 140px;
+        }
 
         &--placeholder {
           background: linear-gradient(135deg, var(--ig-primary-400) 0%, var(--ig-primary-600) 100%);
@@ -122,6 +161,13 @@
         display: flex;
         flex-direction: column;
         gap: 6px;
+
+        // Wider cards on large screens have room to breathe — scale up
+        // padding and type so content doesn't look lost in the card.
+        @media (min-width: 1200px) {
+          padding: 20px 20px 16px;
+          gap: 8px;
+        }
       }
 
       .card-date {
@@ -131,6 +177,10 @@
         font-size: 0.65rem;
         font-weight: 600;
         color: var(--ig-gray-700);
+
+        @media (min-width: 1200px) {
+          font-size: 0.75rem;
+        }
 
         .date-icon {
           font-size: 12px !important;
@@ -149,6 +199,10 @@
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
+
+        @media (min-width: 1200px) {
+          font-size: 1.05rem;
+        }
       }
 
       .card-description {
@@ -161,6 +215,10 @@
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
+
+        @media (min-width: 1200px) {
+          font-size: 0.85rem;
+        }
       }
 
       .tags-container {
@@ -179,6 +237,11 @@
           transition: background-color 0.2s ease;
           cursor: pointer;
 
+          @media (min-width: 1200px) {
+            font-size: 0.7rem;
+            padding: 3px 10px;
+          }
+
           &:hover {
             background: color-mix(in srgb, var(--ig-primary-500) 20%, transparent);
           }
@@ -193,6 +256,10 @@
         font-weight: 700;
         color: var(--ig-primary-500);
         margin-top: 4px;
+
+        @media (min-width: 1200px) {
+          font-size: 0.85rem;
+        }
 
         igx-icon {
           font-size: 15px !important;

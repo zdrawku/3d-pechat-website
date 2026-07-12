@@ -12,7 +12,10 @@
       <igx-icon igxPrefix>search</igx-icon>
       <input igxInput name="search" type="text" [(ngModel)]="searchText" placeholder="Търсене на продукти..." />
       @if (searchText.length > 0) {
-        <igx-icon igxSuffix (click)="searchText = ''">clear</igx-icon>
+        <button igxSuffix type="button" class="search-clear-btn" (click)="searchText = ''"
+          aria-label="Изчисти търсенето">
+          <igx-icon>clear</igx-icon>
+        </button>
       }
     </igx-input-group>
 
@@ -44,6 +47,8 @@
     <div class="column-layout products-section">
       @if (searchText) {
         <h2 class="ig-typography__h4 section-title">Резултати за "{{searchText}}"</h2>
+      } @else {
+        <h2 class="visually-hidden">Каталог с 3D принтирани продукти</h2>
       }
 
       @if (resultCount > 0) {

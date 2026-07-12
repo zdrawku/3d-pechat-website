@@ -229,9 +229,9 @@
   justify-content: center;
   height: max-content;
   --background: var(--ig-primary-500);
-  --foreground: #fff;
+  --foreground: var(--ig-primary-500-contrast);
   background: var(--ig-primary-500);
-  color: #fff;
+  color: var(--ig-primary-500-contrast);
   border-color: var(--ig-primary-500);
   border-radius: 999px;
   padding: 12px 24px;
@@ -244,7 +244,7 @@
     transform: translateY(-2px) !important;
     filter: brightness(1.05);
     background: var(--ig-primary-500);
-    color: #fff;
+    color: var(--ig-primary-500-contrast);
     border-color: var(--ig-primary-500);
     box-shadow: 0 10px 24px color-mix(in srgb, var(--ig-primary-500) 44%, transparent);
   }
@@ -252,7 +252,7 @@
   &:active,
   &.igx-button--focused:hover {
     background: var(--ig-primary-500);
-    color: #fff;
+    color: var(--ig-primary-500-contrast);
     border-color: var(--ig-primary-500);
   }
 
@@ -371,7 +371,7 @@
   border-radius: 50%;
   font-size: 0.8rem;
   font-weight: 800;
-  color: #fff;
+  color: var(--ig-primary-500-contrast);
   background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500));
   margin-bottom: 12px;
 }
@@ -543,7 +543,10 @@
   --ig-size: var(--ig-size-medium);
   height: max-content;
   --background: #fff;
-  --foreground: #E64A19;
+  // Shared accessible orange for white-pill CTAs on the orange banner (was
+  // #E64A19 @ 3.9:1 — failed contrast). Matches products + contact.
+  --foreground: var(--accent-on-light);
+  color: var(--accent-on-light);
   border-radius: 999px;
   padding: 13px 28px;
   font-weight: 700;

@@ -9,6 +9,7 @@ Reports are analyzed per page; most fixes below are **site-wide** and will lift 
 |---|---|---|---|---|---|
 | `/blog/` | 73 | 94 | 100 | 100 | Analyzed (2026-07-10) |
 | `/blog/infill-pri-3d-pechat-platnost-zdravina-i-filament` | — | — | — | — | Lighthouse run errored — see §4 |
+| `/products/` | 82 | 90 | 100 | 100 | Analyzed (2026-07-12), **dark theme** run — see §6 |
 | *(remaining pages)* | | | | | Pending reports |
 
 ## How the Performance score is computed (what actually moves it)
@@ -217,6 +218,175 @@ Then re-run against production URLs (trailing slash!) after deploy. Repeat for e
 tracker table.
 
 
+---
+
+# 6. `/products/` run — 2026-07-12 (dense-design regression)
+
+Scores: **Perf 82 · A11y 90 · BP 100 · SEO 100**. Report banner confirms the audit hit
+`https://3dpechat.bg/products` → 301 → `/products/` (150 ms billed to the page — always audit the
+trailing-slash URL, see P5).
+
+**Theme context (important):** the audit rendered the **dark theme** (screenshot thumbnails are dark).
+Theme selection follows `prefers-color-scheme` when no saved preference exists
+(`app.component.ts:33-41`), so *both* themes ship to first-time visitors — every color fix below must
+pass 4.5:1 in **both** palettes. Contrast is checked only against whatever theme the audited page
+renders, so verify each theme with a separate run (DevTools → Rendering → emulate
+`prefers-color-scheme` light/dark, in incognito so no `localStorage.theme` is set). No second planning
+pass needed — the fixes are token-based; only re-run to *verify*.
+
+Prior-plan carry-overs already done ✅: hydration (P2), lazy routes (P4), theme slimming (P3, unused
+CSS now 149 KiB), deferred gtag (P8), WebP product images, hammer removed. Still open: fonts (P6),
+hosting/cache (P9), trailing-slash audit discipline (P5).
+
+## 6A. Accessibility 90 → 100 (three scored failures)
+
+### A3. Color contrast — the orange CTA system fails in both themes
+Root cause: **white text on brand orange**. Measured ratios (WCAG relative luminance):
+- white on `#FF5722` (light `$primary`) ≈ **3.1:1** ❌
+- white on `#FF7043` (dark `--ig-primary-500`) ≈ **2.7:1** ❌
+- white on `#FF8A65` (`--ig-primary-400`, the *lighter gradient stop* used on CTAs) ≈ **2.2:1** ❌
+
+Affected elements (all use `--ig-primary-400/500` + white):
+| Element | File | Notes |
+|---|---|---|
+| Card CTA "ПОРЪЧАЙТЕ СЕГА" | `src/app/shared/product-grid/product-grid.component.scss:339` `.contact-button` | gradient 400→500, `color:#fff` |
+| Navbar "Заяви оферта" | `src/app/app.component.scss:619` `.nav_cta_button` | same gradient pattern |
+| Active sort pill | `src/app/products-page/products-page.component.scss:71` `.sort-option.active` | solid `--ig-primary-500` + `#fff` |
+| Tag chips | `src/app/shared/product-grid/product-grid.component.scss:255` `.product-tag` | `--ig-primary-500` text on 12% tint — light theme ≈ **2.6:1** ❌, dark ≈ 4.5:1 borderline |
+| Sweep for the same pattern | `.page-banner__eyebrow` (`styles.scss:251`), `.empty-state-icon`, `.carousel-nav` icon (orange on white ≈ 3.1 ❌ but ≥24 px icon may count as graphics, fix anyway), `.info-btn` (`--ig-warn-700` on warn tint — verify) | grep `--ig-primary-500` used as *text/icon color* |
+
+**Fix strategy — introduce CTA tokens instead of touching the palette** (the palette drives too much;
+scoped tokens keep the visual identity). In `styles.scss` `:root` and `.dark-theme`:
+
+```scss
+:root {
+  --cta-bg:    #BF360C;  // deep-orange 800 — white on it ≈ 5.6:1 ✓
+  --cta-bg-2:  #C13A0B;  // lighter gradient stop — white on it ≈ 5.4:1 ✓ (do NOT use #D84315: 4.4:1 ❌)
+  --cta-fg:    #FFFFFF;
+  --tag-fg:    #A83208;  // on the 12% orange tint ≈ 5.4:1 ✓
+}
+.dark-theme {
+  // Option B (recommended): keep the bright brand orange, flip the text dark —
+  // same pattern the palette already uses for teal ($secondary contrast #00201D).
+  --cta-bg:    #FF7043;
+  --cta-bg-2:  #FF8A65;
+  --cta-fg:    #1A1A1A;  // ≈ 6.3:1 on #FF7043 ✓ (verify on the #FF8A65 stop too ✓ ≈ 7.6:1)
+  --tag-fg:    #FF8A65;  // on dark 12% tint ≈ 5.3:1 ✓
+}
+```
+Then swap `.contact-button`, `.nav_cta_button`, `.sort-option.active`, `.product-tag` to the tokens
+(`background: linear-gradient(135deg, var(--cta-bg-2), var(--cta-bg) 70%); color: var(--cta-fg);`).
+If dark-on-orange CTAs are visually unacceptable in dark mode, fall back to Option A: use the light
+tokens in both themes (white on `#BF360C` works on the near-black ground too). Re-verify every pair
+with a contrast checker after the change — the numbers above are computed, not measured in-browser.
+
+### A4. Touch targets (WCAG 2.5.8 — ≥24×24 CSS px, or adequate spacing)
+Confirm the exact list by expanding the audit row (or export the report JSON), but these are the
+probable offenders on `/products/`:
+| Target | File | Problem → fix |
+|---|---|---|
+| Search **clear** icon | `products-page.component.html:15` | bare `igx-icon` with `(click)`, ~18 px → wrap in a real `<button type="button" aria-label="Изчисти търсенето">` with ≥32×32 hit area |
+| `+N` tags chip | `product-grid.component.html:73` `.product-tag-more` | ~18 px tall `span` with tooltip trigger → make it a `<button>` min 24×24 (pad vertically) |
+| `.info-btn` / `.copy-link-btn` pair | `product-grid.component.scss:212`, `styles.scss:397` | 28 px targets 6 px apart → bump both to ≥32×32, keep ≥8 px gap |
+| Footer link stack | `app.component.html:172-199` `.footer_link` | line-height-only rows stacked tightly → `padding: 6px 0; display: inline-block;` (≥24 px row height + spacing) |
+| Carousel nav / sort pills | 34 px / ~31 px | already ≥24 — leave unless flagged |
+
+**Density-preserving trick:** grow the *hit area*, not the visual: transparent `::after` inset
+expansion (`position:absolute; inset:-8px;` on a relative button) or padding + negative margin.
+The layout stays exactly as dense as it is now.
+
+### A5. Heading order
+- `products-page.component.html:46` — the section `h2` renders **only while searching**, so the
+  default view is `h1` → card `h3` (skip). Fix: always render an `h2` for the catalog section
+  (e.g. `<h2 class="visually-hidden">Каталог</h2>` or a visible one above the grid); keep card
+  titles `h3`. Add a global `.visually-hidden` utility in `styles.scss` if missing.
+- `product-grid.component.html:41-44` — the tooltip `<div>` is nested **inside** the `<h3>`. Move it
+  out as a sibling (the `igxTooltipTarget` span stays inside). Invalid heading content can also
+  confuse the audit.
+- Features/CTA sections (`h2` → `h3`) are fine once the catalog `h2` exists.
+
+## 6B. Performance 82 → 95+
+
+### P10. LCP request discovery — first-row card images are lazy-loaded
+`product-grid.component.html:12,16` puts `loading="lazy"` on **every** card image; the LCP element is
+a first-row card image (this is exactly the `/blog/` P1 bug reappearing in the new grid).
+- Track index in the `@for` (`track product; let i = $index`).
+- First 4 cards (one desktop row): front image `loading="eager"`, and `fetchpriority="high"` on
+  card 0. **Back images stay lazy always** (hidden behind the flip).
+- Grid is prerendered + hydrated, so the eager images are discoverable in the initial HTML — this
+  directly fixes both "LCP request discovery" and part of "Network dependency tree".
+
+### P11. Image delivery (−722 KiB) + enormous payload (2,899 KiB)
+Product photos are full-resolution 300–800 KiB WebP files rendered at ~240×170 (`src/assets/real-images/`
+is **46 MB**). They're already WebP — the problem is *dimensions*, so:
+- New `scripts/generate-product-thumbs.js` (sharp is already a devDependency; mirror
+  `generate-carousel-images.js`): emit 320/480/768-wide variants next to the originals
+  (e.g. `name.480.webp`), wired into `prebuild`.
+- In `product-grid.component.html` use `srcset` + `sizes="(max-width:480px) 50vw, (max-width:768px) 33vw, 260px"`,
+  with explicit `width`/`height` attributes (also helps CLS, §P12).
+- Sweep other pages using `real-images` (main-page carousel, portfolio) for the same fix later.
+
+### P12. Layout shift culprits
+Card image containers are fixed-height (170 px), so images shouldn't shift. Likely culprits:
+1. **Web font swap** — Roboto + Material Icons still come from Google Fonts (`index.html:62-65`).
+   Icons render as raw ligature text first (that's also a visual glitch). This is old-plan **P6**:
+   self-host woff2, `font-display: swap` + a `size-adjust`-matched fallback for Roboto,
+   `font-display: block` for the icon font.
+2. Hydration-time changes (result count, conditional controls) — reserve space (`min-height`) if the
+   expanded audit names them.
+Add `width`/`height` to card `<img>`s regardless (free insurance).
+**Get the element list from the expanded "Layout shift culprits" row before spending effort here.**
+
+### P13. Unused JS (409 KiB) — diagnose, don't guess
+Run `ng build` with `"namedChunks": true` + `npx source-map-explorer dist/**/main*.js` (or the esbuild
+metafile). Expected findings: Ignite UI common chunk, gtag (loads post-`load`, still counted — accept),
+`@igniteui/material-icons-extended` (check it registers only the used icons — instagram/tiktok — not
+the whole set). Weight-0 audit; only worth real effort if TBT ever degrades (currently fine).
+
+### P14. Unused CSS (149 KiB)
+Already slimmed from ~815 KiB. Optionally extend `$exclude-components` in `styles.scss:31` (verify
+whether `igx-carousel` is still used after the custom card flip replaced it). Weight-0 — low priority.
+
+### P15. Cache lifetimes (1,789 KiB) + document latency (150 ms) — infrastructure carry-overs
+Both are old-plan items, not code bugs:
+- 150 ms = the trailing-slash 301 (P5) — the report itself says the test URL redirected. Audit `/products/`.
+- Cache TTL is GitHub Pages' hard `max-age=600` (P9) — needs Cloudflare (or a host with header control).
+
+### P16. (Optional, weight-0) 58 non-composited animations
+Hover transitions animate `box-shadow`/`filter`/`background-color` (cards, CTAs, sort pills). If
+chasing the last points, restrict hover transitions to `transform`/`opacity` and pre-render shadows
+via a `::after` opacity fade. Skip unless CLS/TBT numbers say otherwise.
+
+## 6C. Implementation order (hand-off checklist)
+
+| # | Task | Effort | Impact |
+|---|---|---|---|
+| 1 | A3 CTA contrast tokens (both themes) | S | A11y +7-weight audit, site-wide |
+| 2 | A5 heading order (`h2` + tooltip out of `h3`) | S | A11y +3-weight audit |
+| 3 | A4 touch targets (clear btn, +N chip, footer links, icon btns) | S/M | A11y, mobile UX |
+| 4 | P10 eager first-row images + fetchpriority | S | LCP — biggest perf win |
+| 5 | P11 thumbnail pipeline + srcset + width/height | M | −700 KiB+, LCP/SI, mobile |
+| 6 | P12 self-host fonts (old P6) | M | CLS + FCP, site-wide |
+| 7 | P15/P9 Cloudflare + audit-slash discipline | infra | repeat visits, +150 ms per run |
+| 8 | P13/P14/P16 | opt | only if scores still short |
+
+**Verification (must pass all four combos):**
+```bash
+npm run build
+npx http-server dist/dprinting-services-website/browser -p 8080
+# In incognito DevTools, force prefers-color-scheme via Rendering panel, then Lighthouse:
+#   /products/ light + dark, desktop + mobile.
+# Also re-run axe DevTools on both themes for the contrast items (gradients aren't
+# reliably computed by Lighthouse — don't trust a silent pass on gradient buttons).
+```
+Re-check `/blog/` and the main page after — the CTA/token, font, and image fixes are shared surfaces.
+
+**Info still worth collecting (nice-to-have, not blocking):** the expanded element lists for
+"Layout shift culprits", the contrast audit, and the touch-target audit — save the full report
+(HTML or JSON) into the repo (e.g. `lighthouse-reports/products-2026-07-12.json`) so the implementing
+model can read exact selectors instead of relying on the inference above.
+
+---
 
 FROM FABLE:
 
