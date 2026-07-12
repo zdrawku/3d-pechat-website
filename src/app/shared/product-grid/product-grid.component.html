@@ -1,6 +1,6 @@
 <div class="products-grid">
   <!-- Product Card for each variant -->
-  @for (product of products; track product) {
+  @for (product of products; track product; let i = $index) {
     <igx-card class="product-card" [id]="product.linkId">
       <!-- Image Carousel Section -->
       <div class="card-image-section">
@@ -8,8 +8,13 @@
           <!-- Product images with flip indicator -->
           <div class="product-image-wrapper" [class.show-back]="!product.showFront">
             <div class="product-image front-image">
+              <!-- First row (4 cards) loads eagerly so the LCP image is discoverable
+                   in the initial HTML; card 0 also gets fetchpriority. Back images
+                   stay lazy — they're hidden behind the flip. -->
               <img [src]="product.frontImage" [alt]="product.name + ' - Лице'" class="card-image"
-                [class.padded-image]="product.hasImagePadding" loading="lazy" />
+                [class.padded-image]="product.hasImagePadding"
+                [attr.loading]="i < 4 ? 'eager' : 'lazy'"
+                [attr.fetchpriority]="i === 0 ? 'high' : null" />
             </div>
             <div class="product-image back-image">
               <img [src]="product.backImage" [alt]="product.name + ' - Гръб'" class="card-image"
@@ -40,8 +45,8 @@
         <div class="card-top-row">
           <h3 class="ig-typography__h6 card-title">
             <span class="product-name" [igxTooltipTarget]="nameTooltipRef">{{ product.name }}</span>
-            <div #nameTooltipRef="tooltip" igxTooltip class="product-tooltip">{{ product.name }}</div>
           </h3>
+          <div #nameTooltipRef="tooltip" igxTooltip class="product-tooltip">{{ product.name }}</div>
           @if (product.customContent?.show) {
             <button type="button" class="info-btn" title="Още информация"
               [igxTooltipTarget]="infoTooltipRef" aria-label="Още информация за персонализация">
@@ -70,9 +75,10 @@
               <span class="product-tag">{{ tag }}</span>
             }
             @if (product.tags.length > 3) {
-              <span class="product-tag product-tag-more" [igxTooltipTarget]="tagsTooltipRef">
+              <button type="button" class="product-tag product-tag-more"
+                [igxTooltipTarget]="tagsTooltipRef" aria-label="Покажи всички етикети">
                 +{{ product.tags.length - 3 }}
-              </span>
+              </button>
               <div #tagsTooltipRef="tooltip" igxTooltip class="tags-tooltip">
                 {{ product.tags.join(', ') }}
               </div>

@@ -92,21 +92,19 @@
             }
           </igx-input-group>
 
-          <!-- Optional single file attachment (Web3Forms file upload,
-            multipart/form-data). Limited to ONE file because the free
-            Web3Forms plan only delivers a single attachment — the info
-            icon below explains this to the user before they pick a file.
-            onFilesSelected() in the .ts validates size. To change the
-            size limit, edit maxFileSizeBytes in contact-me-page.component.ts. -->
+          <!-- File attachment disabled: Web3Forms file upload is a Pro-plan
+            feature, not available on the current plan. Re-enable this block
+            (and the attachedFile usage in sendEmail()) if upgrading. -->
+          <!--
           <div class="field field-full file-field">
             <label class="file-label">
-              Прикачи файл <span>(по избор, макс. 5MB)</span>
+              Прикачи файл <span>(по избор, макс. 1MB)</span>
               <button type="button" class="file-info-btn" [igxTooltipTarget]="fileInfoTooltip"
                       aria-label="Информация за прикачване на файл">
                 <igx-icon>info</igx-icon>
               </button>
               <div #fileInfoTooltip="tooltip" igxTooltip class="file-info-tooltip">
-                Може да прикачите само 1 файл (до 5MB). Ако имате повече файлове за показване,
+                Може да прикачите само 1 файл (до 1MB). Ако имате повече файлове за показване,
                 добавете линк към тях в съобщението.
               </div>
             </label>
@@ -119,7 +117,7 @@
               </label>
             }
 
-            <!-- Selected file renders as a removable chip -->
+            <!- Selected file renders as a removable chip ->
             @if (attachedFile) {
               <ul class="file-list">
                 <li class="file-chip">
@@ -132,6 +130,7 @@
               </ul>
             }
           </div>
+          -->
         </div>
 
         <div id="hcaptcha-container"></div>
@@ -166,7 +165,7 @@
         }
         @if (submitStatus === 'invalid-file') {
           <p class="form-status form-status--error">
-            Файлът е твърде голям (макс. 5MB). Моля, изберете друг файл.
+            Файлът е твърде голям (макс. 1MB). Моля, изберете друг файл.
           </p>
         }
       </form>

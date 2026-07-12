@@ -105,7 +105,7 @@ export class ProductsPageComponent {
       showFront: true,
       customContent: {
         show: true,
-        title: '✨ Можете да персонализирате всеки аспект:',
+        title: 'Можете да персонализирате всеки аспект:',
         items: [
           'Форма на картата',
           'Снимка или дизайн отпред/отзад',
@@ -151,7 +151,7 @@ export class ProductsPageComponent {
       showFront: true,
       customContent: {
         show: true,
-        title: '✨ Можете да персонализирате всеки аспект:',
+        title: 'Можете да персонализирате всеки аспект:',
         items: [
           'Големина на стойката до 25 см височина',
           'Стойката може да има отвор отгоре за касичка',
@@ -174,7 +174,7 @@ export class ProductsPageComponent {
       showFront: true,
       customContent: {
         show: true,
-        title: '✨ Можете да персонализирате всеки аспект:',
+        title: 'Можете да персонализирате всеки аспект:',
         items: [
           'Големина на стойката до 25 см височина',
           'Стойката може да има отвор отгоре за касичка',

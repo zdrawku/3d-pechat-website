@@ -7,7 +7,10 @@
 @include typography($font-family: "Roboto");
 
 // Light theme palette
-$light-palette: palette($primary: #FF5722,
+// Primary is a deep orange (not the brighter #FF5722) so that white text on a
+// primary background AND primary-colored text/icons on light surfaces both clear
+// WCAG 4.5:1 — one accessible brand color, reused everywhere via --ig-primary-*.
+$light-palette: palette($primary: #C13A0B,
     $secondary: #0EA5A5,
     $surface: #F5F5F5,
     $error: #F44336,
@@ -86,9 +89,11 @@ $exclude-components: (
   --ig-surface-150: #4E4E4E;
   --ig-surface-100: #5A5A5A;
 
-  // Primary colors
+  // Primary colors — keep the bright orange (reads well as accent text on the
+  // dark ground) but use a DARK contrast so text/icons on a primary background
+  // clear 4.5:1 (white on #FF7043 is only ~2.7:1; #1A1A1A on it is ~6.3:1).
   --ig-primary-500: #FF7043;
-  --ig-primary-500-contrast: #FFFFFF;
+  --ig-primary-500-contrast: #1A1A1A;
   --ig-primary-400: #FF8A65;
   --ig-primary-600: #F4511E;
 
@@ -176,6 +181,20 @@ $exclude-components: (
 
   // Consistent soft elevation so cards lift off the new backgrounds
   --shadow-card: 0 1px 2px rgba(33, 29, 24, 0.05), 0 10px 30px rgba(33, 29, 24, 0.07);
+
+  // Deep orange for accent text/icons that sit on a near-WHITE ground in BOTH
+  // themes — e.g. carousel-nav icons on a white circle, and the inverted
+  // white-pill CTAs on our orange banners (products / main / contact). Fixed
+  // across themes (5.4:1 on white) because the dark-theme --ig-primary (#FF7043)
+  // is too light to pass 4.5:1 on white, and the old #E64A19 was only 3.9:1.
+  --accent-on-light: #C13A0B;
+
+  // Accent text/icons that sit on a faint ORANGE TINT (chips, the info button) —
+  // the warm tint eats contrast, so plain --ig-primary-500 (#C13A0B) is only
+  // 4.32:1 on its own 12% tint. This slightly darker orange clears 4.5:1
+  // (≈5.4:1). Dark theme keeps the bright orange (already ≈5.3:1 on dark tint,
+  // see the .dark-theme override below).
+  --accent-on-tint: #A83208;
 }
 
 // Dark mode gray overrides
@@ -207,6 +226,10 @@ $exclude-components: (
   --seam: linear-gradient(to bottom, rgba(0, 0, 0, 0.35), transparent 14px);
 
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 34px rgba(0, 0, 0, 0.5);
+
+  // On the dark card + dark orange tint, the bright brand orange already clears
+  // 4.5:1 (≈5.3:1); no need to darken it here.
+  --accent-on-tint: #FF7043;
 }
 
 // ===========================================================================
@@ -338,6 +361,21 @@ body {
   height: 100%;
 }
 
+// Accessible label that is visually removed but still read by screen readers
+// and counted by the heading-order audit. Use for structural headings that the
+// dense visual design doesn't render on-screen.
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .ig-typography {
 
   h1,
@@ -403,10 +441,17 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--ig-gray-600);
-  /* Use theme variable */
+  // --ig-gray-800 clears 4.5:1 comfortably on the card in both themes
+  // (~11:1 light, ~11:1 dark). Icons need the color set explicitly — Ignite
+  // igx-icon doesn't inherit `color`.
+  color: var(--ig-gray-800);
   transition: all 0.2s ease-in-out;
-  opacity: 0.6;
+
+  igx-icon {
+    // Ignite sets `color: var(--icon-color)` on igx-icon with component
+    // specificity, so override with !important or the icon ignores this color.
+    color: var(--ig-gray-800) !important;
+  }
 
   /* Reset button default line-height to ensure icon centers */
   line-height: 0;
@@ -414,6 +459,30 @@ body {
   &:hover {
     background-color: rgba(0, 0, 0, 0.05);
     color: var(--ig-gray-900);
-    opacity: 1;
+
+    igx-icon {
+      color: var(--ig-gray-900) !important;
+    }
+  }
+}
+
+// Dark theme: a permanent light circular chip with a solid black icon —
+// requested look. At rest the icon would otherwise sit on the dark card; the
+// light circle behind it is what makes a black icon visible.
+.dark-theme .copy-link-btn {
+  background-color: rgba(255, 255, 255, 0.88);
+  color: #000;
+
+  igx-icon {
+    color: #000 !important;
+  }
+
+  &:hover {
+    background-color: #fff;
+    color: #000;
+
+    igx-icon {
+      color: #000 !important;
+    }
   }
 }

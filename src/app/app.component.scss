@@ -123,21 +123,26 @@
     outline-offset: 2px;
   }
 
+  // Active = a solid orange pill. Icon, label and subtitle all sit on the
+  // orange fill using the contrast token (dark text in dark theme, white in
+  // light) — one accent color, no competing orange-on-tint text.
   &.active {
-    background: linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--ig-primary-500) 18%, transparent),
-      color-mix(in srgb, var(--ig-primary-500) 8%, transparent)
-    );
-    border-color: var(--ig-primary-500);
+    background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500) 75%);
+    border-color: transparent;
 
     .drawer_chip_tile {
-      background: var(--ig-primary-500);
-      color: #fff;
+      // Translucent tile on the orange pill instead of a solid orange-on-orange.
+      background: color-mix(in srgb, var(--ig-primary-500-contrast) 16%, transparent);
+      color: var(--ig-primary-500-contrast);
+
+      igx-icon {
+        color: var(--ig-primary-500-contrast) !important;
+      }
     }
 
-    .drawer_chip_txt b {
-      color: var(--ig-primary-500);
+    .drawer_chip_txt b,
+    .drawer_chip_txt span {
+      color: var(--ig-primary-500-contrast);
     }
   }
 }
@@ -155,6 +160,9 @@
   flex-shrink: 0;
 
   igx-icon {
+    // Force the icon color — Ignite icons default to the theme icon color, which
+    // axe measured as low-contrast on the tile. gray-700 clears 4.5:1.
+    color: var(--ig-gray-700) !important;
     font-size: 16px !important;
     width: 16px !important;
     height: 16px !important;
@@ -230,7 +238,9 @@
   border-radius: 999px;
   padding: 7px 14px 7px 11px;
   background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500) 75%);
-  color: #fff;
+  // Contrast token, not #fff — dark text on orange in dark theme, white in light.
+  // Every orange-filled control in the app follows this rule for consistency.
+  color: var(--ig-primary-500-contrast);
   font-weight: 700;
   font-size: 0.8125rem;
   font-family: inherit;
@@ -263,7 +273,8 @@
     right: 0;
     height: 2px;
     border-radius: 2px;
-    background: #fff;
+    // Follow the button's text color (contrast token) so the bars match the label.
+    background: currentColor;
     transition: transform 0.2s ease, width 0.2s ease;
 
     &:nth-child(1) {
@@ -451,7 +462,7 @@
   border-color: var(--ig-primary-500);
 }
 
-// Faint end icons, absolutely positioned at each end, behind the knob.
+// End icons, absolutely positioned at each end, behind the knob.
 .theme-switch-end {
   position: absolute;
   top: 50%;
@@ -460,9 +471,15 @@
   font-size: 14px !important;
   width: 14px !important;
   height: 14px !important;
-  color: var(--ig-gray-600);
+  // gray-700 (not 600) so the sun/moon glyphs clear 4.5:1 on the track.
+  color: var(--ig-gray-700);
   z-index: 0;
   pointer-events: none;
+
+  igx-icon,
+  &.igx-icon {
+    color: var(--ig-gray-700) !important;
+  }
 }
 
 .theme-switch-end--sun {
@@ -495,7 +512,8 @@
   font-size: 13px !important;
   width: 13px !important;
   height: 13px !important;
-  color: #fff;
+  // On the orange knob — use the contrast token like every other orange fill.
+  color: var(--ig-primary-500-contrast) !important;
 }
 
 // Slide the knob to the right end when dark theme is active.
@@ -581,7 +599,8 @@
 }
 .footer_link {
   color: var(--ig-gray-700);
-  height: max-content;
+  display: inline-block; // ≥24px touch target via vertical padding (WCAG 2.5.8)
+  padding: 4px 0;
   min-width: min-content;
   text-decoration: none;
   cursor: pointer;
@@ -625,7 +644,7 @@
   margin-left: 4px;
   border-radius: 999px;
   background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500) 70%);
-  color: #fff;
+  color: var(--ig-primary-500-contrast);
   font-weight: 700;
   font-size: 0.875rem;
   letter-spacing: 0.01em;
