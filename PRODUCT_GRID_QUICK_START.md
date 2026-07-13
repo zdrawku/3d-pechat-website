@@ -1,5 +1,13 @@
 # Product Grid Component - Quick Start Guide
 
+> **Update (2026-07):** Products now live in
+> [`src/data/products.json`](src/data/products.json) and are typed against
+> [`src/app/models/product.model.ts`](src/app/models/product.model.ts)
+> (`Product` = data, `ProductVariant` = data + runtime `showFront`). The grid's
+> inputs/outputs are typed `ProductVariant`, not `any`. The examples below that
+> use inline arrays and `any` predate that change — see
+> [`src/data/README.md`](src/data/README.md) for the current add-a-product flow.
+
 ## ✅ What Was Done
 
 Successfully created a **reusable Product Grid Component** that can display any products with:
@@ -100,19 +108,31 @@ The component is already being used in **Products Page** (`products-page.compone
 
 ## 📊 Product Data Structure
 
+The authoritative definition lives in
+[`src/app/models/product.model.ts`](src/app/models/product.model.ts). `Product`
+is the data stored in `src/data/products.json`; `ProductVariant` adds the runtime
+`showFront` flag the grid mutates.
+
 ```typescript
 interface Product {
-  id: number;              // Unique identifier
-  name: string;            // Product name
-  description: string;     // Product description
-  frontImage?: string;     // Front image URL
-  backImage?: string;      // Back image URL
-  showFront: boolean;      // Initial view (true = front, false = back)
-  customContent?: {        // Optional custom section
-    show: boolean;
-    title: string;
-    items: string[];
-  };
+  id: number;
+  linkId: string;          // Stable slug for #deep-links and copy-link
+  name: string;
+  description: string;
+  frontImage?: string;
+  backImage?: string;
+  dateAdded?: string;
+  hasOldCoins: boolean;
+  hasEuroCoins: boolean;
+  hasImagePadding?: boolean;
+  featured?: boolean;      // MAIN product: pinned banner + nav child item
+  pageUrl?: string;        // Own page (e.g. '/gift-box') instead of order prefill
+  customContent?: { show: boolean; title: string; items: string[] };
+  tags?: string[];
+}
+
+interface ProductVariant extends Product {
+  showFront: boolean;      // Runtime UI state — not stored in products.json
 }
 ```
 

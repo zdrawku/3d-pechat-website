@@ -50,6 +50,9 @@ This is a genuinely strong product idea for a 3D-print business because:
 - It's print-on-demand friendly: you control the contents, so you can print what's
   efficient for you at that moment (filament colors on hand, machine time, etc.).
 
+Note by me:
+About it, i strongly believe it should be a separate page OR providing a way to have pinned products at the top of the page, OR navigatable whether through the products page or a child nav item below the Продукти Nav drawer item, lets explore that, consider SEO, findability and further maintanance, The same way we add this gift box idea right now, will be used to add other MAIN products as well. Consider everyting and let me know what do you think via designs.
+
 ### The 10 categories
 
 🔵 DECISION: The idea said "pick from 10 different categories" — the concrete list
