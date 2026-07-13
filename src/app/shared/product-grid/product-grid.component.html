@@ -43,9 +43,7 @@
       </div>
       <igx-card-content class="card-content">
         <div class="card-top-row">
-          <h3 class="card-title">
-            <span class="product-name" [igxTooltipTarget]="nameTooltipRef">{{ product.name }}</span>
-          </h3>
+          <h2 class="card-title" [igxTooltipTarget]="nameTooltipRef">{{ product.name }}</h2>
           <div #nameTooltipRef="tooltip" igxTooltip class="product-tooltip">{{ product.name }}</div>
           @if (product.customContent?.show) {
             <button type="button" class="info-btn" title="Още информация"
@@ -61,9 +59,11 @@
               </ul>
             </div>
           }
-          <button type="button" class="copy-link-btn" title="Копирай линк към секцията"
-            (click)="copySectionLink(product.linkId)">
-            <igx-icon family="material">link</igx-icon>
+          <button type="button" class="copy-link-btn"
+            [class.copied]="copiedLinkId === product.linkId"
+            [title]="copiedLinkId === product.linkId ? 'Копирано!' : 'Копирай линк към секцията'"
+            (click)="onCopyClick(product.linkId)" data-testid="product-copy-link">
+            <igx-icon family="material">{{ copiedLinkId === product.linkId ? 'check' : 'link' }}</igx-icon>
           </button>
         </div>
         <p class="ig-typography__body-2 product-description">

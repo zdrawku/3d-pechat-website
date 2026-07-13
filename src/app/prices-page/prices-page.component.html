@@ -43,14 +43,14 @@
       <div class="calculator-row">
         <div class="calculator-field">
           <label for="grams-input">Общо грамове</label>
-          <input id="grams-input" type="number" class="calculator-input" [(ngModel)]="grams" placeholder="100" />
+          <input id="grams-input" type="number" class="calculator-input" [(ngModel)]="grams" placeholder="100" data-testid="calc-grams" />
         </div>
 
         <span class="calculator-op">/10 &times;</span>
 
         <div class="calculator-field">
           <label for="tier-select">Тарифа</label>
-          <select id="tier-select" class="calculator-select" [(ngModel)]="selectedTierId">
+          <select id="tier-select" class="calculator-select" [(ngModel)]="selectedTierId" data-testid="calc-tier">
             @for (tier of tiers; track tier.id) {
               <option [value]="tier.id">{{ tier.pricePerTenGrams.toFixed(2) }} € ({{ tier.name }})</option>
             }
@@ -60,7 +60,7 @@
         <span class="calculator-op">=</span>
 
         <div class="calculator-result">
-          <span class="calculator-result-num">{{ totalPrice }} €</span>
+          <span class="calculator-result-num" data-testid="calc-total">{{ totalPrice }} €</span>
           <span class="calculator-result-label">крайна цена</span>
         </div>
       </div>
@@ -70,7 +70,7 @@
       </p>
 
       <div class="calculator-cta">
-        <button type="button" class="btn-order-estimate" (click)="navigateWithEstimate()">
+        <button type="button" class="btn-order-estimate" (click)="navigateWithEstimate()" data-testid="calc-order-btn">
           Заяви поръчка с тази цена
           <igx-icon>arrow_forward</igx-icon>
         </button>

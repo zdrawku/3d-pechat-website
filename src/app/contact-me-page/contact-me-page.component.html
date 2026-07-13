@@ -136,7 +136,7 @@
         <div id="hcaptcha-container"></div>
 
         <button igxButton="contained" type="button" class="submit-btn" (click)="sendEmail(contactForm)"
-                [disabled]="isSubmitting">
+                [disabled]="isSubmitting" data-testid="contact-submit">
           {{ isSubmitting ? 'Изпращане...' : 'Изпрати съобщение' }}
           @if (!isSubmitting) {
             <igx-icon>arrow_forward</igx-icon>
