@@ -119,6 +119,9 @@
             ],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
+            "loader": {
+              ".md": "text"
+            },
             "assets": [
               "src/favicon.ico",
               "src/assets"
