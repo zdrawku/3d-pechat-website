@@ -1,6 +1,7 @@
 <igx-navbar class="navigation_bar_1">
   <igx-navbar-title class="navbar-content">
-    <button type="button" [igxToggleAction]="navigationdrawer1" class="menu-trigger" aria-label="Отвори менюто">
+    <button type="button" [igxToggleAction]="navigationdrawer1" class="menu-trigger" aria-label="Отвори менюто"
+      data-testid="menu-trigger">
       <span class="menu-trigger-bars">
         <span></span>
         <span></span>
@@ -36,7 +37,7 @@
   </div>
   
   <button class="theme-switch" [class.is-dark]="isDarkTheme" (click)="toggleTheme()"
-          aria-label="Смени тема" [igxTooltipTarget]="themeTooltip">
+          aria-label="Смени тема" [igxTooltipTarget]="themeTooltip" data-testid="theme-toggle">
     <span class="theme-switch-track">
       <igx-icon class="theme-switch-end theme-switch-end--sun">light_mode</igx-icon>
       <igx-icon class="theme-switch-end theme-switch-end--moon">dark_mode</igx-icon>
@@ -51,7 +52,7 @@
 </igx-navbar>
 <div class="row-layout horizontal_group_1">
   <igx-nav-drawer [isOpen]="true" width="232px" #navigationdrawer1 class="navigation_drawer_1"
-    [enableGestures]="true">
+    [enableGestures]="true" data-testid="nav-drawer">
     <ng-template igxDrawer>
       <div class="drawer_group_label">Разгледай</div>
       <div class="drawer_chip_list drawer_chip_list_first">

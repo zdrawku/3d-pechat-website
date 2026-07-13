@@ -11,6 +11,7 @@
         [(ngModel)]="searchText"
         (input)="onSearch()"
         placeholder="Търсене в блога..."
+        data-testid="blog-search"
         />
         <igx-prefix>
           <igx-icon>search</igx-icon>
@@ -22,7 +23,7 @@
         }
       </igx-input-group>
     @if (allBlogs.length > 0) {
-      <p class="results-info">
+      <p class="results-info" data-testid="blog-result-count">
         Показани <strong>{{ resultCount }}</strong> от <strong>{{ totalCount }}</strong> статии
       </p>
     }
@@ -34,7 +35,7 @@
     @if (filteredBlogs.length > 0) {
       <div class="blog-grid">
         @for (blog of filteredBlogs; track blog.id; let i = $index) {
-          <a class="blog-card" [routerLink]="blog.route">
+          <a class="blog-card" [routerLink]="blog.route" data-testid="blog-card">
             @if (blog.imageUrl) {
               <div class="card-image-wrapper">
                 @if (i < 2) {
@@ -72,7 +73,7 @@
               @if (blog.tags && blog.tags.length > 0) {
                 <div class="tags-container">
                   @for (tag of blog.tags.slice(0, 3); track tag) {
-                    <span class="tag" (click)="searchByTag($event, tag)">{{ tag }}</span>
+                    <span class="tag" (click)="searchByTag($event, tag)" data-testid="blog-tag">{{ tag }}</span>
                   }
                 </div>
               }

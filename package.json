@@ -16,6 +16,9 @@
     "serve:ssr": "http-server dist/dprinting-services-website/browser -p 8080",
     "watch": "ng build --watch --configuration development",
     "test": "node --max-old-space-size=8192 ./node_modules/@angular/cli/bin/ng test",
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui",
+    "e2e:report": "playwright show-report",
     "lint": "ng lint"
   },
   "private": true,
@@ -55,6 +58,7 @@
     "@anthropic-ai/sdk": "^0.32.1",
     "@eslint/js": "^10.0.1",
     "@igniteui/angular-schematics": "^21.2.1510",
+    "@playwright/test": "^1.61.1",
     "@types/jasmine": "^6.0.0",
     "angular-eslint": "^21.4.0",
     "cheerio": "^1.0.0",
