@@ -3,6 +3,41 @@
 Smoke, SEO, and contact-form tests that run against the **built, prerendered
 site** — the same static HTML that real users and Googlebot receive.
 
+## Test suites at a glance
+
+| Suite | Command | CI workflow | Status |
+|---|---|---|---|
+| Functional E2E (smoke, SEO, products, blog, contact, shell) | `npm run e2e` | `e2e.yml` | ✅ 74 tests |
+| Accessibility (axe-core, per page) | part of `npm run e2e` (`a11y.spec.ts`) | `e2e.yml` | ✅ 6 tests |
+| Visual regression (screenshots × 3 viewports) | `npm run e2e:visual` | `visual.yml` | ⚠️ needs baselines (see below) |
+| Lighthouse budgets (perf/a11y/SEO/best-practices) | `npm run lighthouse` | `lighthouse.yml` | ✅ passing |
+| Unit (SeoService) | `npm test` (Karma) | — not yet in CI | ✅ scaffolded |
+
+### Visual regression — first-time setup
+
+Screenshot baselines are **platform-specific** and are generated on CI (Linux),
+never committed from a local Windows/macOS run. Before the check works, a
+maintainer must generate them once:
+
+- Run the **Visual regression** workflow via *workflow_dispatch* with
+  **"Regenerate and commit baselines" = true**. It commits `e2e/__screenshots__`.
+- After that, every push/PR compares against those baselines. When an
+  intentional UI change lands, re-run the dispatch to refresh them.
+
+Locally you can preview with `npm run e2e:visual:update` (writes baselines) then
+`npm run e2e:visual`, but **don't commit** local baselines — CI's Linux ones win.
+
+## Pending / not yet done
+
+- **Vitest migration** — Karma is deprecated; Angular 21 ships a Vitest builder.
+  `SeoService` has a unit spec (`src/app/services/seo.service.spec.ts`) that runs
+  under the current runner. Still to do: swap the `test` builder in `angular.json`
+  to Vitest, wire `npm test` into a CI workflow, and add specs for `BlogService`
+  and the contact `sendEmail()` success path (needs the private hCaptcha token,
+  which is why it's a unit test rather than E2E).
+- **Visual baselines** are not yet generated (see above).
+- **Mobile Lighthouse budgets** — currently desktop preset only.
+
 ## Running
 
 ```bash

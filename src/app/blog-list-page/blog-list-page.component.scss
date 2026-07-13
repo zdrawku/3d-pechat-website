@@ -230,7 +230,9 @@
           display: inline-block;
           padding: 2px 8px;
           background: color-mix(in srgb, var(--ig-primary-500) 12%, transparent);
-          color: var(--ig-primary-500);
+          // Darker on-tint orange so the chip text clears WCAG AA on its own
+          // tint (plain --ig-primary-500 is only ~4.3:1).
+          color: var(--accent-on-tint);
           border-radius: 999px;
           font-size: 0.6rem;
           font-weight: 700;
