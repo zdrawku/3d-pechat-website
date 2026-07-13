@@ -68,9 +68,12 @@
             <igx-icon family="material">{{ copiedLinkId === product.linkId ? 'check' : 'link' }}</igx-icon>
           </button>
         </div>
-        <p class="ig-typography__body-2 product-description">
+        <p class="ig-typography__body-2 product-description" [igxTooltipTarget]="descriptionTooltipRef">
           {{ product.description }}
         </p>
+        <div #descriptionTooltipRef="tooltip" igxTooltip class="product-tooltip description-tooltip">
+          {{ product.description }}
+        </div>
         @if (product.tags; as tags) {
           @if (tags.length) {
             <div class="product-tags">

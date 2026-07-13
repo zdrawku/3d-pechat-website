@@ -527,3 +527,17 @@
   text-align: center;
   max-width: 250px;
 }
+
+// The description can run several lines, so its tooltip is wider and left-aligned
+// (unlike the short, centered name/tags tooltips) for comfortable reading.
+::ng-deep .description-tooltip {
+  text-align: left;
+  max-width: 320px;
+  font-size: 0.9rem !important;
+  line-height: 1.5;
+}
+
+// Signal that the (clamped) description is interactive and reveals more on hover.
+.product-description {
+  cursor: help;
+}
