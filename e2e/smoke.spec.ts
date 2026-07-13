@@ -15,7 +15,7 @@ function attachErrorCollector(page: Page): { jsErrors: string[]; failedResources
   // Third-party hosts (captcha, analytics/telemetry, CDNs) and favicon are not
   // part of the app under test — their availability is out of our control.
   const ignore = (text: string) =>
-    /hcaptcha|web3forms|googletagmanager|google-analytics|analytics\.google|doubleclick|gstatic|fonts\.googleapis|favicon/i.test(
+    /hcaptcha|web3forms|googletagmanager|google-analytics|analytics\.google|google\.com\/(g\/)?collect|\/g\/collect|doubleclick|gstatic|fonts\.googleapis|favicon/i.test(
       text,
     );
 
