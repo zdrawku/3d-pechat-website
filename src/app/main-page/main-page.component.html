@@ -120,9 +120,9 @@
     </div>
     <div class="about_media">
       <igx-carousel [vertical]="false" animationType="slide" [interval]="2000" indicatorsOrientation="end" class="carousel_1">
-        @for (image of carouselImages; track image; let i = $index) {
+        @for (image of carouselImages; track image.src; let i = $index) {
           <igx-slide class="row-layout carousel_slide_1">
-            <img [src]="image" [alt]="'3D печат проект ' + (i + 1)" class="image_1" loading="lazy" />
+            <img [src]="image.src" [alt]="image.alt || ('3D печат проект ' + (i + 1))" class="image_1" loading="lazy" />
           </igx-slide>
         }
       </igx-carousel>

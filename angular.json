@@ -32,7 +32,12 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets",
+                "ignore": ["**/manifest.json"]
+              },
               "src/robots.txt",
               "src/llms.txt",
               "src/sitemap.xml",
