@@ -32,6 +32,7 @@ which maps each entry to a runtime `ProductVariant` by adding `showFront: true`.
 | `pageUrl`        | –        | Gives the product its own page (e.g. `/gift-box`) instead of the default „order via `/contact`“ prefill flow. Used with `featured` for MAIN products. |
 | `customContent`  | –        | `{ show, title, items[] }` — an extra bulleted info tooltip on the card. |
 | `tags`           | –        | Bulgarian keywords; searchable and shown as chips (first 3, then `+N`). |
+| `links`          | –        | External references shown as icon buttons in the card's top row: `[{ label, url, icon? }]`. E.g. a MakerWorld/Printables model page. `label` is the tooltip/aria text; `icon` is an optional Material icon name (defaults to `open_in_new`). Opened in a new tab with `rel="noopener noreferrer"`. |
 
 > `showFront` is **not** a data field — it is runtime UI state added by the
 > component. Don't put it in the JSON.

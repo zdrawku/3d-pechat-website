@@ -245,6 +245,12 @@
   flex-shrink: 0;
 }
 
+// External-link button reuses .info-btn's round icon-button styling; as an <a>
+// it just needs link defaults cleared.
+.link-btn {
+  text-decoration: none;
+}
+
 // Ensure the card's copy-link button clears a 32×32 touch target (the global
 // .copy-link-btn only pads 6px around a 16px icon ≈ 28px).
 .copy-link-btn {

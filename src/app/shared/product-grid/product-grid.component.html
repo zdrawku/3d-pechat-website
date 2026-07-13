@@ -61,6 +61,16 @@
               </div>
             }
           }
+          @if (product.links; as links) {
+            @for (link of links; track link.url) {
+              <a class="info-btn link-btn" [href]="link.url" target="_blank" rel="noopener noreferrer"
+                [igxTooltipTarget]="linkTooltipRef" [attr.aria-label]="link.label"
+                data-testid="product-external-link">
+                <igx-icon family="material">{{ link.icon || 'open_in_new' }}</igx-icon>
+              </a>
+              <div #linkTooltipRef="tooltip" igxTooltip class="product-tooltip">{{ link.label }}</div>
+            }
+          }
           <button type="button" class="copy-link-btn"
             [class.copied]="copiedLinkId === product.linkId"
             [title]="copiedLinkId === product.linkId ? 'Копирано!' : 'Копирай линк към секцията'"

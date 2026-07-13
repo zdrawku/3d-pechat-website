@@ -29,6 +29,22 @@ export interface Product {
     items: string[];
   };
   tags?: string[];
+  /**
+   * Optional external links shown as icon buttons in the card's top row — e.g. a
+   * MakerWorld/Printables model page where the buyer can see or download the
+   * design. Opened in a new tab with `rel="noopener noreferrer"`.
+   */
+  links?: ProductLink[];
+}
+
+/** An external reference on a product card (model page, video, etc.). */
+export interface ProductLink {
+  /** Tooltip/aria label, e.g. "Виж в MakerWorld". */
+  label: string;
+  /** Absolute URL to open in a new tab. */
+  url: string;
+  /** Optional Material icon name; defaults to a generic external-link icon. */
+  icon?: string;
 }
 
 /**
