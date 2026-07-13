@@ -47,7 +47,11 @@ test.describe('products page', () => {
   });
 
   test('sort A-Я orders cards alphabetically', async ({ page }) => {
-    await page.getByTestId('sort-asc').click();
+    const sortAsc = page.getByTestId('sort-asc');
+    await sortAsc.click();
+    // Wait for the button's active state so the re-sort has been applied
+    // (retrying assertion) before reading the card order.
+    await expect(sortAsc).toHaveClass(/active/);
 
     const titles = await page.locator('[data-testid="product-card"] .card-title').allInnerTexts();
     const trimmed = titles.map((t) => t.trim()).filter(Boolean);
@@ -56,15 +60,17 @@ test.describe('products page', () => {
   });
 
   test('newest vs oldest sort produce a different first card', async ({ page }) => {
+    const firstCard = page.locator('[data-testid="product-card"] .card-title').first();
+
     await page.getByTestId('sort-newest').click();
-    const newestFirst = (
-      await page.locator('[data-testid="product-card"] .card-title').first().innerText()
-    ).trim();
+    await expect(page.getByTestId('sort-newest')).toHaveClass(/active/);
+    const newestFirst = (await firstCard.innerText()).trim();
 
     await page.getByTestId('sort-oldest').click();
-    const oldestFirst = (
-      await page.locator('[data-testid="product-card"] .card-title').first().innerText()
-    ).trim();
+    // Wait for the first card's text to change before reading it, so we never
+    // read the stale (pre-resort) value.
+    await expect(firstCard).not.toHaveText(newestFirst);
+    const oldestFirst = (await firstCard.innerText()).trim();
 
     expect(newestFirst).not.toBe(oldestFirst);
   });

@@ -29,7 +29,12 @@ test.describe('contact form', () => {
     await name.fill('');
     await name.blur();
 
-    await expect(page.locator('igx-hint').first()).toContainText(/задължително/i);
+    // Scope the hint to the name field's own input group so this can't match a
+    // hint from another field.
+    const nameGroup = page
+      .locator('igx-input-group')
+      .filter({ has: page.locator('input[name="value"]') });
+    await expect(nameGroup.locator('igx-hint')).toContainText(/задължително/i);
   });
 
   test('blocks submit on the captcha gate when fields are filled', async ({ page }) => {
