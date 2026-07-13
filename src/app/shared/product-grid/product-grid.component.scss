@@ -245,6 +245,12 @@
   flex-shrink: 0;
 }
 
+// External-link button reuses .info-btn's round icon-button styling; as an <a>
+// it just needs link defaults cleared.
+.link-btn {
+  text-decoration: none;
+}
+
 // Ensure the card's copy-link button clears a 32×32 touch target (the global
 // .copy-link-btn only pads 6px around a 16px icon ≈ 28px).
 .copy-link-btn {
@@ -526,4 +532,18 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   text-align: center;
   max-width: 250px;
+}
+
+// The description can run several lines, so its tooltip is wider and left-aligned
+// (unlike the short, centered name/tags tooltips) for comfortable reading.
+::ng-deep .description-tooltip {
+  text-align: left;
+  max-width: 320px;
+  font-size: 0.9rem !important;
+  line-height: 1.5;
+}
+
+// Signal that the (clamped) description is interactive and reveals more on hover.
+.product-description {
+  cursor: help;
 }

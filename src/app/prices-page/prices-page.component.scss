@@ -114,24 +114,29 @@
 }
 
 // Alternating orange/green tile tints, mirroring the original card-color pairing.
+// Icon color uses the darker on-tint accents so the glyph clears WCAG AA (4.5:1)
+// against its same-hue tinted tile — plain --ig-*-500 fails on its own tint.
 .tier-c1 .tier-icon {
   background: color-mix(in srgb, var(--ig-primary-500) 16%, transparent);
-  color: var(--ig-primary-500);
+  color: var(--accent-on-tint);
 }
 
 .tier-c2 .tier-icon {
-  background: color-mix(in srgb, var(--ig-primary-500) 24%, transparent);
-  color: var(--ig-primary-500);
+  // 16% (not 24%) tint so --accent-on-tint clears 4.5:1 — the darker orange is
+  // calibrated for a ~12–16% ground; a 24% tint is too dark for it to pass.
+  background: color-mix(in srgb, var(--ig-primary-500) 16%, transparent);
+  color: var(--accent-on-tint);
 }
 
 .tier-c3 .tier-icon {
   background: color-mix(in srgb, var(--ig-secondary-500) 16%, transparent);
-  color: var(--ig-secondary-500);
+  color: var(--accent-teal-on-tint);
 }
 
 .tier-c4 .tier-icon {
-  background: color-mix(in srgb, var(--ig-secondary-500) 24%, transparent);
-  color: var(--ig-secondary-500);
+  // 16% tint (see .tier-c2) so --accent-teal-on-tint clears 4.5:1.
+  background: color-mix(in srgb, var(--ig-secondary-500) 16%, transparent);
+  color: var(--accent-teal-on-tint);
 }
 
 .tier-name {
@@ -198,7 +203,7 @@
   height: 48px;
   border-radius: 14px;
   background: color-mix(in srgb, var(--ig-primary-500) 14%, transparent);
-  color: var(--ig-primary-500);
+  color: var(--accent-on-tint);
   display: flex;
   align-items: center;
   justify-content: center;

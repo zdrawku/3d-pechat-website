@@ -2,22 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { IgxButtonDirective, IGX_CARD_DIRECTIVES, IgxIconComponent, IgxIconButtonDirective, IgxTooltipModule } from 'igniteui-angular';
 
-export interface Product {
-  id: number;
-  name: string;
-  description: string;
-  frontImage?: string;
-  backImage?: string;
-  dateAdded?: string;
-  hasImagePadding?: boolean;
-  showFront: boolean;
-  customContent?: {
-    show: boolean;
-    title: string;
-    items: string[];
-  };
-  tags?: string[];
-}
+import { ProductVariant } from '../../models/product.model';
 
 @Component({
   selector: 'app-product-grid',
@@ -26,8 +11,8 @@ export interface Product {
   styleUrls: ['./product-grid.component.scss']
 })
 export class ProductGridComponent {
-  @Input() products: any[] = [];
-  @Output() productAction = new EventEmitter<any>();
+  @Input() products: ProductVariant[] = [];
+  @Output() productAction = new EventEmitter<ProductVariant>();
   // Emits a product's linkId when its "copy link" button is clicked. The parent
   // page owns URL/scroll/clipboard (it has the Router + platform context); this
   // component stays presentational.
@@ -38,17 +23,34 @@ export class ProductGridComponent {
   public copiedLinkId: string | null = null;
   private copiedResetHandle: ReturnType<typeof setTimeout> | null = null;
 
-  public toggleToPrevious(product: any, event: Event): void {
-    event.stopPropagation();
-    product.showFront = !product.showFront;
+  // Ids of products currently showing their back image. Kept locally instead
+  // of mutating the `products` input, which would violate unidirectional data
+  // flow (Angular anti-pattern) and break under OnPush change detection.
+  private readonly flippedIds = new Set<number>();
+
+  public isShowingFront(product: ProductVariant): boolean {
+    return !this.flippedIds.has(product.id);
   }
 
-  public toggleToNext(product: any, event: Event): void {
+  public toggleToPrevious(product: ProductVariant, event: Event): void {
     event.stopPropagation();
-    product.showFront = !product.showFront;
+    this.toggleFlip(product);
   }
 
-  public handleAction(product: any): void {
+  public toggleToNext(product: ProductVariant, event: Event): void {
+    event.stopPropagation();
+    this.toggleFlip(product);
+  }
+
+  private toggleFlip(product: ProductVariant): void {
+    if (this.flippedIds.has(product.id)) {
+      this.flippedIds.delete(product.id);
+    } else {
+      this.flippedIds.add(product.id);
+    }
+  }
+
+  public handleAction(product: ProductVariant): void {
     this.productAction.emit(product);
   }
 

@@ -195,6 +195,11 @@ $exclude-components: (
   // (≈5.4:1). Dark theme keeps the bright orange (already ≈5.3:1 on dark tint,
   // see the .dark-theme override below).
   --accent-on-tint: #A83208;
+
+  // Teal counterpart for icons on a faint TEAL TINT (the tier-c3/c4 price
+  // cards). Plain --ig-secondary-500 (#0EA5A5) is only ~2.4:1 on its own tint;
+  // this darker teal clears 4.5:1 (≈4.8:1) on the same ground.
+  --accent-teal-on-tint: #0F6E6A;
 }
 
 // Dark mode gray overrides
@@ -230,6 +235,8 @@ $exclude-components: (
   // On the dark card + dark orange tint, the bright brand orange already clears
   // 4.5:1 (≈5.3:1); no need to darken it here.
   --accent-on-tint: #FF7043;
+  // Bright teal clears 4.5:1 on the dark teal tint — keep it vivid here.
+  --accent-teal-on-tint: #2DD4BF;
 }
 
 // ===========================================================================

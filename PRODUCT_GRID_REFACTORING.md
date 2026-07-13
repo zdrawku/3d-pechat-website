@@ -1,5 +1,13 @@
 # Product Grid Component - Refactoring Summary
 
+> **Update (2026-07):** A later refactor moved the product data out of
+> `products-page.component.ts` into [`src/data/products.json`](src/data/products.json)
+> (imported at build time) and introduced the shared model in
+> [`src/app/models/product.model.ts`](src/app/models/product.model.ts). The grid
+> no longer defines its own `Product` interface, and its inputs/outputs are typed
+> `ProductVariant` instead of `any`. The notes below describe the *original*
+> component-extraction refactor; the data model has since changed as described.
+
 ## Overview
 Successfully extracted the Products Grid Section from `products-page` into a reusable Angular component called `product-grid`.
 

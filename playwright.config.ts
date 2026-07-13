@@ -27,9 +27,23 @@ export default defineConfig({
     reducedMotion: 'reduce',
   },
 
+  // Consistent snapshot naming across OSes: without this, Playwright appends
+  // the platform (…-win32.png) so CI-Linux baselines wouldn't match. We commit
+  // Linux baselines and pin the name; visual tests only run in CI (see below).
+  snapshotPathTemplate: '{testDir}/__screenshots__/{arg}{ext}',
+
   projects: [
     {
-      name: 'chromium',
+      // Everything except visual regression — the suite that runs on every PR.
+      name: 'functional',
+      testIgnore: /visual\.spec\.ts/,
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      // Visual regression only. Baselines are platform-specific (Linux/CI), so
+      // this project is run via `npm run e2e:visual` in a dedicated CI job.
+      name: 'visual',
+      testMatch: /visual\.spec\.ts/,
       use: { ...devices['Desktop Chrome'] },
     },
   ],

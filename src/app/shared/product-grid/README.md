@@ -10,14 +10,35 @@ A reusable Angular component for displaying products in a grid layout with flipp
 - **Image Carousel Navigation**: Buttons to flip between front and back views
 - **Visual Indicators**: Dots showing which side is currently displayed
 - **Action Buttons**: Customizable action buttons for each product
+- **Copy-link Button**: Emits a product's `linkId` so the parent can build a shareable deep link
 - **Lazy Loading**: Images are lazy-loaded for better performance
+
+## Data model
+
+The component is typed against the shared product model in
+[`src/app/models/product.model.ts`](../../models/product.model.ts). It does **not**
+define its own `Product` interface — import the model to avoid drift.
+
+- **`Product`** — the pure data shape, stored in
+  [`src/data/products.json`](../../../data/products.json) and imported at build time.
+  Includes `linkId`, `hasOldCoins`/`hasEuroCoins`, the optional `featured` /
+  `pageUrl` MAIN-product fields, and `customContent`/`tags`.
+- **`ProductVariant`** — `Product` **plus** the runtime UI field `showFront`
+  (which side of the card is visible initially). The grid tracks which cards are
+  flipped locally (keyed by `id`) rather than mutating this input; `showFront`
+  is deliberately **not** part of the persisted JSON data.
+
+To add or edit a product, edit `src/data/products.json` (see
+[`src/data/README.md`](../../../data/README.md)) — not this component.
 
 ## Usage
 
-### 1. Import the Component
+### 1. Import the Component and the model
 
 ```typescript
 import { ProductGridComponent } from './shared/product-grid/product-grid.component';
+import { Product, ProductVariant } from '../models/product.model';
+import productsData from '../../data/products.json';
 
 @Component({
   // ...
@@ -28,63 +49,31 @@ import { ProductGridComponent } from './shared/product-grid/product-grid.compone
 ### 2. Add to Template
 
 ```html
-<app-product-grid 
-  [products]="yourProducts" 
-  (productAction)="handleProductAction($event)">
+<app-product-grid
+  [products]="productVariants"
+  (productAction)="handleProductAction($event)"
+  (copyLink)="onCopyLink($event)">
 </app-product-grid>
 ```
 
 ### 3. Prepare Your Data
 
-```typescript
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  frontImage?: string;
-  backImage?: string;
-  showFront: boolean;
-  customContent?: {
-    show: boolean;
-    title: string;
-    items: string[];
-  };
-}
+Products are data, not code: load them from JSON and add the runtime `showFront`
+flag as you map to `ProductVariant`.
 
-yourProducts: Product[] = [
-  {
-    id: 1,
-    name: 'Product Name',
-    description: 'Product description text',
-    frontImage: '/assets/images/product-front.jpg',
-    backImage: '/assets/images/product-back.jpg',
-    showFront: true
-  },
-  {
-    id: 2,
-    name: 'Custom Product',
-    description: 'Product with custom content',
-    frontImage: '/assets/images/custom-front.jpg',
-    backImage: '/assets/images/custom-back.jpg',
-    showFront: true,
-    customContent: {
-      show: true,
-      title: '✨ Customization Options:',
-      items: [
-        'Option 1',
-        'Option 2',
-        'Option 3'
-      ]
-    }
-  }
-];
+```typescript
+public productVariants: ProductVariant[] = (productsData as Product[]).map(
+  (product) => ({ ...product, showFront: true })
+);
 ```
 
 ### 4. Handle Product Actions
 
 ```typescript
-handleProductAction(product: Product): void {
+handleProductAction(product: ProductVariant): void {
   // Handle the action (e.g., navigate to order page, open modal, etc.)
+  // A MAIN product may carry its own `pageUrl` (e.g. '/gift-box') to route to
+  // instead of the default /contact order-prefill flow.
   console.log('Action triggered for:', product.name);
 }
 ```
@@ -93,31 +82,42 @@ handleProductAction(product: Product): void {
 
 ### Inputs
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `products` | `any[]` | Array of product objects to display |
+| Property   | Type               | Description                                  |
+|------------|--------------------|----------------------------------------------|
+| `products` | `ProductVariant[]` | Array of runtime product objects to display  |
 
 ### Outputs
 
-| Event | Type | Description |
-|-------|------|-------------|
-| `productAction` | `EventEmitter<any>` | Emitted when the action button is clicked |
+| Event          | Type                        | Description                                              |
+|----------------|-----------------------------|---------------------------------------------------------|
+| `productAction`| `EventEmitter<ProductVariant>` | Emitted when the action button is clicked            |
+| `copyLink`     | `EventEmitter<string>`      | Emits a product's `linkId` for the parent to build a link |
 
 ## Product Object Structure
 
+See [`src/app/models/product.model.ts`](../../models/product.model.ts) for the
+authoritative definition. Summary:
+
 ```typescript
-{
-  id: number;              // Unique identifier
-  name: string;            // Product name (displayed in card header)
-  description: string;     // Product description (displayed in card content)
-  frontImage?: string;     // URL to front image
-  backImage?: string;      // URL to back image
-  showFront: boolean;      // Initial state (true = show front, false = show back)
-  customContent?: {        // Optional custom content section
-    show: boolean;         // Whether to display custom content
-    title: string;         // Title for custom content section
-    items: string[];       // List of items to display
-  };
+interface Product {
+  id: number;
+  linkId: string;          // Stable slug used for #deep-links and copy-link
+  name: string;
+  description: string;
+  frontImage?: string;
+  backImage?: string;
+  dateAdded?: string;      // Drives the newest/oldest sort on the products page
+  hasOldCoins: boolean;
+  hasEuroCoins: boolean;
+  hasImagePadding?: boolean;
+  featured?: boolean;      // MAIN product: pinned banner + nav child item
+  pageUrl?: string;        // Own page (e.g. '/gift-box') instead of order prefill
+  customContent?: { show: boolean; title: string; items: string[] };
+  tags?: string[];
+}
+
+interface ProductVariant extends Product {
+  showFront: boolean;      // Runtime UI state — not stored in products.json
 }
 ```
 
@@ -131,36 +131,6 @@ The component uses CSS variables from your theme. Key variables used:
 - `--ig-surface-*`: Surface colors for backgrounds
 
 To customize, override these CSS variables in your theme or override the component's SCSS.
-
-## Example: E-commerce Products
-
-```typescript
-// In your component
-products = [
-  {
-    id: 1,
-    name: 'Premium Widget',
-    description: 'High-quality widget with advanced features',
-    frontImage: '/assets/products/widget-front.jpg',
-    backImage: '/assets/products/widget-back.jpg',
-    showFront: true
-  }
-];
-
-handleProductAction(product) {
-  this.router.navigate(['/checkout'], { 
-    queryParams: { productId: product.id } 
-  });
-}
-```
-
-```html
-<!-- In your template -->
-<app-product-grid 
-  [products]="products" 
-  (productAction)="handleProductAction($event)">
-</app-product-grid>
-```
 
 ## Accessibility
 

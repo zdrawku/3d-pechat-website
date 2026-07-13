@@ -7,26 +7,8 @@ import { IgxButtonDirective, IgxIconModule, IgxInputGroupModule } from 'igniteui
 
 import { ProductGridComponent } from '../shared/product-grid/product-grid.component';
 import { SeoService } from '../services/seo.service';
-
-interface ProductVariant {
-  id: number;
-  name: string;
-  linkId: string;
-  description: string;
-  frontImage?: string;
-  backImage?: string;
-  dateAdded?: string;
-  hasOldCoins: boolean;
-  hasEuroCoins: boolean;
-  hasImagePadding?: boolean;
-  showFront: boolean; // Track which side is showing
-  customContent?: {
-    show: boolean;
-    title: string;
-    items: string[];
-  };
-  tags?: string[];
-}
+import { Product, ProductVariant } from '../models/product.model';
+import productsData from '../../data/products.json';
 
 @Component({
   selector: 'app-products-page',
@@ -42,185 +24,14 @@ export class ProductsPageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
 
-  // To add product images:
-  // 1. Place images in: src/assets/real-images/bg-cards/
-  // 2. Update the frontImage and backImage properties in productVariants array below
-  // 3. Images will automatically display in the flippable cards
-
-  public productVariants: ProductVariant[] = [
-    {
-      id: 1,
-      linkId: 'where-we-met',
-      name: 'Къде се срещнахме? Романтичен подарък за вашият партньор!',
-      description: 'Романтичен подарък, който посочва мястото с координати на запознанството с партньора ви.',
-      frontImage: '/assets/real-images/where-we-met.webp',
-      backImage: '/assets/real-images/where-we-met-1.webp',
-      dateAdded: '2025-02-14',
-      hasOldCoins: false,
-      hasEuroCoins: false,
-      hasImagePadding: true,
-      showFront: true,
-      tags: ['подарък', 'Свети Валентин', 'Валентин', 'годишнина', 'карта', 'локация', 'романтика', 'любов']
-    },
-    {
-      id: 2,
-      linkId: 'variant-1',
-      name: 'Вариант 1: Правоъгълна карта с българско знаме',
-      description: 'Правоъгълна монетна карта с българско знаме с хоризонтални цветове отпред.',
-      frontImage: '/assets/real-images/bg-cards/variant-1-front.webp',
-      backImage: '/assets/real-images/bg-cards/variant-1-back.webp',
-      dateAdded: '2024-01-01',
-      hasOldCoins: true,
-      hasEuroCoins: true,
-      showFront: true,
-      tags: ['монетна карта', 'българия', 'знаме', 'колекция', 'подарък', 'монети']
-    },
-    {
-      id: 4,
-      linkId: 'variant-2',
-      name: 'Вариант 2: България карта с хоризонтални линии',
-      description: 'България карта с форма на картата на страната с хоризонтални цветни линии.',
-      frontImage: '/assets/real-images/bg-cards/variant-3-front.webp',
-      backImage: '/assets/real-images/bg-cards/variant-3-back.webp',
-      dateAdded: '2024-01-01',
-      hasOldCoins: true,
-      hasEuroCoins: true,
-      showFront: true,
-      tags: ['монетна карта', 'българия', 'знаме', 'колекция', 'подарък', 'монети']
-    },
-    {
-      id: 6,
-      linkId: 'variant-3',
-      name: 'Вариант 3: Европейски съюз Българска карта чисто синьо',
-      description: 'България карта с дизайн на Европейския съюз - син фон с жълти звезди.',
-      frontImage: '/assets/real-images/bg-cards/variant-5-front.webp',
-      backImage: '/assets/real-images/bg-cards/variant-5-back.webp',
-      dateAdded: '2024-01-01',
-      hasOldCoins: true,
-      hasEuroCoins: true,
-      showFront: true,
-      tags: ['монетна карта', 'българия', 'знаме', 'колекция', 'подарък', 'монети']
-    },
-    {
-      id: 7,
-      linkId: 'variant-4',
-      name: 'Вариант 4: Персонализирани Български или правоъгълни карти',
-      description: 'Персонализирани карти - вие решавате дизайна, формата на картата, дали да има контурна снимка или държавно знаме отпред или отзад. Небето е границата!',
-      frontImage: '/assets/real-images/bg-cards/variant-10-front.webp',
-      backImage: '/assets/real-images/bg-cards/variant-10-back.webp',
-      dateAdded: '2024-01-01',
-      hasOldCoins: false,
-      hasEuroCoins: false,
-      showFront: true,
-      customContent: {
-        show: true,
-        title: 'Можете да персонализирате всеки аспект:',
-        items: [
-          'Форма на картата',
-          'Снимка или дизайн отпред/отзад',
-          'Българско знаме или друг дизайн',
-          'Размер и брой слотове за монети',
-          'Специални гравюри или текст'
-        ]
-      },
-      tags: ['монетна карта', 'българия', 'знаме', 'колекция', 'подарък', 'монети']
-    },
-    {
-      id: 8,
-      linkId: 'variant-5',
-      name: 'Вариант 5: Правоъгълни карти с премиум кейс',
-      description: 'Персонализирани правоъгълни карти с премиум кейс за съхранение.',
-      frontImage: '/assets/real-images/Variant-7-back.webp',
-      backImage: '/assets/real-images/Variant-7-front.webp',
-      dateAdded: '2024-06-01',
-      hasOldCoins: false,
-      hasEuroCoins: false,
-      showFront: true,
-      customContent: {
-        show: true,
-        title: 'Различни цветове на картата и кейса:',
-        items: [
-          'Зелен кейс, бордо червен или черен',
-          'Правоъгълна карта с наклонено знаме',
-          'Правоъгълна монетна карта с наклонено българско знаме (45 градуса)'
-        ]
-      },
-      tags: ['монетна карта', 'българия', 'знаме', 'колекция', 'подарък', 'монети', 'премиум']
-    },
-    {
-      id: 9,
-      linkId: 'headphone-stand',
-      name: 'Стойка за слушалки 20 см',
-      description: '3D принтирана стойка за слушалки с опция за отвор за касичка.',
-      frontImage: '/assets/real-images/headphoneStand-back.webp',
-      backImage: '/assets/real-images/headphoneStand-front-2.webp',
-      dateAdded: '2024-01-01',
-      hasOldCoins: false,
-      hasEuroCoins: false,
-      showFront: true,
-      customContent: {
-        show: true,
-        title: 'Можете да персонализирате всеки аспект:',
-        items: [
-          'Големина на стойката до 25 см височина',
-          'Стойката може да има отвор отгоре за касичка',
-          'Цвят по избор',
-          'Отлично за бюро'
-        ]
-      },
-      tags: ['слушалки', 'стойка', 'гейминг', 'офис', 'аксесоар', 'музика', 'премиум']
-    },
-    {
-      id: 10,
-      linkId: 'headphone-stand-big',
-      name: 'Стойка за слушалки 25 см',
-      description: '3D принтирана стойка за слушалки с опция за отвор за касичка, 25 см. височина.',
-      frontImage: '/assets/real-images/headphoneStand-front-3.webp',
-      backImage: '/assets/real-images/headphoneStand-front-4.webp',
-      dateAdded: '2026-03-04',
-      hasOldCoins: false,
-      hasEuroCoins: false,
-      showFront: true,
-      customContent: {
-        show: true,
-        title: 'Можете да персонализирате всеки аспект:',
-        items: [
-          'Големина на стойката до 25 см височина',
-          'Стойката може да има отвор отгоре за касичка',
-          'Цвят по избор',
-          'Отлично за бюро'
-        ]
-      },
-      tags: ['слушалки', 'стойка', 'гейминг', 'офис', 'аксесоар', 'музика', 'премиум']
-    },
-    {
-      id: 11,
-      linkId: 'photo-frame-desktop',
-      name: 'Поставка/Рамка за снимки!',
-      description: 'Елегантна 3D принтирана поставка за снимки — идеален подарък за съхранение на скъпи спомени с близките ви.',
-      frontImage: '/assets/real-images/ramka-1.webp',
-      backImage: '/assets/real-images/ramka-2.webp',
-      dateAdded: '2026-03-04',
-      hasOldCoins: false,
-      hasEuroCoins: false,
-      hasImagePadding: true,
-      showFront: true,
-      tags: ['подарък', 'Свети Валентин', 'Валентин', 'годишнина', 'карта', 'локация', 'романтика', 'любов']
-    },
-    {
-      id: 12,
-      linkId: 'photo-frame-wall',
-      name: 'Стенна рамка за снимки!',
-      description: 'Романтичен подарък, стенна рамка за снимки внасяща уют във всеки дом.',
-      frontImage: '/assets/real-images/ramka.webp',
-      dateAdded: '2026-01-01',
-      hasOldCoins: false,
-      hasEuroCoins: false,
-      hasImagePadding: true,
-      showFront: true,
-      tags: ['подарък', 'Свети Валентин', 'Валентин', 'годишнина', 'карта', 'локация', 'романтика', 'любов']
-    }
-  ];
+  // Products are data, not code: the catalog lives in `src/data/products.json`
+  // and is imported at build time (keeps the prerendered SSR output complete for
+  // SEO). `showFront` is runtime UI state the card grid toggles, so it is added
+  // here rather than stored in the data. To add a product, edit the JSON (or use
+  // the /add-product workflow) — no changes to this component are needed.
+  public productVariants: ProductVariant[] = (productsData as Product[]).map(
+    (product) => ({ ...product, showFront: true })
+  );
 
   public searchText = '';
   // The initial selection is set here

@@ -1,0 +1,90 @@
+name: Visual regression (Playwright)
+
+# Visual regression runs in its own workflow because screenshot baselines are
+# platform-specific — they must be generated on Linux (this runner) to match.
+#
+# Two modes:
+#   • push/PR  → compare the built pages against committed baselines and fail on
+#                unexpected visual diffs (report uploaded as an artifact).
+#   • manual   → run with "update baselines" to (re)generate and commit the
+#                Linux baselines (do this whenever an intentional UI change lands).
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      update_baselines:
+        description: 'Regenerate and commit screenshot baselines'
+        type: boolean
+        default: false
+
+concurrency:
+  group: visual-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  visual:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Resolve Playwright version
+        id: pw
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        id: pw-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
+
+      - name: Install Playwright browser + OS deps
+        if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright OS deps only (cache hit)
+        if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      # --- Update mode: regenerate baselines and commit them ------------------
+      - name: Update baselines
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.update_baselines }}
+        run: npm run e2e:visual:update
+
+      - name: Commit updated baselines
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.update_baselines }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add e2e/__screenshots__
+          if git diff --staged --quiet; then
+            echo "No baseline changes."
+          else
+            git commit -m "chore(visual): update screenshot baselines [skip ci]"
+            git push
+          fi
+
+      # --- Check mode: compare against committed baselines --------------------
+      - name: Run visual regression
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.update_baselines) }}
+        run: npm run e2e:visual
+
+      - name: Upload report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-visual-report
+          path: playwright-report/
+          retention-days: 14

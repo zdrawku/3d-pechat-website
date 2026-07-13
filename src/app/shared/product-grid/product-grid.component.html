@@ -6,7 +6,7 @@
       <div class="card-image-section">
         <div class="image-container">
           <!-- Product images with flip indicator -->
-          <div class="product-image-wrapper" [class.show-back]="!product.showFront">
+          <div class="product-image-wrapper" [class.show-back]="!isShowingFront(product)">
             <div class="product-image front-image">
               <!-- First row (4 cards) loads eagerly so the LCP image is discoverable
                    in the initial HTML; card 0 also gets fetchpriority. Back images
@@ -35,8 +35,8 @@
             <span class="flip-hint">⟲ обърни</span>
             <!-- Side Indicator -->
             <div class="side-indicator">
-              <span class="indicator-dot" [class.active]="product.showFront"></span>
-              <span class="indicator-dot" [class.active]="!product.showFront"></span>
+              <span class="indicator-dot" [class.active]="isShowingFront(product)"></span>
+              <span class="indicator-dot" [class.active]="!isShowingFront(product)"></span>
             </div>
           }
         </div>
@@ -45,19 +45,31 @@
         <div class="card-top-row">
           <h2 class="card-title" [igxTooltipTarget]="nameTooltipRef">{{ product.name }}</h2>
           <div #nameTooltipRef="tooltip" igxTooltip class="product-tooltip">{{ product.name }}</div>
-          @if (product.customContent?.show) {
-            <button type="button" class="info-btn" title="Още информация"
-              [igxTooltipTarget]="infoTooltipRef" aria-label="Още информация за персонализация">
-              <igx-icon family="material">info</igx-icon>
-            </button>
-            <div #infoTooltipRef="tooltip" igxTooltip class="custom-tooltip">
-              <p class="custom-note">{{ product.customContent.title }}</p>
-              <ul class="custom-list">
-                @for (item of product.customContent.items; track item) {
-                  <li>{{ item }}</li>
-                }
-              </ul>
-            </div>
+          @if (product.customContent; as customContent) {
+            @if (customContent.show) {
+              <button type="button" class="info-btn" title="Още информация"
+                [igxTooltipTarget]="infoTooltipRef" aria-label="Още информация за персонализация">
+                <igx-icon family="material">info</igx-icon>
+              </button>
+              <div #infoTooltipRef="tooltip" igxTooltip class="custom-tooltip">
+                <p class="custom-note">{{ customContent.title }}</p>
+                <ul class="custom-list">
+                  @for (item of customContent.items; track item) {
+                    <li>{{ item }}</li>
+                  }
+                </ul>
+              </div>
+            }
+          }
+          @if (product.links; as links) {
+            @for (link of links; track link.url) {
+              <a class="info-btn link-btn" [href]="link.url" target="_blank" rel="noopener noreferrer"
+                [igxTooltipTarget]="linkTooltipRef" [attr.aria-label]="link.label"
+                data-testid="product-external-link">
+                <igx-icon family="material">{{ link.icon || 'open_in_new' }}</igx-icon>
+              </a>
+              <div #linkTooltipRef="tooltip" igxTooltip class="product-tooltip">{{ link.label }}</div>
+            }
           }
           <button type="button" class="copy-link-btn"
             [class.copied]="copiedLinkId === product.linkId"
@@ -66,24 +78,29 @@
             <igx-icon family="material">{{ copiedLinkId === product.linkId ? 'check' : 'link' }}</igx-icon>
           </button>
         </div>
-        <p class="ig-typography__body-2 product-description">
+        <p class="ig-typography__body-2 product-description" [igxTooltipTarget]="descriptionTooltipRef">
           {{ product.description }}
         </p>
-        @if (product.tags?.length) {
-          <div class="product-tags">
-            @for (tag of product.tags.slice(0, 3); track tag) {
-              <span class="product-tag">{{ tag }}</span>
-            }
-            @if (product.tags.length > 3) {
-              <button type="button" class="product-tag product-tag-more"
-                [igxTooltipTarget]="tagsTooltipRef" aria-label="Покажи всички етикети">
-                +{{ product.tags.length - 3 }}
-              </button>
-              <div #tagsTooltipRef="tooltip" igxTooltip class="tags-tooltip">
-                {{ product.tags.join(', ') }}
-              </div>
-            }
-          </div>
+        <div #descriptionTooltipRef="tooltip" igxTooltip class="product-tooltip description-tooltip">
+          {{ product.description }}
+        </div>
+        @if (product.tags; as tags) {
+          @if (tags.length) {
+            <div class="product-tags">
+              @for (tag of tags.slice(0, 3); track tag) {
+                <span class="product-tag">{{ tag }}</span>
+              }
+              @if (tags.length > 3) {
+                <button type="button" class="product-tag product-tag-more"
+                  [igxTooltipTarget]="tagsTooltipRef" aria-label="Покажи всички етикети">
+                  +{{ tags.length - 3 }}
+                </button>
+                <div #tagsTooltipRef="tooltip" igxTooltip class="tags-tooltip">
+                  {{ tags.join(', ') }}
+                </div>
+              }
+            </div>
+          }
         }
       </igx-card-content>
       <igx-card-actions class="card-actions">
