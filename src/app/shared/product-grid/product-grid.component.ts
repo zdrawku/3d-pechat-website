@@ -28,6 +28,15 @@ export interface Product {
 export class ProductGridComponent {
   @Input() products: any[] = [];
   @Output() productAction = new EventEmitter<any>();
+  // Emits a product's linkId when its "copy link" button is clicked. The parent
+  // page owns URL/scroll/clipboard (it has the Router + platform context); this
+  // component stays presentational.
+  @Output() copyLink = new EventEmitter<string>();
+
+  // linkId of the card whose copy just succeeded — drives the transient
+  // "copied" checkmark on that button. Set by the parent via markCopied().
+  public copiedLinkId: string | null = null;
+  private copiedResetHandle: ReturnType<typeof setTimeout> | null = null;
 
   public toggleToPrevious(product: any, event: Event): void {
     event.stopPropagation();
@@ -43,39 +52,17 @@ export class ProductGridComponent {
     this.productAction.emit(product);
   }
 
-  public copySectionLink(sectionId: string): void {
-    // 1. Construct the URL
-    const url = new URL(window.location.href);
-    url.hash = sectionId;
-    const newUrl = url.href;
+  public onCopyClick(sectionId: string): void {
+    this.copyLink.emit(sectionId);
+  }
 
-    // 2. Update Browser URL (Visual only, no reload)
-    window.history.pushState(null, '', newUrl);
-
-    // 3. Smooth Scroll to the Section
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',   // Aligns the top of the element with the top of the viewport
-        inline: 'nearest'
-      });
+  // Called by the parent once the clipboard write resolves, so the checkmark
+  // only shows on real success. Auto-reverts after a short delay.
+  public markCopied(sectionId: string): void {
+    this.copiedLinkId = sectionId;
+    if (this.copiedResetHandle) {
+      clearTimeout(this.copiedResetHandle);
     }
-
-    // 4. Copy to Clipboard
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(newUrl).then(() => {
-        // Optional: Add a toast notification here
-        console.log('Link copied and scrolled!');
-      });
-    } else {
-      // Fallback for older browsers
-      const tempInput = document.createElement('input');
-      tempInput.value = newUrl;
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      document.execCommand('copy');
-      document.body.removeChild(tempInput);
-    }
+    this.copiedResetHandle = setTimeout(() => (this.copiedLinkId = null), 2000);
   }
 }

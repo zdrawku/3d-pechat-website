@@ -82,33 +82,39 @@ test.describe('products page', () => {
 
 /**
  * Deep-link / "copy section link" coverage — the # anchor links each product
- * card exposes (e.g. /products#headphone-stand-big). Two directions:
- *   1. clicking the copy button writes the anchor URL to the clipboard and
- *      updates the address bar (copySectionLink in product-grid.component.ts).
+ * card exposes (e.g. /products#headphone-stand-big). Covered:
+ *   1. clicking the copy button updates the address bar, copies the shareable
+ *      URL, and shows a "copied" checkmark (onCopyLink in products-page).
  *   2. visiting such a URL directly lands on the matching card.
+ *   3. the deep link works even when a search would otherwise filter the card
+ *      out — the page clears the search so the target renders (the case that
+ *      used to silently fail).
  */
 test.describe('product section links', () => {
   const SECTION_ID = 'headphone-stand-big';
 
-  test('copy-link button updates the URL hash and copies it to the clipboard', async ({
+  test('copy-link button updates the URL, copies it, and shows feedback', async ({
     page,
     context,
   }) => {
-    // copySectionLink() calls navigator.clipboard.writeText — grant permission.
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
     await page.goto('/products');
 
-    // The copy button lives on the card whose id === SECTION_ID.
     const card = page.locator(`#${SECTION_ID}`);
     await expect(card).toBeVisible();
-    await card.getByTestId('product-copy-link').click();
+    const copyBtn = card.getByTestId('product-copy-link');
+    await copyBtn.click();
 
     // Address bar now carries the anchor...
     await expect(page).toHaveURL(new RegExp(`/products#${SECTION_ID}$`));
 
-    // ...and the clipboard holds the full shareable URL.
+    // ...the clipboard holds the full shareable URL...
     const clipboard = await page.evaluate(() => navigator.clipboard.readText());
     expect(clipboard).toContain(`/products#${SECTION_ID}`);
+
+    // ...and the button shows the transient "copied" state (green checkmark).
+    await expect(copyBtn).toHaveClass(/copied/);
+    await expect(copyBtn.locator('igx-icon')).toHaveText('check');
   });
 
   test('visiting a section link lands on the matching product card', async ({ page }) => {
@@ -116,7 +122,25 @@ test.describe('product section links', () => {
 
     const card = page.locator(`#${SECTION_ID}`);
     await expect(card).toBeVisible();
-    // The targeted card should be scrolled into the viewport.
     await expect(card).toBeInViewport();
+  });
+
+  test('deep link reveals the card even when a search would filter it out', async ({ page }) => {
+    // Arrive with a search that excludes the target, then apply the fragment.
+    // The page should clear the search so the card renders and scrolls in.
+    await page.goto('/products');
+    await page.getByTestId('product-search').fill('монетна'); // excludes headphone-stand-big
+    await expect(page.locator(`#${SECTION_ID}`)).toHaveCount(0);
+
+    // Navigate to the fragment (as if following a shared link within the app).
+    await page.evaluate((id) => {
+      location.hash = id;
+    }, SECTION_ID);
+
+    const card = page.locator(`#${SECTION_ID}`);
+    await expect(card).toBeVisible();
+    await expect(card).toBeInViewport();
+    // Search was cleared so the full catalog (incl. the target) is shown again.
+    await expect(page.getByTestId('product-search')).toHaveValue('');
   });
 });

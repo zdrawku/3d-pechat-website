@@ -59,9 +59,11 @@
               </ul>
             </div>
           }
-          <button type="button" class="copy-link-btn" title="Копирай линк към секцията"
-            (click)="copySectionLink(product.linkId)" data-testid="product-copy-link">
-            <igx-icon family="material">link</igx-icon>
+          <button type="button" class="copy-link-btn"
+            [class.copied]="copiedLinkId === product.linkId"
+            [title]="copiedLinkId === product.linkId ? 'Копирано!' : 'Копирай линк към секцията'"
+            (click)="onCopyClick(product.linkId)" data-testid="product-copy-link">
+            <igx-icon family="material">{{ copiedLinkId === product.linkId ? 'check' : 'link' }}</igx-icon>
           </button>
         </div>
         <p class="ig-typography__body-2 product-description">

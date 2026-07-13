@@ -52,7 +52,8 @@
       }
 
       @if (resultCount > 0) {
-        <app-product-grid [products]="allFilteredProducts" (productAction)="orderProduct($event)">
+        <app-product-grid #grid [products]="allFilteredProducts" (productAction)="orderProduct($event)"
+          (copyLink)="onCopyLink($event)">
         </app-product-grid>
       } @else {
         <div class="empty-state" data-testid="product-empty-state">

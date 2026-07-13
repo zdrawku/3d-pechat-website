@@ -251,6 +251,13 @@
   min-width: 32px;
   min-height: 32px;
   box-sizing: border-box;
+  transition: color 0.15s ease;
+
+  // Transient success state: the icon swaps to a checkmark (see template) and
+  // turns green while copiedLinkId matches this card.
+  &.copied {
+    color: var(--ig-success-500, #2e7d32);
+  }
 }
 
 // "More info" trigger for products with customContent — replaces the
