@@ -24,8 +24,9 @@ define its own `Product` interface — import the model to avoid drift.
   Includes `linkId`, `hasOldCoins`/`hasEuroCoins`, the optional `featured` /
   `pageUrl` MAIN-product fields, and `customContent`/`tags`.
 - **`ProductVariant`** — `Product` **plus** the runtime UI field `showFront`
-  (which side of the card is visible). This is what the grid consumes and mutates;
-  it is deliberately **not** part of the persisted JSON data.
+  (which side of the card is visible initially). The grid tracks which cards are
+  flipped locally (keyed by `id`) rather than mutating this input; `showFront`
+  is deliberately **not** part of the persisted JSON data.
 
 To add or edit a product, edit `src/data/products.json` (see
 [`src/data/README.md`](../../../data/README.md)) — not this component.

@@ -23,14 +23,31 @@ export class ProductGridComponent {
   public copiedLinkId: string | null = null;
   private copiedResetHandle: ReturnType<typeof setTimeout> | null = null;
 
+  // Ids of products currently showing their back image. Kept locally instead
+  // of mutating the `products` input, which would violate unidirectional data
+  // flow (Angular anti-pattern) and break under OnPush change detection.
+  private readonly flippedIds = new Set<number>();
+
+  public isShowingFront(product: ProductVariant): boolean {
+    return !this.flippedIds.has(product.id);
+  }
+
   public toggleToPrevious(product: ProductVariant, event: Event): void {
     event.stopPropagation();
-    product.showFront = !product.showFront;
+    this.toggleFlip(product);
   }
 
   public toggleToNext(product: ProductVariant, event: Event): void {
     event.stopPropagation();
-    product.showFront = !product.showFront;
+    this.toggleFlip(product);
+  }
+
+  private toggleFlip(product: ProductVariant): void {
+    if (this.flippedIds.has(product.id)) {
+      this.flippedIds.delete(product.id);
+    } else {
+      this.flippedIds.add(product.id);
+    }
   }
 
   public handleAction(product: ProductVariant): void {

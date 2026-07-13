@@ -1,8 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 import { ProductsPageComponent } from './products-page.component';
+import { Product, ProductVariant } from '../models/product.model';
 import productsData from '../../data/products.json';
 
 describe('ProductsPageComponent', () => {
@@ -12,7 +13,7 @@ describe('ProductsPageComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ProductsPageComponent],
-      providers: [provideRouter([]), provideAnimations()]
+      providers: [provideRouter([]), provideNoopAnimations()]
     })
     .compileComponents();
 
@@ -61,10 +62,24 @@ describe('ProductsPageComponent', () => {
     });
 
     it('supports the optional featured / pageUrl MAIN-product fields', () => {
-      // No MAIN product exists yet, but the mapping must not strip the fields.
-      const withPage = { ...productsData[0], featured: true, pageUrl: '/gift-box' };
-      expect(withPage.featured).toBe(true);
-      expect(withPage.pageUrl).toBe('/gift-box');
+      // No MAIN product exists yet, but the component's mapping must not strip
+      // these fields when they are present on a product.
+      const mockProduct: Product = {
+        id: 99,
+        linkId: 'test-main',
+        name: 'Test',
+        description: 'Test Desc',
+        hasOldCoins: false,
+        hasEuroCoins: false,
+        featured: true,
+        pageUrl: '/gift-box'
+      };
+      component.productVariants = [...component.productVariants, { ...mockProduct, showFront: true }];
+
+      const mapped = component.productVariants.find((p) => p.linkId === 'test-main') as ProductVariant;
+      expect(mapped.featured).toBe(true);
+      expect(mapped.pageUrl).toBe('/gift-box');
+      expect(mapped.showFront).toBe(true);
     });
   });
 });

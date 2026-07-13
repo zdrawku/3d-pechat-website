@@ -6,7 +6,7 @@
       <div class="card-image-section">
         <div class="image-container">
           <!-- Product images with flip indicator -->
-          <div class="product-image-wrapper" [class.show-back]="!product.showFront">
+          <div class="product-image-wrapper" [class.show-back]="!isShowingFront(product)">
             <div class="product-image front-image">
               <!-- First row (4 cards) loads eagerly so the LCP image is discoverable
                    in the initial HTML; card 0 also gets fetchpriority. Back images
@@ -35,8 +35,8 @@
             <span class="flip-hint">⟲ обърни</span>
             <!-- Side Indicator -->
             <div class="side-indicator">
-              <span class="indicator-dot" [class.active]="product.showFront"></span>
-              <span class="indicator-dot" [class.active]="!product.showFront"></span>
+              <span class="indicator-dot" [class.active]="isShowingFront(product)"></span>
+              <span class="indicator-dot" [class.active]="!isShowingFront(product)"></span>
             </div>
           }
         </div>
