@@ -38,7 +38,7 @@ describe('ProductsPageComponent', () => {
     });
 
     it('does not persist showFront in the source JSON', () => {
-      const anyHasShowFront = (productsData as Array<Record<string, unknown>>).some(
+      const anyHasShowFront = (productsData as Record<string, unknown>[]).some(
         (p) => 'showFront' in p
       );
       expect(anyHasShowFront).toBe(false);
