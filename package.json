@@ -11,7 +11,7 @@
     "generate-blog": "node scripts/auto-blog/index.js",
     "prestart": "npm run generate-images && npm run generate-blog-content",
     "start": "ng serve -o",
-    "prebuild": "npm run generate-images && npm run generate-blog-images && npm run generate-sitemap && npm run generate-llms && npm run generate-blog-content",
+    "prebuild": "npm run lint && npm run generate-images && npm run generate-blog-images && npm run generate-sitemap && npm run generate-llms && npm run generate-blog-content",
     "build": "ng build",
     "serve:ssr": "http-server dist/dprinting-services-website/browser -p 8080",
     "watch": "ng build --watch --configuration development",
