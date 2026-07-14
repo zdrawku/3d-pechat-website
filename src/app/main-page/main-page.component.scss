@@ -173,17 +173,136 @@
   }
 }
 
+// ===== "3D print" reveal (variant 7Г): grayscale image, violet laser rises
+// bottom-up in fine layer steps, orange nozzle shuttles over the printer area =====
+.hero_print_frame {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.22);
+}
+
 .hero_image_main {
   width: 100%;
   height: auto;
   max-height: 420px;
   object-fit: cover;
-  border-radius: 18px;
-  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.22);
   display: block;
+  filter: grayscale(1);
 
   @media (max-width: 480px) {
     max-height: 280px;
+  }
+}
+
+.hero_image_color {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(100% 0 0 0);
+  animation: heroPrintReveal 7s steps(34) infinite;
+  pointer-events: none;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.hero_laser {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% - 3px);
+  height: 3px;
+  border-radius: 2px;
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(124, 77, 255, 0), #b388ff, rgba(124, 77, 255, 0));
+  box-shadow: 0 0 8px 2px rgba(124, 77, 255, 0.75), 0 0 30px 8px rgba(124, 77, 255, 0.35);
+  animation: heroLaserMove 7s steps(34) infinite;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 3px;
+    height: 44px;
+    background: linear-gradient(to bottom, rgba(124, 77, 255, 0.3), transparent);
+  }
+}
+
+.hero_nozzle {
+  position: absolute;
+  width: 20px;
+  height: 16px;
+  left: 24%;
+  top: calc(100% - 19px);
+  opacity: 0;
+  pointer-events: none;
+  animation:
+    heroNozzleMove 7s steps(34) infinite,
+    heroNozzleShuttle 1.4s ease-in-out infinite alternate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(#ff8a65, #e64a19);
+    clip-path: polygon(0 0, 100% 0, 78% 55%, 62% 100%, 38% 100%, 22% 55%);
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    transform: translate(-50%, -60%);
+    border-radius: 50%;
+    background: #fff3e0;
+    box-shadow: 0 0 8px 3px rgba(255, 138, 101, 0.95), 0 0 18px 7px rgba(255, 87, 34, 0.45);
+  }
+}
+
+// 7s cycle: 0–6% grayscale hold, 6–80% printing, 80–100% full color hold, restart
+@keyframes heroPrintReveal {
+  0%, 6% { clip-path: inset(100% 0 0 0); }
+  80%, 100% { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes heroLaserMove {
+  0% { top: calc(100% - 3px); opacity: 0; }
+  6% { top: calc(100% - 3px); opacity: 1; }
+  80% { top: 0; opacity: 1; }
+  86%, 100% { top: 0; opacity: 0; }
+}
+
+@keyframes heroNozzleMove {
+  0% { top: calc(100% - 19px); opacity: 0; }
+  6% { top: calc(100% - 19px); opacity: 1; }
+  80% { top: -16px; opacity: 1; }
+  86%, 100% { top: -16px; opacity: 0; }
+}
+
+// nozzle shuttles only over the printer area of the photo, not the full frame
+@keyframes heroNozzleShuttle {
+  from { left: 24%; }
+  to { left: calc(76% - 20px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero_image_main {
+    filter: none;
+  }
+
+  .hero_image_color,
+  .hero_laser,
+  .hero_nozzle {
+    display: none;
   }
 }
 
@@ -465,6 +584,72 @@
   @media (max-width: 480px) {
     height: 280px;
     min-height: 240px;
+  }
+
+  // IgniteUI ships square, theme-tinted carousel controls that wash out in dark
+  // mode. Restyle the prev/next arrows and the dot indicators to match the rest
+  // of the site: circular white buttons with an accessible accent glyph (the
+  // same pattern as the product-card carousel-nav), readable in both themes.
+  //
+  // TODO TO DO NOTE (tech debt): these ::ng-deep + !important overrides fight the theming
+  // engine. The square default comes from `$roundness: 0` in styles.scss. The
+  // engine-aligned fix is the `carousel-theme()` mixin (emits
+  // --nav-btn-border-radius, button-arrow-color, indicator-*-dot-color). Deferred
+  // — see the "igniteui-theming-followups" note. Get the exact mixin params from
+  // the Ignite UI theming MCP (configured in .mcp.json; connect via /mcp).
+  ::ng-deep .igx-carousel__arrow--prev,
+  ::ng-deep .igx-carousel__arrow--next {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--accent-on-light); // orange-on-white ≥4.5:1 in both themes
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    // IgniteUI centers the arrow vertically with `top: 50%` + translateY(-50%).
+    // Re-declare that translate here so the hover transform below can keep it —
+    // otherwise the scale() drops the button by half its height.
+    transform: translateY(-50%);
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+
+    igx-icon,
+    .material-icons {
+      color: var(--accent-on-light) !important;
+    }
+
+    &:hover {
+      background: #fff;
+      // Keep the vertical centering; only add the grow so it stays put.
+      transform: translateY(-50%) scale(1.1);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  // The container behind the dots ships square. The rendered node carries a
+  // position modifier class (`--end` for bottom-anchored) with no plain
+  // `.igx-carousel-indicators` base class, so target the modifiers directly and
+  // round it into a pill to match the site's rounded language.
+  ::ng-deep .igx-carousel-indicators--end,
+  ::ng-deep .igx-carousel-indicators--start,
+  ::ng-deep [class*="igx-carousel-indicators--"] {
+    border-radius: 999px !important;
+  }
+
+  // Dot indicators: rounded, clearly visible on any image, orange when active —
+  // mirrors the product-card .indicator-dot. Confirmed DOM: each indicator is
+  // `.igx-carousel-indicators__indicator` wrapping an `.igx-nav-dot` that gains
+  // `.igx-nav-dot--active` on the current slide.
+  ::ng-deep .igx-nav-dot {
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.65) !important;
+    border-color: rgba(255, 255, 255, 0.65) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    transition: background-color 0.2s ease, transform 0.2s ease;
+
+    &.igx-nav-dot--active {
+      background: var(--ig-primary-500) !important;
+      border-color: var(--ig-primary-500) !important;
+      transform: scale(1.25);
+    }
   }
 }
 
