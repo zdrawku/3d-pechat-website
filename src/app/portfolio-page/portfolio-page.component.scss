@@ -1,3 +1,5 @@
+@use '../sla-hover' as sla;
+
 :host {
   height: 100%;
   display: flex;
@@ -139,6 +141,10 @@
 .masonry-item {
   break-inside: avoid;
   margin-bottom: 16px;
+  border-radius: 12px;
+  line-height: 0; // let the border sit flush against the photo, no gap
+
+  @include sla.sla-hover($bump: true);
 
   @media (max-width: 768px) {
     margin-bottom: 12px;
@@ -151,11 +157,5 @@
   display: block;
   border-radius: 12px;
   box-shadow: var(--shadow-card);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-
-  &:hover {
-    transform: scale(1.02);
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
-  }
 }
 

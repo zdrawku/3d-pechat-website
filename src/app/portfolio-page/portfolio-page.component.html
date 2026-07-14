@@ -8,9 +8,9 @@
 <div class="row-layout image_gallery_section_template_toys_hand_painting portfolio-first-section">
   <div class="column-layout column_layout_4">
     <div class="masonry-gallery">
-      @for (image of carouselImages; track image; let i = $index) {
+      @for (image of carouselImages; track image.src; let i = $index) {
         <div class="masonry-item">
-          <img [src]="image" [alt]="'3D печат проект ' + (i + 1)" class="masonry-image" loading="lazy" />
+          <img [src]="image.src" [alt]="image.alt || ('3D печат проект ' + (i + 1))" class="masonry-image" loading="lazy" />
         </div>
       }
     </div>

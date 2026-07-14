@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="bg">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Галерия · редактор</title>
+<style>
+  :root {
+    --ground: #f7f5f1; --panel: #fff; --ink: #221e17; --ink-soft: #5c5346;
+    --hair: #e3dcd0; --grey: #8a7f6e; --accent: #d97a28; --accent-soft: #f6e4d0;
+    --good: #3f8e5c; --bad: #b4462f; --shadow: 0 1px 2px rgba(34,30,23,.06), 0 8px 24px rgba(34,30,23,.06);
+    --mono: ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace;
+    --sans: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #16130e; --panel: #211c15; --ink: #f2ece1; --ink-soft: #b7ac9a;
+      --hair: #342c21; --grey: #9c9080; --accent: #e8944a; --accent-soft: #3a2a18;
+      --good: #6dbb88; --bad: #e0755c; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 28px rgba(0,0,0,.4);
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ground); color: var(--ink); font-family: var(--sans); }
+  header {
+    position: sticky; top: 0; z-index: 10; background: var(--panel);
+    border-bottom: 1px solid var(--hair); padding: 14px 22px;
+    display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+  }
+  h1 { font-size: 17px; margin: 0; font-weight: 750; letter-spacing: -.01em; }
+  h1 .em { font-size: 20px; }
+  .tabs { display: flex; gap: 8px; }
+  .tab {
+    border: 1px solid var(--hair); background: transparent; color: var(--ink-soft);
+    padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 13px;
+    font-weight: 600; font-family: inherit;
+  }
+  .tab.active { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+  .tab .count { color: var(--grey); font-weight: 500; }
+  .spacer { flex: 1; }
+  .save-btn {
+    border: none; background: var(--accent); color: #fff; font-weight: 700;
+    padding: 9px 20px; border-radius: 8px; cursor: pointer; font-size: 14px;
+    font-family: inherit; transition: opacity .15s, transform .1s;
+  }
+  .save-btn:disabled { opacity: .45; cursor: default; }
+  .save-btn:not(:disabled):active { transform: translateY(1px); }
+  .dirty-dot { color: var(--accent); font-size: 22px; line-height: 0; }
+  .toast {
+    position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--ink); color: var(--ground); padding: 11px 20px; border-radius: 10px;
+    font-size: 14px; box-shadow: var(--shadow); opacity: 0; pointer-events: none;
+    transition: opacity .25s, transform .25s; max-width: 90vw;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.err { background: var(--bad); color: #fff; }
+
+  main { padding: 20px 22px 80px; }
+  .hint { color: var(--ink-soft); font-size: 13px; margin: 0 0 16px; }
+  .hint kbd {
+    font-family: var(--mono); font-size: 11px; background: var(--panel);
+    border: 1px solid var(--hair); border-radius: 4px; padding: 1px 5px;
+  }
+  .grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px;
+  }
+  .card {
+    background: var(--panel); border: 1px solid var(--hair); border-radius: 12px;
+    box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column;
+    transition: opacity .15s, border-color .15s;
+  }
+  .card.hidden-img { opacity: .5; }
+  .card.dragging { opacity: .35; }
+  .card.drop-target { border-color: var(--accent); border-width: 2px; }
+  .thumb-wrap { position: relative; background: var(--ground); aspect-ratio: 4/3; }
+  .thumb { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .pos {
+    position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,.6); color: #fff;
+    font-family: var(--mono); font-size: 11px; font-weight: 700; padding: 2px 7px;
+    border-radius: 999px;
+  }
+  .drag-handle {
+    position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,.55); color: #fff;
+    border-radius: 6px; padding: 3px 6px; cursor: grab; font-size: 13px; user-select: none;
+  }
+  .card-body { padding: 10px 11px 12px; display: flex; flex-direction: column; gap: 8px; }
+  .filename {
+    font-family: var(--mono); font-size: 11px; color: var(--grey); word-break: break-all;
+  }
+  .alt-input {
+    width: 100%; border: 1px solid var(--hair); border-radius: 7px; padding: 6px 8px;
+    font-family: inherit; font-size: 12.5px; background: var(--ground); color: var(--ink);
+    resize: vertical; min-height: 34px;
+  }
+  .alt-input::placeholder { color: var(--grey); }
+  .alt-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .card-controls { display: flex; align-items: center; gap: 4px; }
+  .ctl {
+    border: 1px solid var(--hair); background: transparent; color: var(--ink-soft);
+    width: 30px; height: 30px; border-radius: 7px; cursor: pointer; font-size: 15px;
+    display: grid; place-items: center; font-family: inherit;
+  }
+  .ctl:hover { border-color: var(--accent); color: var(--accent); }
+  .ctl:disabled { opacity: .3; cursor: default; }
+  .ctl:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .hide-toggle { margin-left: auto; display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--ink-soft); cursor: pointer; user-select: none; }
+  .hide-toggle input { accent-color: var(--accent); }
+  .loading { color: var(--ink-soft); padding: 40px; text-align: center; }
+</style>
+</head>
+<body>
+  <header>
+    <h1><span class="em">🖼</span> Галерия · редактор</h1>
+    <div class="tabs" id="tabs"></div>
+    <div class="spacer"></div>
+    <span class="dirty-dot" id="dirtyDot" hidden>●</span>
+    <button class="save-btn" id="saveBtn" disabled>Запази</button>
+  </header>
+  <main>
+    <p class="hint">
+      Влачи картинките, за да ги подредиш (или използвай <kbd>←</kbd> <kbd>→</kbd> стрелките).
+      Попълни alt текст за достъпност и SEO. „Скрий“ маха снимка от сайта, без да я трие.
+      „Запази“ обновява <code>manifest.json</code> и регенерира <code>carousel-images.ts</code>.
+    </p>
+    <div id="grid" class="grid"><div class="loading">Зареждане…</div></div>
+  </main>
+  <div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  let galleries = [];
+  let active = 0;
+  let dirty = false;
+
+  const $ = (id) => document.getElementById(id);
+  const gridEl = $('grid'), tabsEl = $('tabs'), saveBtn = $('saveBtn'), dirtyDot = $('dirtyDot'), toastEl = $('toast');
+
+  function setDirty(v) {
+    dirty = v;
+    saveBtn.disabled = !v;
+    dirtyDot.hidden = !v;
+  }
+
+  function toast(msg, isErr) {
+    toastEl.textContent = msg;
+    toastEl.classList.toggle('err', !!isErr);
+    toastEl.classList.add('show');
+    setTimeout(() => toastEl.classList.remove('show'), 2600);
+  }
+
+  async function load() {
+    const res = await fetch('/api/galleries');
+    const data = await res.json();
+    galleries = data.galleries;
+    renderTabs();
+    renderGrid();
+  }
+
+  function renderTabs() {
+    tabsEl.innerHTML = '';
+    galleries.forEach((g, i) => {
+      const b = document.createElement('button');
+      b.className = 'tab' + (i === active ? ' active' : '');
+      const visible = g.images.filter((im) => !im.hidden).length;
+      b.innerHTML = g.label + ' <span class="count">(' + visible + ')</span>';
+      b.onclick = () => {
+        if (dirty && !confirm('Има незапазени промени. Смяна на галерията ще ги отхвърли?')) return;
+        active = i; setDirty(false); load();
+      };
+      tabsEl.appendChild(b);
+    });
+  }
+
+  function move(from, to) {
+    const imgs = galleries[active].images;
+    if (to < 0 || to >= imgs.length) return;
+    const [it] = imgs.splice(from, 1);
+    imgs.splice(to, 0, it);
+    setDirty(true);
+    renderGrid();
+  }
+
+  let dragFrom = null;
+
+  function renderGrid() {
+    const imgs = galleries[active].images;
+    gridEl.innerHTML = '';
+    imgs.forEach((im, idx) => {
+      const card = document.createElement('div');
+      card.className = 'card' + (im.hidden ? ' hidden-img' : '');
+      card.draggable = true;
+
+      card.addEventListener('dragstart', (e) => {
+        dragFrom = idx; card.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+      card.addEventListener('dragend', () => {
+        dragFrom = null; card.classList.remove('dragging');
+        document.querySelectorAll('.drop-target').forEach((el) => el.classList.remove('drop-target'));
+      });
+      card.addEventListener('dragover', (e) => { e.preventDefault(); card.classList.add('drop-target'); });
+      card.addEventListener('dragleave', () => card.classList.remove('drop-target'));
+      card.addEventListener('drop', (e) => {
+        e.preventDefault(); card.classList.remove('drop-target');
+        if (dragFrom !== null && dragFrom !== idx) move(dragFrom, idx);
+      });
+
+      const src = '/img?gallery=' + encodeURIComponent(galleries[active].id) + '&file=' + encodeURIComponent(im.file);
+      card.innerHTML =
+        '<div class="thumb-wrap">' +
+          '<img class="thumb" src="' + src + '" alt="" loading="lazy" />' +
+          '<span class="pos">' + (im.hidden ? '—' : (idx + 1)) + '</span>' +
+          '<span class="drag-handle" title="Влачи">⠿</span>' +
+        '</div>' +
+        '<div class="card-body">' +
+          '<div class="filename">' + im.file + '</div>' +
+        '</div>';
+
+      const body = card.querySelector('.card-body');
+
+      const alt = document.createElement('textarea');
+      alt.className = 'alt-input'; alt.rows = 2;
+      alt.placeholder = 'Alt текст (напр. „3D принтирана ваза“)…';
+      alt.value = im.alt;
+      alt.addEventListener('input', () => { im.alt = alt.value; setDirty(true); });
+      body.appendChild(alt);
+
+      const controls = document.createElement('div');
+      controls.className = 'card-controls';
+
+      const left = document.createElement('button');
+      left.className = 'ctl'; left.textContent = '←'; left.title = 'Премести наляво';
+      left.disabled = idx === 0;
+      left.onclick = () => move(idx, idx - 1);
+
+      const right = document.createElement('button');
+      right.className = 'ctl'; right.textContent = '→'; right.title = 'Премести надясно';
+      right.disabled = idx === imgs.length - 1;
+      right.onclick = () => move(idx, idx + 1);
+
+      const hide = document.createElement('label');
+      hide.className = 'hide-toggle';
+      const cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.checked = im.hidden;
+      cb.onchange = () => { im.hidden = cb.checked; setDirty(true); renderGrid(); renderTabs(); };
+      hide.appendChild(cb);
+      hide.appendChild(document.createTextNode('Скрий'));
+
+      controls.appendChild(left);
+      controls.appendChild(right);
+      controls.appendChild(hide);
+      body.appendChild(controls);
+
+      gridEl.appendChild(card);
+    });
+  }
+
+  saveBtn.onclick = async () => {
+    saveBtn.disabled = true;
+    try {
+      const g = galleries[active];
+      const res = await fetch('/api/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: g.id, images: g.images })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Грешка при запазване');
+      setDirty(false);
+      renderTabs();
+      toast('Запазено · manifest.json и carousel-images.ts са обновени');
+    } catch (err) {
+      setDirty(true);
+      toast(err.message, true);
+    }
+  };
+
+  window.addEventListener('beforeunload', (e) => {
+    if (dirty) { e.preventDefault(); e.returnValue = ''; }
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>
