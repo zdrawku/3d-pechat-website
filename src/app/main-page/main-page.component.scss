@@ -1,3 +1,5 @@
+@use '../sla-hover' as sla;
+
 :host {
   height: 100%;
   display: flex;
@@ -416,12 +418,8 @@
   border-radius: 16px;
   padding: 24px 20px;
   box-shadow: var(--shadow-card);
-  transition: transform 0.3s ease, border-color 0.3s ease;
 
-  &:hover {
-    transform: translateY(-4px);
-    border-color: var(--ig-secondary-500);
-  }
+  @include sla.sla-hover($bump: true);
 }
 
 .prop_icon {
@@ -479,6 +477,8 @@
   border: 1px solid var(--line, var(--ig-gray-300));
   border-radius: 16px;
   box-shadow: var(--shadow-card);
+
+  @include sla.sla-hover($bump: true);
 }
 
 .step_num {

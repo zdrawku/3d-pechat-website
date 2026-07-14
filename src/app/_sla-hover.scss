@@ -1,0 +1,132 @@
+// Unified hover effect (approved from the "Hero анимация" design artifact):
+// a faint violet SLA-style beam sweeps bottom-to-top once per hover-enter,
+// plus a soft shadow deepen. The element itself does not move.
+
+@mixin -sweep-layers {
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &::after {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(124, 77, 255, 0), rgba(179, 136, 255, 0.75), rgba(124, 77, 255, 0));
+    box-shadow: 0 0 5px 1px rgba(124, 77, 255, 0.35), 0 0 12px 4px rgba(124, 77, 255, 0.15);
+  }
+
+  &::before {
+    height: 24px;
+    background: linear-gradient(to bottom, rgba(124, 77, 255, 0.12), transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::before,
+    &::after {
+      display: none;
+    }
+  }
+}
+
+// Themed gradient border (same recipe as .hero_stat): orange → blue diagonal,
+// revealed on hover via background split between padding-box and border-box.
+@mixin -gradient-border($bg: var(--bg-card)) {
+  border: 1px solid transparent;
+  background:
+    linear-gradient($bg, $bg) padding-box,
+    linear-gradient(135deg, var(--ig-primary-500), var(--ig-info-500)) border-box;
+}
+
+// Apply directly to a card whose children stay inside its bounds.
+// Set $bump: true to compare with the slight lift-up variant.
+@mixin sla-hover($bump: false, $bg: var(--bg-card)) {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
+
+  @if $bump {
+    transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+  } @else {
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+
+  @include -sweep-layers;
+
+  &:hover {
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+    @include -gradient-border($bg);
+
+    @if $bump {
+      transform: translateY(-4px);
+    }
+
+    &::after {
+      animation: slaHoverLine 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    &::before {
+      animation: slaHoverGlow 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+  }
+}
+
+// Variant for cards with children that stick out of their bounds (e.g. the
+// featured tier badge), where overflow: hidden on the card itself would clip
+// them: the beam is clipped inside a dedicated child layer instead. Add
+// <div class="sla-sweep" aria-hidden="true"></div> as the card's last child.
+@mixin sla-hover-inner($radius: 16px, $bump: false, $bg: var(--bg-card)) {
+  position: relative;
+  border: 1px solid transparent;
+
+  @if $bump {
+    transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+  } @else {
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+
+  .sla-sweep {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: $radius;
+    pointer-events: none;
+
+    @include -sweep-layers;
+  }
+
+  &:hover {
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+    @include -gradient-border($bg);
+
+    @if $bump {
+      transform: translateY(-4px);
+    }
+
+    .sla-sweep::after {
+      animation: slaHoverLine 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .sla-sweep::before {
+      animation: slaHoverGlow 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+  }
+}
+
+@keyframes slaHoverLine {
+  0% { top: calc(100% - 1px); opacity: 0; }
+  18% { opacity: 0.85; }
+  75% { opacity: 0.85; }
+  100% { top: 0; opacity: 0; }
+}
+
+@keyframes slaHoverGlow {
+  0% { top: 100%; opacity: 0; }
+  18% { opacity: 0.7; }
+  75% { opacity: 0.55; }
+  100% { top: 0; opacity: 0; }
+}

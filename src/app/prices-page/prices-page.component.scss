@@ -1,3 +1,5 @@
+@use '../sla-hover' as sla;
+
 :host {
   display: block;
   background-color: var(--bg-body);
@@ -68,12 +70,10 @@
   border-radius: 16px;
   padding: 26px 20px;
   box-shadow: var(--shadow-card);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
 
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.12);
-  }
+  // beam lives in an inner .sla-sweep layer so the featured badge
+  // (which sticks out above the card) is not clipped
+  @include sla.sla-hover-inner(16px, $bump: true);
 
   &.featured {
     border-color: var(--ig-primary-500);
