@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "generate-images": "node scripts/generate-carousel-images.js",
+    "gallery-editor": "node scripts/gallery-editor/server.js",
     "generate-sitemap": "node scripts/generate-sitemap.js",
     "generate-blog-content": "node scripts/generate-blog-content.js",
     "generate-blog-images": "node scripts/generate-blog-images.js",
