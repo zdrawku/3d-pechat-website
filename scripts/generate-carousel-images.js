@@ -46,7 +46,7 @@ function readManifest(manifestPath) {
     }
     try {
         const parsed = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-        return Array.isArray(parsed.images) ? parsed : { images: [] };
+        return (parsed && Array.isArray(parsed.images)) ? parsed : { images: [] };
     } catch (err) {
         console.warn(`⚠ Could not parse ${manifestPath} (${err.message}); reseeding.`);
         return { images: [] };
@@ -71,8 +71,11 @@ function syncEntries(existingEntries, filesOnDisk) {
 }
 
 function normalizeEntry(entry) {
+    if (!entry || typeof entry !== 'object') {
+        return { file: '', alt: '', hidden: false };
+    }
     return {
-        file: entry.file,
+        file: typeof entry.file === 'string' ? entry.file : '',
         alt: typeof entry.alt === 'string' ? entry.alt : '',
         hidden: entry.hidden === true
     };
@@ -100,8 +103,7 @@ imageFolders.forEach((folder) => {
         const visible = synced.filter((e) => !e.hidden);
         const items = visible.map((e) => {
             const src = `/assets/real-images/${folder.name}/${e.file}`;
-            const alt = e.alt.replace(/'/g, "\\'");
-            return `  { src: '${src}', alt: '${alt}' }`;
+            return `  { src: ${JSON.stringify(src)}, alt: ${JSON.stringify(e.alt)} }`;
         });
 
         const fileContent = `// This file is auto-generated. Do not edit manually.
