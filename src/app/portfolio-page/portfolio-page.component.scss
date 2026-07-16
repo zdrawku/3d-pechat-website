@@ -9,9 +9,7 @@
   align-items: stretch;
   align-content: flex-start;
   gap: 0;
-  background-color: var(--bg-body);
-  background-image: var(--bg-body-texture);
-  background-size: var(--bg-section-size);
+  // Transparent — the dotted texture is painted once on <body> (see styles.scss).
 }
 
 .row-layout {
@@ -120,41 +118,41 @@
   }
 }
 
-// Masonry wall — replaces the old auto-sliding carousel. CSS multi-column
-// layout keeps each photo's natural proportions and shows many at once.
+// Photo wall — an intrinsic row-major grid (fills left-to-right, top-to-bottom).
+// A CSS multi-column layout was used before, but columns fill *column-major*, so
+// the DOM index the stagger animates on didn't match the on-screen reading order
+// and the reveal looked scattered. A grid maps index → visual position, so the
+// .stagger-in cascade now sweeps cleanly row by row. Intrinsic sizing also drops
+// the three breakpoints in favour of one fluid track definition.
 .masonry-gallery {
   width: 100%;
   max-width: rem(1100px);
   margin: 0 auto;
-  column-count: 3;
-  column-gap: rem(16px);
-
-  @media (max-width: 768px) {
-    column-count: 2;
-    column-gap: rem(12px);
-  }
-
-  @media (max-width: 420px) {
-    column-count: 1;
-  }
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, clamp(rem(150px), 22vw, rem(240px))), 1fr));
+  gap: clamp(rem(10px), 1.4vw, rem(16px));
 }
 
 .masonry-item {
-  break-inside: avoid;
-  margin-bottom: rem(16px);
   border-radius: var(--radius-md);
   line-height: 0; // let the border sit flush against the photo, no gap
 
   @include sla.sla-hover($bump: true);
 
-  @media (max-width: 768px) {
-    margin-bottom: rem(12px);
-  }
+  // This wall shows ~25 tiles, so the shared .stagger-in cap of 10 steps would
+  // pop the lower two-thirds in at once. A longer, gentler cascade keeps the
+  // reveal sweeping continuously down the grid without dragging on. (Scoped
+  // selector out-specifies the global .stagger-in > * rule, so no !important.)
+  animation-delay: calc(min(var(--i, 0), 26) * 42ms);
 }
 
 .masonry-image {
   width: 100%;
-  height: auto;
+  height: 100%;
+  // Uniform tiles so the grid aligns into clean rows; a gently portrait ratio
+  // frames the mostly-vertical product shots without heavy cropping.
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
   display: block;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);

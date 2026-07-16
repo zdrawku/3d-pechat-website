@@ -3,9 +3,7 @@
 
 :host {
   display: block;
-  background-color: var(--bg-body);
-  background-image: var(--bg-body-texture);
-  background-size: var(--bg-section-size);
+  // Transparent — the dotted texture is painted once on <body> (see styles.scss).
 }
 
 .prices-page {
@@ -325,7 +323,8 @@
   padding: rem(12px) rem(24px);
   border-radius: var(--radius-pill);
   cursor: pointer;
-  box-shadow: 0 rem(6px) rem(18px) color-mix(in srgb, var(--ig-primary-500) 38%, transparent);
+  // Flat at rest — the glow appears only on hover/focus (see below).
+  box-shadow: none;
   transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
   --ig-icon-color: var(--ig-primary-500-contrast);
   --ig-icon-size: #{rem(16px)};
@@ -334,7 +333,8 @@
     transition: transform 0.2s ease;
   }
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     transform: translateY(rem(-2px));
     filter: brightness(1.05);
     box-shadow: 0 rem(8px) rem(22px) color-mix(in srgb, var(--ig-primary-500) 46%, transparent);
@@ -347,9 +347,7 @@
 
 // ===================== COLOR SWATCHES =====================
 .swatches-block {
-  background-color: var(--bg-section-base);
-  background-image: var(--bg-section);
-  background-size: var(--bg-section-size);
+  // Transparent — the body's dotted texture shows through (no per-section grid).
   border-radius: rem(20px);
   padding: rem(36px) rem(28px);
 

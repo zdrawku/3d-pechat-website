@@ -2,9 +2,7 @@
 @use "../fluid" as *;
 :host {
   display: block;
-  background-color: var(--bg-body);
-  background-image: var(--bg-body-texture);
-  background-size: var(--bg-section-size);
+  // Transparent — the dotted texture is painted once on <body> (see styles.scss).
 }
 
 // Search + count live in the shared .page-banner (see styles.scss).

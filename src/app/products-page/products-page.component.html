@@ -18,26 +18,6 @@
         </button>
       }
     </igx-input-group>
-
-    <!-- Lightweight segmented sort control (replaces the heavy igx-select) -->
-    <div class="sort-segmented" role="group" aria-label="Сортиране на продуктите">
-      <button type="button" class="sort-option" [class.active]="sortOrder === 'newest'"
-        (click)="setSortOrder('newest')" data-testid="sort-newest">
-        Най-нови
-      </button>
-      <button type="button" class="sort-option" [class.active]="sortOrder === 'oldest'"
-        (click)="setSortOrder('oldest')" data-testid="sort-oldest">
-        Най-стари
-      </button>
-      <button type="button" class="sort-option" [class.active]="sortOrder === 'asc'"
-        (click)="setSortOrder('asc')" data-testid="sort-asc">
-        А-Я
-      </button>
-    </div>
-
-    <p class="result-count" data-testid="product-result-count">
-      Показани <strong>{{ resultCount }}</strong> от <strong>{{ totalCount }}</strong> продукта
-    </p>
   </div>
 </header>
 
@@ -50,6 +30,29 @@
       } @else {
         <h2 class="visually-hidden">Каталог с 3D принтирани продукти</h2>
       }
+
+      <!-- Sort + result count sit directly above the grid (moved out of the
+           page-banner header, which now carries only the search field). -->
+      <div class="products-toolbar">
+        <div class="sort-segmented" role="group" aria-label="Сортиране на продуктите">
+          <button type="button" class="sort-option" [class.active]="sortOrder === 'newest'"
+            (click)="setSortOrder('newest')" data-testid="sort-newest">
+            Най-нови
+          </button>
+          <button type="button" class="sort-option" [class.active]="sortOrder === 'oldest'"
+            (click)="setSortOrder('oldest')" data-testid="sort-oldest">
+            Най-стари
+          </button>
+          <button type="button" class="sort-option" [class.active]="sortOrder === 'asc'"
+            (click)="setSortOrder('asc')" data-testid="sort-asc">
+            А-Я
+          </button>
+        </div>
+
+        <p class="result-count" data-testid="product-result-count">
+          Показани <strong>{{ resultCount }}</strong> от <strong>{{ totalCount }}</strong> продукта
+        </p>
+      </div>
 
       @if (resultCount > 0) {
         <app-product-grid #grid [products]="allFilteredProducts" (productAction)="orderProduct($event)"

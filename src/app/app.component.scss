@@ -635,12 +635,15 @@
   letter-spacing: 0.01em;
   white-space: nowrap;
   text-decoration: none;
-  box-shadow: 0 rem(4px) rem(12px) color-mix(in srgb, var(--ig-primary-500) 35%, transparent);
+  // Flat at rest — the glow appears only on hover/focus (see below).
+  box-shadow: none;
   transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     transform: translateY(rem(-1px));
     text-decoration: none;
+    box-shadow: 0 rem(6px) rem(16px) color-mix(in srgb, var(--ig-primary-500) 42%, transparent);
   }
 
   &:active {

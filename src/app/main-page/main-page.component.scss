@@ -354,11 +354,13 @@
   border-radius: var(--radius-pill);
   padding: rem(12px) rem(24px);
   font-weight: 700;
-  box-shadow: 0 rem(6px) rem(18px) color-mix(in srgb, var(--ig-primary-500) 40%, transparent);
+  // Flat at rest — the glow appears only on hover/focus (see below).
+  box-shadow: none;
   will-change: transform;
   transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease, filter 0.28s ease;
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     transform: translateY(rem(-2px));
     filter: brightness(1.05);
     background: var(--ig-primary-500);
@@ -389,9 +391,7 @@
 
 // ===================== VALUE PROPS =====================
 .props_section {
-  background-color: var(--bg-body);
-  background-image: var(--bg-body-texture);
-  background-size: var(--bg-section-size);
+  // Transparent — the body's dotted texture shows through (no per-section grid).
 }
 
 .props_grid {
@@ -514,9 +514,7 @@
 // ===================== ABOUT + GALLERY =====================
 .image_gallery_section_template_1 {
   position: relative;
-  background-color: var(--bg-section-base);
-  background-image: var(--bg-section);
-  background-size: var(--bg-section-size);
+  // Transparent — the body's dotted texture shows through (no per-section grid).
   padding: fluid(32px, 48px) fluid(16px, 32px);
   width: 100%;
   overflow: hidden;
