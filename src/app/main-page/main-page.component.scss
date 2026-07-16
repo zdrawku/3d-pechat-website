@@ -1,4 +1,5 @@
 @use "igniteui-angular/theming" as *;
+@use '../fluid' as *;
 @use '../sla-hover' as sla;
 
 :host {
@@ -22,15 +23,9 @@
 .home_section {
   position: relative;
   width: 100%;
-  padding: rem(48px) rem(32px);
-
-  @media (max-width: 768px) {
-    padding: rem(40px) rem(20px);
-  }
-
-  @media (max-width: 480px) {
-    padding: rem(32px) rem(16px);
-  }
+  // Fluid section padding — scales 32→48px vertical, 16→32px horizontal across
+  // the viewport, no breakpoints.
+  padding: fluid(32px, 48px) fluid(16px, 32px);
 }
 
 .section_inner,
@@ -51,17 +46,13 @@
 }
 
 .section_heading {
-  font-size: rem(28px);
+  font-size: fluid(22.4px, 28px); // fluid, replaces the 480px step
   line-height: 1.15;
   font-weight: 750;
   letter-spacing: -0.02em;
   color: var(--ig-gray-900);
   margin: 0; // header block; the content below adds its own top gap
   text-wrap: balance;
-
-  @media (max-width: 480px) {
-    font-size: rem(22.4px);
-  }
 }
 
 // Optional supporting line under a section heading — sits close to the heading
@@ -92,17 +83,10 @@
   position: relative;
   background: var(--bg-hero);
   border-bottom: rem(1px) solid var(--line, var(--ig-gray-300));
-  padding: rem(40px) rem(32px) rem(20px); // was 21px — snapped to the 4px grid
+  // Fluid padding — top 24→40, sides 16→32, bottom 16→20.
+  padding: fluid(24px, 40px) fluid(16px, 32px) fluid(16px, 20px);
   width: 100%;
   overflow-x: hidden;
-
-  @media (max-width: 768px) {
-    padding: rem(32px) rem(20px);
-  }
-
-  @media (max-width: 480px) {
-    padding: rem(24px) rem(16px);
-  }
 }
 
 .hero_inner {
@@ -412,17 +396,12 @@
 
 .props_grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  // Intrinsic responsive: columns fit as many ~220px tracks as the width
+  // allows (4 → 2 → 1) with no breakpoints. min(100%, …) keeps a single card
+  // from overflowing on very narrow screens.
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, rem(220px)), 1fr));
   gap: rem(18px);
   margin-top: rem(40px);
-
-  @media (max-width: 860px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 520px) {
-    grid-template-columns: 1fr;
-  }
 }
 
 // Now an <igx-card>. The class overrides igx-card's default surface/elevation/
@@ -477,16 +456,9 @@
   padding: 0;
   margin: rem(40px) 0 0;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  // Intrinsic responsive (4 → 2 → 1), no breakpoints.
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, rem(200px)), 1fr));
   gap: rem(16px);
-
-  @media (max-width: 860px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 520px) {
-    grid-template-columns: 1fr;
-  }
 }
 
 // The <li> stays for ordered-list semantics; the igx-card fills it so cards
@@ -545,17 +517,9 @@
   background-color: var(--bg-section-base);
   background-image: var(--bg-section);
   background-size: var(--bg-section-size);
-  padding: rem(48px) rem(32px);
+  padding: fluid(32px, 48px) fluid(16px, 32px);
   width: 100%;
   overflow: hidden;
-
-  @media (max-width: 768px) {
-    padding: rem(40px) rem(20px);
-  }
-
-  @media (max-width: 480px) {
-    padding: rem(32px) rem(16px);
-  }
 }
 
 .about_inner {
@@ -580,14 +544,10 @@
 
 .title_1 {
   color: var(--ig-gray-900);
-  font-size: rem(25.6px);
+  font-size: fluid(21.6px, 25.6px);
   font-weight: 750;
   letter-spacing: -0.02em;
   margin: 0 0 rem(4px);
-
-  @media (max-width: 480px) {
-    font-size: rem(21.6px);
-  }
 }
 
 .title_2 {

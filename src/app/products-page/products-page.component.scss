@@ -221,7 +221,9 @@
 
   .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(rem(180px), 1fr));
+    // Intrinsic responsive — fits as many ~200px tracks as the width allows,
+    // collapsing to 1 column on narrow screens. No breakpoints.
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, rem(200px)), 1fr));
     gap: rem(16px);
     width: 100%;
   }
@@ -301,10 +303,6 @@
 
     .products-section {
       padding: rem(16px) 0;
-    }
-
-    .features-grid {
-      grid-template-columns: 1fr;
     }
   }
 

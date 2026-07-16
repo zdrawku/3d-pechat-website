@@ -3,6 +3,7 @@
 @use "sass:map";
 @use "minireset.css/minireset";
 @use "igniteui-angular/theming" as *;
+@use "app/fluid" as *;
 
 @include core();
 
@@ -340,17 +341,13 @@ $exclude-components: (
 // Scoped under .page-banner so it out-specifies the type scale's
 // `.ig-typography h1` rule (0,2,0 > 0,1,1) without needing !important.
 .page-banner .page-banner__title {
-  font-size: rem(22.4px);
+  font-size: fluid(19.2px, 22.4px); // fluid, replaces the 480px step
   line-height: 1.15;
   font-weight: 800;
   letter-spacing: -0.02em;
   color: var(--ig-gray-900);
   margin: 0;
   text-wrap: balance;
-
-  @media (max-width: 480px) {
-    font-size: rem(19.2px);
-  }
 }
 
 .page-banner__subtitle {

@@ -1,0 +1,17 @@
+@use "sass:math";
+@use "igniteui-angular/theming" as *;
+
+// fluid($min, $max, $from, $to)
+// A value that scales linearly from $min (at the $from viewport width) to $max
+// (at the $to viewport width) and is clamped flat outside that range — the
+// modern replacement for a pair of font-size / padding media queries.
+//
+// Pass px lengths; the min/max are emitted through the theming rem() function
+// and the middle term is a vw slope, e.g.
+//   font-size: fluid(22px, 28px);          // 22px → 28px across 480–1200px
+//   padding-block: fluid(32px, 48px);
+@function fluid($min, $max, $from: 480px, $to: 1200px) {
+  $slope: math.div($max - $min, $to - $from); // unitless (px / px)
+  $intercept: $min - $slope * $from;           // px
+  @return clamp(#{rem($min)}, #{rem($intercept)} + #{$slope * 100}vw, #{rem($max)});
+}

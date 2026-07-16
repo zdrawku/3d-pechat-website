@@ -51,17 +51,10 @@
 // ===================== PRICING TIERS =====================
 .tiers-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  // Intrinsic responsive (4 → 2 → 1), no breakpoints.
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, rem(220px)), 1fr));
   gap: rem(16px);
   margin-top: rem(28px);
-
-  @media (max-width: 860px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 480px) {
-    grid-template-columns: 1fr;
-  }
 }
 
 // Now an <igx-card>. overflow:visible is required because igx-card clips by
@@ -367,17 +360,10 @@
 
 .swatch-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  // Intrinsic responsive (7 → … → 3), no breakpoints.
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, rem(92px)), 1fr));
   gap: rem(14px);
   margin-top: rem(8px);
-
-  @media (max-width: 860px) {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  @media (max-width: 480px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
 }
 
 .swatch {

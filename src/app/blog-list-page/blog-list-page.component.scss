@@ -1,4 +1,5 @@
 @use "igniteui-angular/theming" as *;
+@use "../fluid" as *;
 :host {
   display: block;
   background-color: var(--bg-body);
@@ -62,33 +63,12 @@
   // above the fold instead of the previous 320px/2rem-gap layout showing 2-3.
   .blog-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(rem(288px), 1fr));
-    gap: rem(22px);
+    // Fully intrinsic (matches the products grid): the track's min size is
+    // itself fluid — ~2 columns on phones, growing to roomy ~300px cards on
+    // desktop — with no breakpoints. Gap scales with the viewport too.
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, clamp(rem(160px), 30vw, rem(300px))), 1fr));
+    gap: clamp(rem(12px), 2vw, rem(22px));
     margin-bottom: rem(32px);
-
-    // Lock to 3 wide columns through desktop and laptop widths — auto-fill was
-    // packing in a cramped 4th column here, squeezing cards until titles/tags
-    // wrapped badly. Stay at 3 all the way up to 1900px so cards keep room to
-    // breathe on common laptop/desktop screens.
-    @media (min-width: 900px) {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    // Only widen past 3 columns on large monitors.
-    @media (min-width: 1900px) {
-      grid-template-columns: repeat(4, 1fr);
-    }
-
-    // Roomy 5-across layout on very wide screens instead of stretching
-    // 4 columns thin across the extra width.
-    @media (min-width: 2400px) {
-      grid-template-columns: repeat(5, 1fr);
-    }
-
-    @media (max-width: 480px) {
-      grid-template-columns: repeat(auto-fill, minmax(rem(160px), 1fr));
-      gap: rem(12px);
-    }
 
     // Anchor wrapper — keeps each card a real crawlable link (SEO, middle-click,
     // href that the e2e reads); the <igx-card> inside provides the structure.
@@ -129,19 +109,10 @@
       .card-image-wrapper {
         position: relative;
         width: 100%;
-        height: rem(180px);
+        // Fluid cover height (~140px on phones → ~230px on wide cards).
+        height: clamp(rem(140px), 16vw, rem(230px));
         overflow: hidden;
         flex-shrink: 0;
-
-        // Wider cards on large screens read as squashed at 180px — taller
-        // image keeps the card's proportions comfortable instead of dense.
-        @media (min-width: 1200px) {
-          height: rem(230px);
-        }
-
-        @media (max-width: 480px) {
-          height: rem(140px);
-        }
 
         &--placeholder {
           background: linear-gradient(135deg, var(--ig-primary-400) 0%, var(--ig-primary-600) 100%);
@@ -181,13 +152,9 @@
         display: flex;
         align-items: center;
         gap: rem(4px);
-        font-size: rem(10.4px);
+        font-size: fluid(10.4px, 12px);
         font-weight: 600;
         color: var(--ig-gray-700);
-
-        @media (min-width: 1200px) {
-          font-size: rem(12px);
-        }
 
         .date-icon {
           --ig-icon-size: #{rem(12px)};
@@ -197,7 +164,7 @@
       // Deeply nested (…​.blog-card .card-title ≈ 0,4,0), so it already
       // out-specifies the type scale's `.ig-typography h2` — no !important.
       .card-title {
-        font-size: rem(13.6px);
+        font-size: fluid(13.6px, 16.8px);
         font-weight: 700;
         color: var(--ig-gray-900);
         line-height: 1.3;
@@ -206,14 +173,10 @@
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
-
-        @media (min-width: 1200px) {
-          font-size: rem(16.8px);
-        }
       }
 
       .card-description {
-        font-size: rem(11.2px);
+        font-size: fluid(11.2px, 13.6px);
         color: var(--ig-gray-700);
         line-height: 1.5;
         margin: 0;
@@ -222,10 +185,6 @@
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
-
-        @media (min-width: 1200px) {
-          font-size: rem(13.6px);
-        }
       }
 
       .tags-container {
@@ -235,21 +194,16 @@
 
         .tag {
           display: inline-block;
-          padding: rem(2px) rem(8px);
+          padding: fluid(2px, 3px) fluid(8px, 10px);
           background: color-mix(in srgb, var(--ig-primary-500) 12%, transparent);
           // Darker on-tint orange so the chip text clears WCAG AA on its own
           // tint (plain --ig-primary-500 is only ~4.3:1).
           color: var(--accent-on-tint);
           border-radius: var(--radius-pill);
-          font-size: rem(9.6px);
+          font-size: fluid(9.6px, 11.2px);
           font-weight: 700;
           transition: background-color 0.2s ease;
           cursor: pointer;
-
-          @media (min-width: 1200px) {
-            font-size: rem(11.2px);
-            padding: rem(3px) rem(10px);
-          }
 
           &:hover {
             background: color-mix(in srgb, var(--ig-primary-500) 20%, transparent);
@@ -261,14 +215,10 @@
         display: flex;
         align-items: center;
         gap: rem(5px);
-        font-size: rem(12px);
+        font-size: fluid(12px, 13.6px);
         font-weight: 700;
         color: var(--ig-primary-500);
         margin-top: rem(4px);
-
-        @media (min-width: 1200px) {
-          font-size: rem(13.6px);
-        }
 
         igx-icon {
           --ig-icon-size: #{rem(15px)};
