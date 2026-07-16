@@ -10,14 +10,14 @@
 .prices-page {
   max-width: 1160px;
   margin: 0 auto;
-  padding: 16px 16px 32px;
+  padding: 40px 16px 64px;
 
   @media (max-width: 768px) {
-    padding: 24px 20px 48px;
+    padding: 32px 20px 48px;
   }
 
   @media (max-width: 480px) {
-    padding: 20px 16px 40px;
+    padding: 24px 16px 40px;
   }
 }
 

@@ -118,13 +118,13 @@
   .products-inner {
     display: flex;
     flex-direction: column;
-    gap: 40px;
+    gap: 56px; // more breathing room between the grid, features and CTA sections
     max-width: 1440px;
     width: 100%;
     margin: 0 auto;
     // 16px side gutters (was 32px) so the grid gets the same card width as the
     // blog grid, which sits in a 16px-padded container.
-    padding: 16px 16px 64px;
+    padding: 24px 16px 64px;
     box-sizing: border-box;
 
     // Let the container grow on very large monitors so the 4/5-column grid

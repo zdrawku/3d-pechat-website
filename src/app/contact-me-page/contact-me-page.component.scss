@@ -20,13 +20,15 @@
 }
 
 // ===================== SHELL =====================
+// A large section-sized panel — defined by its border alone. No box-shadow:
+// a drop shadow on a whole section reads as an oddly floating slab (shadows
+// belong on cards, not sections).
 .contact-shell {
   display: grid;
   grid-template-columns: 0.85fr 1.15fr;
   border: 1px solid var(--ig-gray-300);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: var(--shadow-card);
 
   @media (max-width: 820px) {
     grid-template-columns: 1fr;

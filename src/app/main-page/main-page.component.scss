@@ -15,18 +15,20 @@
   display: flex;
 }
 
-// Shared section shell + inner width constraint
+// Shared section shell + inner width constraint. Generous vertical padding so
+// sections have room to breathe and read as distinct bands (~96px between
+// adjacent sections on desktop); scales down on smaller screens.
 .home_section {
   position: relative;
   width: 100%;
-  padding: 16px 32px; // was 17px — snapped to the 4px grid
+  padding: 48px 32px;
 
   @media (max-width: 768px) {
-    padding: 32px 20px;
+    padding: 40px 20px;
   }
 
   @media (max-width: 480px) {
-    padding: 28px 16px;
+    padding: 32px 16px;
   }
 }
 
@@ -44,7 +46,7 @@
   font-size: 0.72rem;
   font-weight: 700;
   color: var(--ig-primary-500);
-  // margin: 0 0 10px;
+  margin: 0 0 8px; // small gap between the kicker and the heading
 }
 
 .section_heading {
@@ -53,12 +55,22 @@
   font-weight: 750;
   letter-spacing: -0.02em;
   color: var(--ig-gray-900);
-  margin: 0 0 4px;
+  margin: 0; // header block; the content below adds its own top gap
   text-wrap: balance;
 
   @media (max-width: 480px) {
     font-size: 1.4rem;
   }
+}
+
+// Optional supporting line under a section heading — sits close to the heading
+// as part of the header block.
+.section_sub {
+  margin: 10px 0 0;
+  max-width: 60ch;
+  color: var(--ig-gray-700);
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 // Soft seam fade helper for stacked sections
@@ -401,7 +413,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 18px;
-  margin-top: 32px;
+  margin-top: 40px;
 
   @media (max-width: 860px) {
     grid-template-columns: repeat(2, 1fr);
@@ -462,7 +474,7 @@
 .process_steps {
   list-style: none;
   padding: 0;
-  margin: 32px 0 0;
+  margin: 40px 0 0;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
@@ -532,16 +544,16 @@
   background-color: var(--bg-section-base);
   background-image: var(--bg-section);
   background-size: var(--bg-section-size);
-  padding: 40px 32px;
+  padding: 48px 32px;
   width: 100%;
   overflow: hidden;
 
   @media (max-width: 768px) {
-    padding: 32px 20px;
+    padding: 40px 20px;
   }
 
   @media (max-width: 480px) {
-    padding: 28px 16px;
+    padding: 32px 16px;
   }
 }
 
