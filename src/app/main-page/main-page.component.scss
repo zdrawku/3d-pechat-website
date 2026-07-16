@@ -412,14 +412,20 @@
   }
 }
 
+// Now an <igx-card>. The class overrides igx-card's default surface/elevation/
+// radius so the card looks unchanged; the padding lives on the inner
+// igx-card-content (.prop_card_body) since igx-card itself is padding-less.
 .prop_card {
   background: var(--bg-card);
   border: 1px solid var(--line, var(--ig-gray-300));
   border-radius: var(--radius-lg);
-  padding: 24px 20px;
   box-shadow: var(--shadow-card);
 
   @include sla.sla-hover($bump: true);
+}
+
+.prop_card_body {
+  padding: 24px 20px;
 }
 
 .prop_icon {
@@ -470,15 +476,26 @@
   }
 }
 
+// The <li> stays for ordered-list semantics; the igx-card fills it so cards
+// keep equal heights across the grid row.
+.process_step_item {
+  display: flex;
+}
+
+// Each step is now an <igx-card>. Class overrides igx-card's default chrome;
+// padding lives on the inner igx-card-content (.process_step_body).
 .process_step {
-  position: relative;
-  padding: 22px 18px 20px;
+  flex: 1;
   background: var(--bg-card);
   border: 1px solid var(--line, var(--ig-gray-300));
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
 
   @include sla.sla-hover($bump: true);
+}
+
+.process_step_body {
+  padding: 22px 18px 20px;
 }
 
 .step_num {
