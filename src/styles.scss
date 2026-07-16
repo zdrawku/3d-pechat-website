@@ -182,6 +182,35 @@ $exclude-components: (
   // Consistent soft elevation so cards lift off the new backgrounds
   --shadow-card: 0 1px 2px rgba(33, 29, 24, 0.05), 0 10px 30px rgba(33, 29, 24, 0.07);
 
+  // ---- Elevation scale ----------------------------------------------------
+  // Reusable box-shadows built on the same warm shadow color as --shadow-card.
+  // Use these tokens instead of ad-hoc `0 .. rgba(0, 0, 0, ..)` values so depth
+  // stays consistent and both themes stay in sync (dark overrides below).
+  --shadow-xs:           0 1px 3px rgba(33, 29, 24, 0.22);   // toggle knob, dots
+  --shadow-float:        0 4px 12px rgba(33, 29, 24, 0.16);  // tooltips, chips, small popovers
+  --shadow-float-strong: 0 2px 8px rgba(33, 29, 24, 0.28);   // controls floating over photos (carousel arrows)
+  --shadow-card-hover:   0 12px 28px rgba(33, 29, 24, 0.14); // card lift on hover
+  --shadow-pop:          0 18px 46px rgba(33, 29, 24, 0.22); // hero media frame / large popovers
+
+  // ---- Radius scale -------------------------------------------------------
+  // --radius-pill for fully-rounded pills/buttons; sm/md/lg for the common
+  // control & card corner steps. Bespoke one-off radii stay inline by design.
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-pill: 999px;
+
+  // ---- Spacing scale (4px base) -------------------------------------------
+  // Available for layout padding/gap so vertical/horizontal rhythm stays on a
+  // shared grid. Prefer these over raw px for new work.
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
   // Deep orange for accent text/icons that sit on a near-WHITE ground in BOTH
   // themes — e.g. carousel-nav icons on a white circle, and the inverted
   // white-pill CTAs on our orange banners (products / main / contact). Fixed
@@ -231,6 +260,13 @@ $exclude-components: (
   --seam: linear-gradient(to bottom, rgba(0, 0, 0, 0.35), transparent 14px);
 
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 34px rgba(0, 0, 0, 0.5);
+
+  // Elevation scale — deepened for the darker ground (see light defaults above).
+  --shadow-xs:           0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-float:        0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-float-strong: 0 2px 10px rgba(0, 0, 0, 0.6);
+  --shadow-card-hover:   0 14px 34px rgba(0, 0, 0, 0.6);
+  --shadow-pop:          0 18px 46px rgba(0, 0, 0, 0.6);
 
   // On the dark card + dark orange tint, the bright brand orange already clears
   // 4.5:1 (≈5.3:1); no need to darken it here.
@@ -405,11 +441,11 @@ body {
 .blog-container {
   img {
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     width: 80%;
     max-width: 280px;
     height: auto;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-float);
     transition: transform 0.3s ease;
 
     &:hover {

@@ -151,7 +151,7 @@
 .drawer_chip_tile {
   width: 28px;
   height: 28px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: var(--bg-alt);
   color: var(--ig-gray-700);
   display: flex;
@@ -202,7 +202,7 @@
     width: 96px;
     max-width: 100%;
     height: auto;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     display: block;
   }
 }
@@ -235,7 +235,7 @@
   align-items: center;
   gap: 8px;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 7px 14px 7px 11px;
   background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500) 75%);
   // Contrast token, not #fff — dark text on orange in dark theme, white in light.
@@ -452,7 +452,7 @@
   position: relative;
   width: 54px;
   height: 28px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--bg-alt);
   border: 1px solid var(--ig-gray-300);
   transition: background-color 0.25s ease, border-color 0.25s ease;
@@ -502,7 +502,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-xs);
   transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1;
 }
@@ -642,7 +642,7 @@
   height: max-content;
   padding: 9px 18px;
   margin-left: 4px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500) 70%);
   color: var(--ig-primary-500-contrast);
   font-weight: 700;

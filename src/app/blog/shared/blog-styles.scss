@@ -1,22 +1,19 @@
 // Shared Blog Styles - Use this in every blog component SCSS file
 // Usage: @use '../shared/blog-styles';
-@use 'sass:color';
-
-// Variables for consistent theming
-$primary-color: #2c3e50; // Dark Blue/Grey for text
-$accent-color: #3498db;  // Blue for links/highlights
-$bg-light: #f8f9fa;      // Light grey for backgrounds
-$border-color: #e9ecef;
-$text-color: #333;
-$font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+//
+// Colors, radii and elevation all come from the theming engine's custom
+// properties (defined in src/styles.scss). They flip automatically between the
+// light and dark palettes, so this file needs NO separate dark-theme block —
+// the one exception is the syntax-highlight code block, which is intentionally
+// dark in both themes (a fixed editor look, not a themed surface).
 
 // Main Container
 .blog-container {
   max-width: 1200px;
   margin: 2rem auto;
   padding: 0 1.5rem;
-  font-family: $font-family;
-  color: $text-color;
+  font-family: inherit; // follow the app's themed typography (Roboto)
+  color: var(--ig-gray-800);
   line-height: 1.8;
 
   @media (max-width: 768px) {
@@ -30,7 +27,7 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     h1 {
       font-size: 2.5rem;
       font-weight: 700;
-      color: $primary-color;
+      color: var(--ig-gray-900);
       margin-bottom: 0.5rem;
       margin-top: 0;
       line-height: 1.2;
@@ -45,10 +42,10 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     h2 {
       font-size: 1.8rem;
       font-weight: 600;
-      color: $primary-color;
+      color: var(--ig-gray-900);
       margin-top: 2.5rem;
       margin-bottom: 1rem;
-      border-bottom: 2px solid $border-color;
+      border-bottom: 2px solid var(--ig-gray-300);
       padding-bottom: 0.5rem;
 
       @media (max-width: 768px) {
@@ -63,7 +60,7 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       font-weight: 600;
       margin-top: 2rem;
       margin-bottom: 0.8rem;
-      color: color.adjust($primary-color, $lightness: 10%);
+      color: var(--ig-gray-900);
 
       @media (max-width: 768px) {
         font-size: 1.2rem;
@@ -77,7 +74,7 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       font-weight: 600;
       margin-top: 1.5rem;
       margin-bottom: 0.6rem;
-      color: color.adjust($primary-color, $lightness: 15%);
+      color: var(--ig-gray-800);
 
       @media (max-width: 768px) {
         font-size: 1.1rem;
@@ -90,7 +87,7 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       font-weight: 600;
       margin-top: 1.2rem;
       margin-bottom: 0.5rem;
-      color: color.adjust($primary-color, $lightness: 20%);
+      color: var(--ig-gray-800);
 
       @media (max-width: 768px) {
         font-size: 1rem;
@@ -102,7 +99,7 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       font-weight: 600;
       margin-top: 1rem;
       margin-bottom: 0.4rem;
-      color: color.adjust($primary-color, $lightness: 25%);
+      color: var(--ig-gray-800);
 
       @media (max-width: 768px) {
         font-size: 0.95rem;
@@ -113,6 +110,7 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     p {
       margin-bottom: 1.5rem;
       font-size: 1.1rem;
+      color: var(--ig-gray-800);
 
       @media (max-width: 768px) {
         font-size: 1rem;
@@ -121,26 +119,26 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
 
     strong {
-      color: color.adjust($primary-color, $lightness: -20%);
+      color: var(--ig-gray-900);
       font-weight: 700;
     }
 
     // 3. BLOCKQUOTES
     blockquote {
-      background: $bg-light;
-      border-left: 5px solid $accent-color;
+      background: var(--bg-alt);
+      border-left: 5px solid var(--ig-primary-500);
       margin: 2rem 0;
       padding: 1.5rem;
       font-style: italic;
-      color: #555;
-      border-radius: 0 8px 8px 0;
-      
+      color: var(--ig-gray-700);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+
       @media (max-width: 768px) {
         margin: 1.5rem -0.5rem;
         padding: 1rem;
         font-size: 0.95rem;
       }
-      
+
       p {
         margin-bottom: 0;
       }
@@ -159,14 +157,15 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       li {
         margin-bottom: 0.5rem;
         padding-left: 0.5rem;
-        
+        color: var(--ig-gray-800);
+
         @media (max-width: 768px) {
           margin-bottom: 0.4rem;
           font-size: 0.95rem;
         }
-        
+
         &::marker {
-          color: $accent-color;
+          color: var(--ig-primary-500);
         }
       }
     }
@@ -185,12 +184,12 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
     // 5. LINKS
     a {
-      color: $accent-color;
+      color: var(--ig-primary-500);
       text-decoration: none;
       transition: color 0.2s;
 
       &:hover {
-        color: color.adjust($accent-color, $lightness: -15%);
+        color: var(--ig-primary-600);
         text-decoration: underline;
       }
     }
@@ -201,9 +200,9 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       border-collapse: collapse;
       margin: 2rem 0;
       font-size: 1rem;
-      background: #fff;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      border-radius: 8px;
+      background: var(--bg-card);
+      box-shadow: var(--shadow-float);
+      border-radius: var(--radius-sm);
       overflow: hidden;
 
       @media (max-width: 768px) {
@@ -218,9 +217,9 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       }
 
       thead {
-        background-color: $primary-color;
-        color: #fff;
-        
+        background-color: var(--ig-gray-900);
+        color: var(--ig-gray-900-contrast);
+
         th {
           padding: 1rem;
           text-align: left;
@@ -237,23 +236,24 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
       tbody {
         tr {
-          border-bottom: 1px solid $border-color;
-          
+          border-bottom: 1px solid var(--ig-gray-300);
+
           &:last-child {
             border-bottom: none;
           }
 
           &:nth-child(even) {
-            background-color: $bg-light;
+            background-color: var(--bg-alt);
           }
 
           &:hover {
-            background-color: color.adjust($bg-light, $lightness: -3%);
+            background-color: color-mix(in srgb, var(--ig-gray-900) 6%, var(--bg-card));
           }
 
           td {
             padding: 1rem;
             vertical-align: top;
+            color: var(--ig-gray-800);
 
             @media (max-width: 768px) {
               padding: 0.6rem 0.4rem;
@@ -267,11 +267,13 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
 
     // 7. CODE BLOCKS
+    // Intentionally a fixed dark editor look in BOTH themes (One Dark palette),
+    // so these values are not themed custom props.
     pre {
       background: #282c34;
       color: #abb2bf;
       padding: 1.5rem;
-      border-radius: 8px;
+      border-radius: var(--radius-sm);
       overflow-x: auto;
       margin: 1.5rem 0;
       border: 1px solid #3a3f4b;
@@ -282,7 +284,7 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         font-size: 0.8rem;
         border-radius: 4px;
       }
-      
+
       code {
         font-family: 'Consolas', 'Monaco', monospace;
         font-size: 0.95rem;
@@ -292,14 +294,14 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
       }
     }
-    
+
     // Inline code
     p > code, li > code {
-      background: rgba(0,0,0,0.05);
+      background: color-mix(in srgb, var(--ig-gray-900) 8%, transparent);
       padding: 0.2rem 0.4rem;
       border-radius: 4px;
       font-family: 'Consolas', monospace;
-      color: #e83e8c;
+      color: var(--ig-primary-600);
       font-size: 0.9em;
       word-break: break-word;
     }
@@ -309,9 +311,9 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       display: block;
       max-width: 100%;
       height: auto;
-      border-radius: 8px;
+      border-radius: var(--radius-sm);
       margin: 1.5rem auto;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      box-shadow: var(--shadow-float);
 
       @media (max-width: 768px) {
         margin: 1rem -0.5rem;
@@ -319,12 +321,12 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         border-radius: 4px;
       }
     }
-    
+
     // 9. Reading Time
     p:first-of-type strong {
       font-size: 0.9rem;
       text-transform: uppercase;
-      color: #888;
+      color: var(--ig-gray-700);
       letter-spacing: 1px;
 
       @media (max-width: 768px) {
@@ -335,101 +337,12 @@ $font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     // 10. HORIZONTAL RULES
     hr {
       border: none;
-      border-top: 2px solid $border-color;
+      border-top: 2px solid var(--ig-gray-300);
       margin: 2.5rem 0;
 
       @media (max-width: 768px) {
         margin: 1.5rem 0;
       }
-    }
-  }
-}
-
-// Dark theme support
-:host-context(.dark-theme) .blog-container {
-  color: #e0e0e0;
-
-  ::ng-deep {
-    h1, h2, h3, h4, h5, h6 {
-      color: #ffffff;
-    }
-
-    h2 {
-      border-bottom-color: #444;
-    }
-
-    p {
-      color: #d0d0d0;
-    }
-
-    strong {
-      color: #ffffff;
-    }
-
-    a {
-      color: #5dade2;
-
-      &:hover {
-        color: #85c1e9;
-      }
-    }
-
-    ul, ol {
-      li {
-        color: #d0d0d0;
-      }
-    }
-
-    blockquote {
-      background: rgba(255, 255, 255, 0.05);
-      border-left-color: #5dade2;
-      color: #d0d0d0;
-    }
-
-    table {
-      background: rgba(255, 255, 255, 0.02);
-
-      thead {
-        background: rgba(255, 255, 255, 0.1);
-        color: #ffffff;
-      }
-
-      tbody tr {
-        &:nth-child(even) {
-          background: rgba(255, 255, 255, 0.03);
-        }
-
-        &:hover {
-          background: rgba(255, 255, 255, 0.07);
-        }
-      }
-
-      th, td {
-        color: #d0d0d0;
-        border-color: #444;
-      }
-    }
-
-    pre {
-      background: rgba(0, 0, 0, 0.3);
-      border-color: #444;
-
-      code {
-        color: #e0e0e0;
-      }
-    }
-
-    code {
-      background: rgba(255, 255, 255, 0.1);
-      color: #ff79c6;
-    }
-
-    p:first-of-type strong {
-      color: #b0b0b0;
-    }
-
-    hr {
-      border-top-color: #444;
     }
   }
 }

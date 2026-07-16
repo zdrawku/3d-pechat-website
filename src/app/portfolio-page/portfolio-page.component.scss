@@ -93,13 +93,13 @@
 
 .image_7 {
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   width: 100%;
   max-width: 280px;
   height: 400px;
   min-width: 200px;
   flex-shrink: 1;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-float);
   transition: transform 0.3s ease;
   
   &:hover {
@@ -141,7 +141,7 @@
 .masonry-item {
   break-inside: avoid;
   margin-bottom: 16px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   line-height: 0; // let the border sit flush against the photo, no gap
 
   @include sla.sla-hover($bump: true);
@@ -155,7 +155,7 @@
   width: 100%;
   height: auto;
   display: block;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
 }
 

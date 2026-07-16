@@ -58,7 +58,7 @@
   @include -sweep-layers;
 
   &:hover {
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--shadow-card-hover);
     @include -gradient-border($bg);
 
     @if $bump {
@@ -100,7 +100,7 @@
   }
 
   &:hover {
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--shadow-card-hover);
     @include -gradient-border($bg);
 
     @if $bump {
