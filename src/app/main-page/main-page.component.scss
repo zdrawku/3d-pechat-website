@@ -586,71 +586,27 @@
     min-height: 240px;
   }
 
-  // IgniteUI ships square, theme-tinted carousel controls that wash out in dark
-  // mode. Restyle the prev/next arrows and the dot indicators to match the rest
-  // of the site: circular white buttons with an accessible accent glyph (the
-  // same pattern as the product-card carousel-nav), readable in both themes.
+  // Restyle the prev/next arrows and dot indicators to match the site: circular
+  // white buttons with an accessible orange glyph, white dots, orange active
+  // dot — readable in both themes.
   //
-  // TODO TO DO NOTE (tech debt): these ::ng-deep + !important overrides fight the theming
-  // engine. The square default comes from `$roundness: 0` in styles.scss. The
-  // engine-aligned fix is the `carousel-theme()` mixin (emits
-  // --nav-btn-border-radius, button-arrow-color, indicator-*-dot-color). Deferred
-  // — see the "igniteui-theming-followups" note. Get the exact mixin params from
-  // the Ignite UI theming MCP (configured in .mcp.json; connect via /mcp).
-  ::ng-deep .igx-carousel__arrow--prev,
-  ::ng-deep .igx-carousel__arrow--next {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.95);
-    color: var(--accent-on-light); // orange-on-white ≥4.5:1 in both themes
-    box-shadow: var(--shadow-float-strong);
-    // IgniteUI centers the arrow vertically with `top: 50%` + translateY(-50%).
-    // Re-declare that translate here so the hover transform below can keep it —
-    // otherwise the scale() drops the button by half its height.
-    transform: translateY(-50%);
-    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-
-    igx-icon,
-    .material-icons {
-      color: var(--accent-on-light) !important;
-    }
-
-    &:hover {
-      background: #fff;
-      // Keep the vertical centering; only add the grow so it stays put.
-      transform: translateY(-50%) scale(1.1);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
-    }
-  }
-
-  // The container behind the dots ships square. The rendered node carries a
-  // position modifier class (`--end` for bottom-anchored) with no plain
-  // `.igx-carousel-indicators` base class, so target the modifiers directly and
-  // round it into a pill to match the site's rounded language.
-  ::ng-deep .igx-carousel-indicators--end,
-  ::ng-deep .igx-carousel-indicators--start,
-  ::ng-deep [class*="igx-carousel-indicators--"] {
-    border-radius: var(--radius-pill) !important;
-  }
-
-  // Dot indicators: rounded, clearly visible on any image, orange when active —
-  // mirrors the product-card .indicator-dot. Confirmed DOM: each indicator is
-  // `.igx-carousel-indicators__indicator` wrapping an `.igx-nav-dot` that gains
-  // `.igx-nav-dot--active` on the current slide.
-  ::ng-deep .igx-nav-dot {
-    border-radius: 50% !important;
-    background: rgba(255, 255, 255, 0.65) !important;
-    border-color: rgba(255, 255, 255, 0.65) !important;
-    box-shadow: var(--shadow-xs);
-    transition: background-color 0.2s ease, transform 0.2s ease;
-
-    &.igx-nav-dot--active {
-      background: var(--ig-primary-500) !important;
-      border-color: var(--ig-primary-500) !important;
-      transform: scale(1.25);
-    }
-  }
+  // Done through the Ignite UI carousel component's OWN exposed theme variables
+  // (--ig-carousel-*) instead of ::ng-deep + !important. CSS custom properties
+  // inherit through Angular's emulated encapsulation, so setting them on the
+  // <igx-carousel> host reaches the internal arrows/dots with no piercing.
+  // The engine derives hover/disabled/focus states and the button elevation
+  // (--ig-elevation-1) from these, so the manual shadows/hover hacks are gone.
+  --ig-carousel-button-background: rgba(255, 255, 255, 0.95);
+  --ig-carousel-button-hover-background: #fff;
+  --ig-carousel-button-arrow-color: var(--accent-on-light); // orange-on-white ≥4.5:1
+  --ig-carousel-button-hover-arrow-color: var(--accent-on-light);
+  --ig-carousel-button-focus-arrow-color: var(--accent-on-light);
+  --ig-carousel-border-radius: var(--radius-pill); // round the nav buttons (theme ships square)
+  --ig-carousel-indicator-background: transparent; // no bar behind the dots
+  --ig-carousel-indicator-dot-color: rgba(255, 255, 255, 0.65);
+  --ig-carousel-indicator-hover-dot-color: #fff;
+  --ig-carousel-indicator-active-dot-color: var(--ig-primary-500);
+  --ig-carousel-indicator-active-border-color: var(--ig-primary-500);
 }
 
 .carousel_slide_1 {

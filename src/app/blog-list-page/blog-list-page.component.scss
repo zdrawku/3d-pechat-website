@@ -15,12 +15,10 @@
     width: 100%;
   }
 
-  // Round to match the pill-shaped controls used elsewhere on the site.
-  ::ng-deep .igx-input-group__bundle {
-    border-radius: var(--radius-pill) !important;
-    overflow: hidden;
-    background: var(--bg-card);
-  }
+  // Round + surface via the input-group's own exposed variables (the field is
+  // type="search"), not a ::ng-deep !important override of the internal node.
+  --ig-input-group-search-border-radius: var(--radius-pill);
+  --ig-input-group-search-background: var(--bg-card);
 
   .clear-icon {
     cursor: pointer;

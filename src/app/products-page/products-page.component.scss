@@ -34,11 +34,10 @@
     width: 100%;
   }
 
-  // Round to match the pill-shaped controls used across the site.
-  ::ng-deep .igx-input-group__bundle {
-    border-radius: var(--radius-pill) !important;
-    overflow: hidden;
-  }
+  // Round to match the pill-shaped controls — set through the input-group's own
+  // exposed radius variable (the field is type="search"), not a ::ng-deep
+  // !important override of the internal .igx-input-group__bundle node.
+  --ig-input-group-search-border-radius: var(--radius-pill);
 }
 
 // Clear-search button — real <button> with a ≥32×32 touch target (WCAG 2.5.8).
