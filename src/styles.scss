@@ -1,10 +1,26 @@
 /* You can add global styles to this file, and also import other style files */
 // Standard CSS normalize, comment out if not required or using a different module
+@use "sass:map";
 @use "minireset.css/minireset";
 @use "igniteui-angular/theming" as *;
 
 @include core();
-@include typography($font-family: "Roboto");
+
+// Heading type scale — shrink h1–h3 from Material's large defaults through the
+// theming engine's OWN type scale (emitted as --ig-h*-font-size on
+// `.ig-typography h1..h3`), instead of the old global
+// `h1/h2/h3 { font-size: … !important }` overrides that fought it. Only size +
+// line-height are overridden; weight/letter-spacing inherit from the Material
+// base. Component-level heading sizes (e.g. .page-banner__title) still win.
+$app-type-scale: map.merge(
+  $material-type-scale,
+  (
+    h1: map.merge(type-scale-category($material-type-scale, "h1"), (font-size: 2rem,    line-height: 1.3)),
+    h2: map.merge(type-scale-category($material-type-scale, "h2"), (font-size: 1.5rem,  line-height: 1.4)),
+    h3: map.merge(type-scale-category($material-type-scale, "h3"), (font-size: 1.25rem, line-height: 1.4)),
+  )
+);
+@include typography($font-family: "Roboto", $type-scale: $app-type-scale);
 
 // Light theme palette
 // Primary is a deep orange (not the brighter #FF5722) so that white text on a
@@ -179,18 +195,19 @@ $exclude-components: (
   // Soft shadow-fade for section boundaries (apply on a 0-height ::before/::after)
   --seam: linear-gradient(to bottom, color-mix(in srgb, #211D18 6%, transparent), transparent 14px);
 
-  // Consistent soft elevation so cards lift off the new backgrounds
-  --shadow-card: 0 1px 2px rgba(33, 29, 24, 0.05), 0 10px 30px rgba(33, 29, 24, 0.07);
-
   // ---- Elevation scale ----------------------------------------------------
-  // Reusable box-shadows built on the same warm shadow color as --shadow-card.
-  // Use these tokens instead of ad-hoc `0 .. rgba(0, 0, 0, ..)` values so depth
-  // stays consistent and both themes stay in sync (dark overrides below).
-  --shadow-xs:           0 1px 3px rgba(33, 29, 24, 0.22);   // toggle knob, dots
-  --shadow-float:        0 4px 12px rgba(33, 29, 24, 0.16);  // tooltips, chips, small popovers
-  --shadow-float-strong: 0 2px 8px rgba(33, 29, 24, 0.28);   // controls floating over photos (carousel arrows)
-  --shadow-card-hover:   0 12px 28px rgba(33, 29, 24, 0.14); // card lift on hover
-  --shadow-pop:          0 18px 46px rgba(33, 29, 24, 0.22); // hero media frame / large popovers
+  // Sourced from the theming engine's own elevation() system (Material scale,
+  // levels 0–24) rather than hand-picked box-shadows. Every value carries
+  // calc(var(--ig-elevation-factor) * …), so bumping --ig-elevation-factor
+  // scales the whole set — that is how the dark theme deepens them below.
+  // These CSS custom properties are how the app's plain (non-Ignite) card
+  // markup taps the same elevation system the Ignite components use.
+  --shadow-card:         #{elevation(2)};   // resting cards / surfaces
+  --shadow-xs:           #{elevation(1)};   // toggle knob, dots
+  --shadow-float:        #{elevation(4)};   // tooltips, chips, small popovers
+  --shadow-float-strong: #{elevation(6)};   // controls floating over photos (carousel arrows)
+  --shadow-card-hover:   #{elevation(8)};   // card lift on hover
+  --shadow-pop:          #{elevation(16)};  // hero media frame / large popovers
 
   // ---- Radius scale -------------------------------------------------------
   // --radius-pill for fully-rounded pills/buttons; sm/md/lg for the common
@@ -259,14 +276,10 @@ $exclude-components: (
 
   --seam: linear-gradient(to bottom, rgba(0, 0, 0, 0.35), transparent 14px);
 
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 34px rgba(0, 0, 0, 0.5);
-
-  // Elevation scale — deepened for the darker ground (see light defaults above).
-  --shadow-xs:           0 1px 3px rgba(0, 0, 0, 0.5);
-  --shadow-float:        0 4px 12px rgba(0, 0, 0, 0.5);
-  --shadow-float-strong: 0 2px 10px rgba(0, 0, 0, 0.6);
-  --shadow-card-hover:   0 14px 34px rgba(0, 0, 0, 0.6);
-  --shadow-pop:          0 18px 46px rgba(0, 0, 0, 0.6);
+  // Deepen every elevation on the darker ground by scaling the engine's
+  // elevation factor — one knob drives the whole --shadow-* set (and the
+  // Ignite components' own shadows) instead of six hand-tuned overrides.
+  --ig-elevation-factor: 1.6;
 
   // On the dark card + dark orange tint, the bright brand orange already clears
   // 4.5:1 (≈5.3:1); no need to darken it here.
@@ -358,24 +371,8 @@ $exclude-components: (
   }
 }
 
-// Reduce heading sizes globally
-h1,
-.ig-typography h1 {
-  font-size: 2rem !important; // 32px, was typically 48px
-  line-height: 1.3;
-}
-
-h2,
-.ig-typography h2 {
-  font-size: 1.5rem !important; // 24px, was typically 36px
-  line-height: 1.4;
-}
-
-h3,
-.ig-typography h3 {
-  font-size: 1.25rem !important; // 20px, was typically 28px
-  line-height: 1.4;
-}
+// Heading sizes (h1–h3) now come from the custom $app-type-scale passed to
+// typography() above — see the top of this file. No global !important needed.
 
 body {
   background: var(--bg-body);
