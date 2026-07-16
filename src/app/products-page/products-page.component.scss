@@ -1,3 +1,4 @@
+@use "igniteui-angular/theming" as *;
 :host {
   display: block;
   background-color: var(--bg-body);
@@ -10,22 +11,22 @@
 .page-banner__title {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: rem(6px);
 }
 
 .page-banner__title .copy-link-btn {
   display: inline-flex;
   flex-shrink: 0;
-  padding: 4px;
+  padding: rem(4px);
 
   igx-icon {
-    --ig-icon-size: 16px;
+    --ig-icon-size: #{rem(16px)};
   }
 }
 
 // Search box inside the banner actions.
 .page-banner .search-input {
-  width: 240px;
+  width: rem(240px);
   max-width: 100%;
 
   @media (max-width: 600px) {
@@ -43,8 +44,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 32px;
-  min-height: 32px;
+  min-width: rem(32px);
+  min-height: rem(32px);
   padding: 0;
   border: none;
   background: none;
@@ -63,9 +64,9 @@
 .sort-segmented {
   display: inline-flex;
   background: var(--bg-card);
-  border: 1px solid var(--ig-gray-300);
+  border: rem(1px) solid var(--ig-gray-300);
   border-radius: var(--radius-pill);
-  padding: 3px;
+  padding: rem(3px);
   box-shadow: var(--shadow-card);
   flex-shrink: 0;
 }
@@ -73,9 +74,9 @@
 .sort-option {
   border: 0;
   background: none;
-  padding: 7px 14px;
+  padding: rem(7px) rem(14px);
   border-radius: var(--radius-pill);
-  font-size: 0.8rem;
+  font-size: rem(12.8px);
   font-weight: 600;
   color: var(--ig-gray-700);
   cursor: pointer;
@@ -93,7 +94,7 @@
 }
 
 .result-count {
-  font-size: 0.8125rem;
+  font-size: rem(13px);
   color: var(--ig-gray-700);
   margin: 0;
   white-space: nowrap;
@@ -107,10 +108,10 @@
   justify-content: flex-start;
   align-items: stretch;
   align-content: flex-start;
-  gap: 48px;
+  gap: rem(48px);
   position: relative;
-  min-width: 50px;
-  min-height: 50px;
+  min-width: rem(50px);
+  min-height: rem(50px);
   max-width: 100%;
   overflow-x: hidden;
 
@@ -118,32 +119,32 @@
   .products-inner {
     display: flex;
     flex-direction: column;
-    gap: 56px; // more breathing room between the grid, features and CTA sections
-    max-width: 1440px;
+    gap: rem(56px); // more breathing room between the grid, features and CTA sections
+    max-width: rem(1440px);
     width: 100%;
     margin: 0 auto;
     // 16px side gutters (was 32px) so the grid gets the same card width as the
     // blog grid, which sits in a 16px-padded container.
-    padding: 24px 16px 64px;
+    padding: rem(24px) rem(16px) rem(64px);
     box-sizing: border-box;
 
     // Let the container grow on very large monitors so the 4/5-column grid
     // gets genuinely wide cards instead of being squeezed into a fixed box.
     @media (min-width: 1900px) {
-      max-width: 1800px;
+      max-width: rem(1800px);
     }
 
     @media (min-width: 2400px) {
-      max-width: 2200px;
+      max-width: rem(2200px);
     }
 
     @media (max-width: 768px) {
-      padding: 12px 20px 48px;
-      gap: 32px;
+      padding: rem(12px) rem(20px) rem(48px);
+      gap: rem(32px);
     }
 
     @media (max-width: 480px) {
-      padding: 12px 16px 40px;
+      padding: rem(12px) rem(16px) rem(40px);
     }
   }
 
@@ -153,23 +154,23 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 6px;
-    padding: 48px 24px;
+    gap: rem(6px);
+    padding: rem(48px) rem(24px);
   }
 
   .empty-state-icon {
-    width: 56px;
-    height: 56px;
+    width: rem(56px);
+    height: rem(56px);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     background: color-mix(in srgb, var(--ig-primary-500) 12%, transparent);
     color: var(--ig-primary-500);
-    margin-bottom: 8px;
+    margin-bottom: rem(8px);
 
     igx-icon {
-      --ig-icon-size: 28px;
+      --ig-icon-size: #{rem(28px)};
     }
   }
 
@@ -181,8 +182,8 @@
 
   .empty-state-text {
     color: var(--ig-gray-700);
-    margin: 0 0 12px;
-    font-size: 0.875rem;
+    margin: 0 0 rem(12px);
+    font-size: rem(14px);
   }
 
   // Products Section — no horizontal padding so the grid gets the same card
@@ -191,8 +192,8 @@
   .products-section {
     justify-content: flex-start;
     align-items: stretch;
-    gap: 32px;
-    padding: 8px 0;
+    gap: rem(32px);
+    padding: rem(8px) 0;
     background-color: var(--bg-section-base);
     background-image: var(--bg-section);
     background-size: var(--bg-section-size);
@@ -210,8 +211,8 @@
   .features-section {
     justify-content: flex-start;
     align-items: stretch;
-    gap: 32px;
-    padding: 48px 0px;
+    gap: rem(32px);
+    padding: rem(48px) 0;
     background-color: var(--bg-section-base);
     background-image: var(--bg-section);
     background-size: var(--bg-section-size);
@@ -220,8 +221,8 @@
 
   .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(rem(180px), 1fr));
+    gap: rem(16px);
     width: 100%;
   }
 
@@ -230,12 +231,12 @@
   .feature-item {
     background-color: var(--bg-card);
     border-radius: var(--radius-sm);
-    border: 1px solid var(--ig-gray-300);
+    border: rem(1px) solid var(--ig-gray-300);
     box-shadow: var(--shadow-card);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 
     &:hover {
-      transform: translateY(-4px);
+      transform: translateY(rem(-4px));
       box-shadow: var(--shadow-card-hover);
       border-color: var(--ig-secondary-500); // Green
     }
@@ -246,27 +247,27 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 8px;
-    padding: 16px;
+    gap: rem(8px);
+    padding: rem(16px);
   }
 
   .feature-icon {
-    font-size: 28px;
-    margin-bottom: 2px;
+    font-size: rem(28px);
+    margin-bottom: rem(2px);
   }
 
   .feature-title {
     color: var(--ig-gray-900);
     margin: 0;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: rem(14.4px);
   }
 
   .feature-item p {
     color: var(--ig-gray-700);
     margin: 0;
     line-height: 1.5;
-    font-size: 0.8rem;
+    font-size: rem(12.8px);
   }
 
   // The CTA now uses the shared global .cta-band (see styles.scss) so it matches
@@ -274,32 +275,32 @@
 
   // Responsive Design
   @media (max-width: 768px) {
-    gap: 32px;
-    padding: 16px;
+    gap: rem(32px);
+    padding: rem(16px);
 
     .hero-section {
-      padding: 32px 16px;
+      padding: rem(32px) rem(16px);
     }
 
     .page-title {
-      font-size: 24px;
+      font-size: rem(24px);
       line-height: 1.4;
-      padding: 0 8px;
+      padding: 0 rem(8px);
     }
 
     .page-subtitle {
-      font-size: 18px;
+      font-size: rem(18px);
       line-height: 1.4;
-      padding: 0 8px;
+      padding: 0 rem(8px);
     }
 
     .hero-description {
-      font-size: 14px;
-      padding: 0 8px;
+      font-size: rem(14px);
+      padding: 0 rem(8px);
     }
 
     .products-section {
-      padding: 16px 0;
+      padding: rem(16px) 0;
     }
 
     .features-grid {
@@ -310,17 +311,17 @@
   // Extra small mobile devices
   @media (max-width: 480px) {
     .page-title {
-      font-size: 20px;
+      font-size: rem(20px);
       line-height: 1.5;
     }
 
     .page-subtitle {
-      font-size: 16px;
+      font-size: rem(16px);
     }
 
     .hero-section {
-      padding: 24px 12px;
-      gap: 20px;
+      padding: rem(24px) rem(12px);
+      gap: rem(20px);
     }
   }
 

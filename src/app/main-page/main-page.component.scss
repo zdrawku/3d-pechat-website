@@ -1,3 +1,4 @@
+@use "igniteui-angular/theming" as *;
 @use '../sla-hover' as sla;
 
 :host {
@@ -21,21 +22,21 @@
 .home_section {
   position: relative;
   width: 100%;
-  padding: 48px 32px;
+  padding: rem(48px) rem(32px);
 
   @media (max-width: 768px) {
-    padding: 40px 20px;
+    padding: rem(40px) rem(20px);
   }
 
   @media (max-width: 480px) {
-    padding: 32px 16px;
+    padding: rem(32px) rem(16px);
   }
 }
 
 .section_inner,
 .hero_inner,
 .about_inner {
-  max-width: 1200px;
+  max-width: rem(1200px);
   margin: 0 auto;
   width: 100%;
 }
@@ -43,14 +44,14 @@
 .section_eyebrow {
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  font-size: 0.72rem;
+  font-size: rem(11.52px);
   font-weight: 700;
   color: var(--ig-primary-500);
-  margin: 0 0 8px; // small gap between the kicker and the heading
+  margin: 0 0 rem(8px); // small gap between the kicker and the heading
 }
 
 .section_heading {
-  font-size: 1.75rem;
+  font-size: rem(28px);
   line-height: 1.15;
   font-weight: 750;
   letter-spacing: -0.02em;
@@ -59,17 +60,17 @@
   text-wrap: balance;
 
   @media (max-width: 480px) {
-    font-size: 1.4rem;
+    font-size: rem(22.4px);
   }
 }
 
 // Optional supporting line under a section heading — sits close to the heading
 // as part of the header block.
 .section_sub {
-  margin: 10px 0 0;
+  margin: rem(10px) 0 0;
   max-width: 60ch;
   color: var(--ig-gray-700);
-  font-size: 0.95rem;
+  font-size: rem(15.2px);
   line-height: 1.6;
 }
 
@@ -81,7 +82,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 16px;
+  height: rem(16px);
   background: var(--seam);
   pointer-events: none;
 }
@@ -90,62 +91,62 @@
 .row_layout_main_hero {
   position: relative;
   background: var(--bg-hero);
-  border-bottom: 1px solid var(--line, var(--ig-gray-300));
-  padding: 40px 32px 20px; // was 21px — snapped to the 4px grid
+  border-bottom: rem(1px) solid var(--line, var(--ig-gray-300));
+  padding: rem(40px) rem(32px) rem(20px); // was 21px — snapped to the 4px grid
   width: 100%;
   overflow-x: hidden;
 
   @media (max-width: 768px) {
-    padding: 32px 20px;
+    padding: rem(32px) rem(20px);
   }
 
   @media (max-width: 480px) {
-    padding: 24px 16px;
+    padding: rem(24px) rem(16px);
   }
 }
 
 .hero_inner {
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
-  gap: 44px;
+  gap: rem(44px);
   align-items: center;
 
   @media (max-width: 860px) {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: rem(32px);
   }
 }
 
 .hero_chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 18px;
+  gap: rem(8px);
+  margin-bottom: rem(18px);
 }
 
 .hero_chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.75rem;
+  gap: rem(6px);
+  font-size: rem(12px);
   font-weight: 600;
   color: var(--ig-gray-900);
   background: var(--bg-card);
-  border: 1px solid var(--line, var(--ig-gray-300));
-  padding: 6px 11px;
+  border: rem(1px) solid var(--line, var(--ig-gray-300));
+  padding: rem(6px) rem(11px);
   border-radius: var(--radius-pill);
   box-shadow: var(--shadow-card);
 }
 
 .chip_dot {
-  width: 7px;
-  height: 7px;
+  width: rem(7px);
+  height: rem(7px);
   border-radius: 50%;
   background: var(--ig-secondary-500);
 }
 
 .hero_title {
-  font-size: clamp(1.9rem, 4.5vw, 2.75rem);
+  font-size: clamp(rem(30.4px), 4.5vw, rem(44px));
   line-height: 1.1;
   font-weight: 800;
   letter-spacing: -0.025em;
@@ -155,10 +156,10 @@
 }
 
 .hero_desc {
-  font-size: 1rem;
+  font-size: rem(16px);
   line-height: 1.7;
   color: var(--ig-gray-700);
-  margin: 18px 0 0;
+  margin: rem(18px) 0 0;
   max-width: 56ch;
 
   @media (max-width: 860px) {
@@ -168,14 +169,14 @@
 
 .hero_cta_row {
   display: flex;
-  gap: 12px;
-  margin-top: 26px;
+  gap: rem(12px);
+  margin-top: rem(26px);
   flex-wrap: wrap;
 }
 
 .hero_note {
-  margin-top: 16px;
-  font-size: 0.8125rem;
+  margin-top: rem(16px);
+  font-size: rem(13px);
   color: var(--ig-gray-700);
 }
 
@@ -191,7 +192,7 @@
 // bottom-up in fine layer steps, orange nozzle shuttles over the printer area =====
 .hero_print_frame {
   position: relative;
-  border-radius: 18px;
+  border-radius: rem(18px);
   overflow: hidden;
   box-shadow: var(--shadow-pop);
 }
@@ -199,13 +200,13 @@
 .hero_image_main {
   width: 100%;
   height: auto;
-  max-height: 420px;
+  max-height: rem(420px);
   object-fit: cover;
   display: block;
   filter: grayscale(1);
 
   @media (max-width: 480px) {
-    max-height: 280px;
+    max-height: rem(280px);
   }
 }
 
@@ -228,13 +229,13 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: calc(100% - 3px);
-  height: 3px;
-  border-radius: 2px;
+  top: calc(100% - rem(3px));
+  height: rem(3px);
+  border-radius: rem(2px);
   opacity: 0;
   pointer-events: none;
   background: linear-gradient(90deg, rgba(124, 77, 255, 0), #b388ff, rgba(124, 77, 255, 0));
-  box-shadow: 0 0 8px 2px rgba(124, 77, 255, 0.75), 0 0 30px 8px rgba(124, 77, 255, 0.35);
+  box-shadow: 0 0 rem(8px) rem(2px) rgba(124, 77, 255, 0.75), 0 0 rem(30px) rem(8px) rgba(124, 77, 255, 0.35);
   animation: heroLaserMove 7s steps(34) infinite;
 
   &::before {
@@ -242,18 +243,18 @@
     position: absolute;
     left: 0;
     right: 0;
-    top: 3px;
-    height: 44px;
+    top: rem(3px);
+    height: rem(44px);
     background: linear-gradient(to bottom, rgba(124, 77, 255, 0.3), transparent);
   }
 }
 
 .hero_nozzle {
   position: absolute;
-  width: 20px;
-  height: 16px;
+  width: rem(20px);
+  height: rem(16px);
   left: 24%;
-  top: calc(100% - 19px);
+  top: calc(100% - rem(19px));
   opacity: 0;
   pointer-events: none;
   animation:
@@ -273,12 +274,12 @@
     position: absolute;
     top: 100%;
     left: 50%;
-    width: 5px;
-    height: 5px;
+    width: rem(5px);
+    height: rem(5px);
     transform: translate(-50%, -60%);
     border-radius: 50%;
     background: #fff3e0;
-    box-shadow: 0 0 8px 3px rgba(255, 138, 101, 0.95), 0 0 18px 7px rgba(255, 87, 34, 0.45);
+    box-shadow: 0 0 rem(8px) rem(3px) rgba(255, 138, 101, 0.95), 0 0 rem(18px) rem(7px) rgba(255, 87, 34, 0.45);
   }
 }
 
@@ -289,23 +290,23 @@
 }
 
 @keyframes heroLaserMove {
-  0% { top: calc(100% - 3px); opacity: 0; }
-  6% { top: calc(100% - 3px); opacity: 1; }
+  0% { top: calc(100% - rem(3px)); opacity: 0; }
+  6% { top: calc(100% - rem(3px)); opacity: 1; }
   80% { top: 0; opacity: 1; }
   86%, 100% { top: 0; opacity: 0; }
 }
 
 @keyframes heroNozzleMove {
-  0% { top: calc(100% - 19px); opacity: 0; }
-  6% { top: calc(100% - 19px); opacity: 1; }
-  80% { top: -16px; opacity: 1; }
-  86%, 100% { top: -16px; opacity: 0; }
+  0% { top: calc(100% - rem(19px)); opacity: 0; }
+  6% { top: calc(100% - rem(19px)); opacity: 1; }
+  80% { top: rem(-16px); opacity: 1; }
+  86%, 100% { top: rem(-16px); opacity: 0; }
 }
 
 // nozzle shuttles only over the printer area of the photo, not the full frame
 @keyframes heroNozzleShuttle {
   from { left: 24%; }
-  to { left: calc(76% - 20px); }
+  to { left: calc(76% - rem(20px)); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -322,36 +323,36 @@
 
 .hero_stat {
   position: absolute;
-  left: -14px;
-  bottom: 20px;
+  left: rem(-14px);
+  bottom: rem(20px);
   display: flex;
   flex-direction: column;
-  border: 1px solid transparent;
+  border: rem(1px) solid transparent;
   background:
     linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
     linear-gradient(135deg, var(--ig-primary-500), var(--ig-info-500)) border-box;
-  border-radius: 14px;
-  padding: 12px 16px;
+  border-radius: rem(14px);
+  padding: rem(12px) rem(16px);
   box-shadow: var(--shadow-card);
 
   @media (max-width: 480px) {
-    left: 8px;
-    bottom: 8px;
-    padding: 8px 12px;
+    left: rem(8px);
+    bottom: rem(8px);
+    padding: rem(8px) rem(12px);
   }
 }
 
 .hero_stat_n {
-  font-size: 1.4rem;
+  font-size: rem(22.4px);
   font-weight: 800;
   color: var(--ig-primary-500);
   line-height: 1;
 }
 
 .hero_stat_l {
-  font-size: 0.7rem;
+  font-size: rem(11.2px);
   color: var(--ig-gray-700);
-  margin-top: 2px;
+  margin-top: rem(2px);
 }
 
 // ===================== SHARED BUTTONS =====================
@@ -367,19 +368,19 @@
   color: var(--ig-primary-500-contrast);
   border-color: var(--ig-primary-500);
   border-radius: var(--radius-pill);
-  padding: 12px 24px;
+  padding: rem(12px) rem(24px);
   font-weight: 700;
-  box-shadow: 0 6px 18px color-mix(in srgb, var(--ig-primary-500) 40%, transparent);
+  box-shadow: 0 rem(6px) rem(18px) color-mix(in srgb, var(--ig-primary-500) 40%, transparent);
   will-change: transform;
   transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease, filter 0.28s ease;
 
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(rem(-2px));
     filter: brightness(1.05);
     background: var(--ig-primary-500);
     color: var(--ig-primary-500-contrast);
     border-color: var(--ig-primary-500);
-    box-shadow: 0 10px 24px color-mix(in srgb, var(--ig-primary-500) 44%, transparent);
+    box-shadow: 0 rem(10px) rem(24px) color-mix(in srgb, var(--ig-primary-500) 44%, transparent);
   }
 
   &:active,
@@ -398,7 +399,7 @@
   --ig-size: var(--ig-size-medium);
   height: max-content;
   border-radius: var(--radius-pill);
-  padding: 12px 24px;
+  padding: rem(12px) rem(24px);
   font-weight: 700;
 }
 
@@ -412,8 +413,8 @@
 .props_grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
-  margin-top: 40px;
+  gap: rem(18px);
+  margin-top: rem(40px);
 
   @media (max-width: 860px) {
     grid-template-columns: repeat(2, 1fr);
@@ -429,7 +430,7 @@
 // igx-card-content (.prop_card_body) since igx-card itself is padding-less.
 .prop_card {
   background: var(--bg-card);
-  border: 1px solid var(--line, var(--ig-gray-300));
+  border: rem(1px) solid var(--line, var(--ig-gray-300));
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
 
@@ -437,31 +438,31 @@
 }
 
 .prop_card_body {
-  padding: 24px 20px;
+  padding: rem(24px) rem(20px);
 }
 
 .prop_icon {
-  width: 46px;
-  height: 46px;
+  width: rem(46px);
+  height: rem(46px);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
+  font-size: rem(22.4px);
   background: color-mix(in srgb, var(--ig-primary-500) 14%, transparent);
-  margin-bottom: 14px;
+  margin-bottom: rem(14px);
 }
 
 .prop_title {
-  margin: 0 0 6px;
-  font-size: 1rem;
+  margin: 0 0 rem(6px);
+  font-size: rem(16px);
   font-weight: 700;
   color: var(--ig-gray-900);
 }
 
 .prop_text {
   margin: 0;
-  font-size: 0.85rem;
+  font-size: rem(13.6px);
   color: var(--ig-gray-700);
   line-height: 1.55;
 }
@@ -474,10 +475,10 @@
 .process_steps {
   list-style: none;
   padding: 0;
-  margin: 40px 0 0;
+  margin: rem(40px) 0 0;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: rem(16px);
 
   @media (max-width: 860px) {
     grid-template-columns: repeat(2, 1fr);
@@ -499,7 +500,7 @@
 .process_step {
   flex: 1;
   background: var(--bg-card);
-  border: 1px solid var(--line, var(--ig-gray-300));
+  border: rem(1px) solid var(--line, var(--ig-gray-300));
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
 
@@ -507,33 +508,33 @@
 }
 
 .process_step_body {
-  padding: 22px 18px 20px;
+  padding: rem(22px) rem(18px) rem(20px);
 }
 
 .step_num {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: rem(30px);
+  height: rem(30px);
   border-radius: 50%;
-  font-size: 0.8rem;
+  font-size: rem(12.8px);
   font-weight: 800;
   color: var(--ig-primary-500-contrast);
   background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500));
-  margin-bottom: 12px;
+  margin-bottom: rem(12px);
 }
 
 .step_title {
-  margin: 0 0 6px;
-  font-size: 0.95rem;
+  margin: 0 0 rem(6px);
+  font-size: rem(15.2px);
   font-weight: 700;
   color: var(--ig-gray-900);
 }
 
 .step_text {
   margin: 0;
-  font-size: 0.8125rem;
+  font-size: rem(13px);
   color: var(--ig-gray-700);
   line-height: 1.5;
 }
@@ -544,28 +545,28 @@
   background-color: var(--bg-section-base);
   background-image: var(--bg-section);
   background-size: var(--bg-section-size);
-  padding: 48px 32px;
+  padding: rem(48px) rem(32px);
   width: 100%;
   overflow: hidden;
 
   @media (max-width: 768px) {
-    padding: 40px 20px;
+    padding: rem(40px) rem(20px);
   }
 
   @media (max-width: 480px) {
-    padding: 32px 16px;
+    padding: rem(32px) rem(16px);
   }
 }
 
 .about_inner {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  gap: rem(40px);
   align-items: center;
 
   @media (max-width: 860px) {
     grid-template-columns: 1fr;
-    gap: 28px;
+    gap: rem(28px);
   }
 }
 
@@ -574,26 +575,26 @@
 }
 
 .about_cta {
-  margin-top: 22px;
+  margin-top: rem(22px);
 }
 
 .title_1 {
   color: var(--ig-gray-900);
-  font-size: 1.6rem;
+  font-size: rem(25.6px);
   font-weight: 750;
   letter-spacing: -0.02em;
-  margin: 0 0 4px;
+  margin: 0 0 rem(4px);
 
   @media (max-width: 480px) {
-    font-size: 1.35rem;
+    font-size: rem(21.6px);
   }
 }
 
 .title_2 {
   color: var(--ig-gray-700);
   line-height: 1.7;
-  font-size: 0.95rem;
-  margin: 14px 0 0;
+  font-size: rem(15.2px);
+  margin: rem(14px) 0 0;
 }
 
 .about_media {
@@ -602,17 +603,17 @@
 
 .carousel_1 {
   width: 100%;
-  height: 420px;
-  min-height: 300px;
+  height: rem(420px);
+  min-height: rem(300px);
 
   @media (max-width: 860px) {
-    height: 360px;
+    height: rem(360px);
     order: -1;
   }
 
   @media (max-width: 480px) {
-    height: 280px;
-    min-height: 240px;
+    height: rem(280px);
+    min-height: rem(240px);
   }
 
   // Restyle the prev/next arrows and dot indicators to match the site: circular

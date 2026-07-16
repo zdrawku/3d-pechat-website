@@ -1,3 +1,4 @@
+@use "igniteui-angular/theming" as *;
 :host {
   display: block;
   background-color: var(--bg-body);
@@ -6,16 +7,16 @@
 }
 
 .contact-page {
-  max-width: 1000px;
+  max-width: rem(1000px);
   margin: 0 auto;
-  padding: 48px 32px 64px;
+  padding: rem(48px) rem(32px) rem(64px);
 
   @media (max-width: 768px) {
-    padding: 32px 20px 48px;
+    padding: rem(32px) rem(20px) rem(48px);
   }
 
   @media (max-width: 480px) {
-    padding: 24px 16px 40px;
+    padding: rem(24px) rem(16px) rem(40px);
   }
 }
 
@@ -26,8 +27,8 @@
 .contact-shell {
   display: grid;
   grid-template-columns: 0.85fr 1.15fr;
-  border: 1px solid var(--ig-gray-300);
-  border-radius: 20px;
+  border: rem(1px) solid var(--ig-gray-300);
+  border-radius: rem(20px);
   overflow: hidden;
 
   @media (max-width: 820px) {
@@ -41,7 +42,7 @@
   overflow: hidden;
   background: linear-gradient(160deg, var(--ig-primary-500) 0%, var(--ig-primary-400) 55%, #E64A19 100%);
   color: #fff;
-  padding: 36px 30px;
+  padding: rem(36px) rem(30px);
 
   &::after {
     content: "";
@@ -52,36 +53,36 @@
   }
 
   @media (max-width: 480px) {
-    padding: 28px 22px;
+    padding: rem(28px) rem(22px);
   }
 }
 
 .info-title {
-  font-size: 1.35rem;
+  font-size: rem(21.6px);
   font-weight: 750;
-  margin: 0 0 8px;
+  margin: 0 0 rem(8px);
   position: relative;
 }
 
 .info-lead {
   color: rgba(255, 255, 255, 0.9);
-  font-size: 0.85rem;
-  margin: 0 0 26px;
+  font-size: rem(13.6px);
+  margin: 0 0 rem(26px);
   position: relative;
 }
 
 .info-row {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 18px;
+  gap: rem(12px);
+  margin-bottom: rem(18px);
   position: relative;
 }
 
 .info-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
+  width: rem(36px);
+  height: rem(36px);
+  border-radius: rem(10px);
   background: rgba(255, 255, 255, 0.16);
   display: flex;
   align-items: center;
@@ -93,13 +94,13 @@
 .info-text {
   display: flex;
   flex-direction: column;
-  font-size: 0.8125rem;
-  padding-top: 4px;
+  font-size: rem(13px);
+  padding-top: rem(4px);
 
   b {
     display: block;
-    font-size: 0.85rem;
-    margin-bottom: 2px;
+    font-size: rem(13.6px);
+    margin-bottom: rem(2px);
   }
 
   a {
@@ -115,26 +116,26 @@
 .contact-info .viber-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: rem(6px);
   background: #fff;
   // Shared accessible orange on the white pill (was #E64A19 @ 3.9:1 — failed).
   color: var(--accent-on-light);
   --foreground: var(--accent-on-light);
   --ig-icon-color: var(--accent-on-light);
-  --ig-icon-size: 14px;
+  --ig-icon-size: #{rem(14px)};
   font-weight: 700;
-  font-size: 0.7rem;
-  padding: 6px 12px;
+  font-size: rem(11.2px);
+  padding: rem(6px) rem(12px);
   border-radius: var(--radius-pill);
-  margin-top: 6px;
+  margin-top: rem(6px);
   width: fit-content;
   height: max-content;
 }
 
 .social-row {
   display: flex;
-  gap: 10px;
-  margin-top: 24px;
+  gap: rem(10px);
+  margin-top: rem(24px);
   position: relative;
   flex-wrap: wrap;
 }
@@ -143,15 +144,15 @@
 .contact-info .social-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: rem(6px);
   background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: rem(1px) solid rgba(255, 255, 255, 0.3);
   color: #fff;
   --foreground: #fff;
-  --ig-icon-size: 16px;
+  --ig-icon-size: #{rem(16px)};
   font-weight: 600;
-  font-size: 0.75rem;
-  padding: 8px 14px;
+  font-size: rem(12px);
+  padding: rem(8px) rem(14px);
   border-radius: var(--radius-pill);
   height: max-content;
 }
@@ -159,29 +160,29 @@
 .response-note {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin: 28px 0 0;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.25);
-  font-size: 0.75rem;
+  gap: rem(6px);
+  margin: rem(28px) 0 0;
+  padding-top: rem(20px);
+  border-top: rem(1px) solid rgba(255, 255, 255, 0.25);
+  font-size: rem(12px);
   color: rgba(255, 255, 255, 0.85);
   position: relative;
-  --ig-icon-size: 16px;
+  --ig-icon-size: #{rem(16px)};
 }
 
 // ===================== FORM PANEL =====================
 .contact-form-wrap {
   background: var(--bg-card);
-  padding: 36px 34px;
+  padding: rem(36px) rem(34px);
 
   @media (max-width: 480px) {
-    padding: 26px 20px;
+    padding: rem(26px) rem(20px);
   }
 }
 
 .form-title {
-  margin: 0 0 20px;
-  font-size: 1rem;
+  margin: 0 0 rem(20px);
+  font-size: rem(16px);
   font-weight: 750;
   color: var(--ig-gray-900);
 }
@@ -189,8 +190,8 @@
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  margin-bottom: 6px;
+  gap: rem(14px);
+  margin-bottom: rem(6px);
 
   @media (max-width: 480px) {
     grid-template-columns: 1fr;
@@ -215,24 +216,24 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: rem(8px);
   width: 100%;
-  margin-top: 18px;
+  margin-top: rem(18px);
   --background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500) 70%);
   background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500) 70%);
   --foreground: var(--ig-primary-500-contrast);
   color: var(--ig-primary-500-contrast);
   font-weight: 700;
   border-radius: var(--radius-pill);
-  box-shadow: 0 6px 18px color-mix(in srgb, var(--ig-primary-500) 38%, transparent);
+  box-shadow: 0 rem(6px) rem(18px) color-mix(in srgb, var(--ig-primary-500) 38%, transparent);
   transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
   --ig-icon-color: var(--ig-primary-500-contrast);
-  --ig-icon-size: 16px;
+  --ig-icon-size: #{rem(16px)};
 
   &:hover:not(:disabled) {
-    transform: translateY(-2px);
+    transform: translateY(rem(-2px));
     filter: brightness(1.05);
-    box-shadow: 0 8px 22px color-mix(in srgb, var(--ig-primary-500) 46%, transparent);
+    box-shadow: 0 rem(8px) rem(22px) color-mix(in srgb, var(--ig-primary-500) 46%, transparent);
   }
 
   &:disabled {
@@ -243,21 +244,21 @@
 
 // ===================== FILE UPLOAD =====================
 .file-field {
-  gap: 8px;
+  gap: rem(8px);
 }
 
 .file-label {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.8125rem;
+  gap: rem(6px);
+  font-size: rem(13px);
   font-weight: 600;
   color: var(--ig-gray-900);
 
   span {
     font-weight: 400;
     color: var(--ig-gray-700);
-    font-size: 0.72rem;
+    font-size: rem(11.52px);
   }
 }
 
@@ -267,8 +268,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
+  width: rem(18px);
+  height: rem(18px);
   border: none;
   border-radius: 50%;
   background: color-mix(in srgb, var(--ig-primary-500) 14%, transparent);
@@ -278,7 +279,7 @@
   transition: background-color 0.2s ease;
 
   igx-icon {
-    --ig-icon-size: 12px;
+    --ig-icon-size: #{rem(12px)};
   }
 
   &:hover {
@@ -289,8 +290,8 @@
 // Tooltip content renders in a global overlay outside this component, so it
 // needs ::ng-deep (same reason as .custom-tooltip in product-grid.component.scss).
 ::ng-deep .file-info-tooltip {
-  max-width: 220px;
-  font-size: 0.72rem;
+  max-width: rem(220px);
+  font-size: rem(11.52px);
   line-height: 1.4;
   text-align: left;
 }
@@ -299,19 +300,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 14px;
-  border: 1.5px dashed var(--ig-gray-400);
+  gap: rem(8px);
+  padding: rem(14px);
+  border: rem(1.5px) dashed var(--ig-gray-400);
   border-radius: var(--radius-md);
   background: var(--bg-body);
   color: var(--ig-gray-700);
-  font-size: 0.8125rem;
+  font-size: rem(13px);
   font-weight: 600;
   cursor: pointer;
   transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
 
   igx-icon {
-    --ig-icon-size: 20px;
+    --ig-icon-size: #{rem(20px)};
   }
 
   &:hover {
@@ -321,8 +322,8 @@
   }
 
   &:focus-within {
-    outline: 2px solid var(--ig-primary-500);
-    outline-offset: 2px;
+    outline: rem(2px) solid var(--ig-primary-500);
+    outline-offset: rem(2px);
   }
 }
 
@@ -332,21 +333,21 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: rem(6px);
 }
 
 .file-chip {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 7px 10px;
-  border-radius: 10px;
+  gap: rem(8px);
+  padding: rem(7px) rem(10px);
+  border-radius: rem(10px);
   background: var(--bg-card);
-  border: 1px solid var(--ig-gray-300);
-  font-size: 0.78rem;
+  border: rem(1px) solid var(--ig-gray-300);
+  font-size: rem(12.48px);
 
   > igx-icon {
-    --ig-icon-size: 16px;
+    --ig-icon-size: #{rem(16px)};
     --ig-icon-color: var(--ig-secondary-500);
     flex-shrink: 0;
   }
@@ -365,8 +366,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: rem(22px);
+  height: rem(22px);
   border: none;
   border-radius: 50%;
   background: transparent;
@@ -376,7 +377,7 @@
   transition: background-color 0.2s ease, color 0.2s ease;
 
   igx-icon {
-    --ig-icon-size: 15px;
+    --ig-icon-size: #{rem(15px)};
   }
 
   &:hover {
@@ -386,11 +387,11 @@
 }
 
 .form-status {
-  margin: 12px 0 0;
-  padding: 12px 16px;
+  margin: rem(12px) 0 0;
+  padding: rem(12px) rem(16px);
   border-radius: var(--radius-sm);
   text-align: center;
-  font-size: 0.85rem;
+  font-size: rem(13.6px);
 }
 
 .form-status--success {

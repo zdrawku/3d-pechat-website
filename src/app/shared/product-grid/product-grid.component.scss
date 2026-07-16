@@ -1,8 +1,9 @@
+@use "igniteui-angular/theming" as *;
 // Products Grid — comfortable card size on desktop, still multiple per row.
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(288px, 1fr));
-  gap: 22px;
+  grid-template-columns: repeat(auto-fill, minmax(rem(288px), 1fr));
+  gap: rem(22px);
   width: 100%;
 
   // Lock to 3 wide columns through desktop and laptop widths — auto-fill was
@@ -27,16 +28,16 @@
 
 .product-card {
   background-color: var(--bg-card);
-  border-radius: 14px;
+  border-radius: rem(14px);
   overflow: hidden;
   box-shadow: var(--shadow-card);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--ig-gray-300);
+  border: rem(1px) solid var(--ig-gray-300);
 
   &:hover {
-    transform: translateY(-4px);
+    transform: translateY(rem(-4px));
     box-shadow: var(--shadow-card-hover);
   }
 }
@@ -47,19 +48,19 @@
   position: relative;
   width: 100%;
   background-color: var(--ig-gray-100);
-  border-bottom: 1px solid var(--ig-gray-300);
+  border-bottom: rem(1px) solid var(--ig-gray-300);
 }
 
 .image-container {
   position: relative;
   width: 100%;
-  height: 210px;
+  height: rem(210px);
   overflow: hidden;
 
   // Wider cards on large screens read as squashed at 210px — taller image
   // keeps the card's proportions comfortable instead of dense.
   @media (min-width: 1200px) {
-    height: 260px;
+    height: rem(260px);
   }
 
   // Reveal the flip controls only on hover/focus so the card reads clean at rest.
@@ -106,7 +107,7 @@
 
 .card-image.padded-image {
   object-fit: contain;
-  padding: 1px;
+  padding: rem(1px);
   background-color: var(--bg-card);
 }
 
@@ -132,8 +133,8 @@
   background-color: rgba(255, 255, 255, 0.95);
   color: var(--accent-on-light); // ≥4.5:1 on the light circle in both themes
   border-radius: 50%;
-  width: 34px;
-  height: 34px;
+  width: rem(34px);
+  height: rem(34px);
   transition: background-color 0.3s ease, transform 0.2s ease, opacity 0.2s ease;
 
   &:hover {
@@ -147,25 +148,25 @@
 }
 
 .prev-btn {
-  left: 8px;
+  left: rem(8px);
 }
 
 .next-btn {
-  right: 8px;
+  right: rem(8px);
 }
 
 // Small "flip me" hint badge — replaces always-visible arrows at rest.
 .flip-hint {
   position: absolute;
-  bottom: 8px;
-  right: 8px;
+  bottom: rem(8px);
+  right: rem(8px);
   z-index: 10;
   background: rgba(0, 0, 0, 0.55);
   color: #fff;
-  font-size: 0.6rem;
+  font-size: rem(9.6px);
   font-weight: 700;
   letter-spacing: 0.02em;
-  padding: 3px 7px;
+  padding: rem(3px) rem(7px);
   border-radius: var(--radius-pill);
   pointer-events: none;
 }
@@ -173,17 +174,17 @@
 // Side Indicator (dots)
 .side-indicator {
   position: absolute;
-  bottom: 8px;
+  bottom: rem(8px);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 6px;
+  gap: rem(6px);
   z-index: 10;
 }
 
 .indicator-dot {
-  width: 6px;
-  height: 6px;
+  width: rem(6px);
+  height: rem(6px);
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.55);
   transition: background-color 0.3s ease, transform 0.2s ease;
@@ -195,24 +196,24 @@
 }
 
 .card-content {
-  padding: 14px 14px 12px;
+  padding: rem(14px) rem(14px) rem(12px);
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: rem(6px);
 
   // Wider cards on large screens have room to breathe — scale up padding
   // so content doesn't look lost in the card.
   @media (min-width: 1200px) {
-    padding: 20px 20px 16px;
-    gap: 8px;
+    padding: rem(20px) rem(20px) rem(16px);
+    gap: rem(8px);
   }
 }
 
 .card-top-row {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
+  gap: rem(8px);
 }
 
 // The title is an <h2>, so the type scale's `.ig-typography h2` (0,1,1) rule
@@ -223,7 +224,7 @@
   margin: 0;
   font-weight: 700;
   line-height: 1.3;
-  font-size: 0.85rem;
+  font-size: rem(13.6px);
   flex: 1;
   min-width: 0;
   display: -webkit-box;
@@ -234,7 +235,7 @@
   text-overflow: ellipsis;
 
   @media (min-width: 1200px) {
-    font-size: 1.15rem;
+    font-size: rem(18.4px);
   }
 }
 
@@ -252,8 +253,8 @@
 // Ensure the card's copy-link button clears a 32×32 touch target (the global
 // .copy-link-btn only pads 6px around a 16px icon ≈ 28px).
 .copy-link-btn {
-  min-width: 32px;
-  min-height: 32px;
+  min-width: rem(32px);
+  min-height: rem(32px);
   box-sizing: border-box;
   transition: color 0.15s ease;
 
@@ -267,8 +268,8 @@
 // "More info" trigger for products with customContent — replaces the
 // always-visible callout box with an icon + tooltip so cards stay compact.
 .info-btn {
-  width: 32px;
-  height: 32px;
+  width: rem(32px);
+  height: rem(32px);
   border: none;
   border-radius: 50%;
   display: flex;
@@ -284,7 +285,7 @@
   // Icon colour + size via Ignite's icon tokens (axe flagged the default theme
   // icon colour as low-contrast on the tint); --accent-on-tint clears 4.5:1.
   --ig-icon-color: var(--accent-on-tint);
-  --ig-icon-size: 16px;
+  --ig-icon-size: #{rem(16px)};
 
   &:hover {
     // 18% (not higher) so the accent still clears 4.5:1 on the hover tint in
@@ -299,14 +300,14 @@
   color: var(--ig-gray-700);
   line-height: 1.5;
   margin: 0;
-  font-size: 0.85rem;
+  font-size: rem(13.6px);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 
   @media (min-width: 1200px) {
-    font-size: 0.85rem;
+    font-size: rem(13.6px);
   }
 }
 
@@ -314,23 +315,23 @@
 .product-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: rem(4px);
 }
 
 .product-tag {
-  font-size: 0.6rem;
+  font-size: rem(9.6px);
   font-weight: 700;
   // --accent-on-tint (not --ig-primary-500) — orange text on its own 12% orange
   // tint is only 4.32:1 in light theme; the token clears 4.5:1 in both themes.
   color: var(--accent-on-tint);
   background: color-mix(in srgb, var(--ig-primary-500) 12%, transparent);
-  padding: 2px 8px;
+  padding: rem(2px) rem(8px);
   border-radius: var(--radius-pill);
   white-space: nowrap;
 
   @media (min-width: 1200px) {
-    font-size: 0.7rem;
-    padding: 3px 10px;
+    font-size: rem(11.2px);
+    padding: rem(3px) rem(10px);
   }
 }
 
@@ -351,7 +352,7 @@
   &::after {
     content: "";
     position: absolute;
-    inset: -6px;
+    inset: rem(-6px);
   }
 }
 
@@ -368,13 +369,13 @@
 // it to the same element), giving 0,2,0 — this out-specifies the tooltip
 // theme's .igx-tooltip rule (0,1,0) so no !important is needed.
 ::ng-deep .igx-tooltip.custom-tooltip {
-  width: 300px;
-  max-width: 300px;
+  width: rem(300px);
+  max-width: rem(300px);
   background-color: var(--bg-card);
-  border: 1px solid var(--ig-gray-300);
-  border-left: 3px solid var(--ig-primary-500);
-  border-radius: 10px;
-  padding: 14px 16px;
+  border: rem(1px) solid var(--ig-gray-300);
+  border-left: rem(3px) solid var(--ig-primary-500);
+  border-radius: rem(10px);
+  padding: rem(14px) rem(16px);
   box-shadow: var(--shadow-card);
   white-space: normal;
   text-align: left;
@@ -384,13 +385,13 @@
   .custom-note {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: rem(8px);
     color: var(--ig-gray-900);
-    margin: 0 0 10px 0;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--ig-gray-200);
+    margin: 0 0 rem(10px) 0;
+    padding-bottom: rem(10px);
+    border-bottom: rem(1px) solid var(--ig-gray-200);
     font-weight: 700;
-    font-size: 0.8rem;
+    font-size: rem(12.8px);
     line-height: 1.3;
 
     &::before {
@@ -399,11 +400,11 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 22px;
-      height: 22px;
-      border-radius: 6px;
+      width: rem(22px);
+      height: rem(22px);
+      border-radius: rem(6px);
       background: color-mix(in srgb, var(--ig-primary-500) 14%, transparent);
-      font-size: 0.8rem;
+      font-size: rem(12.8px);
     }
   }
 
@@ -413,13 +414,13 @@
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 7px;
+    gap: rem(7px);
 
     li {
       color: var(--ig-gray-800);
-      font-size: 0.76rem;
+      font-size: rem(12.16px);
       line-height: 1.35;
-      padding-left: 22px;
+      padding-left: rem(22px);
       position: relative;
 
       &::before {
@@ -439,16 +440,16 @@
 ::ng-deep .igx-tooltip.tags-tooltip {
   background-color: var(--ig-gray-900);
   color: var(--ig-gray-900-contrast);
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 0.75rem;
-  max-width: 240px;
+  border-radius: rem(6px);
+  padding: rem(8px) rem(12px);
+  font-size: rem(12px);
+  max-width: rem(240px);
   box-shadow: var(--shadow-float);
 }
 
 .card-actions {
-  padding: 10px 14px 14px;
-  border-top: 1px solid var(--ig-gray-300);
+  padding: rem(10px) rem(14px) rem(14px);
+  border-top: rem(1px) solid var(--ig-gray-300);
   display: flex;
   justify-content: center;
 }
@@ -458,33 +459,33 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: rem(6px);
   --background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500) 70%);
   background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500) 70%);
   --foreground: var(--ig-primary-500-contrast);
   color: var(--ig-primary-500-contrast);
   border: none;
   border-radius: var(--radius-pill);
-  font-size: 0.8rem;
+  font-size: rem(12.8px);
   font-weight: 700;
-  box-shadow: 0 4px 14px color-mix(in srgb, var(--ig-primary-500) 38%, transparent);
+  box-shadow: 0 rem(4px) rem(14px) color-mix(in srgb, var(--ig-primary-500) 38%, transparent);
   transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
   // Icon colour/size via Ignite's icon tokens — the default theme icon colour is
   // near-black, which is why the arrow rendered black on the orange fill.
   --ig-icon-color: var(--ig-primary-500-contrast);
-  --ig-icon-size: 16px;
+  --ig-icon-size: #{rem(16px)};
 
   igx-icon {
     transition: transform 0.2s ease;
   }
 
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(rem(-2px));
     filter: brightness(1.05);
-    box-shadow: 0 6px 18px color-mix(in srgb, var(--ig-primary-500) 46%, transparent);
+    box-shadow: 0 rem(6px) rem(18px) color-mix(in srgb, var(--ig-primary-500) 46%, transparent);
 
     igx-icon {
-      transform: translateX(2px);
+      transform: translateX(rem(2px));
     }
   }
 }
@@ -492,23 +493,23 @@
 // Responsive Design
 @media (max-width: 768px) {
   .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(rem(240px), 1fr));
+    gap: rem(16px);
   }
 
   .image-container {
-    height: 190px;
+    height: rem(190px);
   }
 }
 
 @media (max-width: 480px) {
   .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(rem(160px), 1fr));
+    gap: rem(12px);
   }
 
   .image-container {
-    height: 150px;
+    height: rem(150px);
 
     // Touch devices can't hover — keep flip controls visible on mobile.
     .carousel-nav,
@@ -523,12 +524,12 @@
 ::ng-deep .igx-tooltip.product-tooltip {
   background-color: var(--ig-gray-900);
   color: var(--ig-gray-900-contrast);
-  font-size: 1rem; // Larger font size
-  padding: 8px 12px;
-  border-radius: 6px;
+  font-size: rem(16px); // Larger font size
+  padding: rem(8px) rem(12px);
+  border-radius: rem(6px);
   box-shadow: var(--shadow-float);
   text-align: center;
-  max-width: 250px;
+  max-width: rem(250px);
 }
 
 // The description can run several lines, so its tooltip is wider and left-aligned
@@ -536,8 +537,8 @@
 // rule comes after .product-tooltip at equal specificity, so it wins by order.
 ::ng-deep .igx-tooltip.description-tooltip {
   text-align: left;
-  max-width: 320px;
-  font-size: 0.9rem;
+  max-width: rem(320px);
+  font-size: rem(14.4px);
   line-height: 1.5;
 }
 
