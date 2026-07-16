@@ -107,9 +107,7 @@
   margin-bottom: 14px;
 
   igx-icon {
-    font-size: 20px !important;
-    width: 20px !important;
-    height: 20px !important;
+    --ig-icon-size: 20px;
   }
 }
 
@@ -210,9 +208,7 @@
   margin: 0 auto 12px;
 
   igx-icon {
-    font-size: 22px !important;
-    width: 22px !important;
-    height: 22px !important;
+    --ig-icon-size: 22px;
   }
 }
 
@@ -337,12 +333,10 @@
   cursor: pointer;
   box-shadow: 0 6px 18px color-mix(in srgb, var(--ig-primary-500) 38%, transparent);
   transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  --ig-icon-color: var(--ig-primary-500-contrast);
+  --ig-icon-size: 16px;
 
   igx-icon {
-    color: var(--ig-primary-500-contrast) !important;
-    font-size: 16px !important;
-    width: 16px !important;
-    height: 16px !important;
     transition: transform 0.2s ease;
   }
 

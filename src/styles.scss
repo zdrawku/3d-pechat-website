@@ -336,8 +336,10 @@ $exclude-components: (
   margin: 0 0 4px;
 }
 
-.page-banner__title {
-  font-size: 1.4rem !important;
+// Scoped under .page-banner so it out-specifies the type scale's
+// `.ig-typography h1` rule (0,2,0 > 0,1,1) without needing !important.
+.page-banner .page-banner__title {
+  font-size: 1.4rem;
   line-height: 1.15;
   font-weight: 800;
   letter-spacing: -0.02em;
@@ -346,7 +348,7 @@ $exclude-components: (
   text-wrap: balance;
 
   @media (max-width: 480px) {
-    font-size: 1.2rem !important;
+    font-size: 1.2rem;
   }
 }
 
@@ -404,6 +406,11 @@ body {
 // Accessible label that is visually removed but still read by screen readers
 // and counted by the heading-order audit. Use for structural headings that the
 // dense visual design doesn't render on-screen.
+//
+// The `!important` here is the one sanctioned exception in the codebase: this
+// utility must forcibly hide the element regardless of whatever positioning the
+// element's own rules set — the whole point of a visually-hidden helper. This is
+// the standard, accessibility-critical use of !important.
 .visually-hidden {
   position: absolute !important;
   width: 1px;
@@ -482,16 +489,12 @@ body {
   align-items: center;
   justify-content: center;
   // --ig-gray-800 clears 4.5:1 comfortably on the card in both themes
-  // (~11:1 light, ~11:1 dark). Icons need the color set explicitly — Ignite
-  // igx-icon doesn't inherit `color`.
+  // (~11:1 light, ~11:1 dark). The icon colour is set through Ignite's own
+  // --ig-icon-color token (igx-icon reads it), so no igx-icon override or
+  // !important is needed — the token just cascades into the icon.
   color: var(--ig-gray-800);
+  --ig-icon-color: var(--ig-gray-800);
   transition: all 0.2s ease-in-out;
-
-  igx-icon {
-    // Ignite sets `color: var(--icon-color)` on igx-icon with component
-    // specificity, so override with !important or the icon ignores this color.
-    color: var(--ig-gray-800) !important;
-  }
 
   /* Reset button default line-height to ensure icon centers */
   line-height: 0;
@@ -499,10 +502,7 @@ body {
   &:hover {
     background-color: rgba(0, 0, 0, 0.05);
     color: var(--ig-gray-900);
-
-    igx-icon {
-      color: var(--ig-gray-900) !important;
-    }
+    --ig-icon-color: var(--ig-gray-900);
   }
 }
 
@@ -512,17 +512,11 @@ body {
 .dark-theme .copy-link-btn {
   background-color: rgba(255, 255, 255, 0.88);
   color: #000;
-
-  igx-icon {
-    color: #000 !important;
-  }
+  --ig-icon-color: #000;
 
   &:hover {
     background-color: #fff;
     color: #000;
-
-    igx-icon {
-      color: #000 !important;
-    }
+    --ig-icon-color: #000;
   }
 }

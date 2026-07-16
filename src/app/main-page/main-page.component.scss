@@ -362,7 +362,7 @@
   transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease, filter 0.28s ease;
 
   &:hover {
-    transform: translateY(-2px) !important;
+    transform: translateY(-2px);
     filter: brightness(1.05);
     background: var(--ig-primary-500);
     color: var(--ig-primary-500-contrast);
@@ -378,7 +378,7 @@
   }
 
   &:active {
-    transform: translateY(0) !important;
+    transform: translateY(0);
   }
 }
 

@@ -52,13 +52,15 @@
     top: 0;
     height: auto;
     
+    // Scoped under .navigation_drawer_1 (0,2,0), which out-specifies Ignite's
+    // own class-level rules — no !important needed to raise the drawer stack.
     ::ng-deep .igx-nav-drawer__aside {
       padding-top: 56px;
-      z-index: 1000 !important;
+      z-index: 1000;
     }
-    
+
     ::ng-deep .igx-nav-drawer__overlay {
-      z-index: 999 !important;
+      z-index: 999;
     }
   }
 }
@@ -134,10 +136,7 @@
       // Translucent tile on the orange pill instead of a solid orange-on-orange.
       background: color-mix(in srgb, var(--ig-primary-500-contrast) 16%, transparent);
       color: var(--ig-primary-500-contrast);
-
-      igx-icon {
-        color: var(--ig-primary-500-contrast) !important;
-      }
+      --ig-icon-color: var(--ig-primary-500-contrast);
     }
 
     .drawer_chip_txt b,
@@ -147,7 +146,9 @@
   }
 }
 
-// Icon tile size — bump width/height/font-size together to resize.
+// Icon tile — the glyph colour and size come from Ignite's own icon tokens
+// (--ig-icon-color / --ig-icon-size), which the igx-icon inside reads. gray-700
+// clears 4.5:1 on the tile; no !important or igx-icon override needed.
 .drawer_chip_tile {
   width: 28px;
   height: 28px;
@@ -158,15 +159,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-
-  igx-icon {
-    // Force the icon color — Ignite icons default to the theme icon color, which
-    // axe measured as low-contrast on the tile. gray-700 clears 4.5:1.
-    color: var(--ig-gray-700) !important;
-    font-size: 16px !important;
-    width: 16px !important;
-    height: 16px !important;
-  }
+  --ig-icon-color: var(--ig-gray-700);
+  --ig-icon-size: 16px;
 }
 
 // Nav item text — `b` is the label (e.g. "Начало"), `span` is the subtitle
@@ -467,19 +461,12 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  --size: 14px;
-  font-size: 14px !important;
-  width: 14px !important;
-  height: 14px !important;
+  // Size + colour via Ignite's icon tokens (this element is an igx-icon).
   // gray-700 (not 600) so the sun/moon glyphs clear 4.5:1 on the track.
-  color: var(--ig-gray-700);
+  --ig-icon-size: 14px;
+  --ig-icon-color: var(--ig-gray-700);
   z-index: 0;
   pointer-events: none;
-
-  igx-icon,
-  &.igx-icon {
-    color: var(--ig-gray-700) !important;
-  }
 }
 
 .theme-switch-end--sun {
@@ -508,12 +495,9 @@
 }
 
 .theme-switch-knob-ic {
-  --size: 13px;
-  font-size: 13px !important;
-  width: 13px !important;
-  height: 13px !important;
   // On the orange knob — use the contrast token like every other orange fill.
-  color: var(--ig-primary-500-contrast) !important;
+  --ig-icon-size: 13px;
+  --ig-icon-color: var(--ig-primary-500-contrast);
 }
 
 // Slide the knob to the right end when dark theme is active.
@@ -676,13 +660,14 @@
 .icon_button_5 {
   --foreground: var(--ig-surface-500-contrast);
   
-  // Remove underline for anchor tags used as icon buttons
+  // Remove underline for anchor tags used as icon buttons. .icon_button_5[href]
+  // (0,2,0) already out-specifies the browser's `a` default, so no !important.
   &[href] {
-    text-decoration: none !important;
+    text-decoration: none;
     color: inherit;
-    
+
     &:hover {
-      text-decoration: none !important;
+      text-decoration: none;
     }
   }
 }
@@ -690,7 +675,7 @@
 // Navbar social media icon styling
 igx-navbar {
   a.icon_button_5 {
-    text-decoration: none !important;
+    text-decoration: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;

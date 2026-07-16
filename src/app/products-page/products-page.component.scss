@@ -19,9 +19,7 @@
   padding: 4px;
 
   igx-icon {
-    font-size: 16px !important;
-    width: 16px !important;
-    height: 16px !important;
+    --ig-icon-size: 16px;
   }
 }
 
@@ -171,9 +169,7 @@
     margin-bottom: 8px;
 
     igx-icon {
-      font-size: 28px !important;
-      width: 28px !important;
-      height: 28px !important;
+      --ig-icon-size: 28px;
     }
   }
 

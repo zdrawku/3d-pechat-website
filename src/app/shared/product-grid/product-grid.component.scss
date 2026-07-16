@@ -215,17 +215,15 @@
   gap: 8px;
 }
 
-// Mirror the blog card title exactly: it's an <h2>, so the global
-// `h2 { font-size: 1.5rem !important; line-height: 1.4 }` rule in styles.scss
-// (plus Ignite's .ig-typography h2 weight/letter-spacing) drives its rendered
-// size — the same override the blog title gets. The declared font-size below is
-// the pre-override baseline; keep it in sync with .blog-card .card-title.
-.card-title {
+// The title is an <h2>, so the type scale's `.ig-typography h2` (0,1,1) rule
+// drives its default size. Scoping under .product-card (0,2,0) lets this
+// override win without !important. Keep in sync with .blog-card .card-title.
+.product-card .card-title {
   color: var(--ig-gray-900);
   margin: 0;
   font-weight: 700;
   line-height: 1.3;
-  font-size: 0.85rem !important;
+  font-size: 0.85rem;
   flex: 1;
   min-width: 0;
   display: -webkit-box;
@@ -236,7 +234,7 @@
   text-overflow: ellipsis;
 
   @media (min-width: 1200px) {
-    font-size: 1.15rem !important;
+    font-size: 1.15rem;
   }
 }
 
@@ -283,15 +281,10 @@
   color: var(--accent-on-tint);
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.2s ease;
-
-  igx-icon {
-    // Force the icon color — Ignite icons default to the theme icon color, which
-    // axe measured as low-contrast on the tint.
-    color: var(--accent-on-tint) !important;
-    font-size: 16px !important;
-    width: 16px !important;
-    height: 16px !important;
-  }
+  // Icon colour + size via Ignite's icon tokens (axe flagged the default theme
+  // icon colour as low-contrast on the tint); --accent-on-tint clears 4.5:1.
+  --ig-icon-color: var(--accent-on-tint);
+  --ig-icon-size: 16px;
 
   &:hover {
     // 18% (not higher) so the accent still clears 4.5:1 on the hover tint in
@@ -301,18 +294,19 @@
   }
 }
 
-.product-description {
+// <p> element — scoped under .product-card (0,2,0) to beat `.ig-typography p`.
+.product-card .product-description {
   color: var(--ig-gray-700);
   line-height: 1.5;
   margin: 0;
-  font-size: 0.85rem !important;
+  font-size: 0.85rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 
   @media (min-width: 1200px) {
-    font-size: 0.85rem !important;
+    font-size: 0.85rem;
   }
 }
 
@@ -370,14 +364,17 @@
 // palette — semantically a warning, and it didn't adapt to dark theme). Uses
 // --bg-card / gray tokens that flip per theme automatically; the orange accent
 // signals "info / personalize". Wider so Cyrillic list items stay on one line.
-::ng-deep .custom-tooltip {
+// Combined with Ignite's own .igx-tooltip class (the igxTooltip directive adds
+// it to the same element), giving 0,2,0 — this out-specifies the tooltip
+// theme's .igx-tooltip rule (0,1,0) so no !important is needed.
+::ng-deep .igx-tooltip.custom-tooltip {
   width: 300px;
   max-width: 300px;
-  background-color: var(--bg-card) !important;
+  background-color: var(--bg-card);
   border: 1px solid var(--ig-gray-300);
   border-left: 3px solid var(--ig-primary-500);
-  border-radius: 10px !important;
-  padding: 14px 16px !important;
+  border-radius: 10px;
+  padding: 14px 16px;
   box-shadow: var(--shadow-card);
   white-space: normal;
   text-align: left;
@@ -438,12 +435,13 @@
 }
 
 // Tags tooltip — shows the full tag list on hover of the "+N" chip.
-::ng-deep .tags-tooltip {
-  background-color: var(--ig-gray-900) !important;
-  color: var(--ig-gray-900-contrast) !important;
-  border-radius: 6px !important;
-  padding: 8px 12px !important;
-  font-size: 0.75rem !important;
+// .igx-tooltip.tags-tooltip (0,2,0) out-specifies the tooltip theme.
+::ng-deep .igx-tooltip.tags-tooltip {
+  background-color: var(--ig-gray-900);
+  color: var(--ig-gray-900-contrast);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.75rem;
   max-width: 240px;
   box-shadow: var(--shadow-float);
 }
@@ -471,14 +469,12 @@
   font-weight: 700;
   box-shadow: 0 4px 14px color-mix(in srgb, var(--ig-primary-500) 38%, transparent);
   transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  // Icon colour/size via Ignite's icon tokens — the default theme icon colour is
+  // near-black, which is why the arrow rendered black on the orange fill.
+  --ig-icon-color: var(--ig-primary-500-contrast);
+  --ig-icon-size: 16px;
 
   igx-icon {
-    // Inherit the button's contrast color — Ignite icons default to the theme
-    // icon color (near-black), which is why the arrow rendered black on white.
-    color: var(--ig-primary-500-contrast) !important;
-    font-size: 16px !important;
-    width: 16px !important;
-    height: 16px !important;
     transition: transform 0.2s ease;
   }
 
@@ -522,24 +518,26 @@
   }
 }
 
-// Global Tooltip Styles (needs to be outside component encapsulation or use ::ng-deep)
-::ng-deep .product-tooltip {
-  background-color: var(--ig-gray-900) !important;
-  color: var(--ig-gray-900-contrast) !important;
-  font-size: 1rem !important; // Larger font size
-  padding: 8px 12px !important;
-  border-radius: 6px !important;
+// Global Tooltip Styles (rendered in a global overlay, reached via ::ng-deep).
+// .igx-tooltip.product-tooltip (0,2,0) out-specifies the tooltip theme (0,1,0).
+::ng-deep .igx-tooltip.product-tooltip {
+  background-color: var(--ig-gray-900);
+  color: var(--ig-gray-900-contrast);
+  font-size: 1rem; // Larger font size
+  padding: 8px 12px;
+  border-radius: 6px;
   box-shadow: var(--shadow-float);
   text-align: center;
   max-width: 250px;
 }
 
 // The description can run several lines, so its tooltip is wider and left-aligned
-// (unlike the short, centered name/tags tooltips) for comfortable reading.
-::ng-deep .description-tooltip {
+// (unlike the short, centered name/tags tooltips) for comfortable reading. This
+// rule comes after .product-tooltip at equal specificity, so it wins by order.
+::ng-deep .igx-tooltip.description-tooltip {
   text-align: left;
   max-width: 320px;
-  font-size: 0.9rem !important;
+  font-size: 0.9rem;
   line-height: 1.5;
 }
 

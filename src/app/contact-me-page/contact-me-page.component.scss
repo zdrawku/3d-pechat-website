@@ -107,28 +107,26 @@
   }
 }
 
-.viber-pill {
+// Scoped under .contact-info (0,2,0) so it out-specifies the igx-button theme
+// (0,1,0) — background/colour/padding win with no !important. The icon uses
+// Ignite's own --ig-icon-* tokens.
+.contact-info .viber-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #fff !important;
+  background: #fff;
   // Shared accessible orange on the white pill (was #E64A19 @ 3.9:1 — failed).
-  color: var(--accent-on-light) !important;
+  color: var(--accent-on-light);
   --foreground: var(--accent-on-light);
+  --ig-icon-color: var(--accent-on-light);
+  --ig-icon-size: 14px;
   font-weight: 700;
   font-size: 0.7rem;
-  padding: 6px 12px !important;
+  padding: 6px 12px;
   border-radius: var(--radius-pill);
   margin-top: 6px;
   width: fit-content;
   height: max-content;
-
-  igx-icon {
-    color: var(--accent-on-light) !important;
-    font-size: 14px !important;
-    width: 14px !important;
-    height: 14px !important;
-  }
 }
 
 .social-row {
@@ -139,25 +137,21 @@
   flex-wrap: wrap;
 }
 
-.social-pill {
+// Scoped under .contact-info (0,2,0) to out-specify the igx-button theme.
+.contact-info .social-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(255, 255, 255, 0.15) !important;
+  background: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  color: #fff !important;
+  color: #fff;
   --foreground: #fff;
+  --ig-icon-size: 16px;
   font-weight: 600;
   font-size: 0.75rem;
-  padding: 8px 14px !important;
+  padding: 8px 14px;
   border-radius: var(--radius-pill);
   height: max-content;
-
-  igx-icon {
-    font-size: 16px !important;
-    width: 16px !important;
-    height: 16px !important;
-  }
 }
 
 .response-note {
@@ -170,12 +164,7 @@
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.85);
   position: relative;
-
-  igx-icon {
-    font-size: 16px !important;
-    width: 16px !important;
-    height: 16px !important;
-  }
+  --ig-icon-size: 16px;
 }
 
 // ===================== FORM PANEL =====================
@@ -235,13 +224,8 @@
   border-radius: var(--radius-pill);
   box-shadow: 0 6px 18px color-mix(in srgb, var(--ig-primary-500) 38%, transparent);
   transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
-
-  igx-icon {
-    color: var(--ig-primary-500-contrast) !important;
-    font-size: 16px !important;
-    width: 16px !important;
-    height: 16px !important;
-  }
+  --ig-icon-color: var(--ig-primary-500-contrast);
+  --ig-icon-size: 16px;
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
@@ -292,9 +276,7 @@
   transition: background-color 0.2s ease;
 
   igx-icon {
-    font-size: 12px !important;
-    width: 12px !important;
-    height: 12px !important;
+    --ig-icon-size: 12px;
   }
 
   &:hover {
@@ -327,9 +309,7 @@
   transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
 
   igx-icon {
-    font-size: 20px !important;
-    width: 20px !important;
-    height: 20px !important;
+    --ig-icon-size: 20px;
   }
 
   &:hover {
@@ -364,10 +344,8 @@
   font-size: 0.78rem;
 
   > igx-icon {
-    font-size: 16px !important;
-    width: 16px !important;
-    height: 16px !important;
-    color: var(--ig-secondary-500);
+    --ig-icon-size: 16px;
+    --ig-icon-color: var(--ig-secondary-500);
     flex-shrink: 0;
   }
 
@@ -396,9 +374,7 @@
   transition: background-color 0.2s ease, color 0.2s ease;
 
   igx-icon {
-    font-size: 15px !important;
-    width: 15px !important;
-    height: 15px !important;
+    --ig-icon-size: 15px;
   }
 
   &:hover {
