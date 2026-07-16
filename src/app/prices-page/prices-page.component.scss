@@ -238,34 +238,26 @@
   }
 }
 
+// The grams field and the tier picker are Ignite controls (igx-input-group /
+// igx-select). The small uppercase caption stays as an external <label> above
+// each control, and Ignite themes the control itself.
 .calculator-field {
   display: flex;
   flex-direction: column;
   gap: 6px;
   min-width: 150px;
 
-  label {
+  > label {
     font-size: 0.6875rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: var(--ig-gray-700);
   }
-}
 
-.calculator-input,
-.calculator-select {
-  border: 1px solid var(--ig-gray-300);
-  background: var(--bg-body);
-  border-radius: var(--radius-md);
-  padding: 12px 14px;
-  font-size: 0.9375rem;
-  color: var(--ig-gray-900);
-  font-family: inherit;
-
-  &:focus {
-    outline: 2px solid var(--ig-primary-500);
-    outline-offset: 1px;
+  igx-input-group,
+  igx-select {
+    width: 100%;
   }
 }
 
@@ -273,7 +265,9 @@
   font-size: 1.25rem;
   color: var(--ig-gray-700);
   font-weight: 700;
-  padding-bottom: 12px;
+  // Aligns the operator with the control row; the field above stacks a caption
+  // over the control, so nudge the glyph down to sit against the input.
+  padding-bottom: 10px;
 
   @media (max-width: 520px) {
     align-self: center;

@@ -44,18 +44,22 @@
       <div class="calculator-row">
         <div class="calculator-field">
           <label for="grams-input">Общо грамове</label>
-          <input id="grams-input" type="number" class="calculator-input" [(ngModel)]="grams" placeholder="100" data-testid="calc-grams" />
+          <igx-input-group type="border">
+            <input igxInput id="grams-input" type="number" [(ngModel)]="grams" placeholder="100" data-testid="calc-grams" />
+          </igx-input-group>
         </div>
 
         <span class="calculator-op">/10 &times;</span>
 
         <div class="calculator-field">
           <label for="tier-select">Тарифа</label>
-          <select id="tier-select" class="calculator-select" [(ngModel)]="selectedTierId" data-testid="calc-tier">
+          <igx-select id="tier-select" [(ngModel)]="selectedTierId" data-testid="calc-tier">
             @for (tier of tiers; track tier.id) {
-              <option [value]="tier.id">{{ tier.pricePerTenGrams.toFixed(2) }} € ({{ tier.name }})</option>
+              <igx-select-item [value]="tier.id" [attr.data-testid]="'calc-tier-' + tier.id">
+                {{ tier.pricePerTenGrams.toFixed(2) }} € ({{ tier.name }})
+              </igx-select-item>
             }
-          </select>
+          </igx-select>
         </div>
 
         <span class="calculator-op">=</span>

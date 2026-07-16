@@ -11,14 +11,22 @@ test.describe('prices calculator', () => {
     await page.goto('/prices');
   });
 
+  // The tier picker is an igx-select (not a native <select>), so it's driven by
+  // opening the dropdown and clicking the option instead of Playwright's
+  // selectOption(). Each igx-select-item carries data-testid="calc-tier-<id>".
+  async function selectTier(page: import('@playwright/test').Page, id: string) {
+    await page.getByTestId('calc-tier').click();
+    await page.getByTestId(`calc-tier-${id}`).click();
+  }
+
   test('computes total for grams × selected tier', async ({ page }) => {
     // 100g / 10 * 0.80 = 8.00
     await page.getByTestId('calc-grams').fill('100');
-    await page.getByTestId('calc-tier').selectOption('single-basic');
+    await selectTier(page, 'single-basic');
     await expect(page.getByTestId('calc-total')).toHaveText(/8\.00\s*€/);
 
     // Switch tier only → 100g / 10 * 1.50 = 15.00
-    await page.getByTestId('calc-tier').selectOption('multi-complex');
+    await selectTier(page, 'multi-complex');
     await expect(page.getByTestId('calc-total')).toHaveText(/15\.00\s*€/);
 
     // Change grams → 250g / 10 * 1.50 = 37.50
@@ -36,7 +44,7 @@ test.describe('prices calculator', () => {
     page,
   }) => {
     await page.getByTestId('calc-grams').fill('150');
-    await page.getByTestId('calc-tier').selectOption('multi-basic'); // 1.00 → 15.00
+    await selectTier(page, 'multi-basic'); // 1.00 → 15.00
 
     await page.getByTestId('calc-order-btn').click();
 
