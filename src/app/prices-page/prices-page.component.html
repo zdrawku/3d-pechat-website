@@ -9,23 +9,25 @@
 <div class="prices-page">
   <!-- Pricing Tiers -->
   <div class="section-block">
-    <div class="tiers-grid">
-      @for (tier of tiers; track tier.id) {
-        <div class="tier-card" [class]="tier.colorClass" [class.featured]="tier.featured">
+    <div class="tiers-grid stagger-in">
+      @for (tier of tiers; track tier.id; let i = $index) {
+        <igx-card class="tier-card" [class]="tier.colorClass" [class.featured]="tier.featured" [style.--i]="i">
           @if (tier.featured) {
             <span class="tier-badge">Най-търсено</span>
           }
-          <div class="tier-icon">
-            <igx-icon>{{ tier.icon }}</igx-icon>
-          </div>
-          <h3 class="tier-name">{{ tier.name }}</h3>
-          <div class="tier-price">
-            <span class="tier-price-num">{{ tier.pricePerTenGrams.toFixed(2) }}</span>
-            <span class="tier-price-unit">€ / 10гр</span>
-          </div>
-          <p class="tier-desc">{{ tier.description }}</p>
+          <igx-card-content class="tier-card_body">
+            <div class="tier-icon">
+              <igx-icon>{{ tier.icon }}</igx-icon>
+            </div>
+            <h3 class="tier-name">{{ tier.name }}</h3>
+            <div class="tier-price">
+              <span class="tier-price-num">{{ tier.pricePerTenGrams.toFixed(2) }}</span>
+              <span class="tier-price-unit">€ / 10гр</span>
+            </div>
+            <p class="tier-desc">{{ tier.description }}</p>
+          </igx-card-content>
           <div class="sla-sweep" aria-hidden="true"></div>
-        </div>
+        </igx-card>
       }
     </div>
   </div>

@@ -225,13 +225,9 @@
     width: 100%;
   }
 
+  // Now an <igx-card>; the class overrides igx-card's default surface/elevation,
+  // and the centred flex layout + padding live on the inner igx-card-content.
   .feature-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 8px;
-    padding: 16px;
     background-color: var(--bg-card);
     border-radius: var(--radius-sm);
     border: 1px solid var(--ig-gray-300);
@@ -243,6 +239,15 @@
       box-shadow: var(--shadow-card-hover);
       border-color: var(--ig-secondary-500); // Green
     }
+  }
+
+  .feature-item_body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    padding: 16px;
   }
 
   .feature-icon {

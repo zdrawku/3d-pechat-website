@@ -63,22 +63,28 @@
   }
 }
 
+// Now an <igx-card>. overflow:visible is required because igx-card clips by
+// default and the featured badge sticks out above the card. Padding lives on
+// the inner igx-card-content (.tier-card_body); the beam lives in the inner
+// .sla-sweep layer (sla-hover-inner) so the badge is never clipped.
 .tier-card {
   position: relative;
+  overflow: visible;
   background: var(--bg-card);
   border: 1px solid var(--ig-gray-300);
   border-radius: var(--radius-lg);
-  padding: 26px 20px;
   box-shadow: var(--shadow-card);
 
-  // beam lives in an inner .sla-sweep layer so the featured badge
-  // (which sticks out above the card) is not clipped
   @include sla.sla-hover-inner(16px, $bump: true);
 
   &.featured {
     border-color: var(--ig-primary-500);
     background: linear-gradient(160deg, var(--bg-card), color-mix(in srgb, var(--ig-primary-500) 6%, var(--bg-card)));
   }
+}
+
+.tier-card_body {
+  padding: 26px 20px;
 }
 
 .tier-badge {

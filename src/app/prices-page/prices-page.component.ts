@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { IgxIconComponent, IGX_INPUT_GROUP_DIRECTIVES, IGX_SELECT_DIRECTIVES } from 'igniteui-angular';
+import { IgxIconComponent, IGX_INPUT_GROUP_DIRECTIVES, IGX_SELECT_DIRECTIVES, IGX_CARD_DIRECTIVES } from 'igniteui-angular';
 import { SeoService } from '../services/seo.service';
 
 interface PricingTier {
@@ -18,7 +18,7 @@ interface PricingTier {
 
 @Component({
   selector: 'app-prices-page',
-  imports: [FormsModule, IgxIconComponent, IGX_INPUT_GROUP_DIRECTIVES, IGX_SELECT_DIRECTIVES],
+  imports: [FormsModule, IgxIconComponent, IGX_INPUT_GROUP_DIRECTIVES, IGX_SELECT_DIRECTIVES, IGX_CARD_DIRECTIVES],
   templateUrl: './prices-page.component.html',
   styleUrls: ['./prices-page.component.scss']
 })

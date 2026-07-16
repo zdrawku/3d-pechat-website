@@ -3,7 +3,7 @@ import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { IgxButtonDirective, IgxIconModule, IgxInputGroupModule } from 'igniteui-angular';
+import { IgxButtonDirective, IgxIconModule, IgxInputGroupModule, IGX_CARD_DIRECTIVES } from 'igniteui-angular';
 
 import { ProductGridComponent } from '../shared/product-grid/product-grid.component';
 import { SeoService } from '../services/seo.service';
@@ -12,7 +12,7 @@ import productsData from '../../data/products.json';
 
 @Component({
   selector: 'app-products-page',
-  imports: [FormsModule, IgxButtonDirective, ProductGridComponent, IgxIconModule, IgxInputGroupModule],
+  imports: [FormsModule, IgxButtonDirective, ProductGridComponent, IgxIconModule, IgxInputGroupModule, IGX_CARD_DIRECTIVES],
   templateUrl: './products-page.component.html',
   styleUrls: ['./products-page.component.scss']
 })

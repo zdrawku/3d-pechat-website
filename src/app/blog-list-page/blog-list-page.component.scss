@@ -89,6 +89,22 @@
       gap: 12px;
     }
 
+    // Anchor wrapper — keeps each card a real crawlable link (SEO, middle-click,
+    // href that the e2e reads); the <igx-card> inside provides the structure.
+    .blog-card-link {
+      display: block;
+      height: 100%;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+
+      &:focus-visible {
+        outline: 2px solid var(--ig-primary-500);
+        outline-offset: 2px;
+        border-radius: 14px;
+      }
+    }
+
     .blog-card {
       height: 100%;
       display: flex;
@@ -98,10 +114,7 @@
       border-radius: 14px;
       box-shadow: var(--shadow-card);
       transition: transform 0.25s ease, box-shadow 0.25s ease;
-      cursor: pointer;
       overflow: hidden;
-      text-decoration: none;
-      color: inherit;
 
       &:hover {
         transform: translateY(-4px);
@@ -110,11 +123,6 @@
         .card-cover-image {
           transform: scale(1.06);
         }
-      }
-
-      &:focus-visible {
-        outline: 2px solid var(--ig-primary-500);
-        outline-offset: 2px;
       }
 
       .card-image-wrapper {
