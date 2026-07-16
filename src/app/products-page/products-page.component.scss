@@ -264,54 +264,8 @@
     font-size: 0.8rem;
   }
 
-  // CTA Section
-  .cta-section {
-    justify-content: center;
-    align-items: center;
-    gap: 24px;
-    padding: 64px 24px;
-    background: linear-gradient(135deg, var(--ig-primary-500) 0%, var(--ig-primary-400) 100%); // Orange gradient
-    border-radius: var(--radius-sm);
-    text-align: center;
-  }
-
-  .cta-title {
-    color: white;
-    margin: 0;
-    font-weight: 700;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    max-width: 100%;
-  }
-
-  .cta-description {
-    color: white;
-    margin: 0 15px 20px 15px;
-    // max-width: 600px;
-    line-height: 1.8;
-    opacity: 0.95;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  }
-
-  .cta-button {
-    padding: 16px 48px;
-    font-size: 18px;
-    font-weight: 600;
-    background-color: white;
-    // Accessible deep orange on the white pill (shared token) — matches the
-    // main-page and contact banner CTAs. Plain --ig-primary-500 reads muddy and
-    // #E64A19 fails contrast; --accent-on-light is the single vetted value.
-    color: var(--accent-on-light);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    max-width: 100%;
-    box-sizing: border-box;
-
-    &:hover {
-      transform: scale(1.05);
-      box-shadow: 0 8px 24px rgba(255, 255, 255, 0.3);
-    }
-  }
+  // The CTA now uses the shared global .cta-band (see styles.scss) so it matches
+  // the main-page CTA exactly — no page-specific CTA styles here.
 
   // Responsive Design
   @media (max-width: 768px) {
@@ -320,13 +274,6 @@
 
     .hero-section {
       padding: 32px 16px;
-    }
-
-    .cta-button {
-      padding: 12px 24px;
-      font-size: 16px;
-      width: auto;
-      max-width: calc(100% - 32px);
     }
 
     .page-title {
@@ -352,10 +299,6 @@
 
     .features-grid {
       grid-template-columns: 1fr;
-    }
-
-    .cta-section {
-      padding: 48px 16px;
     }
   }
 

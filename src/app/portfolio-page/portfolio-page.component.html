@@ -7,9 +7,9 @@
 
 <div class="row-layout image_gallery_section_template_toys_hand_painting portfolio-first-section">
   <div class="column-layout column_layout_4">
-    <div class="masonry-gallery">
+    <div class="masonry-gallery img-focus stagger-in">
       @for (image of carouselImages; track image.src; let i = $index) {
-        <div class="masonry-item">
+        <div class="masonry-item" [style.--i]="i">
           <img [src]="image.src" [alt]="image.alt || ('3D печат проект ' + (i + 1))" class="masonry-image" loading="lazy" />
         </div>
       }
@@ -26,7 +26,7 @@
         Разгледайте нашите уникални играчки, готови за творческо докосване
       </h3>
     </div>
-    <div class="row-layout row_layout_3">
+    <div class="row-layout row_layout_3 img-focus stagger-in stagger-in--auto">
       <img src="/assets/real-images/20251227_201101.webp" alt="Играчка за ръчно рисуване" class="image_7" loading="lazy" />
       <img src="/assets/real-images/20250109_183236.webp" alt="Играчка за ръчно рисуване" class="image_7" loading="lazy" />
       <img src="/assets/real-images/20251218_180815.webp" alt="Играчка за ръчно рисуване" class="image_7" loading="lazy" />

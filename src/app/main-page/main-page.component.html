@@ -137,18 +137,18 @@
   </div>
 </section>
 
-<!-- FINAL CTA -->
-<section class="final_cta_section">
-  <div class="final_cta_band">
-    <h2 class="final_cta_title">Готови да реализирате вашата идея?</h2>
-    <p class="final_cta_desc">
+<!-- FINAL CTA — shared .cta-band (see styles.scss) -->
+<section class="cta-band-section">
+  <div class="cta-band">
+    <h2 class="cta-band__title">Готови да реализирате вашата идея?</h2>
+    <p class="cta-band__desc">
       Свържете се с нас днес — ще ви помогнем да изберете най-доброто решение за вашия проект.
     </p>
-    <div class="hero_cta_row final_cta_row">
-      <button igxButton="contained" type="button" class="btn_solid" (click)="navigateToContact()">
+    <div class="cta-band__actions">
+      <button igxButton="contained" type="button" class="cta-band__btn" (click)="navigateToContact()">
         Заяви оферта
       </button>
-      <a href="tel:+359883310616" class="btn_line">
+      <a href="tel:+359883310616" class="cta-band__btn cta-band__btn--line">
         Обади се сега
       </a>
     </div>

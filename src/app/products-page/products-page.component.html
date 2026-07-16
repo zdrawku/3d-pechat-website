@@ -110,16 +110,16 @@
       </div>
     </div>
 
-    <!-- CTA Section -->
-    <div class="column-layout cta-section">
-      <h2 class="ig-typography__h3 cta-title">
-        Готови да поръчате вашата монетна карта?
-      </h2>
-      <p class="ig-typography__body-1 cta-description">
+    <!-- CTA — shared .cta-band (see styles.scss) -->
+    <div class="cta-band">
+      <h2 class="cta-band__title">Готови да поръчате вашата монетна карта?</h2>
+      <p class="cta-band__desc">
         Свържете се с нас днес и ще ви помогнем да изберете перфектния дизайн за вашата колекция!
       </p>
-      <button igxButton="contained" type="button" (click)="navigateToContact()" class="cta-button">
-        Свържете се с нас
-      </button>
+      <div class="cta-band__actions">
+        <button igxButton="contained" type="button" (click)="navigateToContact()" class="cta-band__btn">
+          Свържете се с нас
+        </button>
+      </div>
     </div>
   </div>

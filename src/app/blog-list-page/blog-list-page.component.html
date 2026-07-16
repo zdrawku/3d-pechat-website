@@ -33,9 +33,9 @@
 <div class="blog-list-container">
     <!-- Blog Cards Grid -->
     @if (filteredBlogs.length > 0) {
-      <div class="blog-grid">
+      <div class="blog-grid stagger-in">
         @for (blog of filteredBlogs; track blog.id; let i = $index) {
-          <a class="blog-card" [routerLink]="blog.route" data-testid="blog-card">
+          <a class="blog-card" [routerLink]="blog.route" [style.--i]="i" data-testid="blog-card">
             @if (blog.imageUrl) {
               <div class="card-image-wrapper">
                 @if (i < 2) {

@@ -215,6 +215,7 @@ $exclude-components: (
   --radius-sm:   8px;
   --radius-md:   12px;
   --radius-lg:   16px;
+  --radius-xl:   24px;   // large panels / hero bands
   --radius-pill: 999px;
 
   // ---- Spacing scale (4px base) -------------------------------------------
@@ -370,6 +371,168 @@ $exclude-components: (
 
   @media (max-width: 600px) {
     width: 100%;
+  }
+}
+
+// ===========================================================================
+// Shared call-to-action band — a rounded brand-gradient panel with a title, a
+// short description, and one or two pill actions. Reused across pages (the main
+// page's final CTA, the products CTA, …) so every "Готови да…?" block looks
+// identical instead of each page rolling its own.
+//
+// Markup:
+//   <section class="cta-band-section">
+//     <div class="cta-band">
+//       <h2 class="cta-band__title">…</h2>
+//       <p class="cta-band__desc">…</p>
+//       <div class="cta-band__actions">
+//         <button igxButton="contained" class="cta-band__btn">…</button>
+//         <a class="cta-band__btn cta-band__btn--line">…</a>   (optional 2nd)
+//       </div>
+//     </div>
+//   </section>
+// ---------------------------------------------------------------------------
+.cta-band-section {
+  padding: 0 32px 64px;
+  background: var(--bg-body);
+
+  @media (max-width: 480px) {
+    padding: 0 16px 44px;
+  }
+}
+
+.cta-band {
+  max-width: 1120px;
+  margin: 0 auto;
+  border-radius: var(--radius-xl);
+  padding: 52px 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--ig-primary-500) 0%, var(--ig-primary-400) 55%, var(--ig-primary-600) 100%);
+  box-shadow: 0 20px 50px color-mix(in srgb, var(--ig-primary-500) 40%, transparent);
+
+  // Soft top-right glow.
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(60% 120% at 100% 0%, rgba(255, 255, 255, 0.22), transparent 60%);
+    pointer-events: none;
+  }
+
+  @media (max-width: 480px) {
+    padding: 40px 20px;
+  }
+}
+
+.cta-band__title {
+  color: #fff;
+  font-size: 1.6rem;
+  font-weight: 750;
+  margin: 0;
+  position: relative;
+  text-wrap: balance;
+}
+
+.cta-band__desc {
+  color: rgba(255, 255, 255, 0.92);
+  max-width: 60ch;
+  margin: 14px auto 0;
+  position: relative;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.cta-band__actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 24px;
+  position: relative;
+}
+
+// White pill (primary). Works as <button igxButton> or <a>.
+.cta-band__btn {
+  --ig-size: var(--ig-size-medium);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: max-content;
+  --background: #fff;
+  --foreground: var(--accent-on-light);
+  color: var(--accent-on-light);
+  border-radius: var(--radius-pill);
+  padding: 13px 28px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: transform 0.18s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+// Outline variant (secondary) for the optional second action.
+.cta-band__btn--line {
+  --background: transparent;
+  background: transparent;
+  --foreground: #fff;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  transition: background-color 0.18s ease;
+
+  &:hover {
+    transform: none;
+    background: rgba(255, 255, 255, 0.12);
+  }
+}
+
+// ===========================================================================
+// Gallery / image helpers
+// ---------------------------------------------------------------------------
+// #6 Image focus — hovering any <img> inside a .img-focus group keeps that one
+// colored and desaturates the rest. Pure CSS via :has() (no JS); browsers
+// without :has() simply skip the effect (progressive enhancement).
+.img-focus {
+  img {
+    transition: filter 0.35s ease, opacity 0.35s ease, transform 0.3s ease;
+  }
+
+  &:has(img:hover) img:not(:hover) {
+    filter: grayscale(1);
+    opacity: 0.82;
+  }
+}
+
+// #7 Staggered reveal — direct children fade/slide in on mount, each offset by
+// its index. Set --i per item (e.g. style="--i: {{ $index }}"), or add the
+// .stagger-in--auto modifier to derive --i from nth-child for static lists.
+// Uses animation-fill-mode: backwards so the item is hidden only DURING its
+// delay and reverts to normal styles afterwards — leaving :hover transforms
+// (card lift, image zoom) free to work once revealed.
+@keyframes staggerIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.stagger-in > * {
+  animation: staggerIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  // Cap the cascade at ~10 steps so large grids don't get a slow, long reveal.
+  animation-delay: calc(min(var(--i, 0), 10) * 60ms);
+}
+
+.stagger-in--auto > * {
+  @for $i from 1 through 12 {
+    &:nth-child(#{$i}) { --i: #{$i - 1}; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stagger-in > * {
+    animation: none;
   }
 }
 
