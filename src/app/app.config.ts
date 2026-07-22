@@ -1,5 +1,5 @@
 import { ApplicationConfig, ErrorHandler, Provider } from '@angular/core';
-import { provideRouter, withInMemoryScrolling } from '@angular/router';
+import { provideRouter, withInMemoryScrolling, UrlSerializer } from '@angular/router';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 // Uncomment after installing @angular/service-worker
@@ -11,12 +11,14 @@ import { GlobalErrorHandlerService } from './error-routing/error/global-error-ha
 import { environment } from '../environments/environment';
 import { provideMarkdown } from 'ngx-markdown';
 import { provideHttpClient, withFetch } from '@angular/common/http';
+import { TrailingSlashUrlSerializer } from './trailing-slash-url-serializer';
 
 const providers: Provider = [
   provideRouter(routes, withInMemoryScrolling({
     anchorScrolling: 'enabled',
     scrollPositionRestoration: 'enabled'
   })),
+  { provide: UrlSerializer, useClass: TrailingSlashUrlSerializer },
   provideClientHydration(withEventReplay()),
   provideHttpClient(withFetch()),
   provideMarkdown(),

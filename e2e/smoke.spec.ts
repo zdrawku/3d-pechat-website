@@ -85,7 +85,11 @@ test.describe('navigation', () => {
     for (const route of CORE_ROUTES) {
       if (route.path === '/') continue;
       // Drawer chips carry the destination as routerLink; click by href.
-      const link = page.locator(`a.drawer_chip[href="${route.path}"]`).first();
+      // Hrefs render with a canonical trailing slash (see
+      // TrailingSlashUrlSerializer), so match either form.
+      const link = page
+        .locator(`a.drawer_chip[href="${route.path}"], a.drawer_chip[href="${route.path}/"]`)
+        .first();
       await expect(link).toBeVisible();
       await link.click();
       await expect(page).toHaveURL(new RegExp(`${route.path}/?$`));

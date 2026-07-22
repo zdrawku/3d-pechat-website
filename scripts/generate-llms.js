@@ -31,7 +31,7 @@ function parseBlogPosts(src) {
     const route = (block[0].match(/route:\s*'([^']*)'/) || [])[1];
     if (title && route) {
       posts.push({
-        url: `https://3dpechat.bg${route}/`,
+        url: `https://3dpechat.bg${route.replace(/\/+$/, '')}/`,
         title: title.replace(/\\'/g, "'"),
         desc: description ? description.replace(/\\'/g, "'") : '',
       });

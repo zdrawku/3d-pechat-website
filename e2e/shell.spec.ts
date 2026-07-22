@@ -43,7 +43,7 @@ test.describe('navigation drawer (mobile)', () => {
     // path we care about — assert one routes correctly.
     await expect(page.getByTestId('menu-trigger')).toBeVisible();
 
-    const pricesChip = page.locator('a.drawer_chip[href="/prices"]');
+    const pricesChip = page.locator('a.drawer_chip[href="/prices/"]');
     await expect(pricesChip).toBeVisible();
     await pricesChip.click();
 

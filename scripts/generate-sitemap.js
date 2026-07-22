@@ -78,7 +78,7 @@ const sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>
     <priority>0.9</priority>
   </url>
 ${routes.map(blog => `  <url>
-    <loc>https://3dpechat.bg${blog.route}/</loc>
+    <loc>https://3dpechat.bg${blog.route.replace(/\/+$/, '')}/</loc>
     <lastmod>${blog.date}T10:00:00+01:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
