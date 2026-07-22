@@ -44,7 +44,7 @@ test.describe('navigation drawer (mobile)', () => {
     await expect(trigger).toBeVisible();
     await trigger.click();
 
-    const pricesChip = page.locator('a.drawer_chip[href="/prices"]');
+    const pricesChip = page.locator('a.drawer_chip[href="/prices/"]');
     await expect(pricesChip).toBeInViewport();
     await pricesChip.click();
 

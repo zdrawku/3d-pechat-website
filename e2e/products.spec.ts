@@ -112,11 +112,11 @@ test.describe('product section links', () => {
     await copyBtn.click();
 
     // Address bar now carries the anchor...
-    await expect(page).toHaveURL(new RegExp(`/products#${SECTION_ID}$`));
+    await expect(page).toHaveURL(new RegExp(`/products/?#${SECTION_ID}$`));
 
     // ...the clipboard holds the full shareable URL...
     const clipboard = await page.evaluate(() => navigator.clipboard.readText());
-    expect(clipboard).toContain(`/products#${SECTION_ID}`);
+    expect(clipboard).toMatch(new RegExp(`/products/?#${SECTION_ID}`));
 
     // ...and the button shows the transient "copied" state (green checkmark).
     await expect(copyBtn).toHaveClass(/copied/);
