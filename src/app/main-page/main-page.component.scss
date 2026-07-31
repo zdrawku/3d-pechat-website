@@ -590,6 +590,14 @@
   --ig-carousel-button-hover-arrow-color: var(--accent-on-light);
   --ig-carousel-button-focus-arrow-color: var(--accent-on-light);
   --ig-carousel-border-radius: var(--radius-pill); // round the nav buttons (theme ships square)
+
+  // The dot indicators do NOT read --ig-carousel-border-radius. Their radius is
+  // `clamp(0, var(--ig-radius-factor) * 50%, 50%)`, and our global $roundness: 0
+  // pins that factor to 0 — which is why the dots render as squares. Restoring
+  // the factor here (scoped to the carousel host, so the rest of the site keeps
+  // its square-cornered look) makes them circles again.
+  --ig-radius-factor: 1;
+
   --ig-carousel-indicator-background: transparent; // no bar behind the dots
   --ig-carousel-indicator-dot-color: rgba(255, 255, 255, 0.65);
   --ig-carousel-indicator-hover-dot-color: #fff;
