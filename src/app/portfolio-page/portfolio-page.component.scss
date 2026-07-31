@@ -1,3 +1,4 @@
+@use "igniteui-angular/theming" as *;
 @use '../sla-hover' as sla;
 
 :host {
@@ -8,9 +9,7 @@
   align-items: stretch;
   align-content: flex-start;
   gap: 0;
-  background-color: var(--bg-body);
-  background-image: var(--bg-body-texture);
-  background-size: var(--bg-section-size);
+  // Transparent — the dotted texture is painted once on <body> (see styles.scss).
 }
 
 .row-layout {
@@ -21,11 +20,11 @@
   justify-content: center;
   align-items: center;
   align-content: flex-start;
-  gap: 32px;
+  gap: rem(32px);
   position: relative;
-  padding: 48px 32px;
-  min-width: 50px;
-  min-height: 50px;
+  padding: rem(48px) rem(32px);
+  min-width: rem(50px);
+  min-height: rem(50px);
   flex-grow: 1;
   flex-shrink: 0;
 }
@@ -33,7 +32,7 @@
 // First section sits right under the banner — trim its top padding so the
 // masonry grid starts high on the page instead of after a big gap.
 .portfolio-first-section {
-  padding-top: 24px;
+  padding-top: rem(24px);
 }
 
 .column-layout {
@@ -45,11 +44,11 @@
   justify-content: flex-start;
   align-items: stretch;
   align-content: flex-start;
-  gap: 32px;
+  gap: rem(32px);
   position: relative;
-  min-width: 50px;
-  min-height: 50px;
-  max-width: 1400px;
+  min-width: rem(50px);
+  min-height: rem(50px);
+  max-width: rem(1400px);
   flex-grow: 1;
   flex-basis: 0;
 }
@@ -58,10 +57,10 @@
   justify-content: flex-start;
   align-items: center;
   align-content: flex-start;
-  gap: 8px;
+  gap: rem(8px);
   position: relative;
-  min-width: 50px;
-  min-height: 50px;
+  min-width: rem(50px);
+  min-height: rem(50px);
   flex-shrink: 0;
 }
 
@@ -70,10 +69,10 @@
   justify-content: center;
   align-items: stretch;
   align-content: stretch;
-  gap: 24px;
+  gap: rem(24px);
   position: relative;
-  min-width: 50px;
-  min-height: 50px;
+  min-width: rem(50px);
+  min-height: rem(50px);
   flex-shrink: 0;
 }
 
@@ -93,13 +92,13 @@
 
 .image_7 {
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   width: 100%;
-  max-width: 280px;
-  height: 400px;
-  min-width: 200px;
+  max-width: rem(280px);
+  height: rem(400px);
+  min-width: rem(200px);
   flex-shrink: 1;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-float);
   transition: transform 0.3s ease;
   
   &:hover {
@@ -107,30 +106,32 @@
   }
   
   @media (max-width: 768px) {
-    max-width: 220px;
-    height: 320px;
-    min-width: 160px;
+    max-width: rem(220px);
+    height: rem(320px);
+    min-width: rem(160px);
   }
   
   @media (max-width: 480px) {
     max-width: 100%;
-    height: 280px;
-    min-width: 140px;
+    height: rem(280px);
+    min-width: rem(140px);
   }
 }
 
-// Masonry wall — replaces the old auto-sliding carousel. CSS multi-column
-// layout keeps each photo's natural proportions and shows many at once.
+// Masonry wall — CSS multi-column layout keeps each photo's natural
+// proportions and shows many at once. Columns fill column-major, so the
+// stagger cascade runs down each column rather than across rows; that reads
+// fine here and is the trade for not cropping the photos to a fixed ratio.
 .masonry-gallery {
   width: 100%;
-  max-width: 1100px;
+  max-width: rem(1100px);
   margin: 0 auto;
   column-count: 3;
-  column-gap: 16px;
+  column-gap: rem(16px);
 
   @media (max-width: 768px) {
     column-count: 2;
-    column-gap: 12px;
+    column-gap: rem(12px);
   }
 
   @media (max-width: 420px) {
@@ -140,22 +141,28 @@
 
 .masonry-item {
   break-inside: avoid;
-  margin-bottom: 16px;
-  border-radius: 12px;
+  margin-bottom: rem(16px);
+  border-radius: var(--radius-md);
   line-height: 0; // let the border sit flush against the photo, no gap
 
   @include sla.sla-hover($bump: true);
 
+  // This wall shows ~25 tiles, so the shared .stagger-in cap of 10 steps would
+  // pop the lower two-thirds in at once. A longer, gentler cascade keeps the
+  // reveal sweeping continuously down the wall without dragging on. (Scoped
+  // selector out-specifies the global .stagger-in > * rule, so no !important.)
+  animation-delay: calc(min(var(--i, 0), 26) * 42ms);
+
   @media (max-width: 768px) {
-    margin-bottom: 12px;
+    margin-bottom: rem(12px);
   }
 }
 
 .masonry-image {
   width: 100%;
-  height: auto;
+  height: auto; // natural proportions — no fixed aspect-ratio crop
   display: block;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
 }
 

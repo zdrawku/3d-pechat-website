@@ -47,27 +47,35 @@
   <div class="section_inner">
     <p class="section_eyebrow">Защо да изберете нас</p>
     <h2 class="section_heading">Всичко за вашия проект, на едно място</h2>
-    <div class="props_grid">
-      <div class="prop_card">
-        <div class="prop_icon">🎯</div>
-        <h3 class="prop_title">Прецизност</h3>
-        <p class="prop_text">Точни размери и чист финиш при всеки детайл, независимо от сложността.</p>
-      </div>
-      <div class="prop_card">
-        <div class="prop_icon">⚡</div>
-        <h3 class="prop_title">Бързи срокове</h3>
-        <p class="prop_text">Кратко време за изработка — от прототип до готова малка серия.</p>
-      </div>
-      <div class="prop_card">
-        <div class="prop_icon">🧩</div>
-        <h3 class="prop_title">Всякаква форма</h3>
-        <p class="prop_text">Свобода при геометрията — сложни модели, които други методи не позволяват.</p>
-      </div>
-      <div class="prop_card">
-        <div class="prop_icon">💬</div>
-        <h3 class="prop_title">Съдействие</h3>
-        <p class="prop_text">Помагаме от идеята до готовия модел, на всеки етап от процеса.</p>
-      </div>
+    <div class="props_grid stagger-in">
+      <igx-card class="prop_card" [style.--i]="0">
+        <igx-card-content class="prop_card_body">
+          <div class="prop_icon">🎯</div>
+          <h3 class="prop_title">Прецизност</h3>
+          <p class="prop_text">Точни размери и чист финиш при всеки детайл, независимо от сложността.</p>
+        </igx-card-content>
+      </igx-card>
+      <igx-card class="prop_card" [style.--i]="1">
+        <igx-card-content class="prop_card_body">
+          <div class="prop_icon">⚡</div>
+          <h3 class="prop_title">Бързи срокове</h3>
+          <p class="prop_text">Кратко време за изработка — от прототип до готова малка серия.</p>
+        </igx-card-content>
+      </igx-card>
+      <igx-card class="prop_card" [style.--i]="2">
+        <igx-card-content class="prop_card_body">
+          <div class="prop_icon">🧩</div>
+          <h3 class="prop_title">Всякаква форма</h3>
+          <p class="prop_text">Свобода при геометрията — сложни модели, които други методи не позволяват.</p>
+        </igx-card-content>
+      </igx-card>
+      <igx-card class="prop_card" [style.--i]="3">
+        <igx-card-content class="prop_card_body">
+          <div class="prop_icon">💬</div>
+          <h3 class="prop_title">Съдействие</h3>
+          <p class="prop_text">Помагаме от идеята до готовия модел, на всеки етап от процеса.</p>
+        </igx-card-content>
+      </igx-card>
     </div>
   </div>
 </section>
@@ -77,26 +85,42 @@
   <div class="section_inner">
     <p class="section_eyebrow">Как работим</p>
     <h2 class="section_heading">От идея до готов детайл за 4 стъпки</h2>
-    <ol class="process_steps">
-      <li class="process_step">
-        <span class="step_num">1</span>
-        <h3 class="step_title">Изпратете идея</h3>
-        <p class="step_text">Модел, скица или описание — през формата, Viber или Instagram.</p>
+    <ol class="process_steps stagger-in stagger-in--auto">
+      <li class="process_step_item">
+        <igx-card class="process_step">
+          <igx-card-content class="process_step_body">
+            <span class="step_num">1</span>
+            <h3 class="step_title">Изпратете идея</h3>
+            <p class="step_text">Модел, скица или описание — през формата, Viber или Instagram.</p>
+          </igx-card-content>
+        </igx-card>
       </li>
-      <li class="process_step">
-        <span class="step_num">2</span>
-        <h3 class="step_title">Оферта</h3>
-        <p class="step_text">Уточняваме материал, цвят и срок и получавате ясна цена.</p>
+      <li class="process_step_item">
+        <igx-card class="process_step">
+          <igx-card-content class="process_step_body">
+            <span class="step_num">2</span>
+            <h3 class="step_title">Оферта</h3>
+            <p class="step_text">Уточняваме материал, цвят и срок и получавате ясна цена.</p>
+          </igx-card-content>
+        </igx-card>
       </li>
-      <li class="process_step">
-        <span class="step_num">3</span>
-        <h3 class="step_title">Печат</h3>
-        <p class="step_text">Изработваме детайла с качествени материали и контрол на качеството.</p>
+      <li class="process_step_item">
+        <igx-card class="process_step">
+          <igx-card-content class="process_step_body">
+            <span class="step_num">3</span>
+            <h3 class="step_title">Печат</h3>
+            <p class="step_text">Изработваме детайла с качествени материали и контрол на качеството.</p>
+          </igx-card-content>
+        </igx-card>
       </li>
-      <li class="process_step">
-        <span class="step_num">4</span>
-        <h3 class="step_title">Доставка</h3>
-        <p class="step_text">Получавате готовия продукт — с грижа за всеки детайл.</p>
+      <li class="process_step_item">
+        <igx-card class="process_step">
+          <igx-card-content class="process_step_body">
+            <span class="step_num">4</span>
+            <h3 class="step_title">Доставка</h3>
+            <p class="step_text">Получавате готовия продукт — с грижа за всеки детайл.</p>
+          </igx-card-content>
+        </igx-card>
       </li>
     </ol>
   </div>
@@ -137,18 +161,18 @@
   </div>
 </section>
 
-<!-- FINAL CTA -->
-<section class="final_cta_section">
-  <div class="final_cta_band">
-    <h2 class="final_cta_title">Готови да реализирате вашата идея?</h2>
-    <p class="final_cta_desc">
+<!-- FINAL CTA — shared .cta-band (see styles.scss) -->
+<section class="cta-band-section">
+  <div class="cta-band">
+    <h2 class="cta-band__title">Готови да реализирате вашата идея?</h2>
+    <p class="cta-band__desc">
       Свържете се с нас днес — ще ви помогнем да изберете най-доброто решение за вашия проект.
     </p>
-    <div class="hero_cta_row final_cta_row">
-      <button igxButton="contained" type="button" class="btn_solid" (click)="navigateToContact()">
+    <div class="cta-band__actions">
+      <button igxButton="contained" type="button" class="cta-band__btn" (click)="navigateToContact()">
         Заяви оферта
       </button>
-      <a href="tel:+359883310616" class="btn_line">
+      <a href="tel:+359883310616" class="cta-band__btn cta-band__btn--line">
         Обади се сега
       </a>
     </div>

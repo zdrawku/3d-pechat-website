@@ -1,3 +1,4 @@
+@use "igniteui-angular/theming" as *;
 :host {
   height: 100%;
   display: flex;
@@ -18,7 +19,7 @@
     var(--bg-card) 55%,
     var(--bg-card) 100%
   );
-  border-bottom: 1px solid var(--line, var(--ig-gray-300));
+  border-bottom: rem(1px) solid var(--line, var(--ig-gray-300));
   z-index: 10000;
   position: fixed;
   top: 0;
@@ -39,11 +40,11 @@
 .navigation_drawer_1 {
   min-width: min-content;
   min-height: 0;
-  max-width: 232px;
+  max-width: rem(232px);
   flex-shrink: 0;
   position: sticky;
-  top: 56px;
-  height: calc(100vh - 56px);
+  top: rem(56px);
+  height: calc(100vh - rem(56px));
   overflow-y: auto;
   z-index: 100;
   
@@ -52,13 +53,15 @@
     top: 0;
     height: auto;
     
+    // Scoped under .navigation_drawer_1 (0,2,0), which out-specifies Ignite's
+    // own class-level rules — no !important needed to raise the drawer stack.
     ::ng-deep .igx-nav-drawer__aside {
-      padding-top: 56px;
-      z-index: 1000 !important;
+      padding-top: rem(56px);
+      z-index: 1000;
     }
-    
+
     ::ng-deep .igx-nav-drawer__overlay {
-      z-index: 999 !important;
+      z-index: 999;
     }
   }
 }
@@ -81,33 +84,33 @@
 // an icon tile + one-line subtitle, grouped under small section labels.
 // Replaces the old flat igxDrawerItem icon+text rows.
 .drawer_group_label {
-  font-size: 10px;
+  font-size: rem(10px);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--ig-gray-700);
-  padding: 10px 14px 4px;
+  padding: rem(10px) rem(14px) rem(4px);
 }
 
 .drawer_chip_list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 0 10px;
+  gap: rem(4px);
+  padding: 0 rem(10px);
 }
 
 .drawer_chip_list_first {
-  padding-top: 10px;
+  padding-top: rem(10px);
 }
 
 .drawer_chip {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
-  border-radius: 10px;
+  gap: rem(10px);
+  padding: rem(8px) rem(10px);
+  border-radius: rem(10px);
   background: var(--bg-body);
-  border: 1px solid var(--ig-gray-300);
+  border: rem(1px) solid var(--ig-gray-300);
   cursor: pointer;
   text-decoration: none;
   color: inherit;
@@ -115,12 +118,12 @@
 
   &:hover {
     border-color: var(--ig-primary-500);
-    transform: translateX(2px);
+    transform: translateX(rem(2px));
   }
 
   &:focus-visible {
-    outline: 2px solid var(--ig-primary-500);
-    outline-offset: 2px;
+    outline: rem(2px) solid var(--ig-primary-500);
+    outline-offset: rem(2px);
   }
 
   // Active = a solid orange pill. Icon, label and subtitle all sit on the
@@ -134,10 +137,7 @@
       // Translucent tile on the orange pill instead of a solid orange-on-orange.
       background: color-mix(in srgb, var(--ig-primary-500-contrast) 16%, transparent);
       color: var(--ig-primary-500-contrast);
-
-      igx-icon {
-        color: var(--ig-primary-500-contrast) !important;
-      }
+      --ig-icon-color: var(--ig-primary-500-contrast);
     }
 
     .drawer_chip_txt b,
@@ -147,26 +147,21 @@
   }
 }
 
-// Icon tile size — bump width/height/font-size together to resize.
+// Icon tile — the glyph colour and size come from Ignite's own icon tokens
+// (--ig-icon-color / --ig-icon-size), which the igx-icon inside reads. gray-700
+// clears 4.5:1 on the tile; no !important or igx-icon override needed.
 .drawer_chip_tile {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
+  width: rem(28px);
+  height: rem(28px);
+  border-radius: var(--radius-sm);
   background: var(--bg-alt);
   color: var(--ig-gray-700);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-
-  igx-icon {
-    // Force the icon color — Ignite icons default to the theme icon color, which
-    // axe measured as low-contrast on the tile. gray-700 clears 4.5:1.
-    color: var(--ig-gray-700) !important;
-    font-size: 16px !important;
-    width: 16px !important;
-    height: 16px !important;
-  }
+  --ig-icon-color: var(--ig-gray-700);
+  --ig-icon-size: #{rem(16px)};
 }
 
 // Nav item text — `b` is the label (e.g. "Начало"), `span` is the subtitle
@@ -178,13 +173,13 @@
   min-width: 0;
 
   b {
-    font-size: 14px; // nav item label size
+    font-size: rem(14px); // nav item label size
     font-weight: 650;
     color: var(--ig-gray-900);
   }
 
   span {
-    font-size: 10.5px; // nav item subtitle size
+    font-size: rem(10.5px); // nav item subtitle size
     color: var(--ig-gray-700);
   }
 }
@@ -194,21 +189,21 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 12px 14px 14px;
-  border-top: 1px solid var(--ig-gray-300);
+  gap: rem(6px);
+  padding: rem(12px) rem(14px) rem(14px);
+  border-top: rem(1px) solid var(--ig-gray-300);
 
   img {
-    width: 96px;
+    width: rem(96px);
     max-width: 100%;
     height: auto;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     display: block;
   }
 }
 
 .drawer_brand_tag {
-  font-size: 10px;
+  font-size: rem(10px);
   line-height: 1.3;
   text-align: center;
   color: var(--ig-gray-700);
@@ -223,7 +218,7 @@
   flex-grow: 1;
 }
 .navbar-content {
-  gap: 1rem;
+  gap: rem(16px);
 }
 .row-layout {
   display: flex;
@@ -233,16 +228,16 @@
 .menu-trigger {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: rem(8px);
   border: none;
-  border-radius: 999px;
-  padding: 7px 14px 7px 11px;
+  border-radius: var(--radius-pill);
+  padding: rem(7px) rem(14px) rem(7px) rem(11px);
   background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500) 75%);
   // Contrast token, not #fff — dark text on orange in dark theme, white in light.
   // Every orange-filled control in the app follows this rule for consistency.
   color: var(--ig-primary-500-contrast);
   font-weight: 700;
-  font-size: 0.8125rem;
+  font-size: rem(13px);
   font-family: inherit;
   cursor: pointer;
   flex-shrink: 0;
@@ -256,14 +251,14 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--ig-primary-500);
-    outline-offset: 2px;
+    outline: rem(2px) solid var(--ig-primary-500);
+    outline-offset: rem(2px);
   }
 }
 
 .menu-trigger-bars {
-  width: 16px;
-  height: 11px;
+  width: rem(16px);
+  height: rem(11px);
   position: relative;
   flex-shrink: 0;
 
@@ -271,8 +266,8 @@
     position: absolute;
     left: 0;
     right: 0;
-    height: 2px;
-    border-radius: 2px;
+    height: rem(2px);
+    border-radius: rem(2px);
     // Follow the button's text color (contrast token) so the bars match the label.
     background: currentColor;
     transition: transform 0.2s ease, width 0.2s ease;
@@ -282,12 +277,12 @@
     }
 
     &:nth-child(2) {
-      top: 4.5px;
+      top: rem(4.5px);
       width: 70%;
     }
 
     &:nth-child(3) {
-      top: 9px;
+      top: rem(9px);
     }
   }
 }
@@ -305,11 +300,11 @@
   align-content: flex-start;
   gap: 0;
   position: relative;
-  min-width: 50px;
-  min-height: 50px;
+  min-width: rem(50px);
+  min-height: rem(50px);
   flex-grow: 1;
   flex-shrink: 0;
-  padding-top: 56px; /* Add padding for fixed navbar height */
+  padding-top: rem(56px); /* Add padding for fixed navbar height */
 }
 .column-layout {
   display: flex;
@@ -334,19 +329,19 @@
   align-content: flex-start;
   gap: 0;
   position: relative;
-  min-width: 50px;
-  min-height: 50px;
+  min-width: rem(50px);
+  min-height: rem(50px);
   flex-shrink: 0;
 }
 .row_layout_-6 {
   justify-content: center;
   align-items: center;
   align-content: flex-start;
-  gap: 16px;
+  gap: rem(16px);
   position: relative;
-  padding: 20px;
-  min-width: 50px;
-  min-height: 50px;
+  padding: rem(20px);
+  min-width: rem(50px);
+  min-height: rem(50px);
   flex-shrink: 0;
 }
 .row_layout_-5 {
@@ -355,10 +350,13 @@
   justify-content: space-between;
   align-items: flex-start;
   align-content: flex-start;
-  gap: 8px;
+  gap: rem(8px);
   position: relative;
-  min-width: 320px;
-  max-width: 1200px;
+  // Capped floors — a bare 320px/120px minimum can exceed a narrow viewport and
+  // force the page to scroll sideways. `min()` keeps the intent on wide screens
+  // while letting these collapse cleanly on small ones.
+  min-width: min(rem(320px), 100%);
+  max-width: rem(1200px);
   flex-grow: 1;
   flex-basis: 0;
 }
@@ -366,9 +364,9 @@
   justify-content: flex-start;
   align-items: stretch;
   align-content: flex-start;
-  gap: 3px;
+  gap: rem(3px);
   position: relative;
-  min-width: 120px;
+  min-width: min(rem(120px), 100%);
   flex-grow: 1;
   flex-basis: 0;
 }
@@ -376,7 +374,7 @@
   justify-content: flex-start;
   align-items: center;
   align-content: flex-start;
-  gap: 8px;
+  gap: rem(8px);
   position: relative;
   height: max-content;
   min-width: min-content;
@@ -386,52 +384,66 @@
   justify-content: flex-start;
   align-items: stretch;
   align-content: flex-start;
-  gap: 4px;
+  gap: rem(4px);
   position: relative;
-  min-width: 50px;
-  min-height: 50px;
+  min-width: rem(50px);
+  min-height: rem(50px);
   flex-shrink: 0;
 }
+// Contacts column. A hard 240px floor made this column (and so the whole
+// four-column footer row) wider than the space left beside the drawer on
+// mid-size viewports. A fluid floor lets it wrap onto its own line instead.
 .column_layout_-3 {
   justify-content: flex-start;
   align-items: stretch;
   align-content: flex-start;
-  gap: 3px;
+  gap: rem(3px);
   position: relative;
-  min-width: 240px;
+  min-width: min(rem(240px), 100%);
   flex-grow: 1;
   flex-basis: 0;
 }
+// Footer contact rows (icon + address/phone/mail). These must be free to shrink:
+// `min-width: max-content` would pin each row to the full width of its longest
+// unbroken line (the address is ~279px), which overflowed the page horizontally
+// once the drawer took its 232px out of the viewport. min-width:0 lets the text
+// child wrap instead, and the icon keeps its own size via flex-shrink:0 below.
 .row_layout_-2 {
   justify-content: flex-start;
   align-items: center;
   align-content: flex-start;
-  gap: 8px;
+  gap: rem(8px);
   position: relative;
   height: max-content;
-  min-width: max-content;
-  flex-shrink: 0;
+  min-width: 0;
+
+  // The text next to the icon is what gives way when space is tight.
+  > p,
+  > a {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
 }
 .row_layout_-7 {
   border-color: var(--ig-gray-400);
-  border-width: 1px 0px 0px;
+  border-width: rem(1px) 0 0;
   border-style: solid;
   justify-content: center;
   align-items: center;
   align-content: flex-start;
   gap: 0;
   position: relative;
-  padding-right: 32px;
-  padding-left: 32px;
-  min-height: 50px;
+  padding-right: rem(32px);
+  padding-left: rem(32px);
+  min-height: rem(50px);
   flex-grow: 1;
   flex-shrink: 0;
 }
 .icon_12 {
-  --size: 24px;
-  font-size: 24px;
-  width: 24px;
-  height: 24px;
+  --size: #{rem(24px)};
+  font-size: rem(24px);
+  width: rem(24px);
+  height: rem(24px);
 }
 
 // Theme switch — a sliding sun/moon toggle. The knob shows the CURRENT theme's
@@ -442,7 +454,7 @@
   background: transparent;
   border: none;
   padding: 0;
-  margin-left: 8px;
+  margin-left: rem(8px);
   display: inline-flex;
   align-items: center;
   cursor: pointer;
@@ -450,11 +462,11 @@
 
 .theme-switch-track {
   position: relative;
-  width: 54px;
-  height: 28px;
-  border-radius: 999px;
+  width: rem(54px);
+  height: rem(28px);
+  border-radius: var(--radius-pill);
   background: var(--bg-alt);
-  border: 1px solid var(--ig-gray-300);
+  border: rem(1px) solid var(--ig-gray-300);
   transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
@@ -467,60 +479,50 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  --size: 14px;
-  font-size: 14px !important;
-  width: 14px !important;
-  height: 14px !important;
+  // Size + colour via Ignite's icon tokens (this element is an igx-icon).
   // gray-700 (not 600) so the sun/moon glyphs clear 4.5:1 on the track.
-  color: var(--ig-gray-700);
+  --ig-icon-size: #{rem(14px)};
+  --ig-icon-color: var(--ig-gray-700);
   z-index: 0;
   pointer-events: none;
-
-  igx-icon,
-  &.igx-icon {
-    color: var(--ig-gray-700) !important;
-  }
 }
 
 .theme-switch-end--sun {
-  left: 7px;
+  left: rem(7px);
 }
 
 .theme-switch-end--moon {
-  right: 7px;
+  right: rem(7px);
 }
 
 // The sliding knob.
 .theme-switch-knob {
   position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 22px;
-  height: 22px;
+  top: rem(2px);
+  left: rem(2px);
+  width: rem(22px);
+  height: rem(22px);
   border-radius: 50%;
   background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500));
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-xs);
   transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1;
 }
 
 .theme-switch-knob-ic {
-  --size: 13px;
-  font-size: 13px !important;
-  width: 13px !important;
-  height: 13px !important;
   // On the orange knob — use the contrast token like every other orange fill.
-  color: var(--ig-primary-500-contrast) !important;
+  --ig-icon-size: #{rem(13px)};
+  --ig-icon-color: var(--ig-primary-500-contrast);
 }
 
 // Slide the knob to the right end when dark theme is active.
 // 26px = track width (54px) - knob width (22px) - 2*offset (2px each side).
 // If you resize .theme-switch-track or .theme-switch-knob, recompute this.
 .theme-switch.is-dark .theme-switch-knob {
-  transform: translateX(26px);
+  transform: translateX(rem(26px));
 }
 
 .content {
@@ -545,10 +547,10 @@
   color: var(--ig-surface-500-contrast);
 }
 .icon_site_footer {
-  --size: 24px;
-  font-size: 24px;
-  width: 24px;
-  height: 24px;
+  --size: #{rem(24px)};
+  font-size: rem(24px);
+  width: rem(24px);
+  height: rem(24px);
   color: var(--ig-gray-600);
   transition: color 0.3s ease;
   
@@ -569,9 +571,9 @@
     }
     
     &:focus {
-      outline: 2px solid var(--ig-primary-500);
-      outline-offset: 2px;
-      border-radius: 4px;
+      outline: rem(2px) solid var(--ig-primary-500);
+      outline-offset: rem(2px);
+      border-radius: rem(4px);
     }
   }
 }
@@ -586,10 +588,11 @@
   min-width: min-content;
 }
 .icon_mail_footer {
-  --size: 18px;
-  font-size: 18px;
-  width: 18px;
-  height: 18px;
+  --size: #{rem(18px)};
+  font-size: rem(18px);
+  width: rem(18px);
+  height: rem(18px);
+  flex-shrink: 0; // the text beside it wraps; the glyph keeps its 18px box
   // #666666 (~5.3:1 on #F5F5F5) instead of the ~#8A8A8A gray-600 (3.16:1).
   color: #666666;
 }
@@ -600,7 +603,7 @@
 .footer_link {
   color: var(--ig-gray-700);
   display: inline-block; // ≥24px touch target via vertical padding (WCAG 2.5.8)
-  padding: 4px 0;
+  padding: rem(4px) 0;
   min-width: min-content;
   text-decoration: none;
   cursor: pointer;
@@ -612,9 +615,9 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--ig-primary-500);
-    outline-offset: 2px;
-    border-radius: 4px;
+    outline: rem(2px) solid var(--ig-primary-500);
+    outline-offset: rem(2px);
+    border-radius: rem(4px);
   }
 }
 
@@ -640,22 +643,25 @@
   align-items: center;
   justify-content: center;
   height: max-content;
-  padding: 9px 18px;
-  margin-left: 4px;
-  border-radius: 999px;
+  padding: rem(9px) rem(18px);
+  margin-left: rem(4px);
+  border-radius: var(--radius-pill);
   background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500) 70%);
   color: var(--ig-primary-500-contrast);
   font-weight: 700;
-  font-size: 0.875rem;
+  font-size: rem(14px);
   letter-spacing: 0.01em;
   white-space: nowrap;
   text-decoration: none;
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--ig-primary-500) 35%, transparent);
+  // Flat at rest — the glow appears only on hover/focus (see below).
+  box-shadow: none;
   transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 
-  &:hover {
-    transform: translateY(-1px);
+  &:hover,
+  &:focus-visible {
+    transform: translateY(rem(-1px));
     text-decoration: none;
+    box-shadow: 0 rem(6px) rem(16px) color-mix(in srgb, var(--ig-primary-500) 42%, transparent);
   }
 
   &:active {
@@ -663,26 +669,27 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--ig-primary-500);
-    outline-offset: 2px;
+    outline: rem(2px) solid var(--ig-primary-500);
+    outline-offset: rem(2px);
   }
 
   // Shrink to just the essentials on tight widths so it doesn't overflow.
   @media (max-width: 480px) {
-    padding: 8px 12px;
-    font-size: 0.8125rem;
+    padding: rem(8px) rem(12px);
+    font-size: rem(13px);
   }
 }
 .icon_button_5 {
   --foreground: var(--ig-surface-500-contrast);
-  
-  // Remove underline for anchor tags used as icon buttons
+
+  // Remove underline for anchor tags used as icon buttons. .icon_button_5[href]
+  // (0,2,0) already out-specifies the browser's `a` default, so no !important.
   &[href] {
-    text-decoration: none !important;
+    text-decoration: none;
     color: inherit;
-    
+
     &:hover {
-      text-decoration: none !important;
+      text-decoration: none;
     }
   }
 }
@@ -690,15 +697,49 @@
 // Navbar social media icon styling
 igx-navbar {
   a.icon_button_5 {
-    text-decoration: none !important;
+    text-decoration: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    
+
     igx-icon {
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+  }
+
+  // Below 420px the navbar row (menu pill + CTA + 2 socials + theme switch) is
+  // wider than the viewport, and igx-navbar's own `overflow: hidden` clipped the
+  // theme switch off-screen entirely instead of scrolling to it. Shed the social
+  // icons here — the same progressive-shedding rule the wordmark follows at
+  // 600px. Both links stay reachable in the footer.
+  //
+  // Must sit after the rule above and match its specificity (0,2,1): Ignite's
+  // own .igx-icon-button sets `display: flex`, so a plain .icon_button_5 block
+  // would lose. Same weight + later in the file wins without !important.
+  @media (max-width: 420px) {
+    a.icon_button_5 {
+      display: none;
+    }
+  }
+
+  // At the 320px floor the remaining three controls still overhang by a few px.
+  // Reclaim it from the bar's own side padding and the inter-control margins
+  // rather than shrinking the touch targets.
+  @media (max-width: 360px) {
+    .igx-navbar__part--start,
+    .igx-navbar__right {
+      padding-inline: rem(8px);
+    }
+
+    .nav_cta_button {
+      margin-left: 0;
+      padding: rem(8px) rem(10px);
+    }
+
+    .theme-switch {
+      margin-left: rem(4px);
     }
   }
 }

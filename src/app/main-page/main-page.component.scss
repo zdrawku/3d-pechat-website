@@ -1,3 +1,5 @@
+@use "igniteui-angular/theming" as *;
+@use '../fluid' as *;
 @use '../sla-hover' as sla;
 
 :host {
@@ -15,25 +17,21 @@
   display: flex;
 }
 
-// Shared section shell + inner width constraint
+// Shared section shell + inner width constraint. Generous vertical padding so
+// sections have room to breathe and read as distinct bands (~96px between
+// adjacent sections on desktop); scales down on smaller screens.
 .home_section {
   position: relative;
   width: 100%;
-  padding: 17px 32px;
-
-  @media (max-width: 768px) {
-    padding: 32px 20px;
-  }
-
-  @media (max-width: 480px) {
-    padding: 28px 16px;
-  }
+  // Fluid section padding — scales 32→48px vertical, 16→32px horizontal across
+  // the viewport, no breakpoints.
+  padding: fluid(32px, 48px) fluid(16px, 32px);
 }
 
 .section_inner,
 .hero_inner,
 .about_inner {
-  max-width: 1200px;
+  max-width: rem(1200px);
   margin: 0 auto;
   width: 100%;
 }
@@ -41,24 +39,30 @@
 .section_eyebrow {
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  font-size: 0.72rem;
+  font-size: rem(11.52px);
   font-weight: 700;
   color: var(--ig-primary-500);
-  // margin: 0 0 10px;
+  margin: 0 0 rem(8px); // small gap between the kicker and the heading
 }
 
 .section_heading {
-  font-size: 1.75rem;
+  font-size: fluid(22.4px, 28px); // fluid, replaces the 480px step
   line-height: 1.15;
   font-weight: 750;
   letter-spacing: -0.02em;
   color: var(--ig-gray-900);
-  margin: 0 0 4px;
+  margin: 0; // header block; the content below adds its own top gap
   text-wrap: balance;
+}
 
-  @media (max-width: 480px) {
-    font-size: 1.4rem;
-  }
+// Optional supporting line under a section heading — sits close to the heading
+// as part of the header block.
+.section_sub {
+  margin: rem(10px) 0 0;
+  max-width: 60ch;
+  color: var(--ig-gray-700);
+  font-size: rem(15.2px);
+  line-height: 1.6;
 }
 
 // Soft seam fade helper for stacked sections
@@ -69,7 +73,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 16px;
+  height: rem(16px);
   background: var(--seam);
   pointer-events: none;
 }
@@ -78,62 +82,55 @@
 .row_layout_main_hero {
   position: relative;
   background: var(--bg-hero);
-  border-bottom: 1px solid var(--line, var(--ig-gray-300));
-  padding: 40px 32px 21px;
+  border-bottom: rem(1px) solid var(--line, var(--ig-gray-300));
+  // Fluid padding — top 24→40, sides 16→32, bottom 16→20.
+  padding: fluid(24px, 40px) fluid(16px, 32px) fluid(16px, 20px);
   width: 100%;
   overflow-x: hidden;
-
-  @media (max-width: 768px) {
-    padding: 32px 20px;
-  }
-
-  @media (max-width: 480px) {
-    padding: 24px 16px;
-  }
 }
 
 .hero_inner {
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
-  gap: 44px;
+  gap: rem(44px);
   align-items: center;
 
   @media (max-width: 860px) {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: rem(32px);
   }
 }
 
 .hero_chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 18px;
+  gap: rem(8px);
+  margin-bottom: rem(18px);
 }
 
 .hero_chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.75rem;
+  gap: rem(6px);
+  font-size: rem(12px);
   font-weight: 600;
   color: var(--ig-gray-900);
   background: var(--bg-card);
-  border: 1px solid var(--line, var(--ig-gray-300));
-  padding: 6px 11px;
-  border-radius: 999px;
+  border: rem(1px) solid var(--line, var(--ig-gray-300));
+  padding: rem(6px) rem(11px);
+  border-radius: var(--radius-pill);
   box-shadow: var(--shadow-card);
 }
 
 .chip_dot {
-  width: 7px;
-  height: 7px;
+  width: rem(7px);
+  height: rem(7px);
   border-radius: 50%;
   background: var(--ig-secondary-500);
 }
 
 .hero_title {
-  font-size: clamp(1.9rem, 4.5vw, 2.75rem);
+  font-size: clamp(rem(30.4px), 4.5vw, rem(44px));
   line-height: 1.1;
   font-weight: 800;
   letter-spacing: -0.025em;
@@ -143,10 +140,10 @@
 }
 
 .hero_desc {
-  font-size: 1rem;
+  font-size: rem(16px);
   line-height: 1.7;
   color: var(--ig-gray-700);
-  margin: 18px 0 0;
+  margin: rem(18px) 0 0;
   max-width: 56ch;
 
   @media (max-width: 860px) {
@@ -156,14 +153,14 @@
 
 .hero_cta_row {
   display: flex;
-  gap: 12px;
-  margin-top: 26px;
+  gap: rem(12px);
+  margin-top: rem(26px);
   flex-wrap: wrap;
 }
 
 .hero_note {
-  margin-top: 16px;
-  font-size: 0.8125rem;
+  margin-top: rem(16px);
+  font-size: rem(13px);
   color: var(--ig-gray-700);
 }
 
@@ -179,21 +176,21 @@
 // bottom-up in fine layer steps, orange nozzle shuttles over the printer area =====
 .hero_print_frame {
   position: relative;
-  border-radius: 18px;
+  border-radius: rem(18px);
   overflow: hidden;
-  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.22);
+  box-shadow: var(--shadow-pop);
 }
 
 .hero_image_main {
   width: 100%;
   height: auto;
-  max-height: 420px;
+  max-height: rem(420px);
   object-fit: cover;
   display: block;
   filter: grayscale(1);
 
   @media (max-width: 480px) {
-    max-height: 280px;
+    max-height: rem(280px);
   }
 }
 
@@ -216,13 +213,13 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: calc(100% - 3px);
-  height: 3px;
-  border-radius: 2px;
+  top: calc(100% - rem(3px));
+  height: rem(3px);
+  border-radius: rem(2px);
   opacity: 0;
   pointer-events: none;
   background: linear-gradient(90deg, rgba(124, 77, 255, 0), #b388ff, rgba(124, 77, 255, 0));
-  box-shadow: 0 0 8px 2px rgba(124, 77, 255, 0.75), 0 0 30px 8px rgba(124, 77, 255, 0.35);
+  box-shadow: 0 0 rem(8px) rem(2px) rgba(124, 77, 255, 0.75), 0 0 rem(30px) rem(8px) rgba(124, 77, 255, 0.35);
   animation: heroLaserMove 7s steps(34) infinite;
 
   &::before {
@@ -230,18 +227,18 @@
     position: absolute;
     left: 0;
     right: 0;
-    top: 3px;
-    height: 44px;
+    top: rem(3px);
+    height: rem(44px);
     background: linear-gradient(to bottom, rgba(124, 77, 255, 0.3), transparent);
   }
 }
 
 .hero_nozzle {
   position: absolute;
-  width: 20px;
-  height: 16px;
+  width: rem(20px);
+  height: rem(16px);
   left: 24%;
-  top: calc(100% - 19px);
+  top: calc(100% - rem(19px));
   opacity: 0;
   pointer-events: none;
   animation:
@@ -261,12 +258,12 @@
     position: absolute;
     top: 100%;
     left: 50%;
-    width: 5px;
-    height: 5px;
+    width: rem(5px);
+    height: rem(5px);
     transform: translate(-50%, -60%);
     border-radius: 50%;
     background: #fff3e0;
-    box-shadow: 0 0 8px 3px rgba(255, 138, 101, 0.95), 0 0 18px 7px rgba(255, 87, 34, 0.45);
+    box-shadow: 0 0 rem(8px) rem(3px) rgba(255, 138, 101, 0.95), 0 0 rem(18px) rem(7px) rgba(255, 87, 34, 0.45);
   }
 }
 
@@ -277,23 +274,23 @@
 }
 
 @keyframes heroLaserMove {
-  0% { top: calc(100% - 3px); opacity: 0; }
-  6% { top: calc(100% - 3px); opacity: 1; }
+  0% { top: calc(100% - rem(3px)); opacity: 0; }
+  6% { top: calc(100% - rem(3px)); opacity: 1; }
   80% { top: 0; opacity: 1; }
   86%, 100% { top: 0; opacity: 0; }
 }
 
 @keyframes heroNozzleMove {
-  0% { top: calc(100% - 19px); opacity: 0; }
-  6% { top: calc(100% - 19px); opacity: 1; }
-  80% { top: -16px; opacity: 1; }
-  86%, 100% { top: -16px; opacity: 0; }
+  0% { top: calc(100% - rem(19px)); opacity: 0; }
+  6% { top: calc(100% - rem(19px)); opacity: 1; }
+  80% { top: rem(-16px); opacity: 1; }
+  86%, 100% { top: rem(-16px); opacity: 0; }
 }
 
 // nozzle shuttles only over the printer area of the photo, not the full frame
 @keyframes heroNozzleShuttle {
   from { left: 24%; }
-  to { left: calc(76% - 20px); }
+  to { left: calc(76% - rem(20px)); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -310,36 +307,36 @@
 
 .hero_stat {
   position: absolute;
-  left: -14px;
-  bottom: 20px;
+  left: rem(-14px);
+  bottom: rem(20px);
   display: flex;
   flex-direction: column;
-  border: 1px solid transparent;
+  border: rem(1px) solid transparent;
   background:
     linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
     linear-gradient(135deg, var(--ig-primary-500), var(--ig-info-500)) border-box;
-  border-radius: 14px;
-  padding: 12px 16px;
+  border-radius: rem(14px);
+  padding: rem(12px) rem(16px);
   box-shadow: var(--shadow-card);
 
   @media (max-width: 480px) {
-    left: 8px;
-    bottom: 8px;
-    padding: 8px 12px;
+    left: rem(8px);
+    bottom: rem(8px);
+    padding: rem(8px) rem(12px);
   }
 }
 
 .hero_stat_n {
-  font-size: 1.4rem;
+  font-size: rem(22.4px);
   font-weight: 800;
   color: var(--ig-primary-500);
   line-height: 1;
 }
 
 .hero_stat_l {
-  font-size: 0.7rem;
+  font-size: rem(11.2px);
   color: var(--ig-gray-700);
-  margin-top: 2px;
+  margin-top: rem(2px);
 }
 
 // ===================== SHARED BUTTONS =====================
@@ -354,20 +351,22 @@
   background: var(--ig-primary-500);
   color: var(--ig-primary-500-contrast);
   border-color: var(--ig-primary-500);
-  border-radius: 999px;
-  padding: 12px 24px;
+  border-radius: var(--radius-pill);
+  padding: rem(12px) rem(24px);
   font-weight: 700;
-  box-shadow: 0 6px 18px color-mix(in srgb, var(--ig-primary-500) 40%, transparent);
+  // Flat at rest — the glow appears only on hover/focus (see below).
+  box-shadow: none;
   will-change: transform;
   transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease, filter 0.28s ease;
 
-  &:hover {
-    transform: translateY(-2px) !important;
+  &:hover,
+  &:focus-visible {
+    transform: translateY(rem(-2px));
     filter: brightness(1.05);
     background: var(--ig-primary-500);
     color: var(--ig-primary-500-contrast);
     border-color: var(--ig-primary-500);
-    box-shadow: 0 10px 24px color-mix(in srgb, var(--ig-primary-500) 44%, transparent);
+    box-shadow: 0 rem(10px) rem(24px) color-mix(in srgb, var(--ig-primary-500) 44%, transparent);
   }
 
   &:active,
@@ -378,72 +377,71 @@
   }
 
   &:active {
-    transform: translateY(0) !important;
+    transform: translateY(0);
   }
 }
 
 .btn_ghost {
   --ig-size: var(--ig-size-medium);
   height: max-content;
-  border-radius: 999px;
-  padding: 12px 24px;
+  border-radius: var(--radius-pill);
+  padding: rem(12px) rem(24px);
   font-weight: 700;
 }
 
 // ===================== VALUE PROPS =====================
 .props_section {
-  background-color: var(--bg-body);
-  background-image: var(--bg-body-texture);
-  background-size: var(--bg-section-size);
+  // Transparent — the body's dotted texture shows through (no per-section grid).
 }
 
 .props_grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
-  margin-top: 32px;
-
-  @media (max-width: 860px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 520px) {
-    grid-template-columns: 1fr;
-  }
+  // Intrinsic responsive: columns fit as many ~220px tracks as the width
+  // allows (4 → 2 → 1) with no breakpoints. min(100%, …) keeps a single card
+  // from overflowing on very narrow screens.
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, rem(220px)), 1fr));
+  gap: rem(18px);
+  margin-top: rem(40px);
 }
 
+// Now an <igx-card>. The class overrides igx-card's default surface/elevation/
+// radius so the card looks unchanged; the padding lives on the inner
+// igx-card-content (.prop_card_body) since igx-card itself is padding-less.
 .prop_card {
   background: var(--bg-card);
-  border: 1px solid var(--line, var(--ig-gray-300));
-  border-radius: 16px;
-  padding: 24px 20px;
+  border: rem(1px) solid var(--line, var(--ig-gray-300));
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
 
   @include sla.sla-hover($bump: true);
 }
 
+.prop_card_body {
+  padding: rem(24px) rem(20px);
+}
+
 .prop_icon {
-  width: 46px;
-  height: 46px;
-  border-radius: 12px;
+  width: rem(46px);
+  height: rem(46px);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
+  font-size: rem(22.4px);
   background: color-mix(in srgb, var(--ig-primary-500) 14%, transparent);
-  margin-bottom: 14px;
+  margin-bottom: rem(14px);
 }
 
 .prop_title {
-  margin: 0 0 6px;
-  font-size: 1rem;
+  margin: 0 0 rem(6px);
+  font-size: rem(16px);
   font-weight: 700;
   color: var(--ig-gray-900);
 }
 
 .prop_text {
   margin: 0;
-  font-size: 0.85rem;
+  font-size: rem(13.6px);
   color: var(--ig-gray-700);
   line-height: 1.55;
 }
@@ -456,55 +454,59 @@
 .process_steps {
   list-style: none;
   padding: 0;
-  margin: 32px 0 0;
+  margin: rem(40px) 0 0;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-
-  @media (max-width: 860px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 520px) {
-    grid-template-columns: 1fr;
-  }
+  // Intrinsic responsive (4 → 2 → 1), no breakpoints.
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, rem(200px)), 1fr));
+  gap: rem(16px);
 }
 
+// The <li> stays for ordered-list semantics; the igx-card fills it so cards
+// keep equal heights across the grid row.
+.process_step_item {
+  display: flex;
+}
+
+// Each step is now an <igx-card>. Class overrides igx-card's default chrome;
+// padding lives on the inner igx-card-content (.process_step_body).
 .process_step {
-  position: relative;
-  padding: 22px 18px 20px;
+  flex: 1;
   background: var(--bg-card);
-  border: 1px solid var(--line, var(--ig-gray-300));
-  border-radius: 16px;
+  border: rem(1px) solid var(--line, var(--ig-gray-300));
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
 
   @include sla.sla-hover($bump: true);
+}
+
+.process_step_body {
+  padding: rem(22px) rem(18px) rem(20px);
 }
 
 .step_num {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: rem(30px);
+  height: rem(30px);
   border-radius: 50%;
-  font-size: 0.8rem;
+  font-size: rem(12.8px);
   font-weight: 800;
   color: var(--ig-primary-500-contrast);
   background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500));
-  margin-bottom: 12px;
+  margin-bottom: rem(12px);
 }
 
 .step_title {
-  margin: 0 0 6px;
-  font-size: 0.95rem;
+  margin: 0 0 rem(6px);
+  font-size: rem(15.2px);
   font-weight: 700;
   color: var(--ig-gray-900);
 }
 
 .step_text {
   margin: 0;
-  font-size: 0.8125rem;
+  font-size: rem(13px);
   color: var(--ig-gray-700);
   line-height: 1.5;
 }
@@ -512,31 +514,21 @@
 // ===================== ABOUT + GALLERY =====================
 .image_gallery_section_template_1 {
   position: relative;
-  background-color: var(--bg-section-base);
-  background-image: var(--bg-section);
-  background-size: var(--bg-section-size);
-  padding: 40px 32px;
+  // Transparent — the body's dotted texture shows through (no per-section grid).
+  padding: fluid(32px, 48px) fluid(16px, 32px);
   width: 100%;
   overflow: hidden;
-
-  @media (max-width: 768px) {
-    padding: 32px 20px;
-  }
-
-  @media (max-width: 480px) {
-    padding: 28px 16px;
-  }
 }
 
 .about_inner {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  gap: rem(40px);
   align-items: center;
 
   @media (max-width: 860px) {
     grid-template-columns: 1fr;
-    gap: 28px;
+    gap: rem(28px);
   }
 }
 
@@ -545,26 +537,22 @@
 }
 
 .about_cta {
-  margin-top: 22px;
+  margin-top: rem(22px);
 }
 
 .title_1 {
   color: var(--ig-gray-900);
-  font-size: 1.6rem;
+  font-size: fluid(21.6px, 25.6px);
   font-weight: 750;
   letter-spacing: -0.02em;
-  margin: 0 0 4px;
-
-  @media (max-width: 480px) {
-    font-size: 1.35rem;
-  }
+  margin: 0 0 rem(4px);
 }
 
 .title_2 {
   color: var(--ig-gray-700);
   line-height: 1.7;
-  font-size: 0.95rem;
-  margin: 14px 0 0;
+  font-size: rem(15.2px);
+  margin: rem(14px) 0 0;
 }
 
 .about_media {
@@ -573,84 +561,48 @@
 
 .carousel_1 {
   width: 100%;
-  height: 420px;
-  min-height: 300px;
+  height: rem(420px);
+  min-height: rem(300px);
 
   @media (max-width: 860px) {
-    height: 360px;
+    height: rem(360px);
     order: -1;
   }
 
   @media (max-width: 480px) {
-    height: 280px;
-    min-height: 240px;
+    height: rem(280px);
+    min-height: rem(240px);
   }
 
-  // IgniteUI ships square, theme-tinted carousel controls that wash out in dark
-  // mode. Restyle the prev/next arrows and the dot indicators to match the rest
-  // of the site: circular white buttons with an accessible accent glyph (the
-  // same pattern as the product-card carousel-nav), readable in both themes.
+  // Restyle the prev/next arrows and dot indicators to match the site: circular
+  // white buttons with an accessible orange glyph, white dots, orange active
+  // dot — readable in both themes.
   //
-  // TODO TO DO NOTE (tech debt): these ::ng-deep + !important overrides fight the theming
-  // engine. The square default comes from `$roundness: 0` in styles.scss. The
-  // engine-aligned fix is the `carousel-theme()` mixin (emits
-  // --nav-btn-border-radius, button-arrow-color, indicator-*-dot-color). Deferred
-  // — see the "igniteui-theming-followups" note. Get the exact mixin params from
-  // the Ignite UI theming MCP (configured in .mcp.json; connect via /mcp).
-  ::ng-deep .igx-carousel__arrow--prev,
-  ::ng-deep .igx-carousel__arrow--next {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.95);
-    color: var(--accent-on-light); // orange-on-white ≥4.5:1 in both themes
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-    // IgniteUI centers the arrow vertically with `top: 50%` + translateY(-50%).
-    // Re-declare that translate here so the hover transform below can keep it —
-    // otherwise the scale() drops the button by half its height.
-    transform: translateY(-50%);
-    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  // Done through the Ignite UI carousel component's OWN exposed theme variables
+  // (--ig-carousel-*) instead of ::ng-deep + !important. CSS custom properties
+  // inherit through Angular's emulated encapsulation, so setting them on the
+  // <igx-carousel> host reaches the internal arrows/dots with no piercing.
+  // The engine derives hover/disabled/focus states and the button elevation
+  // (--ig-elevation-1) from these, so the manual shadows/hover hacks are gone.
+  --ig-carousel-button-background: rgba(255, 255, 255, 0.95);
+  --ig-carousel-button-hover-background: #fff;
+  --ig-carousel-button-arrow-color: var(--accent-on-light); // orange-on-white ≥4.5:1
+  --ig-carousel-button-hover-arrow-color: var(--accent-on-light);
+  --ig-carousel-button-focus-arrow-color: var(--accent-on-light);
+  --ig-carousel-border-radius: var(--radius-pill); // round the nav buttons (theme ships square)
 
-    igx-icon,
-    .material-icons {
-      color: var(--accent-on-light) !important;
-    }
+  // The dot indicators do NOT read --ig-carousel-border-radius. Their radius is
+  // `clamp(0, var(--ig-radius-factor) * 50%, 50%)`, and our global $roundness: 0
+  // pins that factor to 0 — which is why the dots render as squares. Restoring
+  // the factor here (scoped to the carousel host, so the rest of the site keeps
+  // its square-cornered look) makes them circles again.
+  --ig-radius-factor: 1;
 
-    &:hover {
-      background: #fff;
-      // Keep the vertical centering; only add the grow so it stays put.
-      transform: translateY(-50%) scale(1.1);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
-    }
-  }
-
-  // The container behind the dots ships square. The rendered node carries a
-  // position modifier class (`--end` for bottom-anchored) with no plain
-  // `.igx-carousel-indicators` base class, so target the modifiers directly and
-  // round it into a pill to match the site's rounded language.
-  ::ng-deep .igx-carousel-indicators--end,
-  ::ng-deep .igx-carousel-indicators--start,
-  ::ng-deep [class*="igx-carousel-indicators--"] {
-    border-radius: 999px !important;
-  }
-
-  // Dot indicators: rounded, clearly visible on any image, orange when active —
-  // mirrors the product-card .indicator-dot. Confirmed DOM: each indicator is
-  // `.igx-carousel-indicators__indicator` wrapping an `.igx-nav-dot` that gains
-  // `.igx-nav-dot--active` on the current slide.
-  ::ng-deep .igx-nav-dot {
-    border-radius: 50% !important;
-    background: rgba(255, 255, 255, 0.65) !important;
-    border-color: rgba(255, 255, 255, 0.65) !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
-    transition: background-color 0.2s ease, transform 0.2s ease;
-
-    &.igx-nav-dot--active {
-      background: var(--ig-primary-500) !important;
-      border-color: var(--ig-primary-500) !important;
-      transform: scale(1.25);
-    }
-  }
+  --ig-carousel-indicator-background: transparent; // no bar behind the dots
+  --ig-carousel-indicator-dot-color: rgba(255, 255, 255, 0.65);
+  --ig-carousel-indicator-hover-dot-color: #fff;
+  --ig-carousel-indicator-active-dot-color: var(--ig-primary-500);
+  --ig-carousel-indicator-active-border-color: var(--ig-primary-500);
 }
 
 .carousel_slide_1 {
@@ -664,98 +616,6 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
 }
 
-// ===================== FINAL CTA =====================
-.final_cta_section {
-  padding: 0 32px 64px;
-  background: var(--bg-body);
-
-  @media (max-width: 480px) {
-    padding: 0 16px 44px;
-  }
-}
-
-.final_cta_band {
-  max-width: 1120px;
-  margin: 0 auto;
-  border-radius: 24px;
-  padding: 52px 40px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(135deg, var(--ig-primary-500) 0%, var(--ig-primary-400) 55%, #E64A19 100%);
-  box-shadow: 0 20px 50px color-mix(in srgb, var(--ig-primary-500) 40%, transparent);
-
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(60% 120% at 100% 0%, rgba(255, 255, 255, 0.22), transparent 60%);
-    pointer-events: none;
-  }
-
-  @media (max-width: 480px) {
-    padding: 40px 20px;
-  }
-}
-
-.final_cta_title {
-  color: #fff;
-  font-size: 1.6rem;
-  font-weight: 750;
-  margin: 0;
-  position: relative;
-  text-wrap: balance;
-}
-
-.final_cta_desc {
-  color: rgba(255, 255, 255, 0.92);
-  max-width: 60ch;
-  margin: 14px auto 0;
-  position: relative;
-  font-size: 0.95rem;
-  line-height: 1.6;
-}
-
-.final_cta_row {
-  justify-content: center;
-  position: relative;
-}
-
-.btn_solid {
-  --ig-size: var(--ig-size-medium);
-  height: max-content;
-  --background: #fff;
-  // Shared accessible orange for white-pill CTAs on the orange banner (was
-  // #E64A19 @ 3.9:1 — failed contrast). Matches products + contact.
-  --foreground: var(--accent-on-light);
-  color: var(--accent-on-light);
-  border-radius: 999px;
-  padding: 13px 28px;
-  font-weight: 700;
-  transition: transform 0.18s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-  }
-}
-
-.btn_line {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  padding: 13px 28px;
-  font-weight: 700;
-  font-size: 0.9rem;
-  color: #fff;
-  text-decoration: none;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  transition: background-color 0.18s ease;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.12);
-  }
-}

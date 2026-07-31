@@ -15,6 +15,23 @@
                  object-src 'none';
                  base-uri 'self';">
 
+  <!-- Theme boot — runs synchronously in <head> BEFORE first paint so the
+       correct theme class is on <html> before the body renders. Without this
+       the prerendered markup paints light, then Angular's ngOnInit adds
+       .dark-theme after hydration, causing a light→dark flash (FOUC). Mirrors
+       the logic in AppComponent.ngOnInit so the two never disagree. -->
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('theme');
+        var dark = saved
+          ? saved === 'dark'
+          : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.classList.add(dark ? 'dark-theme' : 'light-theme');
+      } catch (e) { /* SSR / privacy mode — Angular will set it on bootstrap */ }
+    })();
+  </script>
+
   <!-- Google tag (gtag.js) — loaded after window 'load' so it doesn't compete
        for bandwidth during the initial render (improves SI/LCP on slow links). -->
   <script>

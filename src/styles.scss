@@ -1,10 +1,27 @@
 /* You can add global styles to this file, and also import other style files */
 // Standard CSS normalize, comment out if not required or using a different module
+@use "sass:map";
 @use "minireset.css/minireset";
 @use "igniteui-angular/theming" as *;
+@use "app/fluid" as *;
 
 @include core();
-@include typography($font-family: "Roboto");
+
+// Heading type scale — shrink h1–h3 from Material's large defaults through the
+// theming engine's OWN type scale (emitted as --ig-h*-font-size on
+// `.ig-typography h1..h3`), instead of the old global
+// `h1/h2/h3 { font-size: … !important }` overrides that fought it. Only size +
+// line-height are overridden; weight/letter-spacing inherit from the Material
+// base. Component-level heading sizes (e.g. .page-banner__title) still win.
+$app-type-scale: map.merge(
+  $material-type-scale,
+  (
+    h1: map.merge(type-scale-category($material-type-scale, "h1"), (font-size: rem(32px),    line-height: 1.3)),
+    h2: map.merge(type-scale-category($material-type-scale, "h2"), (font-size: rem(24px),  line-height: 1.4)),
+    h3: map.merge(type-scale-category($material-type-scale, "h3"), (font-size: rem(20px), line-height: 1.4)),
+  )
+);
+@include typography($font-family: "Roboto", $type-scale: $app-type-scale);
 
 // Light theme palette
 // Primary is a deep orange (not the brighter #FF5722) so that white text on a
@@ -166,21 +183,52 @@ $exclude-components: (
   //           background-image: var(--bg-section);
   //           background-size: var(--bg-section-size);
   --bg-section-base: var(--bg-paper);
-  --bg-section: radial-gradient(color-mix(in srgb, #FF5722 26%, transparent) 1px, transparent 1.4px);
-  --bg-section-size: 22px 22px;
+  --bg-section: radial-gradient(color-mix(in srgb, #FF5722 26%, transparent) #{rem(1px)}, transparent #{rem(1.4px)});
+  --bg-section-size: #{rem(22px)} #{rem(22px)};
 
   // Whole-page texture: same dot grid but fainter, meant to sit under a page's
   // default body so no page reads as a dead-flat fill. Apply on a page :host as:
   //   background-color: var(--bg-body);
   //   background-image: var(--bg-body-texture);
   //   background-size: var(--bg-section-size);
-  --bg-body-texture: radial-gradient(color-mix(in srgb, #FF5722 14%, transparent) 1px, transparent 1.4px);
+  --bg-body-texture: radial-gradient(color-mix(in srgb, #FF5722 14%, transparent) #{rem(1px)}, transparent #{rem(1.4px)});
 
   // Soft shadow-fade for section boundaries (apply on a 0-height ::before/::after)
-  --seam: linear-gradient(to bottom, color-mix(in srgb, #211D18 6%, transparent), transparent 14px);
+  --seam: linear-gradient(to bottom, color-mix(in srgb, #211D18 6%, transparent), transparent #{rem(14px)});
 
-  // Consistent soft elevation so cards lift off the new backgrounds
-  --shadow-card: 0 1px 2px rgba(33, 29, 24, 0.05), 0 10px 30px rgba(33, 29, 24, 0.07);
+  // ---- Elevation scale ----------------------------------------------------
+  // Sourced from the theming engine's own elevation() system (Material scale,
+  // levels 0–24) rather than hand-picked box-shadows. Every value carries
+  // calc(var(--ig-elevation-factor) * …), so bumping --ig-elevation-factor
+  // scales the whole set — that is how the dark theme deepens them below.
+  // These CSS custom properties are how the app's plain (non-Ignite) card
+  // markup taps the same elevation system the Ignite components use.
+  --shadow-card:         #{elevation(2)};   // resting cards / surfaces
+  --shadow-xs:           #{elevation(1)};   // toggle knob, dots
+  --shadow-float:        #{elevation(4)};   // tooltips, chips, small popovers
+  --shadow-float-strong: #{elevation(6)};   // controls floating over photos (carousel arrows)
+  --shadow-card-hover:   #{elevation(8)};   // card lift on hover
+  --shadow-pop:          #{elevation(16)};  // hero media frame / large popovers
+
+  // ---- Radius scale -------------------------------------------------------
+  // --radius-pill for fully-rounded pills/buttons; sm/md/lg for the common
+  // control & card corner steps. Bespoke one-off radii stay inline by design.
+  --radius-sm:   #{rem(8px)};
+  --radius-md:   #{rem(12px)};
+  --radius-lg:   #{rem(16px)};
+  --radius-xl:   #{rem(24px)};   // large panels / hero bands
+  --radius-pill: #{rem(999px)};
+
+  // ---- Spacing scale (4px base) -------------------------------------------
+  // Available for layout padding/gap so vertical/horizontal rhythm stays on a
+  // shared grid. Prefer these over raw px for new work.
+  --space-1: #{rem(4px)};
+  --space-2: #{rem(8px)};
+  --space-3: #{rem(12px)};
+  --space-4: #{rem(16px)};
+  --space-5: #{rem(20px)};
+  --space-6: #{rem(24px)};
+  --space-8: #{rem(32px)};
 
   // Deep orange for accent text/icons that sit on a near-WHITE ground in BOTH
   // themes — e.g. carousel-nav icons on a white circle, and the inverted
@@ -225,12 +273,15 @@ $exclude-components: (
     linear-gradient(155deg, var(--bg-paper-2), var(--bg-alt));
 
   --bg-section-base: var(--bg-paper);
-  --bg-section: radial-gradient(color-mix(in srgb, #FF5722 34%, transparent) 1px, transparent 1.4px);
-  --bg-body-texture: radial-gradient(color-mix(in srgb, #FF5722 20%, transparent) 1px, transparent 1.4px);
+  --bg-section: radial-gradient(color-mix(in srgb, #FF5722 34%, transparent) #{rem(1px)}, transparent #{rem(1.4px)});
+  --bg-body-texture: radial-gradient(color-mix(in srgb, #FF5722 20%, transparent) #{rem(1px)}, transparent #{rem(1.4px)});
 
-  --seam: linear-gradient(to bottom, rgba(0, 0, 0, 0.35), transparent 14px);
+  --seam: linear-gradient(to bottom, rgba(0, 0, 0, 0.35), transparent #{rem(14px)});
 
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 34px rgba(0, 0, 0, 0.5);
+  // Deepen every elevation on the darker ground by scaling the engine's
+  // elevation factor — one knob drives the whole --shadow-* set (and the
+  // Ignite components' own shadows) instead of six hand-tuned overrides.
+  --ig-elevation-factor: 1.6;
 
   // On the dark card + dark orange tint, the bright brand orange already clears
   // 4.5:1 (≈5.3:1); no need to darken it here.
@@ -258,19 +309,19 @@ $exclude-components: (
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: rem(20px);
   flex-wrap: wrap;
-  padding: 16px 32px;
+  padding: rem(16px) rem(32px);
   background: var(--bg-hero);
-  border-bottom: 1px solid var(--line, var(--ig-gray-300));
+  border-bottom: rem(1px) solid var(--line, var(--ig-gray-300));
 
   @media (max-width: 768px) {
-    padding: 14px 20px;
+    padding: rem(14px) rem(20px);
   }
 
   @media (max-width: 480px) {
-    padding: 12px 16px;
-    gap: 12px;
+    padding: rem(12px) rem(16px);
+    gap: rem(12px);
   }
 }
 
@@ -281,30 +332,28 @@ $exclude-components: (
 .page-banner__eyebrow {
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  font-size: 0.68rem;
+  font-size: rem(10.88px);
   font-weight: 700;
   color: var(--ig-primary-500);
-  margin: 0 0 4px;
+  margin: 0 0 rem(4px);
 }
 
-.page-banner__title {
-  font-size: 1.4rem !important;
+// Scoped under .page-banner so it out-specifies the type scale's
+// `.ig-typography h1` rule (0,2,0 > 0,1,1) without needing !important.
+.page-banner .page-banner__title {
+  font-size: fluid(19.2px, 22.4px); // fluid, replaces the 480px step
   line-height: 1.15;
   font-weight: 800;
   letter-spacing: -0.02em;
   color: var(--ig-gray-900);
   margin: 0;
   text-wrap: balance;
-
-  @media (max-width: 480px) {
-    font-size: 1.2rem !important;
-  }
 }
 
 .page-banner__subtitle {
-  font-size: 0.85rem;
+  font-size: rem(13.6px);
   color: var(--ig-gray-700);
-  margin: 3px 0 0;
+  margin: rem(3px) 0 0;
 
   @media (max-width: 600px) {
     display: none; // keep the banner slim on phones
@@ -314,7 +363,7 @@ $exclude-components: (
 .page-banner__actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: rem(12px);
   flex-wrap: wrap;
 
   @media (max-width: 600px) {
@@ -322,27 +371,186 @@ $exclude-components: (
   }
 }
 
-// Reduce heading sizes globally
-h1,
-.ig-typography h1 {
-  font-size: 2rem !important; // 32px, was typically 48px
-  line-height: 1.3;
+// ===========================================================================
+// Shared call-to-action band — a rounded brand-gradient panel with a title, a
+// short description, and one or two pill actions. Reused across pages (the main
+// page's final CTA, the products CTA, …) so every "Готови да…?" block looks
+// identical instead of each page rolling its own.
+//
+// Markup:
+//   <section class="cta-band-section">
+//     <div class="cta-band">
+//       <h2 class="cta-band__title">…</h2>
+//       <p class="cta-band__desc">…</p>
+//       <div class="cta-band__actions">
+//         <button igxButton="contained" class="cta-band__btn">…</button>
+//         <a class="cta-band__btn cta-band__btn--line">…</a>   (optional 2nd)
+//       </div>
+//     </div>
+//   </section>
+// ---------------------------------------------------------------------------
+.cta-band-section {
+  padding: 0 rem(32px) rem(64px);
+  background: var(--bg-body);
+
+  @media (max-width: 480px) {
+    padding: 0 rem(16px) rem(44px);
+  }
 }
 
-h2,
-.ig-typography h2 {
-  font-size: 1.5rem !important; // 24px, was typically 36px
-  line-height: 1.4;
+.cta-band {
+  max-width: rem(1120px);
+  margin: 0 auto;
+  border-radius: var(--radius-xl);
+  padding: rem(52px) rem(40px);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--ig-primary-500) 0%, var(--ig-primary-400) 55%, var(--ig-primary-600) 100%);
+  box-shadow: 0 rem(20px) rem(50px) color-mix(in srgb, var(--ig-primary-500) 40%, transparent);
+
+  // Soft top-right glow.
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(60% 120% at 100% 0%, rgba(255, 255, 255, 0.22), transparent 60%);
+    pointer-events: none;
+  }
+
+  @media (max-width: 480px) {
+    padding: rem(40px) rem(20px);
+  }
 }
 
-h3,
-.ig-typography h3 {
-  font-size: 1.25rem !important; // 20px, was typically 28px
-  line-height: 1.4;
+.cta-band__title {
+  color: #fff;
+  font-size: rem(25.6px);
+  font-weight: 750;
+  margin: 0;
+  position: relative;
+  text-wrap: balance;
 }
+
+.cta-band__desc {
+  color: rgba(255, 255, 255, 0.92);
+  max-width: 60ch;
+  margin: rem(14px) auto 0;
+  position: relative;
+  font-size: rem(15.2px);
+  line-height: 1.6;
+}
+
+.cta-band__actions {
+  display: flex;
+  gap: rem(12px);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: rem(24px);
+  position: relative;
+}
+
+// White pill (primary). Works as <button igxButton> or <a>.
+.cta-band__btn {
+  --ig-size: var(--ig-size-medium);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: max-content;
+  --background: #fff;
+  --foreground: var(--accent-on-light);
+  color: var(--accent-on-light);
+  border-radius: var(--radius-pill);
+  padding: rem(13px) rem(28px);
+  font-weight: 700;
+  font-size: rem(14.4px);
+  text-decoration: none;
+  // Flat at rest — a soft lift + glow appear only on hover/focus.
+  box-shadow: none;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(rem(-2px));
+    box-shadow: 0 rem(8px) rem(20px) rgba(0, 0, 0, 0.18);
+  }
+}
+
+// Outline variant (secondary) for the optional second action.
+.cta-band__btn--line {
+  --background: transparent;
+  background: transparent;
+  --foreground: #fff;
+  color: #fff;
+  border: rem(1px) solid rgba(255, 255, 255, 0.6);
+  transition: background-color 0.18s ease;
+
+  &:hover,
+  &:focus-visible {
+    transform: none;
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: none;
+  }
+}
+
+// ===========================================================================
+// Gallery / image helpers
+// ---------------------------------------------------------------------------
+// #6 Image focus — hovering any <img> inside a .img-focus group keeps that one
+// colored and desaturates the rest. Pure CSS via :has() (no JS); browsers
+// without :has() simply skip the effect (progressive enhancement).
+.img-focus {
+  img {
+    transition: filter 0.35s ease, opacity 0.35s ease, transform 0.3s ease;
+  }
+
+  &:has(img:hover) img:not(:hover) {
+    filter: grayscale(1);
+    opacity: 0.82;
+  }
+}
+
+// #7 Staggered reveal — direct children fade/slide in on mount, each offset by
+// its index. Set --i per item (e.g. style="--i: {{ $index }}"), or add the
+// .stagger-in--auto modifier to derive --i from nth-child for static lists.
+// Uses animation-fill-mode: backwards so the item is hidden only DURING its
+// delay and reverts to normal styles afterwards — leaving :hover transforms
+// (card lift, image zoom) free to work once revealed.
+@keyframes staggerIn {
+  from { opacity: 0; transform: translateY(rem(12px)); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.stagger-in > * {
+  animation: staggerIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  // Cap the cascade at ~10 steps so large grids don't get a slow, long reveal.
+  animation-delay: calc(min(var(--i, 0), 10) * 60ms);
+}
+
+.stagger-in--auto > * {
+  @for $i from 1 through 12 {
+    &:nth-child(#{$i}) { --i: #{$i - 1}; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stagger-in > * {
+    animation: none;
+  }
+}
+
+// Heading sizes (h1–h3) now come from the custom $app-type-scale passed to
+// typography() above — see the top of this file. No global !important needed.
 
 body {
-  background: var(--bg-body);
+  // The dotted texture lives on the body once — pages and sections stay
+  // transparent so this single layer shows through. `background-attachment:
+  // fixed` keeps the dot grid anchored to the viewport instead of scrolling
+  // per element, so there are no visible seams between stacked sections.
+  background-color: var(--bg-body);
+  background-image: var(--bg-body-texture);
+  background-size: var(--bg-section-size);
+  background-attachment: fixed;
   color: var(--ig-surface-500-contrast);
   --ig-size: var(--ig-size-medium);
 }
@@ -358,7 +566,7 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  height: 16px;
+  height: rem(16px);
   background: var(--seam);
   pointer-events: none;
 }
@@ -371,12 +579,17 @@ body {
 // Accessible label that is visually removed but still read by screen readers
 // and counted by the heading-order audit. Use for structural headings that the
 // dense visual design doesn't render on-screen.
+//
+// The `!important` here is the one sanctioned exception in the codebase: this
+// utility must forcibly hide the element regardless of whatever positioning the
+// element's own rules set — the whole point of a visually-hidden helper. This is
+// the standard, accessibility-critical use of !important.
 .visually-hidden {
   position: absolute !important;
-  width: 1px;
-  height: 1px;
+  width: rem(1px);
+  height: rem(1px);
   padding: 0;
-  margin: -1px;
+  margin: rem(-1px);
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
@@ -405,11 +618,11 @@ body {
 .blog-container {
   img {
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     width: 80%;
-    max-width: 280px;
+    max-width: rem(280px);
     height: auto;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-float);
     transition: transform 0.3s ease;
 
     &:hover {
@@ -417,7 +630,7 @@ body {
     }
 
     @media (max-width: 768px) {
-      max-width: 220px;
+      max-width: rem(220px);
     }
 
     @media (max-width: 480px) {
@@ -428,8 +641,8 @@ body {
   .back-button {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 2rem;
+    gap: rem(8px);
+    margin-bottom: rem(32px);
 
     igx-icon {
       display: flex;
@@ -443,22 +656,18 @@ body {
   // background: transparent;
   border: none;
   cursor: pointer;
-  padding: 6px;
+  padding: rem(6px);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   // --ig-gray-800 clears 4.5:1 comfortably on the card in both themes
-  // (~11:1 light, ~11:1 dark). Icons need the color set explicitly — Ignite
-  // igx-icon doesn't inherit `color`.
+  // (~11:1 light, ~11:1 dark). The icon colour is set through Ignite's own
+  // --ig-icon-color token (igx-icon reads it), so no igx-icon override or
+  // !important is needed — the token just cascades into the icon.
   color: var(--ig-gray-800);
+  --ig-icon-color: var(--ig-gray-800);
   transition: all 0.2s ease-in-out;
-
-  igx-icon {
-    // Ignite sets `color: var(--icon-color)` on igx-icon with component
-    // specificity, so override with !important or the icon ignores this color.
-    color: var(--ig-gray-800) !important;
-  }
 
   /* Reset button default line-height to ensure icon centers */
   line-height: 0;
@@ -466,10 +675,7 @@ body {
   &:hover {
     background-color: rgba(0, 0, 0, 0.05);
     color: var(--ig-gray-900);
-
-    igx-icon {
-      color: var(--ig-gray-900) !important;
-    }
+    --ig-icon-color: var(--ig-gray-900);
   }
 }
 
@@ -479,17 +685,11 @@ body {
 .dark-theme .copy-link-btn {
   background-color: rgba(255, 255, 255, 0.88);
   color: #000;
-
-  igx-icon {
-    color: #000 !important;
-  }
+  --ig-icon-color: #000;
 
   &:hover {
     background-color: #fff;
     color: #000;
-
-    igx-icon {
-      color: #000 !important;
-    }
+    --ig-icon-color: #000;
   }
 }

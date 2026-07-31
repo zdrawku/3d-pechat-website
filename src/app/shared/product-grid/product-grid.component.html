@@ -1,7 +1,7 @@
-<div class="products-grid">
+<div class="products-grid stagger-in">
   <!-- Product Card for each variant -->
   @for (product of products; track product; let i = $index) {
-    <igx-card class="product-card" [id]="product.linkId" data-testid="product-card">
+    <igx-card class="product-card" [id]="product.linkId" [style.--i]="i" data-testid="product-card">
       <!-- Image Carousel Section -->
       <div class="card-image-section">
         <div class="image-container">

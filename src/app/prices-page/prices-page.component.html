@@ -9,23 +9,25 @@
 <div class="prices-page">
   <!-- Pricing Tiers -->
   <div class="section-block">
-    <div class="tiers-grid">
-      @for (tier of tiers; track tier.id) {
-        <div class="tier-card" [class]="tier.colorClass" [class.featured]="tier.featured">
+    <div class="tiers-grid stagger-in">
+      @for (tier of tiers; track tier.id; let i = $index) {
+        <igx-card class="tier-card" [class]="tier.colorClass" [class.featured]="tier.featured" [style.--i]="i">
           @if (tier.featured) {
             <span class="tier-badge">Най-търсено</span>
           }
-          <div class="tier-icon">
-            <igx-icon>{{ tier.icon }}</igx-icon>
-          </div>
-          <h3 class="tier-name">{{ tier.name }}</h3>
-          <div class="tier-price">
-            <span class="tier-price-num">{{ tier.pricePerTenGrams.toFixed(2) }}</span>
-            <span class="tier-price-unit">€ / 10гр</span>
-          </div>
-          <p class="tier-desc">{{ tier.description }}</p>
+          <igx-card-content class="tier-card_body">
+            <div class="tier-icon">
+              <igx-icon>{{ tier.icon }}</igx-icon>
+            </div>
+            <h3 class="tier-name">{{ tier.name }}</h3>
+            <div class="tier-price">
+              <span class="tier-price-num">{{ tier.pricePerTenGrams.toFixed(2) }}</span>
+              <span class="tier-price-unit">€ / 10гр</span>
+            </div>
+            <p class="tier-desc">{{ tier.description }}</p>
+          </igx-card-content>
           <div class="sla-sweep" aria-hidden="true"></div>
-        </div>
+        </igx-card>
       }
     </div>
   </div>
@@ -44,18 +46,29 @@
       <div class="calculator-row">
         <div class="calculator-field">
           <label for="grams-input">Общо грамове</label>
-          <input id="grams-input" type="number" class="calculator-input" [(ngModel)]="grams" placeholder="100" data-testid="calc-grams" />
+          <igx-input-group type="border">
+            <input igxInput id="grams-input" type="number" [(ngModel)]="grams" placeholder="100" data-testid="calc-grams" />
+          </igx-input-group>
         </div>
 
         <span class="calculator-op">/10 &times;</span>
 
         <div class="calculator-field">
-          <label for="tier-select">Тарифа</label>
-          <select id="tier-select" class="calculator-select" [(ngModel)]="selectedTierId" data-testid="calc-tier">
+          <!-- The caption stays outside the control so the uppercase style above
+               still applies. Deliberately NO `for=` — it can't reach the real
+               <input role="combobox"> that igx-select renders internally (that
+               left the input with no accessible name: axe critical, WCAG 4.1.2),
+               and pointing it at the host made label clicks re-toggle the
+               dropdown shut. [labelledBy] wires aria-labelledby to this id. -->
+          <label id="tier-select-label">Тарифа</label>
+          <igx-select id="tier-select" labelledBy="tier-select-label" [(ngModel)]="selectedTierId"
+            data-testid="calc-tier">
             @for (tier of tiers; track tier.id) {
-              <option [value]="tier.id">{{ tier.pricePerTenGrams.toFixed(2) }} € ({{ tier.name }})</option>
+              <igx-select-item [value]="tier.id" [attr.data-testid]="'calc-tier-' + tier.id">
+                {{ tier.pricePerTenGrams.toFixed(2) }} € ({{ tier.name }})
+              </igx-select-item>
             }
-          </select>
+          </igx-select>
         </div>
 
         <span class="calculator-op">=</span>
@@ -71,7 +84,7 @@
       </p>
 
       <div class="calculator-cta">
-        <button type="button" class="btn-order-estimate" (click)="navigateWithEstimate()" data-testid="calc-order-btn">
+        <button igxButton="contained" type="button" class="btn-order-estimate" (click)="navigateWithEstimate()" data-testid="calc-order-btn">
           Заяви поръчка с тази цена
           <igx-icon>arrow_forward</igx-icon>
         </button>

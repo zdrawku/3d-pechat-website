@@ -4,6 +4,7 @@ import { BlogService } from '../services/blog.service';
 import { of } from 'rxjs';
 import { provideRouter } from '@angular/router';
 import { Meta, Title } from '@angular/platform-browser';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 describe('BlogListPageComponent', () => {
   let component: BlogListPageComponent;
@@ -39,6 +40,9 @@ describe('BlogListPageComponent', () => {
       providers: [
         { provide: BlogService, useValue: blogServiceSpy },
         provideRouter([]),
+        // igxTooltip injects AnimationBuilder; noop satisfies it without
+        // running real animations in the test.
+        provideNoopAnimations(),
         Title,
         Meta
       ]

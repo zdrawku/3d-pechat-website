@@ -1,23 +1,22 @@
+@use "igniteui-angular/theming" as *;
 @use '../sla-hover' as sla;
 
 :host {
   display: block;
-  background-color: var(--bg-body);
-  background-image: var(--bg-body-texture);
-  background-size: var(--bg-section-size);
+  // Transparent — the dotted texture is painted once on <body> (see styles.scss).
 }
 
 .prices-page {
-  max-width: 1160px;
+  max-width: rem(1160px);
   margin: 0 auto;
-  padding: 16px 16px 32px;
+  padding: rem(40px) rem(16px) rem(64px);
 
   @media (max-width: 768px) {
-    padding: 24px 20px 48px;
+    padding: rem(32px) rem(20px) rem(48px);
   }
 
   @media (max-width: 480px) {
-    padding: 20px 16px 40px;
+    padding: rem(24px) rem(16px) rem(40px);
   }
 }
 
@@ -26,54 +25,49 @@
 
 .section-heading {
   text-align: center;
-  font-size: 1.35rem;
+  font-size: rem(21.6px);
   font-weight: 750;
   letter-spacing: -0.01em;
   color: var(--ig-gray-900);
-  margin: 0 0 4px;
+  margin: 0 0 rem(4px);
 }
 
 .section-heading-note {
   color: var(--ig-gray-700);
   font-weight: 500;
-  font-size: 0.85rem;
+  font-size: rem(13.6px);
 }
 
 .section-note {
   text-align: center;
   color: var(--ig-gray-700);
-  font-size: 0.85rem;
+  font-size: rem(13.6px);
   max-width: 60ch;
-  margin: 0 auto 24px;
+  margin: 0 auto rem(24px);
 }
 
 // ===================== PRICING TIERS =====================
 .tiers-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-top: 28px;
-
-  @media (max-width: 860px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 480px) {
-    grid-template-columns: 1fr;
-  }
+  // Intrinsic responsive (4 → 2 → 1), no breakpoints.
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, rem(220px)), 1fr));
+  gap: rem(16px);
+  margin-top: rem(28px);
 }
 
+// Now an <igx-card>. overflow:visible is required because igx-card clips by
+// default and the featured badge sticks out above the card. Padding lives on
+// the inner igx-card-content (.tier-card_body); the beam lives in the inner
+// .sla-sweep layer (sla-hover-inner) so the badge is never clipped.
 .tier-card {
   position: relative;
+  overflow: visible;
   background: var(--bg-card);
-  border: 1px solid var(--ig-gray-300);
-  border-radius: 16px;
-  padding: 26px 20px;
+  border: rem(1px) solid var(--ig-gray-300);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
 
-  // beam lives in an inner .sla-sweep layer so the featured badge
-  // (which sticks out above the card) is not clipped
-  @include sla.sla-hover-inner(16px, $bump: true);
+  @include sla.sla-hover-inner(rem(16px), $bump: true);
 
   &.featured {
     border-color: var(--ig-primary-500);
@@ -81,35 +75,37 @@
   }
 }
 
+.tier-card_body {
+  padding: rem(26px) rem(20px);
+}
+
 .tier-badge {
   position: absolute;
-  top: -11px;
+  top: rem(-11px);
   left: 50%;
   transform: translateX(-50%);
   background: var(--ig-primary-500);
   color: var(--ig-primary-500-contrast);
-  font-size: 0.625rem;
+  font-size: rem(10px);
   font-weight: 700;
   letter-spacing: 0.04em;
-  padding: 4px 12px;
-  border-radius: 999px;
+  padding: rem(4px) rem(12px);
+  border-radius: var(--radius-pill);
   white-space: nowrap;
-  box-shadow: 0 4px 10px color-mix(in srgb, var(--ig-primary-500) 40%, transparent);
+  box-shadow: 0 rem(4px) rem(10px) color-mix(in srgb, var(--ig-primary-500) 40%, transparent);
 }
 
 .tier-icon {
-  width: 46px;
-  height: 46px;
-  border-radius: 12px;
+  width: rem(46px);
+  height: rem(46px);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 14px;
+  margin-bottom: rem(14px);
 
   igx-icon {
-    font-size: 20px !important;
-    width: 20px !important;
-    height: 20px !important;
+    --ig-icon-size: #{rem(20px)};
   }
 }
 
@@ -140,36 +136,36 @@
 }
 
 .tier-name {
-  font-size: 0.8rem;
+  font-size: rem(12.8px);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   font-weight: 750;
   color: var(--ig-gray-900);
-  margin: 0 0 8px;
+  margin: 0 0 rem(8px);
 }
 
 .tier-price {
   display: flex;
   align-items: baseline;
-  gap: 5px;
-  margin-bottom: 10px;
+  gap: rem(5px);
+  margin-bottom: rem(10px);
 }
 
 .tier-price-num {
-  font-size: 1.6rem;
+  font-size: rem(25.6px);
   font-weight: 800;
   letter-spacing: -0.02em;
   color: var(--ig-gray-900);
 }
 
 .tier-price-unit {
-  font-size: 0.75rem;
+  font-size: rem(12px);
   color: var(--ig-gray-700);
   font-weight: 600;
 }
 
 .tier-desc {
-  font-size: 0.8rem;
+  font-size: rem(12.8px);
   color: var(--ig-gray-700);
   margin: 0;
   line-height: 1.55;
@@ -177,55 +173,59 @@
 
 // ===================== CALCULATOR =====================
 .calculator-wrap {
-  margin-top: 56px;
-  border-radius: 22px;
-  padding: 2px;
+  margin-top: rem(56px);
+  border-radius: rem(22px);
+  padding: rem(2px);
   background: linear-gradient(135deg, var(--ig-primary-500), var(--ig-info-500));
 }
 
 .calculator-card {
   background: var(--bg-card);
-  border-radius: 20px;
-  padding: 36px 32px;
+  border-radius: rem(20px);
+  padding: rem(36px) rem(32px);
 
   @media (max-width: 480px) {
-    padding: 28px 20px;
+    padding: rem(28px) rem(20px);
+  }
+
+  // At the 320px floor the side padding plus the calculator field's own minimum
+  // is wider than the viewport, which pushed the whole page sideways.
+  @media (max-width: 380px) {
+    padding: rem(24px) rem(12px);
   }
 }
 
 .calculator-head {
   text-align: center;
-  margin-bottom: 26px;
+  margin-bottom: rem(26px);
 }
 
 .calculator-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
+  width: rem(48px);
+  height: rem(48px);
+  border-radius: rem(14px);
   background: color-mix(in srgb, var(--ig-primary-500) 14%, transparent);
   color: var(--accent-on-tint);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 12px;
+  margin: 0 auto rem(12px);
 
   igx-icon {
-    font-size: 22px !important;
-    width: 22px !important;
-    height: 22px !important;
+    --ig-icon-size: #{rem(22px)};
   }
 }
 
 .calculator-title {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: rem(20px);
   font-weight: 750;
   color: var(--ig-gray-900);
 }
 
 .calculator-subtitle {
-  margin: 6px 0 0;
-  font-size: 0.8125rem;
+  margin: rem(6px) 0 0;
+  font-size: rem(13px);
   color: var(--ig-gray-700);
 }
 
@@ -233,7 +233,7 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: 14px;
+  gap: rem(14px);
   flex-wrap: wrap;
 
   @media (max-width: 520px) {
@@ -242,42 +242,38 @@
   }
 }
 
+// The grams field and the tier picker are Ignite controls (igx-input-group /
+// igx-select). The small uppercase caption stays as an external <label> above
+// each control, and Ignite themes the control itself.
 .calculator-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  min-width: 150px;
+  gap: rem(6px);
+  // Capped floor: a bare 150px minimum can't fit beside its sibling on a 320px
+  // screen, so the row forced the page wider instead of stacking.
+  min-width: min(rem(150px), 100%);
 
-  label {
-    font-size: 0.6875rem;
+  > label {
+    font-size: rem(11px);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: var(--ig-gray-700);
   }
-}
 
-.calculator-input,
-.calculator-select {
-  border: 1px solid var(--ig-gray-300);
-  background: var(--bg-body);
-  border-radius: 12px;
-  padding: 12px 14px;
-  font-size: 0.9375rem;
-  color: var(--ig-gray-900);
-  font-family: inherit;
-
-  &:focus {
-    outline: 2px solid var(--ig-primary-500);
-    outline-offset: 1px;
+  igx-input-group,
+  igx-select {
+    width: 100%;
   }
 }
 
 .calculator-op {
-  font-size: 1.25rem;
+  font-size: rem(20px);
   color: var(--ig-gray-700);
   font-weight: 700;
-  padding-bottom: 12px;
+  // Aligns the operator with the control row; the field above stacks a caption
+  // over the control, so nudge the glyph down to sit against the input.
+  padding-bottom: rem(10px);
 
   @media (max-width: 520px) {
     align-self: center;
@@ -289,23 +285,23 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: rem(2px);
   background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500));
   color: var(--ig-primary-500-contrast);
-  border-radius: 14px;
-  padding: 12px 26px;
-  box-shadow: 0 8px 22px color-mix(in srgb, var(--ig-primary-500) 35%, transparent);
+  border-radius: rem(14px);
+  padding: rem(12px) rem(26px);
+  box-shadow: 0 rem(8px) rem(22px) color-mix(in srgb, var(--ig-primary-500) 35%, transparent);
 }
 
 .calculator-result-num {
-  font-size: 1.6rem;
+  font-size: rem(25.6px);
   font-weight: 800;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }
 
 .calculator-result-label {
-  font-size: 0.625rem;
+  font-size: rem(10px);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   opacity: 0.9;
@@ -313,92 +309,93 @@
 
 .calculator-example {
   text-align: center;
-  font-size: 0.75rem;
+  font-size: rem(12px);
   color: var(--ig-gray-700);
-  margin: 18px 0 0;
+  margin: rem(18px) 0 0;
 }
 
 .calculator-cta {
   text-align: center;
-  margin-top: 22px;
+  margin-top: rem(22px);
 }
 
 .btn-order-estimate {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: rem(8px);
+  // Ignite's .igx-button sets `white-space: nowrap`, which made this long
+  // Bulgarian label a single unbreakable ~294px box that widened the page on
+  // 320px screens. Let it wrap onto two lines at that size instead.
+  max-width: 100%;
+
+  @media (max-width: 380px) {
+    white-space: normal;
+    text-align: center;
+  }
+
   background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500) 70%);
   color: var(--ig-primary-500-contrast);
   border: none;
   font-weight: 700;
-  font-size: 0.85rem;
-  padding: 12px 24px;
-  border-radius: 999px;
+  font-size: rem(13.6px);
+  padding: rem(12px) rem(24px);
+  border-radius: var(--radius-pill);
   cursor: pointer;
-  box-shadow: 0 6px 18px color-mix(in srgb, var(--ig-primary-500) 38%, transparent);
+  // Flat at rest — the glow appears only on hover/focus (see below).
+  box-shadow: none;
   transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  --ig-icon-color: var(--ig-primary-500-contrast);
+  --ig-icon-size: #{rem(16px)};
 
   igx-icon {
-    color: var(--ig-primary-500-contrast) !important;
-    font-size: 16px !important;
-    width: 16px !important;
-    height: 16px !important;
     transition: transform 0.2s ease;
   }
 
-  &:hover {
-    transform: translateY(-2px);
+  &:hover,
+  &:focus-visible {
+    transform: translateY(rem(-2px));
     filter: brightness(1.05);
-    box-shadow: 0 8px 22px color-mix(in srgb, var(--ig-primary-500) 46%, transparent);
+    box-shadow: 0 rem(8px) rem(22px) color-mix(in srgb, var(--ig-primary-500) 46%, transparent);
 
     igx-icon {
-      transform: translateX(2px);
+      transform: translateX(rem(2px));
     }
   }
 }
 
 // ===================== COLOR SWATCHES =====================
 .swatches-block {
-  background-color: var(--bg-section-base);
-  background-image: var(--bg-section);
-  background-size: var(--bg-section-size);
-  border-radius: 20px;
-  padding: 36px 28px;
+  // Transparent — the body's dotted texture shows through (no per-section grid).
+  border-radius: rem(20px);
+  padding: rem(36px) rem(28px);
 
   @media (max-width: 480px) {
-    padding: 28px 16px;
+    padding: rem(28px) rem(16px);
   }
 }
 
 .swatch-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 14px;
-  margin-top: 8px;
-
-  @media (max-width: 860px) {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  @media (max-width: 480px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  // Intrinsic responsive (7 → … → 3), no breakpoints.
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, rem(92px)), 1fr));
+  gap: rem(14px);
+  margin-top: rem(8px);
 }
 
 .swatch {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: rem(8px);
 }
 
 .swatch-disc {
-  width: 64px;
-  height: 64px;
+  width: rem(64px);
+  height: rem(64px);
   border-radius: 50%;
   overflow: hidden;
   box-shadow: var(--shadow-card);
-  border: 3px solid var(--bg-card);
+  border: rem(3px) solid var(--bg-card);
   transition: transform 0.25s ease;
 
   img {
@@ -414,7 +411,7 @@
 }
 
 .swatch-name {
-  font-size: 0.72rem;
+  font-size: rem(11.52px);
   font-weight: 600;
   color: var(--ig-gray-800);
   text-align: center;

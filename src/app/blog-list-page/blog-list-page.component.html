@@ -33,9 +33,10 @@
 <div class="blog-list-container">
     <!-- Blog Cards Grid -->
     @if (filteredBlogs.length > 0) {
-      <div class="blog-grid">
+      <div class="blog-grid stagger-in">
         @for (blog of filteredBlogs; track blog.id; let i = $index) {
-          <a class="blog-card" [routerLink]="blog.route" data-testid="blog-card">
+          <a class="blog-card-link" [routerLink]="blog.route" [style.--i]="i" data-testid="blog-card">
+            <igx-card class="blog-card">
             @if (blog.imageUrl) {
               <div class="card-image-wrapper">
                 @if (i < 2) {
@@ -63,13 +64,17 @@
                 <igx-icon class="placeholder-icon">view_in_ar</igx-icon>
               </div>
             }
-            <div class="card-body">
+            <igx-card-content class="card-body">
               <span class="card-date">
                 <igx-icon class="date-icon">calendar_today</igx-icon>
                 {{ formatDate(blog.date) }}
               </span>
-              <h2 class="card-title">{{ blog.title }}</h2>
-              <p class="card-description">{{ blog.description }}</p>
+              <h2 class="card-title" [igxTooltipTarget]="titleTooltipRef">{{ blog.title }}</h2>
+              <div #titleTooltipRef="tooltip" igxTooltip class="blog-tooltip">{{ blog.title }}</div>
+              <p class="card-description" [igxTooltipTarget]="descriptionTooltipRef">{{ blog.description }}</p>
+              <div #descriptionTooltipRef="tooltip" igxTooltip class="blog-tooltip description-tooltip">
+                {{ blog.description }}
+              </div>
               @if (blog.tags && blog.tags.length > 0) {
                 <div class="tags-container">
                   @for (tag of blog.tags.slice(0, 3); track tag) {
@@ -81,7 +86,8 @@
                 Прочети повече
                 <igx-icon>arrow_forward</igx-icon>
               </span>
-            </div>
+            </igx-card-content>
+            </igx-card>
           </a>
         }
       </div>
