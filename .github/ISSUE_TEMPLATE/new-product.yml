@@ -1,0 +1,73 @@
+name: 📦 Нов продукт
+description: Добави продукт в каталога от телефон (снимки + описание). Само за собственика на сайта.
+title: '[Продукт]: '
+labels: ['new-product']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Попълни формата и снимките се качват автоматично — ботът ги конвертира в
+        `.webp`, добавя продукта в `products.json` и отваря PR, който ти ревюваш и
+        мърджваш. Нищо не отива на живия сайт без твоето одобрение.
+
+        ⚠️ Работи **само за собственика на репото** (`zdrawku`). Issue-та от други
+        акаунти се затварят автоматично.
+
+  - type: input
+    id: name
+    attributes:
+      label: Име на продукта
+      description: На български, както ще се вижда в картата.
+      placeholder: Стойка за телефон „Вълна“
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Описание
+      description: 1–2 изречения на български — какво е, за какво служи.
+      placeholder: Стойка за телефон с вълнообразен дизайн, подходяща за бюро или нощно шкафче.
+    validations:
+      required: true
+
+  - type: textarea
+    id: images
+    attributes:
+      label: Снимки
+      description: |
+        Провлачи снимките тук (GitHub ги качва сам). **Първата** снимка става
+        лице на картата, **втората** — гръб (може и само една).
+      placeholder: Провлачи снимките в това поле…
+    validations:
+      required: true
+
+  - type: input
+    id: tags
+    attributes:
+      label: Ключови думи
+      description: Разделени със запетая. Ако оставиш празно, се генерират от името.
+      placeholder: стойка, телефон, бюро, подарък, аксесоар
+    validations:
+      required: false
+
+  - type: dropdown
+    id: featured
+    attributes:
+      label: Основен продукт?
+      description: „Да“ го закача като банер най-горе на /products и в менюто.
+      options:
+        - 'Не'
+        - 'Да'
+      default: 0
+    validations:
+      required: false
+
+  - type: input
+    id: model_url
+    attributes:
+      label: Линк към модела (по избор)
+      description: MakerWorld / Printables страница, ако има такава.
+      placeholder: https://makerworld.com/en/models/…
+    validations:
+      required: false

@@ -235,7 +235,19 @@
         <p class="ig-typography__body-2 content_2">
           © 2026 3dpechat.bg - All Rights Reserved
         </p>
+        <a [href]="googleReviewUrl" target="_blank" rel="noopener noreferrer"
+           class="review_cta_footer" data-testid="footer-review-cta">
+          <span class="review_cta_google_mark" aria-hidden="true">G</span>
+          <span class="review_cta_txt">
+            <b>Хареса ли ви работата ни?</b>
+            <span>Споделете мнението си в Google</span>
+          </span>
+          <span class="review_cta_btn">⭐ Остави ревю</span>
+        </a>
       </div>
     </footer>
   </div>
 </div>
+
+<!-- Review CTA layer 3: opens itself after the visitor's second navigation. -->
+<app-review-cta></app-review-cta>

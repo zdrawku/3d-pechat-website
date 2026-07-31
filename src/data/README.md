@@ -48,10 +48,27 @@ which maps each entry to a runtime `ProductVariant` by adding `showFront: true`.
 For a MAIN product (like the gift box), also set `featured: true` and `pageUrl`,
 and add the matching page component/route.
 
-> ℹ️ The `/add-product` Claude Code skill (planned, foundation #3) will automate
-> steps 1–4: convert/resize images, draft the Bulgarian copy + tags for your
-> approval, append the entry, build, and open a PR. Until it lands, the manual
-> steps above are the workflow.
+### Add a product automatically (preferred)
+
+Two automated routes exist — both end in a PR you review and merge:
+
+- **From your PC — the `/add-product` Claude Code skill**
+  ([`.claude/skills/add-product/SKILL.md`](../../.claude/skills/add-product/SKILL.md)).
+  Say `/add-product`, paste the photos straight into the chat (or give a folder
+  path) plus a one-line brief; it converts the images, drafts the Bulgarian
+  copy + tags for your approval, appends the entry, builds, and opens the PR.
+- **From your phone — the „📦 Нов продукт“ issue form**
+  ([`.github/ISSUE_TEMPLATE/new-product.yml`](../../.github/ISSUE_TEMPLATE/new-product.yml)).
+  Fill in the form, drag in the photos;
+  [`add-product.yml`](../../.github/workflows/add-product.yml) runs
+  [`scripts/add-product/from-issue.js`](../../scripts/add-product/from-issue.js)
+  and opens the PR. Owner-only: the workflow refuses to run unless the issue
+  author is `zdrawku` *and* GitHub reports them as `OWNER`; anyone else's issue
+  is commented on and closed without any code running.
+
+Both share [`scripts/add-product/lib.js`](../../scripts/add-product/lib.js),
+which owns id/`linkId`/`dateAdded` generation, webp conversion, and the
+append-without-reformatting write.
 
 ### ⚠️ Encoding note
 

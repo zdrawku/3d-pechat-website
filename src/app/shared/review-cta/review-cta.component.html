@@ -1,0 +1,23 @@
+<!--
+  Layer 3 of the Google review CTA. `isBrowser` keeps the snackbar out of the
+  prerendered HTML entirely — no dead markup shipped on every page, and no
+  chance a crawler sees anything resembling an interstitial. Once in the
+  browser it stays hidden until ReviewCtaComponent opens it (second in-session
+  navigation).
+-->
+@if (isBrowser) {
+<igx-snackbar #reviewSnackbar [autoHide]="false" class="review_snackbar"
+              data-testid="review-cta-snackbar">
+  <span class="review_snackbar_mark" aria-hidden="true">G</span>
+  <span class="review_snackbar_txt">Били ли сте наш клиент? Споделете опита си</span>
+
+  <button type="button" igxButton="flat" class="review_snackbar_action"
+          (click)="onAction()" data-testid="review-cta-action">
+    ОСТАВИ РЕВЮ
+  </button>
+  <button type="button" igxButton="flat" class="review_snackbar_close"
+          (click)="onDismiss()" aria-label="Затвори" data-testid="review-cta-dismiss">
+    ✕
+  </button>
+</igx-snackbar>
+}

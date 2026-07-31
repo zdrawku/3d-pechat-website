@@ -424,20 +424,97 @@
     overflow-wrap: anywhere;
   }
 }
+// Footer bottom bar: copyright on the left, the Google review CTA on the right.
+// Wraps to two centered rows on narrow viewports.
 .row_layout_-7 {
   border-color: var(--ig-gray-400);
   border-width: rem(1px) 0 0;
   border-style: solid;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  align-content: flex-start;
-  gap: 0;
+  align-content: center;
+  flex-wrap: wrap;
+  gap: rem(12px);
   position: relative;
-  padding-right: rem(32px);
-  padding-left: rem(32px);
+  padding: rem(12px) rem(32px);
   min-height: rem(50px);
   flex-grow: 1;
   flex-shrink: 0;
+
+  @media (max-width: 700px) {
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+// Google review CTA (Idea 4, layer 1) — quiet, permanent, on every page.
+// The whole block is the link; the pill on the right is only a visual affordance.
+.review_cta_footer {
+  display: inline-flex;
+  align-items: center;
+  gap: rem(10px);
+  padding: rem(8px) rem(14px);
+  border: rem(1px) solid var(--ig-gray-400);
+  border-radius: rem(12px);
+  background: var(--bg-card);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--ig-primary-500);
+    box-shadow: 0 rem(2px) rem(10px) rgba(0, 0, 0, 0.08);
+  }
+}
+
+// Google's four-colour mark, drawn with a conic gradient (no extra asset).
+.review_cta_google_mark {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: rem(18px);
+  height: rem(18px);
+  border-radius: 50%;
+  background: conic-gradient(
+    #4285f4 0 25%,
+    #34a853 25% 50%,
+    #fbbc05 50% 75%,
+    #ea4335 75% 100%
+  );
+  color: #fff;
+  font-size: rem(10px);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.review_cta_txt {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  text-align: left;
+
+  b {
+    font-size: rem(13px);
+    line-height: 1.3;
+  }
+
+  span {
+    font-size: rem(11.5px);
+    color: var(--ig-gray-700);
+  }
+}
+
+.review_cta_btn {
+  flex-shrink: 0;
+  padding: rem(6px) rem(13px);
+  border-radius: rem(999px);
+  background: var(--ig-primary-500);
+  color: var(--ig-primary-500-contrast);
+  font-size: rem(11.5px);
+  font-weight: 700;
+  white-space: nowrap;
 }
 .icon_12 {
   --size: #{rem(24px)};

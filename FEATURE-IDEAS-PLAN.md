@@ -1,9 +1,14 @@
 # Feature Ideas Plan — Gift Box, Gallery Ordering, Product Workflow, Google Reviews
 
 > Drafted 2026-07-12, extended 2026-07-13 (Ideas 4–5) by Claude (Fable).
-> Status: **✅ variants approved by Zdravko on 2026-07-13 — ready to implement, no
-> code changes made yet.** Approved choices are marked `✅ APPROVED`; the original
-> autonomous decisions remain tagged `🔵 DECISION` and listed in the final section.
+> Status: **✅ variants approved by Zdravko on 2026-07-13.** Approved choices are
+> marked `✅ APPROVED`; the original autonomous decisions remain tagged
+> `🔵 DECISION` and listed in the final section.
+>
+> **Implementation progress:** Ideas **2** (gallery manifest + editor), **3**
+> (products.json + `/add-product` skill + issue-form flow) and **4** (review CTA,
+> all three layers) are shipped. Remaining: **Idea 5** (Happy Customers section)
+> and **Idea 1** (gift box page). See the build-order table at the bottom.
 
 ## Context (how the site works today — constraints the plan must respect)
 
@@ -210,6 +215,13 @@ is the primary UX, chosen over building an admin panel.**
 ✅ APPROVED (2026-07-13), with one added requirement: **images can also be pasted
 directly into the skill call**, not only referenced by folder path.
 
+✅ **IMPLEMENTED 2026-07-31** — [`.claude/skills/add-product/SKILL.md`](.claude/skills/add-product/SKILL.md),
+backed by the shared [`scripts/add-product/lib.js`](scripts/add-product/lib.js)
+(Bulgarian→Latin transliteration for `linkId`, next-free-`id` assignment, sharp
+webp conversion matching `convert-images-to-webp.js`, and an append that does
+**not** reformat the rest of `products.json` — the diff shows only the new
+entry). Accepts both pasted images and folder paths, per the added requirement.
+
 A project skill (`.claude/skills/add-product/SKILL.md`) so that in any session you
 can say: */add-product — here are 2 photos in `~/Downloads`, title "Стойка за
 телефон", it's a desk accessory* — **or paste the photos straight into the chat**
@@ -230,6 +242,15 @@ the PC where the photos are, no hosting, no auth, no cost.
 
 **Phase 3 — add-from-phone via a GitHub Issue form. ✅ APPROVED (2026-07-13) as
 MANDATORY — no longer optional — with an owner-only guard.**
+
+✅ **IMPLEMENTED 2026-07-31** — issue form
+[`.github/ISSUE_TEMPLATE/new-product.yml`](.github/ISSUE_TEMPLATE/new-product.yml),
+workflow [`.github/workflows/add-product.yml`](.github/workflows/add-product.yml),
+parser [`scripts/add-product/from-issue.js`](scripts/add-product/from-issue.js).
+The guard is stricter than specified: a dedicated `check-owner` job requires the
+author login to be `zdrawku` **and** `author_association == 'OWNER'` (both, not
+either), every other job `needs:` that verdict, and a `reject-non-owner` job
+comments + closes anything else before any code runs.
 
 For adding a product from a phone (photo taken at the printer): a GitHub **Issue
 template** (`new-product.yml` form: title, description, category, drag-in photos —
@@ -326,18 +347,29 @@ Also a **policy** note surfaced by the research: don't ask for a *positive* revi
 [design artifact](https://claude.ai/code/artifact/1e006177-f26d-48e2-a41c-493e64bd1270)
 (modal/exit-intent stays rejected).
 
+✅ **IMPLEMENTED 2026-07-31** — all three layers, with the artifact's exact
+Bulgarian copy. The link lives once in
+[`src/data/site-links.ts`](src/data/site-links.ts) (`GOOGLE_REVIEW_URL`).
+
 1. **Footer CTA (every page).** Small block in the shared footer:
-   „⭐ Хареса ли ви работата ни? Оставете ревю в Google" → direct review link.
-   This literally satisfies "CTA on each page" with zero UX cost.
+   „Хареса ли ви работата ни? / Споделете мнението си в Google" + „⭐ Остави ревю"
+   → direct review link. Satisfies "CTA on each page" with zero UX cost.
+   *Shipped in `app.component.html` (footer bottom bar) + `.review_cta_footer` styles.*
 2. **Contact-form success state (the money spot).** After a successful Web3Forms
-   submit, the confirmation message gains a prominent review button — the visitor
-   just finished interacting with you. Same for the future gift-box flow (Idea 1),
-   whose confirmation passes through `/contact`.
+   submit, the confirmation message gains a prominent review card
+   („Работили сме заедно преди? / Разкажете как мина — мнението ви помага на други") —
+   the visitor just finished interacting with you. Same for the future gift-box
+   flow (Idea 1), whose confirmation passes through `/contact`.
+   *Shipped in `contact-me-page.component.html`, rendered only when `submitStatus === 'success'`.*
 3. **One-time snackbar for engaged visitors.** Reusable `ReviewCtaComponent` using
    the already-installed Ignite UI `IgxSnackbar`: appears after genuine engagement
-   (second route navigation in a session), single "Остави ревю" action + dismiss;
-   dismissal or click stored in `localStorage` with a cool-down (~30 days) so
-   nobody sees it twice in a month. SSR-safe (guarded for prerender).
+   (second route navigation in a session, +2.5 s so it never fights the page
+   render), single „ОСТАВИ РЕВЮ" action + dismiss; dismissal or click stored in
+   `localStorage` with a 30-day cool-down so nobody sees it twice in a month.
+   *Shipped as [`src/app/shared/review-cta/`](src/app/shared/review-cta/) with 7 unit
+   specs. SSR: the whole template sits behind `@if (isBrowser)`, so the snackbar is
+   absent from the prerendered HTML entirely — verified against the build output —
+   rather than merely hidden with `aria-hidden`.*
 
 🔵 DECISION: **No modal dialogs and no exit-intent popups** — annoyance + mobile
 interstitial SEO risk outweigh the extra conversions for a portfolio-style site.
@@ -464,17 +496,17 @@ To iterate on any of them, ask Claude to update the artifact — same link is ke
 
 **Suggested build order:**
 
-| # | Work item | Idea | Size |
-|---|-----------|------|------|
-| 1 | Extract `products.json` + model file | 3.1 | S |
-| 2 | Manifest + sync rewrite of `generate-carousel-images.js` | 2.1–2.2 | S |
-| 3 | Review CTA layers (footer + contact success + snackbar) — *review link ✅ in hand* | 4 | S–M |
-| 4 | `reviews.json` + Happy Customers section | 5 | M |
-| 5 | `/add-product` skill | 3.2 | M |
-| 6 | Gift box product + `/gift-box` configurator page | 1 | M |
-| 7 | Local drag-drop gallery editor | 2.3 | M |
-| 8 | Issue-form add-from-phone flow (owner-only guard) — *mandatory* | 3.3 | M |
-| 9 | (Optional) Gift box unboxing gallery, blog post | 1 | S |
+| # | Work item | Idea | Size | Status |
+|---|-----------|------|------|--------|
+| 1 | Extract `products.json` + model file | 3.1 | S | ✅ done |
+| 2 | Manifest + sync rewrite of `generate-carousel-images.js` | 2.1–2.2 | S | ✅ done |
+| 3 | Review CTA layers (footer + contact success + snackbar) | 4 | S–M | ✅ done 2026-07-31 |
+| 4 | `reviews.json` + Happy Customers section | 5 | M | ⬜ next |
+| 5 | `/add-product` skill | 3.2 | M | ✅ done 2026-07-31 |
+| 6 | Gift box product + `/gift-box` configurator page | 1 | M | ⬜ |
+| 7 | Local drag-drop gallery editor | 2.3 | M | ✅ done |
+| 8 | Issue-form add-from-phone flow (owner-only guard) | 3.3 | M | ✅ done 2026-07-31 |
+| 9 | (Optional) Gift box unboxing gallery, blog post | 1 | S | ⬜ |
 
 *(Items 3–4 jumped the queue vs. the original order: they're small, independent of
 the JSON refactor, and reviews compound over time — the sooner the CTA ships, the

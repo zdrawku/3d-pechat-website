@@ -147,6 +147,19 @@
           <p class="form-status form-status--success">
             Благодарим ви! Съобщението е изпратено успешно. Ще се свържем с вас възможно най-скоро.
           </p>
+          <!--
+            Review CTA layer 2 (Idea 4): the highest-converting moment — the
+            visitor has just interacted with us. Only shown on success.
+          -->
+          <a [href]="googleReviewUrl" target="_blank" rel="noopener noreferrer"
+             class="review-prompt" data-testid="contact-review-cta">
+            <span class="review-prompt__mark" aria-hidden="true">G</span>
+            <span class="review-prompt__txt">
+              <b>Работили сме заедно преди?</b>
+              <span>Разкажете как мина — мнението ви помага на други</span>
+            </span>
+            <span class="review-prompt__btn">Сподели в Google</span>
+          </a>
         }
         @if (submitStatus === 'error') {
           <p class="form-status form-status--error">

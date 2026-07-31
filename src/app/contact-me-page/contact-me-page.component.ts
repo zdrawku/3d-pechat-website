@@ -5,6 +5,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
 import { SeoService } from '../services/seo.service';
 import { environment } from '../../environments/environment';
+import { GOOGLE_REVIEW_URL } from '../../data/site-links';
 
 declare const hcaptcha: {
   render(container: string | HTMLElement, options: Record<string, unknown>): string;
@@ -42,6 +43,9 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
 
   private hcaptchaWidgetId?: string;
   private hcaptchaToken = '';
+
+  /** Direct Google write-review link, shared by every review CTA (see site-links). */
+  public readonly googleReviewUrl = GOOGLE_REVIEW_URL;
 
   phoneNumber = '+359883310616';
   email = '3dpechat.bg@gmail.com';

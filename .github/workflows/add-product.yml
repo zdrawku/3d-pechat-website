@@ -1,0 +1,123 @@
+name: Add Product from Issue
+
+# "Add from phone" flow (Idea 3, Phase 3): the owner opens a `📦 Нов продукт`
+# issue with photos, this converts them and opens a PR.
+#
+# SECURITY — anyone can open an issue on a public repo, so the pipeline is
+# fail-closed and layered:
+#   1. `check-owner` gates every subsequent job on the issue author being the
+#      repo owner (login AND author_association must both match).
+#   2. Non-owner issues are commented on and closed without any code running.
+#   3. Even for the owner, the result is only a PR — nothing reaches the live
+#      site until it is reviewed and merged.
+
+on:
+  issues:
+    types: [opened, labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  # Gate 1: decide whether this issue may drive the pipeline at all.
+  check-owner:
+    if: contains(github.event.issue.labels.*.name, 'new-product')
+    runs-on: ubuntu-latest
+    outputs:
+      is_owner: ${{ steps.verify.outputs.is_owner }}
+    steps:
+      - name: Verify issue author
+        id: verify
+        env:
+          AUTHOR: ${{ github.event.issue.user.login }}
+          ASSOCIATION: ${{ github.event.issue.author_association }}
+        run: |
+          # Belt and braces: the login must be the owner AND GitHub must agree
+          # the author is the repo OWNER. Either check failing = no run.
+          if [[ "$AUTHOR" == "zdrawku" && "$ASSOCIATION" == "OWNER" ]]; then
+            echo "is_owner=true" >> $GITHUB_OUTPUT
+            echo "Author '$AUTHOR' verified as repo owner."
+          else
+            echo "is_owner=false" >> $GITHUB_OUTPUT
+            echo "Author '$AUTHOR' ($ASSOCIATION) is not the owner — refusing to run."
+          fi
+
+  # Gate 2: politely close anything that isn't from the owner. No code runs here.
+  reject-non-owner:
+    needs: check-owner
+    if: needs.check-owner.outputs.is_owner != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment and close
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh issue comment "$ISSUE" --repo "$REPO" --body \
+            "Продукти може да добавя само собственикът на сайта, затова това issue се затваря автоматично. Ако искаш да предложиш продукт, пиши ни през формата за контакт на https://3dpechat.bg/contact/ 🙂"
+          gh issue close "$ISSUE" --repo "$REPO" --reason "not planned"
+
+  add-product:
+    needs: check-owner
+    if: needs.check-owner.outputs.is_owner == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Add product from issue
+        id: add
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/add-product/from-issue.js
+
+      - name: Validate build
+        run: npm run build
+
+      - name: Create Pull Request
+        id: pr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'feat(products): add ${{ steps.add.outputs.product_name }}'
+          title: '📦 Нов продукт: ${{ steps.add.outputs.product_name }}'
+          body: |
+            ## Нов продукт от issue #${{ github.event.issue.number }}
+
+            **${{ steps.add.outputs.product_name }}** (`${{ steps.add.outputs.link_id }}`)
+
+            Автоматично добавен от [issue #${{ github.event.issue.number }}](${{ github.event.issue.html_url }}):
+            снимките са свалени, конвертирани в `.webp` и вписани в `src/data/products.json`.
+
+            ### Преди мърдж провери:
+            - [ ] Името и описанието са на правилен български
+            - [ ] Снимките са в правилния ред (лице / гръб) и с правилна ориентация
+            - [ ] Ключовите думи са смислени
+            - [ ] `npm run build` мина (виж стъпката по-горе)
+
+            Closes #${{ github.event.issue.number }}
+          branch: add-product/${{ steps.add.outputs.link_id }}
+          delete-branch: true
+          labels: product,auto-generated
+
+      - name: Link PR on the issue
+        if: steps.pr.outputs.pull-request-url != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+          PR_URL: ${{ steps.pr.outputs.pull-request-url }}
+        run: |
+          gh issue comment "$ISSUE" --repo "$REPO" --body \
+            "Готово ✅ Отворих PR за ревю: $PR_URL"
