@@ -352,7 +352,10 @@
   align-content: flex-start;
   gap: rem(8px);
   position: relative;
-  min-width: rem(320px);
+  // Capped floors — a bare 320px/120px minimum can exceed a narrow viewport and
+  // force the page to scroll sideways. `min()` keeps the intent on wide screens
+  // while letting these collapse cleanly on small ones.
+  min-width: min(rem(320px), 100%);
   max-width: rem(1200px);
   flex-grow: 1;
   flex-basis: 0;
@@ -363,7 +366,7 @@
   align-content: flex-start;
   gap: rem(3px);
   position: relative;
-  min-width: rem(120px);
+  min-width: min(rem(120px), 100%);
   flex-grow: 1;
   flex-basis: 0;
 }
@@ -387,16 +390,24 @@
   min-height: rem(50px);
   flex-shrink: 0;
 }
+// Contacts column. A hard 240px floor made this column (and so the whole
+// four-column footer row) wider than the space left beside the drawer on
+// mid-size viewports. A fluid floor lets it wrap onto its own line instead.
 .column_layout_-3 {
   justify-content: flex-start;
   align-items: stretch;
   align-content: flex-start;
   gap: rem(3px);
   position: relative;
-  min-width: rem(240px);
+  min-width: min(rem(240px), 100%);
   flex-grow: 1;
   flex-basis: 0;
 }
+// Footer contact rows (icon + address/phone/mail). These must be free to shrink:
+// `min-width: max-content` would pin each row to the full width of its longest
+// unbroken line (the address is ~279px), which overflowed the page horizontally
+// once the drawer took its 232px out of the viewport. min-width:0 lets the text
+// child wrap instead, and the icon keeps its own size via flex-shrink:0 below.
 .row_layout_-2 {
   justify-content: flex-start;
   align-items: center;
@@ -404,8 +415,14 @@
   gap: rem(8px);
   position: relative;
   height: max-content;
-  min-width: max-content;
-  flex-shrink: 0;
+  min-width: 0;
+
+  // The text next to the icon is what gives way when space is tight.
+  > p,
+  > a {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
 }
 .row_layout_-7 {
   border-color: var(--ig-gray-400);
@@ -575,6 +592,7 @@
   font-size: rem(18px);
   width: rem(18px);
   height: rem(18px);
+  flex-shrink: 0; // the text beside it wraps; the glyph keeps its 18px box
   // #666666 (~5.3:1 on #F5F5F5) instead of the ~#8A8A8A gray-600 (3.16:1).
   color: #666666;
 }
@@ -663,7 +681,7 @@
 }
 .icon_button_5 {
   --foreground: var(--ig-surface-500-contrast);
-  
+
   // Remove underline for anchor tags used as icon buttons. .icon_button_5[href]
   // (0,2,0) already out-specifies the browser's `a` default, so no !important.
   &[href] {
@@ -683,11 +701,45 @@ igx-navbar {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    
+
     igx-icon {
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+  }
+
+  // Below 420px the navbar row (menu pill + CTA + 2 socials + theme switch) is
+  // wider than the viewport, and igx-navbar's own `overflow: hidden` clipped the
+  // theme switch off-screen entirely instead of scrolling to it. Shed the social
+  // icons here — the same progressive-shedding rule the wordmark follows at
+  // 600px. Both links stay reachable in the footer.
+  //
+  // Must sit after the rule above and match its specificity (0,2,1): Ignite's
+  // own .igx-icon-button sets `display: flex`, so a plain .icon_button_5 block
+  // would lose. Same weight + later in the file wins without !important.
+  @media (max-width: 420px) {
+    a.icon_button_5 {
+      display: none;
+    }
+  }
+
+  // At the 320px floor the remaining three controls still overhang by a few px.
+  // Reclaim it from the bar's own side padding and the inter-control margins
+  // rather than shrinking the touch targets.
+  @media (max-width: 360px) {
+    .igx-navbar__part--start,
+    .igx-navbar__right {
+      padding-inline: rem(8px);
+    }
+
+    .nav_cta_button {
+      margin-left: 0;
+      padding: rem(8px) rem(10px);
+    }
+
+    .theme-switch {
+      margin-left: rem(4px);
     }
   }
 }

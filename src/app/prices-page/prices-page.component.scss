@@ -187,6 +187,12 @@
   @media (max-width: 480px) {
     padding: rem(28px) rem(20px);
   }
+
+  // At the 320px floor the side padding plus the calculator field's own minimum
+  // is wider than the viewport, which pushed the whole page sideways.
+  @media (max-width: 380px) {
+    padding: rem(24px) rem(12px);
+  }
 }
 
 .calculator-head {
@@ -243,7 +249,9 @@
   display: flex;
   flex-direction: column;
   gap: rem(6px);
-  min-width: rem(150px);
+  // Capped floor: a bare 150px minimum can't fit beside its sibling on a 320px
+  // screen, so the row forced the page wider instead of stacking.
+  min-width: min(rem(150px), 100%);
 
   > label {
     font-size: rem(11px);
@@ -315,6 +323,16 @@
   display: inline-flex;
   align-items: center;
   gap: rem(8px);
+  // Ignite's .igx-button sets `white-space: nowrap`, which made this long
+  // Bulgarian label a single unbreakable ~294px box that widened the page on
+  // 320px screens. Let it wrap onto two lines at that size instead.
+  max-width: 100%;
+
+  @media (max-width: 380px) {
+    white-space: normal;
+    text-align: center;
+  }
+
   background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500) 70%);
   color: var(--ig-primary-500-contrast);
   border: none;
