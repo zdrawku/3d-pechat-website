@@ -3,16 +3,20 @@ import { isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { IGX_NAVBAR_DIRECTIVES, IGX_NAVIGATION_DRAWER_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxIconComponent, IgxIconService, IgxNavigationDrawerComponent, IgxToggleActionDirective, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
 import { instagram, tiktok } from '@igniteui/material-icons-extended';
+import { GOOGLE_REVIEW_URL } from '../data/site-links';
+import { ReviewCtaComponent } from './shared/review-cta/review-cta.component';
 
 @Component({
   selector: 'app-root',
-  imports: [IGX_NAVIGATION_DRAWER_DIRECTIVES, IGX_NAVBAR_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxToggleActionDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective, RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [IGX_NAVIGATION_DRAWER_DIRECTIVES, IGX_NAVBAR_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxToggleActionDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective, RouterOutlet, RouterLink, RouterLinkActive, ReviewCtaComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
   @ViewChild('navigationdrawer1', { static: true }) public drawer!: IgxNavigationDrawerComponent;
   public isDarkTheme = false;
+  /** Direct Google write-review link, shared by every review CTA (see site-links). */
+  public readonly googleReviewUrl = GOOGLE_REVIEW_URL;
 
   constructor(
     public router: Router,

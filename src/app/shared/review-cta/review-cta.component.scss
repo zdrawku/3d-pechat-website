@@ -1,0 +1,93 @@
+@use "igniteui-angular/theming" as *;
+@use "../../fluid" as *;
+
+// Snackbar palette. Fixed (not palette-derived) so the pill stays dark and the
+// action stays legible in both light and dark themes — see the note below.
+$snack-ink: #211D18;    // warm near-black, matches the design artifact
+$snack-fg: #F3EEE6;     // warm off-white body copy
+$snack-accent: #FFAB91; // warm orange action, ~7:1 on $snack-ink
+
+// One-time Google review ask (Idea 4, layer 3). Dark pill floating above the
+// content — deliberately small and dismissible, never blocking the page.
+//
+// NOTE: `igx-snackbar` must stay OUT of `$exclude-components` in styles.scss,
+// otherwise the theme emits no snackbar CSS at all and this renders as bare
+// unstyled text in the corner.
+.review_snackbar {
+  // The global theme sets $roundness: 0, which would square off the pill. The
+  // floating snackbar reads as a detached object, so it keeps its round corners.
+  --ig-snackbar-border-radius: #{rem(12px)};
+
+  // The pill is deliberately dark in BOTH themes (per the approved design):
+  // --ig-gray-900 inverts to near-white under .dark-theme, which would put the
+  // warm action text on a light background and destroy its contrast. Pin the
+  // ink colour instead of following the palette.
+  --ig-snackbar-background: #{$snack-ink};
+  --ig-snackbar-text-color: #{$snack-fg};
+  // Warm accent for the action, per the approved design (the default
+  // --ig-secondary-500 is the site's blue and fights the dark pill).
+  --ig-snackbar-button-color: #{$snack-accent};
+
+  // Opaque: the theme's backdrop-filter let portfolio images bleed through the
+  // pill and made the copy hard to read over busy pages.
+  background: $snack-ink;
+  backdrop-filter: none;
+
+  // Wide enough to keep the message on one line next to the action buttons.
+  max-width: min(#{rem(680px)}, calc(100vw - #{rem(32px)}));
+
+  ::ng-deep .igx-snackbar__message {
+    display: flex;
+    align-items: center;
+    gap: rem(10px);
+    flex-wrap: wrap;
+    // The theme's 1.5rem inter-element gap is what forced the copy to wrap.
+    margin-inline-end: rem(4px);
+  }
+}
+
+// Google's four-colour mark, drawn with a conic gradient (no extra asset).
+.review_snackbar_mark {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: rem(18px);
+  height: rem(18px);
+  border-radius: 50%;
+  background: conic-gradient(
+    #4285f4 0 25%,
+    #34a853 25% 50%,
+    #fbbc05 50% 75%,
+    #ea4335 75% 100%
+  );
+  color: #fff;
+  font-size: rem(10px);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.review_snackbar_txt {
+  min-width: 0;
+  font-size: rem(13px);
+  color: $snack-fg;
+}
+
+.review_snackbar_action {
+  font-weight: 700;
+  white-space: nowrap;
+  // igx-snackbar__button is `display: contents`, so these buttons don't pick up
+  // the pill's colors on their own — set them against the dark background.
+  color: $snack-accent;
+}
+
+.review_snackbar_close {
+  min-width: rem(40px);
+  color: $snack-fg;
+  opacity: 0.7;
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+  }
+}
