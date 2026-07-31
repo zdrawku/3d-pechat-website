@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IgxButtonModule, IgxRippleModule, IgxIconModule, IgxInputGroupModule, IGX_CARD_DIRECTIVES } from 'igniteui-angular';
+import { IgxButtonModule, IgxRippleModule, IgxIconModule, IgxInputGroupModule, IGX_CARD_DIRECTIVES, IgxTooltipModule } from 'igniteui-angular';
 import { BlogService } from '../services/blog.service';
 import { BlogPost } from '../models/blog-post.model';
 import { SeoService } from '../services/seo.service';
@@ -19,7 +19,8 @@ import { SeoService } from '../services/seo.service';
     IgxRippleModule,
     IgxIconModule,
     IgxInputGroupModule,
-    IGX_CARD_DIRECTIVES
+    IGX_CARD_DIRECTIVES,
+    IgxTooltipModule
 ],
   templateUrl: './blog-list-page.component.html',
   styleUrls: ['./blog-list-page.component.scss']

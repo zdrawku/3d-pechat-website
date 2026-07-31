@@ -183,6 +183,8 @@
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
+        // Signal that the clamped text is interactive and reveals more on hover.
+        cursor: help;
       }
 
       .tags-container {
@@ -258,4 +260,29 @@
       margin-top: rem(16px);
     }
   }
+}
+
+// Tooltips for the clamped title/description — mirrors the product grid, so the
+// two catalogue pages behave identically on hover. The tooltip renders in an
+// overlay outside the card, hence ::ng-deep and a top-level (unnested) rule.
+// .igx-tooltip.blog-tooltip (0,2,0) out-specifies the tooltip theme (0,1,0).
+::ng-deep .igx-tooltip.blog-tooltip {
+  background-color: var(--ig-gray-900);
+  color: var(--ig-gray-900-contrast);
+  font-size: rem(16px);
+  padding: rem(8px) rem(12px);
+  border-radius: rem(6px);
+  box-shadow: var(--shadow-float);
+  text-align: center;
+  max-width: rem(250px);
+}
+
+// The description runs several lines, so its tooltip is wider and left-aligned
+// (unlike the short, centered title tooltip). This rule comes after
+// .blog-tooltip at equal specificity, so it wins by order.
+::ng-deep .igx-tooltip.description-tooltip {
+  text-align: left;
+  max-width: rem(320px);
+  font-size: rem(14.4px);
+  line-height: 1.5;
 }

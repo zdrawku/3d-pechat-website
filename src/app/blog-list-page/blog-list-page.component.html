@@ -69,8 +69,12 @@
                 <igx-icon class="date-icon">calendar_today</igx-icon>
                 {{ formatDate(blog.date) }}
               </span>
-              <h2 class="card-title">{{ blog.title }}</h2>
-              <p class="card-description">{{ blog.description }}</p>
+              <h2 class="card-title" [igxTooltipTarget]="titleTooltipRef">{{ blog.title }}</h2>
+              <div #titleTooltipRef="tooltip" igxTooltip class="blog-tooltip">{{ blog.title }}</div>
+              <p class="card-description" [igxTooltipTarget]="descriptionTooltipRef">{{ blog.description }}</p>
+              <div #descriptionTooltipRef="tooltip" igxTooltip class="blog-tooltip description-tooltip">
+                {{ blog.description }}
+              </div>
               @if (blog.tags && blog.tags.length > 0) {
                 <div class="tags-container">
                   @for (tag of blog.tags.slice(0, 3); track tag) {

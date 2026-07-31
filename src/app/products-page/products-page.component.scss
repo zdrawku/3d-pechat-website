@@ -67,6 +67,10 @@
   align-items: center;
   justify-content: space-between;
   gap: rem(12px) rem(20px);
+  // Own margin rather than relying on the parent's gap: .products-section is a
+  // plain block (its .column-layout class has no display rule), so a gap there
+  // never applies and the toolbar would sit flush against the grid.
+  margin-bottom: rem(24px);
 }
 
 // Segmented sort control — a lightweight pill group.
