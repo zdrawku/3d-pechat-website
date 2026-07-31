@@ -54,8 +54,15 @@
         <span class="calculator-op">/10 &times;</span>
 
         <div class="calculator-field">
-          <label for="tier-select">Тарифа</label>
-          <igx-select id="tier-select" [(ngModel)]="selectedTierId" data-testid="calc-tier">
+          <!-- The caption stays outside the control so the uppercase style above
+               still applies. Deliberately NO `for=` — it can't reach the real
+               <input role="combobox"> that igx-select renders internally (that
+               left the input with no accessible name: axe critical, WCAG 4.1.2),
+               and pointing it at the host made label clicks re-toggle the
+               dropdown shut. [labelledBy] wires aria-labelledby to this id. -->
+          <label id="tier-select-label">Тарифа</label>
+          <igx-select id="tier-select" labelledBy="tier-select-label" [(ngModel)]="selectedTierId"
+            data-testid="calc-tier">
             @for (tier of tiers; track tier.id) {
               <igx-select-item [value]="tier.id" [attr.data-testid]="'calc-tier-' + tier.id">
                 {{ tier.pricePerTenGrams.toFixed(2) }} € ({{ tier.name }})
