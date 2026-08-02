@@ -187,32 +187,35 @@ function updateBlogService(slug, seo, coverImageAssetPath) {
 function updateRoutes(slug, pascalName) {
   const src = fs.readFileSync(ROUTES_FILE, 'utf8');
   const className = `${pascalName}Component`;
-  const importLine = `import { ${className} } from './blog/${slug}/${slug}.component';`;
 
-  if (src.includes(importLine)) {
-    console.log('[scaffold] route import already present, skipping');
+  // Blog routes are lazy: every child is
+  //   { path: '<slug>',
+  //     loadComponent: () => import('./blog/<slug>/<slug>.component').then(m => m.<Class>) }
+  // There are deliberately NO static `import … from './blog/…'` lines at the top
+  // of this file — adding one would eagerly pull the chunk into the main bundle
+  // and undo the lazy loading.
+  if (new RegExp(`path:\\s*'${slug.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}'`).test(src)) {
+    console.log('[scaffold] route already present, skipping');
     return;
   }
 
-  // Insert the import after the last existing './blog/...' import.
-  const importRegex = /^import .* from '\.\/blog\/[^']+';$/gm;
-  let lastMatch;
-  let m;
-  while ((m = importRegex.exec(src)) !== null) lastMatch = m;
-  if (!lastMatch) throw new Error('Could not locate existing blog imports in app.routes.ts');
-  const insertAt = lastMatch.index + lastMatch[0].length;
-  let updated = src.slice(0, insertAt) + '\n' + importLine + src.slice(insertAt);
-
-  // Add the route inside the blog children array, before the closing `]`.
+  // Append the route inside the blog children array, before its closing `]`.
   const blogChildrenRegex = /(path:\s*'blog'\s*,\s*children:\s*\[)([\s\S]*?)(\n\s*\]\s*\})/;
-  const match = updated.match(blogChildrenRegex);
+  const match = src.match(blogChildrenRegex);
   if (!match) throw new Error('Could not locate blog children array in app.routes.ts');
+
   const before = match[1];
   const body = match[2].replace(/\s*$/, '');
   const after = match[3];
-  const newRoute = `,\n      { path: '${slug}', component: ${className} }`;
-  updated = updated.replace(blogChildrenRegex, `${before}${body}${newRoute}${after}`);
+  const newRoute =
+    `,\n      {\n` +
+    `        path: '${slug}',\n` +
+    `        loadComponent: () => import('./blog/${slug}/${slug}.component')` +
+    `.then(m => m.${className})\n` +
+    `      }`;
+  const updated = src.replace(blogChildrenRegex, `${before}${body}${newRoute}${after}`);
 
+  if (updated === src) throw new Error('Failed to insert the blog route into app.routes.ts');
   fs.writeFileSync(ROUTES_FILE, updated, 'utf8');
 }
 
@@ -241,4 +244,7 @@ function scaffoldArticle(article, coverImagePath) {
   };
 }
 
-module.exports = { scaffoldArticle, pascalCaseFromSlug };
+// updateRoutes is exported for the route-format check in
+// scripts/auto-blog/verify-routes.js (it must stay in sync with the lazy
+// `loadComponent` shape used by src/app/app.routes.ts).
+module.exports = { scaffoldArticle, pascalCaseFromSlug, updateRoutes };

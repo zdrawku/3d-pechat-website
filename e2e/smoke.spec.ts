@@ -95,6 +95,31 @@ test.describe('navigation', () => {
     }
   });
 
+  // At >=1024px the drawer is laid out as a persistent sidebar by CSS while
+  // Ignite still treats it as an unpinned overlay drawer, so it renders no
+  // overlay to catch outside clicks — the hamburger used to be the only way to
+  // close it. AppComponent.onDocumentClick restores the toggle.
+  test('drawer closes on an outside click and reopens from the hamburger', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/');
+
+    const aside = page.locator('.igx-nav-drawer__aside');
+    const width = async () => (await aside.boundingBox())?.width ?? 0;
+
+    expect(await width()).toBeGreaterThan(200);
+
+    // Click page content well clear of the drawer.
+    await page.mouse.click(1200, 500);
+    await expect.poll(width).toBeLessThan(50);
+
+    await page.getByTestId('menu-trigger').click();
+    await expect.poll(width).toBeGreaterThan(200);
+
+    // A click inside the drawer must NOT close it.
+    await page.locator('.drawer_group_label').first().click();
+    expect(await width()).toBeGreaterThan(200);
+  });
+
   test('header CTA goes to contact page', async ({ page }) => {
     await page.goto('/');
     await page.locator('a.nav_cta_button').click();

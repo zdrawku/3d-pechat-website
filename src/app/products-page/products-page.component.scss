@@ -58,6 +58,14 @@
   }
 }
 
+// Curated-reviews trust bar (Idea 5, Option C) above the toolbar + grid. Like
+// .products-toolbar below it, it carries its own margin: .products-section is a
+// plain block, so a gap there never applies.
+.products-trust-bar {
+  display: block;
+  margin-bottom: rem(24px);
+}
+
 // Toolbar directly above the products grid — holds the sort control (left) and
 // the result count (right). Wraps to two rows on narrow screens without a media
 // query. The search field stays up in the page-banner header.

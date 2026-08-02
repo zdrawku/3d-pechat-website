@@ -4,10 +4,11 @@ import { IGX_CAROUSEL_DIRECTIVES, IGX_CARD_DIRECTIVES, IgxButtonDirective } from
 
 import { carouselImages } from './carousel-images';
 import { SeoService } from '../services/seo.service';
+import { HappyCustomersComponent } from '../shared/happy-customers/happy-customers.component';
 
 @Component({
   selector: 'app-main-page',
-  imports: [IGX_CAROUSEL_DIRECTIVES, IGX_CARD_DIRECTIVES, IgxButtonDirective],
+  imports: [IGX_CAROUSEL_DIRECTIVES, IGX_CARD_DIRECTIVES, IgxButtonDirective, HappyCustomersComponent],
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.scss']
 })

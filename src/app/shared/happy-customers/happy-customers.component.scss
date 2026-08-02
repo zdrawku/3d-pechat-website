@@ -1,0 +1,341 @@
+@use "igniteui-angular/theming" as *;
+@use "../../fluid" as *;
+@use "../../sla-hover" as sla;
+
+// Idea 5 — „Доволни клиенти". Structure comes from Ignite UI components
+// (igx-card / igx-avatar / igx-icon / igxButton); this file only positions them
+// and applies the site's tokens, so both themes follow automatically. The one
+// exception is the star gold and Google's four-colour mark, which are fixed
+// brand colours in both themes.
+$star-gold: #F9A825;
+
+// ============================ shared bits ============================
+
+// Star rows are decorative — every one of them is paired with a
+// .visually-hidden text label in the template.
+.hc_stars {
+  color: $star-gold;
+  letter-spacing: rem(1.5px);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+// Google's four-colour mark drawn with a conic gradient (same recipe as the
+// review-cta snackbar — no extra asset). Not an igx-icon: the Material set has
+// no four-colour Google mark.
+.hc_gmark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: rem(16px);
+  height: rem(16px);
+  border-radius: 50%;
+  background: conic-gradient(
+    #4285f4 0 25%,
+    #34a853 25% 50%,
+    #fbbc05 50% 75%,
+    #ea4335 75% 100%
+  );
+  color: #fff;
+  font-size: rem(9px);
+  font-weight: 800;
+  line-height: 1;
+  vertical-align: rem(-3px);
+
+  &--sm {
+    width: rem(13px);
+    height: rem(13px);
+    font-size: rem(7.5px);
+    vertical-align: rem(-2px);
+  }
+}
+
+// ============================ A — section (main page) ============================
+
+.hc_section {
+  position: relative;
+  width: 100%;
+  padding: fluid(32px, 48px) fluid(16px, 32px);
+
+  // Same soft seam fade the main page's other stacked sections use.
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: rem(16px);
+    background: var(--seam);
+    pointer-events: none;
+  }
+}
+
+.hc_inner {
+  max-width: rem(1200px);
+  margin: 0 auto;
+  width: 100%;
+}
+
+.hc_head {
+  text-align: center;
+  margin-bottom: rem(20px);
+}
+
+.hc_title {
+  font-size: fluid(22.4px, 28px);
+  line-height: 1.15;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  color: var(--ig-gray-900);
+  margin: 0 0 rem(6px);
+  text-wrap: balance;
+}
+
+.hc_agg {
+  margin: 0;
+  font-size: rem(13.5px);
+  color: var(--ig-gray-700);
+
+  strong {
+    color: var(--ig-gray-900);
+  }
+}
+
+// Grid on desktop. On narrow screens it becomes the approved Option B swipeable
+// strip — CSS only, so there is a single markup path to maintain.
+.hc_grid {
+  display: grid;
+  // minmax(0, 1fr) — NOT plain 1fr. A 1fr track's implicit minimum is `auto`,
+  // so the columns refuse to shrink below the cards' intrinsic content width
+  // and force the whole page into a horizontal scrollbar on narrow screens.
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: rem(14px);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+// The <li> is a pure layout wrapper; igx-card inside it is the real surface.
+.hc_card_item {
+  display: flex;
+}
+
+.hc_card {
+  @include sla.sla-hover;
+
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-radius: var(--radius-md);
+
+  // sla-hover paints the border on hover; give it a visible resting colour.
+  border-color: var(--ig-gray-300);
+}
+
+// igx-card-header ships generous default padding tuned for media cards; tighten
+// it so the review cards stay compact.
+.hc_card_head {
+  padding: rem(14px) rem(14px) rem(6px);
+}
+
+.hc_author {
+  font-size: rem(13px);
+  font-weight: 700;
+  color: var(--ig-gray-900);
+  margin: 0;
+}
+
+.hc_date {
+  font-size: rem(11px);
+  color: var(--ig-gray-700);
+}
+
+.hc_card_body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: rem(7px);
+  padding: 0 rem(14px) rem(4px);
+  // Absorbs the height difference between cards of unequal text length, which
+  // keeps the footers aligned across the row.
+  flex: 1;
+}
+
+.hc_text {
+  margin: 0;
+  font-size: rem(13.5px);
+  line-height: 1.6;
+  color: var(--ig-gray-800);
+}
+
+.hc_card_foot {
+  display: flex;
+  align-items: center;
+  gap: rem(6px);
+  padding: rem(10px) rem(14px) rem(14px);
+}
+
+.hc_src {
+  font-size: rem(11px);
+  color: var(--ig-gray-700);
+}
+
+.hc_links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: rem(10px);
+  justify-content: center;
+  margin-top: rem(18px);
+}
+
+// Flat igxButton anchors: keep the button's hit area/ripple/focus ring, restyle
+// the label to the design's link colours.
+.hc_link {
+  display: inline-flex;
+  align-items: center;
+  gap: rem(6px);
+  font-size: rem(13px);
+  font-weight: 600;
+  text-decoration: none;
+  // The button theme uppercases labels; the approved design is sentence case.
+  text-transform: none;
+  letter-spacing: normal;
+  // --foreground is the knob the button theme reads (same as .cta-band__btn).
+  color: var(--ig-info-500);
+  --foreground: var(--ig-info-500);
+
+  &--cta {
+    color: var(--accent-on-light);
+    --foreground: var(--accent-on-light);
+  }
+}
+
+.hc_link_icon {
+  // igx-icon defaults to 24px, which overpowers a 13px label.
+  --ig-size: 1;
+  font-size: rem(17px);
+  width: rem(17px);
+  height: rem(17px);
+  // igx-icon otherwise takes the icon theme's own colour (a teal) rather than
+  // inheriting the link colour it sits next to.
+  color: inherit;
+}
+
+// Option B — the section's mobile face: the same cards, swipeable.
+@media (max-width: 760px) {
+  .hc_grid {
+    display: flex;
+    grid-template-columns: none;
+    overflow-x: auto;
+    // Partner to overflow-x on a flex strip: without it the row can still be
+    // sized by its items instead of by its parent. (The shell-level fix in
+    // app.component.scss's .group is what stops the inflation reaching the
+    // page; this keeps the component correct on its own.)
+    min-width: 0;
+    // Room for the cards' hover/resting shadow, which a plain overflow clips.
+    padding: rem(4px) rem(4px) rem(10px);
+    margin-inline: rem(-4px);
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .hc_card_item {
+    flex: 0 0 min(#{rem(260px)}, 82vw);
+    scroll-snap-align: start;
+  }
+}
+
+// ============================ C — trust bar (products page) ============================
+
+.hc_bar {
+  border-radius: var(--radius-md);
+  border-color: var(--ig-gray-300);
+  // igx-card defaults to the raised card surface; the bar reads as a recessed
+  // strip in the page flow instead.
+  background: var(--bg-alt);
+}
+
+.hc_bar_body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: rem(18px);
+  padding: rem(13px) rem(18px);
+}
+
+.hc_bar_score {
+  text-align: center;
+}
+
+.hc_bar_num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: rem(8px);
+  margin: 0;
+  font-size: rem(22px);
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--ig-gray-900);
+
+  .hc_stars {
+    font-size: rem(15px);
+  }
+}
+
+.hc_bar_count {
+  margin: rem(2px) 0 0;
+  font-size: rem(11.5px);
+  color: var(--ig-gray-700);
+}
+
+// The author sits outside .hc_bar_quote so the quote's line-clamp can never
+// truncate the attribution.
+.hc_bar_quote_wrap {
+  max-width: 38ch;
+}
+
+.hc_bar_author {
+  margin: rem(2px) 0 0;
+  font-size: rem(12px);
+  color: var(--ig-gray-700);
+}
+
+.hc_bar_quote {
+  margin: 0;
+  font-size: rem(13px);
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--ig-gray-700);
+  // The bar is a compact one-row strip; a long review would stretch it to five
+  // lines. Clamp it here rather than trimming the review itself, which reads in
+  // full inside the section's card.
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+
+// Contained igxButton anchor — the theme supplies the fill/elevation; only the
+// pill radius and label sizing are ours.
+.hc_bar_btn {
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  font-size: rem(12px);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  // The button theme uppercases labels; the approved design is sentence case.
+  text-transform: none;
+  letter-spacing: normal;
+  // The contained button defaults to the theme's teal secondary; the approved
+  // design uses the brand orange with a white label (the teal's default
+  // near-black label also failed contrast). --background/--foreground are the
+  // knobs the button theme actually reads — same pattern as .cta-band__btn.
+  --background: var(--ig-primary-500);
+  --foreground: #fff;
+  color: #fff;
+}

@@ -6,9 +6,9 @@
 > `🔵 DECISION` and listed in the final section.
 >
 > **Implementation progress:** Ideas **2** (gallery manifest + editor), **3**
-> (products.json + `/add-product` skill + issue-form flow) and **4** (review CTA,
-> all three layers) are shipped. Remaining: **Idea 5** (Happy Customers section)
-> and **Idea 1** (gift box page). See the build-order table at the bottom.
+> (products.json + `/add-product` skill + issue-form flow), **4** (review CTA,
+> all three layers) and **5** (Happy Customers section) are shipped. Remaining:
+> **Idea 1** (gift box page). See the build-order table at the bottom.
 
 ## Context (how the site works today — constraints the plan must respect)
 
@@ -117,7 +117,7 @@ flow. Revisit only if the whole site ever gets e-commerce.
 
 ---
 
-## Idea 2 — 🖼️ Controllable image ordering for Portfolio & Carousels
+## DONE Idea 2 — 🖼️ Controllable image ordering for Portfolio & Carousels
 
 ### Problem restatement
 
@@ -185,7 +185,7 @@ Step 3 ≈ a focused day. Products' front/back images are **not** part of this s
 
 ---
 
-## Idea 3 — 📦 Seamless "add a product" workflow
+## DONE Idea 3 — 📦 Seamless "add a product" workflow
 
 ### Problem restatement
 
@@ -286,7 +286,7 @@ it costs nothing to run.
 
 ---
 
-## Idea 4 — ⭐ Site-wide "Leave us a Google review" call to action
+## DONE Idea 4 — ⭐ Site-wide "Leave us a Google review" call to action
 
 ### Problem restatement
 
@@ -382,7 +382,7 @@ one snackbar component).
 
 ---
 
-## Idea 5 — 💬 "Доволни клиенти" (Happy customers) curated reviews section
+## DONE Idea 5 — 💬 "Доволни клиенти" (Happy customers) curated reviews section
 
 ### Problem restatement
 
@@ -443,6 +443,25 @@ where trust matters most). The gift-box page (Idea 1) reuses it later.
 „Доволни клиенти" section on the main page, and **Option C compact trust bar**
 above the order CTAs on the products page; all fed by the same `reviews.json`.
 
+✅ **IMPLEMENTED 2026-08-02** — [`src/app/shared/happy-customers/`](src/app/shared/happy-customers/),
+fed by [`src/data/reviews.json`](src/data/reviews.json) (shape in
+[`src/app/models/review.model.ts`](src/app/models/review.model.ts), documented in
+[`src/data/README.md`](src/data/README.md)) with 12 unit specs.
+One component, one `variant` input: `"section"` on the main page (between the
+gallery and the final CTA band) and `"bar"` on `/products` (above the sort
+toolbar + grid, so it doesn't strand itself when a search returns nothing).
+Option B's mobile strip is a **CSS-only** collapse of the same grid markup —
+one markup path, not two. Both faces are confirmed present in the prerendered
+static HTML. The two closing links reuse `GOOGLE_MAPS_PROFILE_URL` and
+`GOOGLE_REVIEW_URL` from [`src/data/site-links.ts`](src/data/site-links.ts),
+closing the loop with Idea 4. Star glyphs are `aria-hidden` and each is paired
+with a `.visually-hidden` „Оценка N от 5 звезди" label (a spec enforces the
+pairing). No schema.org review markup, per the caveat below.
+
+⚠️ **Seeded with the design artifact's three sample reviews as placeholders**
+(`totalCount: 3`) — replace them with the real Google reviews and the real total
+before this is meant to persuade anyone.
+
 **Structured data caveat** — ⚠️ deliberately **no** `schema.org` `Review`/
 `AggregateRating` markup for these: Google's guidelines prohibit "self-serving"
 review markup sourced from third-party sites (including Google itself); marking
@@ -501,7 +520,7 @@ To iterate on any of them, ask Claude to update the artifact — same link is ke
 | 1 | Extract `products.json` + model file | 3.1 | S | ✅ done |
 | 2 | Manifest + sync rewrite of `generate-carousel-images.js` | 2.1–2.2 | S | ✅ done |
 | 3 | Review CTA layers (footer + contact success + snackbar) | 4 | S–M | ✅ done 2026-07-31 |
-| 4 | `reviews.json` + Happy Customers section | 5 | M | ⬜ next |
+| 4 | `reviews.json` + Happy Customers section | 5 | M | ✅ done 2026-08-02 |
 | 5 | `/add-product` skill | 3.2 | M | ✅ done 2026-07-31 |
 | 6 | Gift box product + `/gift-box` configurator page | 1 | M | ⬜ |
 | 7 | Local drag-drop gallery editor | 2.3 | M | ✅ done |
