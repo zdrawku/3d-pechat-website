@@ -317,6 +317,12 @@
   position: relative;
   flex-grow: 1;
   flex-basis: 0;
+  // This wrapper holds every routed page and is itself a flex item, so its
+  // default min-width:auto lets any wide descendant (a horizontal scroll strip,
+  // a long unbreakable string) inflate the shell and give the whole site a
+  // horizontal scrollbar. min-width:0 keeps the shell at viewport width and
+  // makes each component's own overflow-x handling actually take effect.
+  min-width: 0;
 }
 .footer_section {
   background: linear-gradient(

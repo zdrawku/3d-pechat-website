@@ -106,7 +106,10 @@ $star-gold: #F9A825;
 // strip — CSS only, so there is a single markup path to maintain.
 .hc_grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  // minmax(0, 1fr) — NOT plain 1fr. A 1fr track's implicit minimum is `auto`,
+  // so the columns refuse to shrink below the cards' intrinsic content width
+  // and force the whole page into a horizontal scrollbar on narrow screens.
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: rem(14px);
   list-style: none;
   margin: 0;
@@ -225,6 +228,11 @@ $star-gold: #F9A825;
     display: flex;
     grid-template-columns: none;
     overflow-x: auto;
+    // Partner to overflow-x on a flex strip: without it the row can still be
+    // sized by its items instead of by its parent. (The shell-level fix in
+    // app.component.scss's .group is what stops the inflation reaching the
+    // page; this keeps the component correct on its own.)
+    min-width: 0;
     // Room for the cards' hover/resting shadow, which a plain overflow clips.
     padding: rem(4px) rem(4px) rem(10px);
     margin-inline: rem(-4px);

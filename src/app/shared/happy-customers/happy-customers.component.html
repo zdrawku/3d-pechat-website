@@ -44,7 +44,14 @@
                   <p class="hc_text">„{{ review.text }}“</p>
                 </igx-card-content>
 
-                <igx-card-footer class="hc_card_foot">
+                <!-- IgxCardFooterDirective defaults to role="footer", which is not
+                     a valid ARIA role (axe: aria-roles, critical). The role is an
+                     @Input typed string, and the directive owns the attr.role host
+                     binding, so overriding it here is the only way to clear it.
+                     "presentation" is the right replacement: no landmark belongs
+                     inside a list item (contentinfo would be its own violation),
+                     and the attribution text below stays readable regardless. -->
+                <igx-card-footer class="hc_card_foot" role="presentation">
                   <span class="hc_gmark hc_gmark--sm" aria-hidden="true">G</span>
                   <span class="hc_src">публикувано в Google</span>
                 </igx-card-footer>

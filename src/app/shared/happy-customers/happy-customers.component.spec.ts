@@ -103,6 +103,19 @@ describe('HappyCustomersComponent', () => {
     expect(labels.length).toBe(decorative.length);
   });
 
+  // IgxCardFooterDirective defaults to role="footer", which is not a valid ARIA
+  // role and fails axe's aria-roles rule at critical impact. The template clears
+  // it; this guards against the override being dropped.
+  it('leaves no invalid ARIA role on the card footers', () => {
+    const footers: HTMLElement[] = Array.from(
+      fixture.nativeElement.querySelectorAll('igx-card-footer')
+    );
+    expect(footers.length).toBe(component.reviews.length);
+    for (const footer of footers) {
+      expect(footer.getAttribute('role')).toBe('presentation');
+    }
+  });
+
   it('builds an avatar initial from the author name', () => {
     expect(component.initial('Иван П.')).toBe('И');
     expect(component.initial('  мария Д.')).toBe('М');
