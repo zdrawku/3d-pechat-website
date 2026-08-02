@@ -6,13 +6,14 @@ import { FormsModule } from '@angular/forms';
 import { IgxButtonDirective, IgxIconModule, IgxInputGroupModule, IGX_CARD_DIRECTIVES } from 'igniteui-angular';
 
 import { ProductGridComponent } from '../shared/product-grid/product-grid.component';
+import { HappyCustomersComponent } from '../shared/happy-customers/happy-customers.component';
 import { SeoService } from '../services/seo.service';
 import { Product, ProductVariant } from '../models/product.model';
 import productsData from '../../data/products.json';
 
 @Component({
   selector: 'app-products-page',
-  imports: [FormsModule, IgxButtonDirective, ProductGridComponent, IgxIconModule, IgxInputGroupModule, IGX_CARD_DIRECTIVES],
+  imports: [FormsModule, IgxButtonDirective, ProductGridComponent, HappyCustomersComponent, IgxIconModule, IgxInputGroupModule, IGX_CARD_DIRECTIVES],
   templateUrl: './products-page.component.html',
   styleUrls: ['./products-page.component.scss']
 })

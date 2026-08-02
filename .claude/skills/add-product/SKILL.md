@@ -112,11 +112,18 @@ Merging deploys automatically via `.github/workflows/github-pages.yml`.
 
 ## Notes
 
+- **Any UI you build must use Ignite UI Angular components** (`igx-card`,
+  `igxButton`, `igx-icon`, `igx-avatar`, …) — never hand-rolled plain HTML.
+  See Rule 1 in [`CLAUDE.md`](../../../CLAUDE.md), including the
+  `$exclude-components` trap and the standalone-`imports:` requirement. This
+  skill itself only writes JSON + images, so it normally doesn't apply — but it
+  does the moment you build the page component below.
 - **MAIN products.** If the user says this is a flagship/main product, set
   `featured: true` (pins it as a banner at the top of `/products` and adds a
   child item under „Продукти“ in the nav drawer). If it needs its own page
   rather than the default „order via /contact“ flow, also set `pageUrl` — and
-  tell the user that page component + route still has to be built separately.
+  tell the user that page component + route still has to be built separately
+  (built with Ignite UI components, per the rule above).
 - **`linkId` is permanent.** It is the card's DOM id and the target of shared
   `#deep-links`. Never change an existing one.
 - **Coin metadata.** `hasOldCoins`/`hasEuroCoins` are coin-card specific; leave

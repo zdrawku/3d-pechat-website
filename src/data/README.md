@@ -70,6 +70,54 @@ Both share [`scripts/add-product/lib.js`](../../scripts/add-product/lib.js),
 which owns id/`linkId`/`dateAdded` generation, webp conversion, and the
 append-without-reformatting write.
 
+## `reviews.json` — the „Доволни клиенти" curated reviews
+
+Hand-picked Google reviews shown by
+[`HappyCustomersComponent`](../app/shared/happy-customers/happy-customers.component.ts)
+on the main page (card grid, collapsing to a swipeable strip on mobile) and on
+`/products` (compact trust bar above the order CTAs). The shape is defined in
+[`src/app/models/review.model.ts`](../app/models/review.model.ts).
+
+Deliberately **curated, not synced**: no third-party widget script (performance,
+GDPR, paywalls) and no Places API key (returns only 5 uncontrollable reviews and
+needs billing). It's a hall of fame, so going "stale" is the intent.
+
+### Fields
+
+| Field           | Required | Notes                                                            |
+|-----------------|----------|------------------------------------------------------------------|
+| `totalCount`    | ✅       | Total reviews on the Business Profile — drives „N ревюта" in the header. Separate from `reviews.length`, since only a subset is displayed. |
+| `averageRating` | ✅       | Overall rating on the profile, e.g. `5`.                          |
+| `reviews[]`     | ✅       | **Array order is display order.**                                 |
+| ↳ `author`      | ✅       | Abbreviated name, e.g. „Иван П.". Drives the coloured initial circle. |
+| ↳ `rating`      | ✅       | 1–5.                                                              |
+| ↳ `date`        | ✅       | `YYYY-MM` (rendered as „май 2026"). A malformed value falls back to the raw string. |
+| ↳ `text`        | ✅       | Review text **without** quote marks — the UI adds them.           |
+| ↳ `sourceUrl`   | –        | Optional deep link to the review on Google Maps.                  |
+| ↳ `featured`    | ✅       | Only `true` entries are rendered.                                 |
+
+### Add a review
+
+Copy the text from Google Maps → append an entry (or reorder to promote one) →
+bump `totalCount` if the profile's total changed → commit. Or just ask Claude in
+a session: *"add this review to the happy customers section"*.
+
+Current contents: the 8 real Google reviews as of 2026-08-02 (all 5★). One of
+the 8 is rating-only with no text, so it is not listed — `totalCount` stays 8
+because it still counts on the profile. The three `featured: true` entries are
+the ones shown in the section; the rest are kept so promoting one later is just
+a flag flip.
+
+**Trimming is allowed, rewriting is not.** A long review may be cut to its
+strongest sentences so the cards stay balanced (Alexander Atanasov's is trimmed
+this way), but the remaining words must be *verbatim* — never paraphrase,
+never improve a customer's wording, and never change the sentiment.
+
+> ⚠️ **Never add schema.org `Review`/`AggregateRating` markup for these.** Google
+> prohibits self-serving review markup sourced from third-party sites (including
+> Google itself) and it risks a manual action. The section is display-only; the
+> real stars already show on the Business Profile in search results.
+
 ### ⚠️ Encoding note
 
 These files contain Bulgarian (Cyrillic) text. Edit them with a UTF-8-aware

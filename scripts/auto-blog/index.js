@@ -25,8 +25,15 @@ const { getTopicIdea } = require('./scrape-ideas');
 const { generateArticle } = require('./generate-article');
 const { scaffoldArticle } = require('./scaffold-component');
 const { generateCoverImage } = require('./generate-image');
+const { preflight } = require('./preflight');
 
 async function main() {
+  // Verify the scaffolder still matches the files it edits BEFORE spending a
+  // Claude API call and an image generation on an article that can't be filed.
+  console.log('::group::Preflight');
+  preflight();
+  console.log('::endgroup::');
+
   console.log('::group::Pick topic');
   const topic = await getTopicIdea();
   console.log(JSON.stringify(topic, null, 2));

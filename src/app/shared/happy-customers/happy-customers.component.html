@@ -1,0 +1,101 @@
+<!--
+  Idea 5 — „Доволни клиенти". Two faces from one component and one reviews.json.
+
+  Built from Ignite UI components throughout (igx-card / igx-avatar / igx-icon /
+  igxButton), matching the rest of the site — no hand-rolled plain-HTML
+  equivalents. NB: igx-chip and igx-divider are in styles.scss's
+  $exclude-components, so they must not be used here.
+
+  Note the deliberate absence of schema.org Review/AggregateRating markup: Google
+  forbids self-serving markup of reviews sourced from Google itself, so these are
+  display-only (see review.model.ts).
+-->
+@if (reviews.length > 0) {
+  @if (variant === 'section') {
+    <!-- Card grid on desktop; the same cards become a swipeable strip on mobile
+         via CSS only (no second markup path to keep in sync). -->
+    <section class="hc_section" aria-labelledby="hc-heading">
+      <div class="hc_inner">
+        <div class="hc_head">
+          <h2 class="hc_title" id="hc-heading">Доволни клиенти</h2>
+          <p class="hc_agg">
+            <span class="hc_stars" aria-hidden="true">{{ stars(averageRating) }}</span>
+            <span class="visually-hidden">{{ ratingLabel(averageRating) }}.</span>
+            <strong>{{ averageRatingLabel }}</strong> от {{ reviewCountLabel }} в
+            <span class="hc_gmark" aria-hidden="true">G</span> Google
+          </p>
+        </div>
+
+        <ul class="hc_grid" data-testid="happy-customers-grid">
+          @for (review of reviews; track review.author + review.date; let i = $index) {
+            <li class="hc_card_item">
+              <igx-card class="hc_card" elevated>
+                <igx-card-header class="hc_card_head">
+                  <igx-avatar igxCardHeaderThumbnail shape="circle" [initials]="initial(review.author)"
+                              [bgColor]="avatarColor(i)" color="#fff" size="small"
+                              [attr.aria-hidden]="true"></igx-avatar>
+                  <h3 igxCardHeaderTitle class="hc_author">{{ review.author }}</h3>
+                  <span igxCardHeaderSubtitle class="hc_date">{{ formatDate(review.date) }}</span>
+                </igx-card-header>
+
+                <igx-card-content class="hc_card_body">
+                  <span class="hc_stars" aria-hidden="true">{{ stars(review.rating) }}</span>
+                  <span class="visually-hidden">{{ ratingLabel(review.rating) }}</span>
+                  <p class="hc_text">„{{ review.text }}“</p>
+                </igx-card-content>
+
+                <igx-card-footer class="hc_card_foot">
+                  <span class="hc_gmark hc_gmark--sm" aria-hidden="true">G</span>
+                  <span class="hc_src">публикувано в Google</span>
+                </igx-card-footer>
+              </igx-card>
+            </li>
+          }
+        </ul>
+
+        <div class="hc_links">
+          <a igxButton="flat" class="hc_link" [href]="googleMapsUrl"
+             target="_blank" rel="noopener noreferrer" data-testid="happy-customers-all">
+            Виж всички ревюта в Google
+            <igx-icon class="hc_link_icon" aria-hidden="true">arrow_forward</igx-icon>
+          </a>
+          <a igxButton="flat" class="hc_link hc_link--cta" [href]="googleReviewUrl"
+             target="_blank" rel="noopener noreferrer" data-testid="happy-customers-review">
+            <igx-icon class="hc_link_icon" aria-hidden="true">star</igx-icon>
+            Остави и ти ревю
+          </a>
+        </div>
+      </div>
+    </section>
+  } @else {
+    <!-- Compact trust bar: rating, count, one quote, CTA — one row, no vertical
+         cost, sitting right where the purchase decision happens. -->
+    <igx-card class="hc_bar" role="region" aria-label="Оценки от клиенти"
+              data-testid="happy-customers-bar">
+      <igx-card-content class="hc_bar_body">
+        <div class="hc_bar_score">
+          <p class="hc_bar_num">
+            {{ averageRatingLabel }}
+            <span class="hc_stars" aria-hidden="true">{{ stars(averageRating) }}</span>
+            <span class="visually-hidden">{{ ratingLabel(averageRating) }}</span>
+          </p>
+          <p class="hc_bar_count">
+            {{ reviewCountLabel }} в <span class="hc_gmark hc_gmark--sm" aria-hidden="true">G</span> Google
+          </p>
+        </div>
+
+        @if (leadReview; as review) {
+          <div class="hc_bar_quote_wrap">
+            <p class="hc_bar_quote">„{{ review.text }}“</p>
+            <p class="hc_bar_author">— {{ review.author }}</p>
+          </div>
+        }
+
+        <a igxButton="contained" class="hc_bar_btn" [href]="googleMapsUrl"
+           target="_blank" rel="noopener noreferrer" data-testid="happy-customers-bar-link">
+          Виж ревютата
+        </a>
+      </igx-card-content>
+    </igx-card>
+  }
+}

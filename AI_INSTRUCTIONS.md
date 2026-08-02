@@ -7,7 +7,7 @@ This file contains the definitive instructions and guidelines for the AI assista
 2. **Sitemap**: Always run `npm run generate-sitemap` after adding routes or blog posts.
 3. **Images**: Always use `assets/` (no leading slash) for image paths in markdown or HTML to ensure they load correctly in all environments. Use kebab-case for filenames.
 4. **Styles**: Prefer using shared styles (e.g., `src/app/blog/shared/blog-styles.scss`) over ad-hoc styling.
-5. **Component Library**: Always use **Ignite UI for Angular** components (`igx-card`, `igx-input-group`, etc.) instead of native HTML elements or other libraries whenever possible.
+5. **Component Library**: Always use **Ignite UI for Angular** components (`igx-card`, `igx-avatar`, `igxButton`, `igx-icon`, `igx-carousel`, `igx-input-group`, …) instead of native HTML elements or other libraries. This is not a "when convenient" preference — hand-rolling a plain-HTML equivalent of a component that exists is a defect, and every new component ships with a spec asserting the `igx-*` tags are present. Plain HTML is for semantics/layout only (`<section>`, `<ul>`, `<p>`, headings). **See Rule 1 in [`CLAUDE.md`](CLAUDE.md)** for the full mapping table and the two traps: the `$exclude-components` list in `src/styles.scss` (an excluded component renders unstyled) and the standalone `imports:` array (a missing entry renders the tag as an unknown element).
 
 ---
 
@@ -25,6 +25,8 @@ Run `npm run generate-blog` to fully automate article creation:
 Override topic: set `MANUAL_TOPIC=your topic here` in `.env` before running.
 
 **GitHub Actions** (`.github/workflows/auto-blog.yml`): runs automatically Mon/Thu 9AM UTC and supports `workflow_dispatch` with an optional `topic` input. Requires `ANTHROPIC_API_KEY` repo secret.
+
+> ⚠️ **The scaffolder edits `app.routes.ts` and `blog.service.ts` by regex, so it is coupled to their formatting.** Blog routes are **lazy** — `{ path: '<slug>', loadComponent: () => import('./blog/<slug>/<slug>.component').then(m => m.<Class>) }` — with **no static `import … from './blog/…'` lines** (adding one would pull the chunk into the main bundle and defeat lazy loading). If you reformat either file, update `updateRoutes()`/`updateBlogService()` in `scripts/auto-blog/scaffold-component.js` **and** the anchors in `scripts/auto-blog/preflight.js`. Preflight runs first and fails fast naming the drifted file, so a format change can no longer waste a Claude API call and an image generation before dying. *(This is exactly what broke the pipeline in Aug 2026: the routes had migrated to `loadComponent` while the scaffolder still looked for static imports.)*
 
 **Important conventions enforced by the generator** (maintain these manually too):
 - Article markdown must **not** contain inline images (`![...](...)`). Images are added manually after review.
