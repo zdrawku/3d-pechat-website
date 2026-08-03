@@ -38,19 +38,31 @@ function clean(value) {
 }
 
 /**
- * Extracts image URLs from a form field: both markdown images `![alt](url)` and
- * bare user-images/assets URLs that GitHub sometimes leaves unwrapped.
+ * Extracts image URLs from a form field. GitHub renders an uploaded image in
+ * one of three shapes depending on the client, so all three are handled:
+ *   1. markdown  — `![alt](url)`
+ *   2. HTML      — `<img width="…" alt="Image" src="url" />`, which is what the
+ *                  web and mobile uploaders emit for drag-and-dropped images
+ *   3. bare URL  — occasionally left unwrapped
  */
 function extractImageUrls(value) {
   if (!value) return [];
   const urls = [];
-  const md = /!\[[^\]]*\]\(([^)\s]+)\)/g;
   let m;
+
+  const md = /!\[[^\]]*\]\(([^)\s]+)\)/g;
   while ((m = md.exec(value)) !== null) urls.push(m[1]);
+
+  // `src` may be single- or double-quoted, and is not necessarily the first
+  // attribute on the tag.
+  const html = /<img\b[^>]*?\bsrc\s*=\s*["']([^"']+)["']/gi;
+  while ((m = html.exec(value)) !== null) urls.push(m[1]);
 
   if (urls.length === 0) {
     const bare = /https?:\/\/\S+/g;
-    while ((m = bare.exec(value)) !== null) urls.push(m[0].replace(/[),.]+$/, ''));
+    // Trim trailing punctuation and any quote/angle bracket that belonged to
+    // the surrounding markup rather than the URL.
+    while ((m = bare.exec(value)) !== null) urls.push(m[0].replace(/["'>),.]+$/, ''));
   }
   // De-duplicate while preserving the order (first = front, second = back).
   return [...new Set(urls)];
