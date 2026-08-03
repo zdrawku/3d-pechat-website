@@ -51,7 +51,12 @@
   </div>
 </igx-navbar>
 <div class="row-layout horizontal_group_1">
-  <igx-nav-drawer [isOpen]="true" width="232px" #navigationdrawer1 class="navigation_drawer_1"
+  <!-- isOpen is bound to a FIELD, not the literal `true`: a static binding is
+       re-applied on every change-detection pass, so drawer.close() was
+       immediately undone and the drawer could never be dismissed by an outside
+       click. Anything that closes the drawer must also set drawerOpen=false. -->
+  <igx-nav-drawer [isOpen]="drawerOpen" width="232px" #navigationdrawer1 class="navigation_drawer_1"
+    (opened)="drawerOpen = true" (closed)="drawerOpen = false"
     [enableGestures]="true" data-testid="nav-drawer">
     <ng-template igxDrawer>
       <div class="drawer_group_label">Разгледай</div>

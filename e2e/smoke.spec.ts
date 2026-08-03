@@ -95,11 +95,13 @@ test.describe('navigation', () => {
     }
   });
 
-  // At >=1024px the drawer is laid out as a persistent sidebar by CSS while
-  // Ignite still treats it as an unpinned overlay drawer, so it renders no
-  // overlay to catch outside clicks — the hamburger used to be the only way to
-  // close it. AppComponent.onDocumentClick restores the toggle.
-  test('drawer closes on an outside click and reopens from the hamburger', async ({ page }) => {
+  // At >=1024px the drawer is a persistent sidebar laid out BESIDE the content
+  // (position: sticky in app.component.scss) and starts open. Closing it on any
+  // outside click made every ordinary interaction — clicking a product, a link,
+  // the carousel — collapse the menu, so on this layout the hamburger is the
+  // only intended control. Outside-click dismissal is mobile-only; see the
+  // 'navigation drawer (mobile)' describe in shell.spec.ts.
+  test('drawer ignores outside clicks on desktop and toggles from the hamburger', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto('/');
 
@@ -108,14 +110,20 @@ test.describe('navigation', () => {
 
     expect(await width()).toBeGreaterThan(200);
 
-    // Click page content well clear of the drawer.
+    // Clicking page content must NOT collapse the sidebar.
     await page.mouse.click(1200, 500);
+    await page.waitForTimeout(600);
+    expect(await width()).toBeGreaterThan(200);
+
+    // The hamburger is the control that closes it...
+    await page.getByTestId('menu-trigger').click();
     await expect.poll(width).toBeLessThan(50);
 
+    // ...and reopens it.
     await page.getByTestId('menu-trigger').click();
     await expect.poll(width).toBeGreaterThan(200);
 
-    // A click inside the drawer must NOT close it.
+    // A click inside the drawer must NOT close it either.
     await page.locator('.drawer_group_label').first().click();
     expect(await width()).toBeGreaterThan(200);
   });

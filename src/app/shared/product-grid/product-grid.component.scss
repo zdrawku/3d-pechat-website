@@ -434,13 +434,23 @@
   // Flat at rest — the glow appears only on hover/focus (see below).
   box-shadow: none;
   transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
-  // Icon colour/size via Ignite's icon tokens — the default theme icon colour is
-  // near-black, which is why the arrow rendered black on the orange fill.
-  --ig-icon-color: var(--ig-primary-500-contrast);
   --ig-icon-size: #{rem(16px)};
 
   igx-icon {
+    // igx-icon does NOT pick up the button's foreground, and it ignores
+    // --ig-icon-color here (that token resolves to Ignite's auto-contrast
+    // expression, which the component doesn't apply to its own color/fill) —
+    // so the arrow fell back to black on the orange fill in the light theme
+    // while the label next to it was white. Inheriting is what actually keeps
+    // the arrow and the label the same colour in both themes.
+    color: inherit;
+    fill: currentColor;
     transition: transform 0.2s ease;
+  }
+
+  // The cart icon is the narrow-screen face of this button; hidden by default.
+  .contact-button_cart {
+    display: none;
   }
 
   &:hover,
@@ -449,8 +459,40 @@
     filter: brightness(1.05);
     box-shadow: 0 rem(6px) rem(18px) color-mix(in srgb, var(--ig-primary-500) 46%, transparent);
 
-    igx-icon {
+    // Only the trailing arrow slides — nudging the cart icon would look like a
+    // glitch, since it sits before the label rather than pointing anywhere.
+    .contact-button_arrow {
       transform: translateX(rem(2px));
+    }
+  }
+}
+
+// Narrow cards: the grid packs 2 columns from ~430px (auto-fill floor is 160px),
+// leaving each card too small for "Поръчайте сега" — the label wrapped onto two
+// lines and dominated the card. Collapse to a cart icon only. The accessible
+// name lives on the button's aria-label, so nothing is lost for screen readers.
+@media (max-width: 520px) {
+  .contact-button {
+    // Square-ish pill instead of full width, so the icon reads as a button
+    // rather than a stretched bar. Sized to the 44px minimum touch target —
+    // this is the primary CTA on the layout where everything is tapped.
+    width: auto;
+    min-width: rem(64px);
+    min-height: rem(44px);
+    padding-inline: rem(20px);
+    gap: 0;
+
+    .contact-button_cart {
+      --ig-icon-size: #{rem(20px)};
+    }
+
+    .contact-button_cart {
+      display: inline-flex;
+    }
+
+    .contact-button_label,
+    .contact-button_arrow {
+      display: none;
     }
   }
 }

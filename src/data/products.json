@@ -189,5 +189,17 @@
         "url": "https://makerworld.com/en/models/3046687-jewelry-stand-for-four-watches-bracelets-rings#profileId-3426781"
       }
     ]
+  },
+  {
+    "id": 14,
+    "linkId": "razdeliteli-za-knigi",
+    "name": "Разделители за книги",
+    "description": "Разделители за книги в различни дизайни или по поръчка на клиента.",
+    "frontImage": "/assets/real-images/razdeliteli-za-knigi.webp",
+    "backImage": "/assets/real-images/razdeliteli-za-knigi-back.webp",
+    "dateAdded": "2026-08-03",
+    "hasOldCoins": false,
+    "hasEuroCoins": false,
+    "tags": ["книгоразделител", "разделител", "книга"]
   }
 ]

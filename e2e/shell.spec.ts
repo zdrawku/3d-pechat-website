@@ -37,17 +37,39 @@ test.describe('navigation drawer (mobile)', () => {
   test('drawer chips navigate on a mobile viewport', async ({ page }) => {
     await page.goto('/');
 
-    // The drawer is [isOpen]="true"; on mobile (<=1023px) it renders as an
-    // overlay that sits above the page (see app.component.scss). The hamburger
-    // (menu-trigger) is present for toggling, but the chips are the navigation
-    // path we care about — assert one routes correctly.
-    await expect(page.getByTestId('menu-trigger')).toBeVisible();
+    // On mobile (<=1023px) the drawer is an overlay ON TOP of the page, so it
+    // starts CLOSED — otherwise it would cover the content on load. Open it via
+    // the hamburger before reaching for a chip.
+    const trigger = page.getByTestId('menu-trigger');
+    await expect(trigger).toBeVisible();
+    await trigger.click();
 
     const pricesChip = page.locator('a.drawer_chip[href="/prices"]');
-    await expect(pricesChip).toBeVisible();
+    await expect(pricesChip).toBeInViewport();
     await pricesChip.click();
 
     await expect(page).toHaveURL(/\/prices\/?$/);
+  });
+
+  // The mobile counterpart of the desktop test in smoke.spec.ts: here the
+  // drawer covers the content, so a tap outside it means "dismiss". Ignite
+  // renders a full-bleed .igx-nav-drawer__overlay that is the click target for
+  // every such tap, but it does not close the drawer on its own —
+  // AppComponent.onDocumentClick does.
+  test('drawer closes on an outside tap', async ({ page }) => {
+    await page.goto('/');
+
+    const aside = page.locator('.igx-nav-drawer__aside');
+    // Off-screen drawers keep their width but sit at a negative x, so compare
+    // the right edge rather than the width.
+    const rightEdge = async () => (await aside.boundingBox())?.x ?? -999;
+
+    await page.getByTestId('menu-trigger').click();
+    await expect.poll(rightEdge).toBeGreaterThanOrEqual(0);
+
+    // Tap the page well clear of the 232px-wide drawer.
+    await page.mouse.click(370, 700);
+    await expect.poll(rightEdge).toBeLessThan(0);
   });
 });
 

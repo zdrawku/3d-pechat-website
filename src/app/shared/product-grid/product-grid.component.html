@@ -104,10 +104,16 @@
         }
       </igx-card-content>
       <igx-card-actions class="card-actions">
+        <!-- On narrow screens the cards get too small for "Поръчайте сега" —
+             the label wraps and swamps the card. There the button collapses to
+             the cart icon alone (CSS-only, see .contact-button), so the label
+             stays available to screen readers via aria-label and the icon keeps
+             the same tap target. -->
         <button igxButton="contained" type="button" (click)="handleAction(product)" class="contact-button"
-          data-testid="product-order-btn">
-          Поръчайте сега
-          <igx-icon family="material">arrow_forward</igx-icon>
+          aria-label="Поръчайте сега" data-testid="product-order-btn">
+          <igx-icon family="material" class="contact-button_cart" aria-hidden="true">shopping_cart</igx-icon>
+          <span class="contact-button_label">Поръчайте сега</span>
+          <igx-icon family="material" class="contact-button_arrow" aria-hidden="true">arrow_forward</igx-icon>
         </button>
       </igx-card-actions>
     </igx-card>
