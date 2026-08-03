@@ -60,6 +60,23 @@ async function main() {
   console.log(JSON.stringify(result, null, 2));
   console.log('::endgroup::');
 
+  // The cover arrives from Pollinations as JPEG/PNG. Convert it to WebP and let
+  // the converter rewrite every reference (blog.service.ts, markdown, the blog
+  // component's og:image + JSON-LD) so the PR needs no manual image fixup.
+  console.log('::group::Optimize blog images');
+  const blogImagesScript = path.resolve(__dirname, '../generate-blog-images.js');
+  execSync(`node "${blogImagesScript}"`, { stdio: 'inherit', cwd: path.resolve(__dirname, '../..') });
+  console.log('[blog-images] converted to webp');
+  console.log('::endgroup::');
+
+  // BLOG_CONTENT is what the prerenderer reads; without regenerating it the new
+  // markdown is never bundled and the post renders empty.
+  console.log('::group::Generate blog content map');
+  const blogContentScript = path.resolve(__dirname, '../generate-blog-content.js');
+  execSync(`node "${blogContentScript}"`, { stdio: 'inherit', cwd: path.resolve(__dirname, '../..') });
+  console.log('[blog-content] regenerated successfully');
+  console.log('::endgroup::');
+
   console.log('::group::Generate sitemap');
   const sitemapScript = path.resolve(__dirname, '../generate-sitemap.js');
   execSync(`node "${sitemapScript}"`, { stdio: 'inherit', cwd: path.resolve(__dirname, '../..') });

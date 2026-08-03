@@ -21,6 +21,7 @@ sharp.cache(false);
 const IMAGES_DIR = path.join(__dirname, '../src/assets/blogs/images');
 const BLOG_SERVICE = path.join(__dirname, '../src/app/services/blog.service.ts');
 const BLOGS_DIR = path.join(__dirname, '../src/assets/blogs');
+const BLOG_COMPONENTS_DIR = path.join(__dirname, '../src/app/blog');
 
 const MAX_WIDTH = 800;
 const QUALITY = 80;
@@ -61,6 +62,26 @@ async function unlinkWithRetry(file, attempts = 5) {
     path: filePath,
     content: fs.readFileSync(filePath, 'utf8'),
   }));
+
+  // Blog component .ts files embed the cover as the og:image and the JSON-LD
+  // "image" — they must follow the rename too, or the post ships pointing at a
+  // file this script just deleted.
+  const componentFiles = fs.existsSync(BLOG_COMPONENTS_DIR)
+    ? fs
+        .readdirSync(BLOG_COMPONENTS_DIR, { withFileTypes: true })
+        .filter((e) => e.isDirectory())
+        .flatMap((e) =>
+          fs
+            .readdirSync(path.join(BLOG_COMPONENTS_DIR, e.name))
+            .filter((f) => f.endsWith('.ts'))
+            .map((f) => path.join(BLOG_COMPONENTS_DIR, e.name, f))
+        )
+    : [];
+  const componentContents = componentFiles.map((filePath) => ({
+    path: filePath,
+    content: fs.readFileSync(filePath, 'utf8'),
+  }));
+
   let converted = 0;
   let savedBytes = 0;
 
@@ -87,6 +108,11 @@ async function unlinkWithRetry(file, attempts = 5) {
       md.content = md.content.split(name).join(webpName);
     }
 
+    // Rewrite references in blog component .ts files (og:image + JSON-LD)
+    for (const comp of componentContents) {
+      comp.content = comp.content.split(name).join(webpName);
+    }
+
     converted++;
     savedBytes += originalSize - fs.statSync(target).size;
     console.log(`✓ ${name} -> ${webpName} (${(originalSize / 1024).toFixed(0)} KB -> ${(fs.statSync(target).size / 1024).toFixed(0)} KB)`);
@@ -100,6 +126,11 @@ async function unlinkWithRetry(file, attempts = 5) {
       fs.writeFileSync(md.path, md.content);
     }
     console.log(`✓ Updated references in ${mdContents.length} markdown files`);
+
+    for (const comp of componentContents) {
+      fs.writeFileSync(comp.path, comp.content);
+    }
+    console.log(`✓ Updated references in ${componentContents.length} blog component files`);
   }
 
   console.log(`\nConverted ${converted} blog images, saved ${(savedBytes / 1024 / 1024).toFixed(1)} MB`);

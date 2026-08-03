@@ -2,8 +2,10 @@ name: Auto Blog Post Generator
 
 on:
   schedule:
-    # Once a week: Monday at 9:00 AM UTC
-    - cron: '0 9 * * 1'
+    # Every 10 days → 3 posts per month, on the 1st, 11th and 21st at 9:00 UTC.
+    # Note: `*/10` is NOT used on purpose — it would also fire on the 31st,
+    # which would put two posts 10 days apart and then one after only 1 day.
+    - cron: '0 9 1,11,21 * *'
   workflow_dispatch:
     inputs:
       topic:
