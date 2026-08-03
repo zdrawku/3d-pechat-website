@@ -1,0 +1,38 @@
+# Normalize line endings so generated files don't show up as phantom changes.
+#
+# Why this exists: `core.autocrlf=true` on Windows checks files out with CRLF,
+# but the build scripts (generate-blog-content.js, generate-sitemap.js,
+# generate-carousel-images.js, …) write plain LF. Every `npm start`/`npm build`
+# runs those via prestart/prebuild hooks, so their output kept showing as
+# "modified" in git status with an EMPTY diff — content identical, endings only.
+#
+# Declaring the normalization here makes it a property of the repo rather than
+# of each machine's git config.
+
+# Default: normalize text files to LF in the repository. Git still honours a
+# developer's core.autocrlf for the working copy.
+* text=auto eol=lf
+
+# Generated files: written as LF by the scripts, so pin them explicitly.
+src/app/services/blog-content.generated.ts text eol=lf
+src/app/main-page/carousel-images.ts       text eol=lf
+src/app/portfolio-page/carousel-images.ts  text eol=lf
+src/sitemap.xml                            text eol=lf
+src/llms.txt                               text eol=lf
+src/data/*.json                            text eol=lf
+**/manifest.json                           text eol=lf
+
+# Binary assets: never touch these.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.webp binary
+*.gif  binary
+*.ico  binary
+*.pdf  binary
+*.woff  binary
+*.woff2 binary
+*.ttf   binary
+*.eot   binary
+*.stl   binary
+*.3mf   binary

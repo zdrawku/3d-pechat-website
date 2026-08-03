@@ -14,6 +14,13 @@ import { ReviewCtaComponent } from './shared/review-cta/review-cta.component';
 })
 export class AppComponent implements OnInit {
   @ViewChild('navigationdrawer1', { static: true }) public drawer!: IgxNavigationDrawerComponent;
+  /**
+   * Drives `[isOpen]` on the drawer. Starts `true` so the prerendered HTML has
+   * the desktop sidebar open; ngOnInit narrows it to desktop-only in the
+   * browser. Must be kept in sync whenever the drawer is closed in code, or the
+   * binding will reopen it on the next change-detection pass.
+   */
+  public drawerOpen = true;
   public isDarkTheme = false;
   /** Direct Google write-review link, shared by every review CTA (see site-links). */
   public readonly googleReviewUrl = GOOGLE_REVIEW_URL;
@@ -34,6 +41,16 @@ export class AppComponent implements OnInit {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
+
+    // The drawer's open state is bound to `drawerOpen` rather than a literal
+    // `true`: a static binding is re-applied on every change-detection pass, so
+    // drawer.close() was instantly reverted and the menu could never be
+    // dismissed by clicking outside it. Setting the field keeps the binding and
+    // the component in agreement.
+    //
+    // Only the desktop sidebar layout starts open; on mobile the drawer is an
+    // overlay covering the page and must not block the content on load.
+    this.drawerOpen = window.matchMedia('(min-width: 1024px)').matches;
     // Check if user has a saved theme preference
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
@@ -69,27 +86,33 @@ export class AppComponent implements OnInit {
   // this only handles closing the drawer overlay on small screens afterwards.
   public closeDrawerOnMobile(): void {
     if (this.drawer && !this.drawer.pin) {
+      this.drawerOpen = false;
       this.drawer.close();
     }
   }
 
   /**
-   * Close the drawer when a click lands outside it.
+   * Close the drawer when a click lands outside it — **on mobile layouts only.**
    *
-   * Below 1024px Ignite renders its own overlay, which already handles this.
-   * At >=1024px the drawer is laid out as a persistent sidebar by CSS
-   * (`position: sticky` in app.component.scss) while Ignite still treats it as
-   * an unpinned overlay drawer — so it renders no overlay and nothing catches
-   * the outside click, leaving the hamburger as the only way to close it.
-   * This restores the expected toggle behaviour at those widths.
+   * The two layouts want opposite behaviour:
+   *
+   * - **<=1023px** the drawer is an overlay sitting *on top of* the content
+   *   (see the `max-width: 1023px` block in app.component.scss), so a click on
+   *   the page behind it means "dismiss the menu".
+   * - **>=1024px** the drawer is a persistent sidebar (`position: sticky`)
+   *   laid out *beside* the content, and it starts open (`[isOpen]="true"`).
+   *   Closing it on any outside click made every ordinary interaction with the
+   *   page — clicking a product, a link, the carousel — collapse the menu. On
+   *   this layout the hamburger in the toolbar is the only intended control.
    */
   @HostListener('document:click', ['$event'])
   public onDocumentClick(event: MouseEvent): void {
     if (!isPlatformBrowser(this.platformId) || !this.drawer?.isOpen) {
       return;
     }
-    // Let Ignite's overlay own this below the desktop breakpoint.
-    if (!window.matchMedia('(min-width: 1024px)').matches) {
+    // Desktop: the drawer is a sidebar next to the content, not over it — an
+    // outside click is just normal page use and must not collapse the menu.
+    if (window.matchMedia('(min-width: 1024px)').matches) {
       return;
     }
 
@@ -106,6 +129,11 @@ export class AppComponent implements OnInit {
       return;
     }
 
+    // On mobile Ignite renders a full-bleed `.igx-nav-drawer__overlay` over the
+    // page but does NOT close the drawer when it is clicked. That overlay is
+    // the click target for every tap outside the drawer, so it correctly falls
+    // through to here and counts as an outside click.
+    this.drawerOpen = false;
     this.drawer.close();
   }
 }
