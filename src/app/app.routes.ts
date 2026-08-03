@@ -89,6 +89,10 @@ export const routes: Routes = [
       {
         path: 'infill-pri-3d-pechat-platnost-zdravina-i-filament',
         loadComponent: () => import('./blog/infill-pri-3d-pechat-platnost-zdravina-i-filament/infill-pri-3d-pechat-platnost-zdravina-i-filament.component').then(m => m.InfillPri3dPechatPlatnostZdravinaIFilamentComponent)
+      },
+      {
+        path: 'prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p',
+        loadComponent: () => import('./blog/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p.component').then(m => m.ProzrachenIPoluprozrachenPlaFilamentKakDaPostigneteSvetlopropuskliv3dPComponent)
       }
     ]
   },
