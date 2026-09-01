@@ -161,6 +161,17 @@ export class BlogService {
       imageUrl: 'assets/blogs/images/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p-cover.webp',
       tags: ['PLA филамент', 'прозрачни материали', 'настройки за печат', 'материали за 3D печат', 'техники за принтиране', 'PETG', 'постобработка', 'сравнение материали'],
       author: '3D Печат България'
+    },
+        {
+      id: '15',
+      title: 'Видове филамент за 3D принтиране – Пълно ръководство 2024',
+      description: 'Научете как да изберете правилния филамент за вашия 3D принтер. Сравнение на PLA, PETG, ABS, TPU, Nylon и други материали с практични съвети за печат.',
+      slug: 'vidove-filament-za-3d-printirane-kak-da-izberete-pravilniya-material',
+      route: '/blog/vidove-filament-za-3d-printirane-kak-da-izberete-pravilniya-material',
+      date: new Date('2026-09-01'),
+      imageUrl: 'assets/blogs/images/vidove-filament-za-3d-printirane-kak-da-izberete-pravilniya-material-cover.webp',
+      tags: ['филамент', 'материали за 3D печат', 'PLA', 'PETG', 'ABS', 'TPU', 'ръководство', 'избор на филамент'],
+      author: '3D Печат България'
     }
     // Add more blog posts here as you create them
   ];
