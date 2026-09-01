@@ -93,6 +93,10 @@ export const routes: Routes = [
       {
         path: 'prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p',
         loadComponent: () => import('./blog/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p.component').then(m => m.ProzrachenIPoluprozrachenPlaFilamentKakDaPostigneteSvetlopropuskliv3dPComponent)
+      },
+      {
+        path: 'vidove-filament-za-3d-printirane-kak-da-izberete-pravilniya-material',
+        loadComponent: () => import('./blog/vidove-filament-za-3d-printirane-kak-da-izberete-pravilniya-material/vidove-filament-za-3d-printirane-kak-da-izberete-pravilniya-material.component').then(m => m.VidoveFilamentZa3dPrintiraneKakDaIzberetePravilniyaMaterialComponent)
       }
     ]
   },
