@@ -161,6 +161,17 @@ export class BlogService {
       imageUrl: 'assets/blogs/images/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p-cover.webp',
       tags: ['PLA филамент', 'прозрачни материали', 'настройки за печат', 'материали за 3D печат', 'техники за принтиране', 'PETG', 'постобработка', 'сравнение материали'],
       author: '3D Печат България'
+    },
+        {
+      id: '15',
+      title: 'По-бързи и по-умни 3D принтери – бъдещето на производството',
+      description: 'Открийте как новите 3D принтери стават по-бързи, по-интелигентни и по-подходящи за реално производство. Разберете накъде върви технологията след 2024.',
+      slug: '1-po-barzi-i-po-umni-mashini',
+      route: '/blog/1-po-barzi-i-po-umni-mashini',
+      date: new Date('2026-09-21'),
+      imageUrl: 'assets/og-image.png',
+      tags: ['3D принтиране', 'технологии', 'производство', 'иновации', 'скорост', 'автоматизация', 'индустрия', 'бъдеще'],
+      author: '3D Печат България'
     }
     // Add more blog posts here as you create them
   ];
