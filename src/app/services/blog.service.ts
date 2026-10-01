@@ -161,6 +161,17 @@ export class BlogService {
       imageUrl: 'assets/blogs/images/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p-cover.webp',
       tags: ['PLA филамент', 'прозрачни материали', 'настройки за печат', 'материали за 3D печат', 'техники за принтиране', 'PETG', 'постобработка', 'сравнение материали'],
       author: '3D Печат България'
+    },
+        {
+      id: '15',
+      title: 'Zits и blobs при 3D принтиране: причини и решения',
+      description: 'Научете как да разпознаете и отстраните zits, blobs и Z-seam дефекти при 3D печат. Практични съвети за настройка на температура, ретракция и flow.',
+      slug: 'zits-i-blobs-pri-3d-printirane-prichini-i-resheniya',
+      route: '/blog/zits-i-blobs-pri-3d-printirane-prichini-i-resheniya',
+      date: new Date('2026-10-01'),
+      imageUrl: 'assets/blogs/images/zits-i-blobs-pri-3d-printirane-prichini-i-resheniya-cover.webp',
+      tags: ['3D принтиране', 'дефекти', 'zits', 'blobs', 'настройки', 'качество', 'филамент', 'проблеми'],
+      author: '3D Печат България'
     }
     // Add more blog posts here as you create them
   ];
