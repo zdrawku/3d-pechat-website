@@ -93,6 +93,10 @@ export const routes: Routes = [
       {
         path: 'prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p',
         loadComponent: () => import('./blog/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p.component').then(m => m.ProzrachenIPoluprozrachenPlaFilamentKakDaPostigneteSvetlopropuskliv3dPComponent)
+      },
+      {
+        path: 'barzi-i-umni-3d-printeri',
+        loadComponent: () => import('./blog/barzi-i-umni-3d-printeri/barzi-i-umni-3d-printeri.component').then(m => m.BarziIUmni3dPrinteriComponent)
       }
     ]
   },

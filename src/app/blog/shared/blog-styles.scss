@@ -316,6 +316,14 @@
       margin: rem(24px) auto;
       box-shadow: var(--shadow-float);
 
+      // The global `.blog-container img { width: 80% }` upscales 800px covers
+      // and turns portrait photos into a full screen of image. Use the natural
+      // size instead, capped so a portrait shot never exceeds the viewport.
+      @media (min-width: 769px) {
+        width: auto;
+        max-height: 75vh;
+      }
+
       @media (max-width: 768px) {
         margin: rem(16px) rem(-8px);
         width: calc(100% + rem(16px));
