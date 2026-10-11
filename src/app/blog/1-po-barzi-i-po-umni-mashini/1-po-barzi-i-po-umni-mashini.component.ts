@@ -12,7 +12,7 @@ import { SeoService } from '../../services/seo.service';
   templateUrl: './1-po-barzi-i-po-umni-mashini.component.html',
   styleUrls: ['./1-po-barzi-i-po-umni-mashini.component.scss'],
 })
-export class 1PoBarziIPoUmniMashiniComponent implements OnInit {
+export class Blog1PoBarziIPoUmniMashiniComponent implements OnInit {
   postContent = '';
 
   constructor(
@@ -25,7 +25,7 @@ export class 1PoBarziIPoUmniMashiniComponent implements OnInit {
       description: 'Открийте как новите 3D принтери стават по-бързи, по-интелигентни и по-подходящи за реално производство. Разберете накъде върви технологията след 2024.',
       keywords: '3D принтиране, 3D принтер, бързи 3D принтери, индустриален 3D печат, производство с 3D печат, технологии за 3D принтиране, умни 3D принтери, бъдеще на 3D печата',
       url: 'https://3dpechat.bg/blog/1-po-barzi-i-po-umni-mashini',
-      image: 'https://3dpechat.bg/assets/og-image.png',
+      image: 'https://3dpechat.bg/assets/blogs/images/1-po-barzi-i-po-umni-mashini-cover.webp',
       type: 'article',
       author: '3D Печат България',
       publishedDate: new Date('2026-09-21').toISOString(),
@@ -43,7 +43,7 @@ export class 1PoBarziIPoUmniMashiniComponent implements OnInit {
       },
       "datePublished": "2026-09-21T00:00:00.000Z",
       "dateModified": "2026-09-21T00:00:00.000Z",
-      "image": "https://3dpechat.bg/assets/og-image.png",
+      "image": "https://3dpechat.bg/assets/blogs/images/1-po-barzi-i-po-umni-mashini-cover.webp",
       "publisher": {
         "@type": "Organization",
         "name": "3D Печат България",

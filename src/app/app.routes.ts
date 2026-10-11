@@ -96,7 +96,7 @@ export const routes: Routes = [
       },
       {
         path: '1-po-barzi-i-po-umni-mashini',
-        loadComponent: () => import('./blog/1-po-barzi-i-po-umni-mashini/1-po-barzi-i-po-umni-mashini.component').then(m => m.1PoBarziIPoUmniMashiniComponent)
+        loadComponent: () => import('./blog/1-po-barzi-i-po-umni-mashini/1-po-barzi-i-po-umni-mashini.component').then(m => m.Blog1PoBarziIPoUmniMashiniComponent)
       }
     ]
   },

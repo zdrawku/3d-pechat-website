@@ -169,7 +169,7 @@ export class BlogService {
       slug: '1-po-barzi-i-po-umni-mashini',
       route: '/blog/1-po-barzi-i-po-umni-mashini',
       date: new Date('2026-09-21'),
-      imageUrl: 'assets/og-image.png',
+      imageUrl: 'assets/blogs/images/1-po-barzi-i-po-umni-mashini-cover.webp',
       tags: ['3D принтиране', 'технологии', 'производство', 'иновации', 'скорост', 'автоматизация', 'индустрия', 'бъдеще'],
       author: '3D Печат България'
     }
