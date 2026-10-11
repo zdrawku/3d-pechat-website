@@ -5,14 +5,15 @@ import post2 from "../../assets/blogs/3d-printing-in-sofia-for-your-project.md";
 import post3 from "../../assets/blogs/3d-printing-technologies.md";
 import post4 from "../../assets/blogs/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari.md";
 import post5 from "../../assets/blogs/3d-printirani-obuvki.md";
-import post6 from "../../assets/blogs/how-to-make-money.md";
-import post7 from "../../assets/blogs/infill-pri-3d-pechat-platnost-zdravina-i-filament.md";
-import post8 from "../../assets/blogs/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish.md";
-import post9 from "../../assets/blogs/kak-da-pechelim-ot-3d-printiraneto.md";
-import post10 from "../../assets/blogs/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model.md";
-import post11 from "../../assets/blogs/pla-pla-pla-pro-i-pln-razliki-i-izbor.md";
-import post12 from "../../assets/blogs/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p.md";
-import post13 from "../../assets/blogs/what-is-3d-printing.md";
+import post6 from "../../assets/blogs/bambu-lab-a2l-sreshtu-a1-i-p1s-koy-3d-printer-da-izberete.md";
+import post7 from "../../assets/blogs/how-to-make-money.md";
+import post8 from "../../assets/blogs/infill-pri-3d-pechat-platnost-zdravina-i-filament.md";
+import post9 from "../../assets/blogs/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish.md";
+import post10 from "../../assets/blogs/kak-da-pechelim-ot-3d-printiraneto.md";
+import post11 from "../../assets/blogs/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model.md";
+import post12 from "../../assets/blogs/pla-pla-pla-pro-i-pln-razliki-i-izbor.md";
+import post13 from "../../assets/blogs/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p.md";
+import post14 from "../../assets/blogs/what-is-3d-printing.md";
 
 export const BLOG_CONTENT: Record<string, string> = {
   "3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor": post0,
@@ -21,12 +22,13 @@ export const BLOG_CONTENT: Record<string, string> = {
   "3d-printing-technologies": post3,
   "3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari": post4,
   "3d-printirani-obuvki": post5,
-  "how-to-make-money": post6,
-  "infill-pri-3d-pechat-platnost-zdravina-i-filament": post7,
-  "izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish": post8,
-  "kak-da-pechelim-ot-3d-printiraneto": post9,
-  "litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model": post10,
-  "pla-pla-pla-pro-i-pln-razliki-i-izbor": post11,
-  "prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p": post12,
-  "what-is-3d-printing": post13
+  "bambu-lab-a2l-sreshtu-a1-i-p1s-koy-3d-printer-da-izberete": post6,
+  "how-to-make-money": post7,
+  "infill-pri-3d-pechat-platnost-zdravina-i-filament": post8,
+  "izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish": post9,
+  "kak-da-pechelim-ot-3d-printiraneto": post10,
+  "litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model": post11,
+  "pla-pla-pla-pro-i-pln-razliki-i-izbor": post12,
+  "prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p": post13,
+  "what-is-3d-printing": post14
 };

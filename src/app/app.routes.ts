@@ -93,6 +93,10 @@ export const routes: Routes = [
       {
         path: 'prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p',
         loadComponent: () => import('./blog/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p.component').then(m => m.ProzrachenIPoluprozrachenPlaFilamentKakDaPostigneteSvetlopropuskliv3dPComponent)
+      },
+      {
+        path: 'bambu-lab-a2l-sreshtu-a1-i-p1s-koy-3d-printer-da-izberete',
+        loadComponent: () => import('./blog/bambu-lab-a2l-sreshtu-a1-i-p1s-koy-3d-printer-da-izberete/bambu-lab-a2l-sreshtu-a1-i-p1s-koy-3d-printer-da-izberete.component').then(m => m.BambuLabA2lSreshtuA1IP1sKoy3dPrinterDaIzbereteComponent)
       }
     ]
   },
