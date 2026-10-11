@@ -123,6 +123,7 @@
   font-size: rem(11.2px);
   padding: rem(6px) rem(12px);
   border-radius: var(--radius-pill);
+  text-decoration: none; // it's an <a>; don't inherit .info-text a's underline
   margin-top: rem(6px);
   width: fit-content;
   height: max-content;

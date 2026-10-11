@@ -47,7 +47,6 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
   /** Direct Google write-review link, shared by every review CTA (see site-links). */
   public readonly googleReviewUrl = GOOGLE_REVIEW_URL;
 
-  phoneNumber = '+359883310616';
   email = '3dpechat.bg@gmail.com';
   instagramUrl = 'https://www.instagram.com/3dpechat.bg';
   tiktokUrl = 'https://www.tiktok.com/@3dpechat.bg';
@@ -140,11 +139,6 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
     }
     this.resetHcaptcha();
     delete (window as unknown as Record<string, unknown>)[HCAPTCHA_CALLBACK];
-  }
-
-  openViber(): void {
-    const viberUrl = `viber://add?number=${this.phoneNumber}`;
-    window.location.href = viberUrl;
   }
 
   openInstagram(): void {
