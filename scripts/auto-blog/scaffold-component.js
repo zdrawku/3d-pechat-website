@@ -14,11 +14,13 @@ function pascalCaseFromSlug(slug) {
   // Special handling: leading "3d-" becomes "ThreeD" to match existing convention.
   let s = slug;
   if (/^3d-/.test(s)) s = 'three-d-' + s.slice(3);
-  return s
+  const name = s
     .split('-')
     .filter(Boolean)
     .map(p => p.charAt(0).toUpperCase() + p.slice(1))
     .join('');
+  // A TS class name can't start with a digit (e.g. slug "1-po-barzi-…").
+  return /^\d/.test(name) ? `Blog${name}` : name;
 }
 
 function ensureUniqueSlug(slug) {
@@ -72,7 +74,7 @@ export class ${pascalName}Component implements OnInit {
       title: '${headline} | 3D Печат България',
       description: '${description}',
       keywords: '${keywords}',
-      url: 'https://3dpechat.bg/blog/${slug}',
+      url: 'https://3dpechat.bg/blog/${slug}/',
       image: '${coverImageUrl}',
       type: 'article',
       author: '3D Печат България',
@@ -102,7 +104,7 @@ export class ${pascalName}Component implements OnInit {
       },
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://3dpechat.bg/blog/${slug}"
+        "@id": "https://3dpechat.bg/blog/${slug}/"
       },
       "keywords": "${keywords}"
     });
@@ -175,7 +177,7 @@ function updateBlogService(slug, seo, coverImageAssetPath) {
   let updated;
   if (src.includes(marker)) {
     // Append a comma to the closing brace of the previous entry, then insert new entry
-    updated = src.replace(/(})(\s*\n\s*\/\/ Add more blog posts here)/, `$1,\n    ${entry}$2`);
+    updated = src.replace(/(})(\s*\n\s*\/\/ Add more blog posts here)/, `$1,\n${entry}$2`);
   } else {
     updated = src.replace(/(\n\s*)\];/, `\n    ${entry}$1];`);
   }

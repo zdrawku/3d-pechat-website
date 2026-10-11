@@ -162,15 +162,15 @@ export class BlogService {
       tags: ['PLA филамент', 'прозрачни материали', 'настройки за печат', 'материали за 3D печат', 'техники за принтиране', 'PETG', 'постобработка', 'сравнение материали'],
       author: '3D Печат България'
     },
-        {
+    {
       id: '15',
-      title: 'По-бързи и по-умни 3D принтери – бъдещето на производството',
-      description: 'Открийте как новите 3D принтери стават по-бързи, по-интелигентни и по-подходящи за реално производство. Разберете накъде върви технологията след 2024.',
-      slug: '1-po-barzi-i-po-umni-mashini',
-      route: '/blog/1-po-barzi-i-po-umni-mashini',
-      date: new Date('2026-09-21'),
-      imageUrl: 'assets/blogs/images/1-po-barzi-i-po-umni-mashini-cover.webp',
-      tags: ['3D принтиране', 'технологии', 'производство', 'иновации', 'скорост', 'автоматизация', 'индустрия', 'бъдеще'],
+      title: 'По-бързи и по-умни 3D принтери: опитът ни с Bambu Lab A1 Combo',
+      description: 'Как 3D принтерите станаха бързи, тихи и умни – тенденциите и реалният ни опит с Bambu Lab A1 Combo у дома. Предимства, ограничения и съвети.',
+      slug: 'barzi-i-umni-3d-printeri',
+      route: '/blog/barzi-i-umni-3d-printeri',
+      date: new Date('2026-10-11'),
+      imageUrl: 'assets/blogs/images/barzi-i-umni-3d-printeri-cover.webp',
+      tags: ['3D принтери', 'Bambu Lab', 'A1 Combo', 'многоцветен печат', 'технологии', 'иновации', 'опит', 'производство'],
       author: '3D Печат България'
     }
     // Add more blog posts here as you create them

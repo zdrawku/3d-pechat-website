@@ -1,11 +1,23 @@
 // Generates a Bulgarian-language blog article via the Anthropic Claude API.
 
 const { slugify } = require('./scrape-ideas');
+const { getBlogPosts, getStaticPages, fixInternalLinks } = require('./internal-links');
 
 const MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-5-20250929';
 
+// Topic ideas are often numbered list items ("1. По-бързи машини"), which
+// slugify turns into "1-po-barzi-…". Drop leading numeric segments; "3d-" has a
+// letter in it and survives.
+function cleanSlug(slug) {
+  return slug.replace(/^(\d+-)+/, '');
+}
+
 function buildPrompt(topicObj) {
   const { topic, summary, sourceUrl, suggestedSlug } = topicObj;
+  const year = new Date().getFullYear();
+  const linkTargets = [...getBlogPosts(), ...getStaticPages()]
+    .map(p => `   - ${p.path} — ${p.title}`)
+    .join('\n');
   return `Ти си професионален копирайтър за български сайт за 3D принтиране (3dpechat.bg).
 Напиши информативна, практична и SEO-оптимизирана статия на български език по темата:
 
@@ -13,6 +25,8 @@ function buildPrompt(topicObj) {
 КОНТЕКСТ/РЕЗЮМЕ: ${summary || '(няма)'}
 ИЗТОЧНИК НА ИДЕЯТА: ${sourceUrl || '(няма)'}
 ПРЕДЛОЖЕН SLUG: ${suggestedSlug}
+
+ТЕКУЩА ГОДИНА: ${year}. Не описвай минали години като бъдеще (напр. „след 2024“) — пиши спрямо текущата година.
 
 ИЗИСКВАНИЯ ЗА СТАТИЯТА (markdown):
 1. Започни с "# " и заглавието (на български).
@@ -26,7 +40,9 @@ function buildPrompt(topicObj) {
 9. Завърши с раздел "## Заключение" и call-to-action, който приканва читателя да "свържете се с нас" за 3D печат услуги в България.
 10. Не включвай HTML, само markdown.
 11. ЗАДЪЛЖИТЕЛНО добави поне 2 вътрешни линка към други блог статии от сайта, когато тематично са релевантни.
-12. Използвай root-relative вътрешни линкове в markdown формат, например: [Какво е 3D принтиране](/blog/what-is-3d-printing).
+12. Използвай root-relative вътрешни линкове в markdown формат, завършващи с "/", например: [Какво е 3D принтиране](/blog/what-is-3d-printing/).
+    Линквай САМО към страниците от този списък — други адреси не съществуват и ще бъдат премахнати:
+${linkTargets}
 13. Предпочитай естествени вътрешни линкове към материали, технологии, приложения, постобработка, локални услуги и бизнес теми, когато са логично свързани със статията.
 
 ИЗИСКВАНИЯ ЗА SEO МЕТАДАННИ:
@@ -106,12 +122,17 @@ async function generateArticle(topicObj) {
   const { meta, markdown: rawMarkdown } = parseResponse(text);
 
   // Strip any image lines Claude may have included despite the instruction.
-  const markdown = rawMarkdown
+  const withoutImages = rawMarkdown
     .replace(/^\s*!\[.*?\]\(.*?\)\s*$/gm, '')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 
-  const finalSlug = slugify(meta.slug || topicObj.suggestedSlug || topicObj.topic);
+  const { markdown, dropped } = fixInternalLinks(withoutImages);
+  if (dropped.length) {
+    console.warn(`[generate-article] unwrapped ${dropped.length} link(s) to non-existent pages: ${dropped.join(', ')}`);
+  }
+
+  const finalSlug = cleanSlug(slugify(meta.slug || topicObj.suggestedSlug || topicObj.topic));
   if (!finalSlug) throw new Error('Failed to derive a valid slug');
 
   const publishDate = new Date().toISOString().slice(0, 10);
@@ -134,4 +155,4 @@ async function generateArticle(topicObj) {
   };
 }
 
-module.exports = { generateArticle };
+module.exports = { generateArticle, cleanSlug };

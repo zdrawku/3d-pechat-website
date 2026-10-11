@@ -24,7 +24,7 @@ export class ProzrachenIPoluprozrachenPlaFilamentKakDaPostigneteSvetlopropuskliv
       title: 'Прозрачен PLA филамент: как да постигнете светлопропусклив 3D печат | 3D Печат България',
       description: 'Практическо ръководство за 3D принтиране с прозрачен и полупрозрачен PLA филамент. Настройки, техники и сравнение с PETG и ABS за оптимални резултати.',
       keywords: 'прозрачен PLA, полупрозрачен филамент, 3D принтиране, светлопропусклив 3D печат, transparent PLA, PETG филамент, настройки за прозрачен PLA, 3D принтер',
-      url: 'https://3dpechat.bg/blog/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p',
+      url: 'https://3dpechat.bg/blog/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p/',
       image: 'https://3dpechat.bg/assets/blogs/images/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p-cover.webp',
       type: 'article',
       author: '3D Печат България',
@@ -54,7 +54,7 @@ export class ProzrachenIPoluprozrachenPlaFilamentKakDaPostigneteSvetlopropuskliv
       },
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://3dpechat.bg/blog/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p"
+        "@id": "https://3dpechat.bg/blog/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p/"
       },
       "keywords": "прозрачен PLA, полупрозрачен филамент, 3D принтиране, светлопропусклив 3D печат, transparent PLA, PETG филамент, настройки за прозрачен PLA, 3D принтер"
     });
