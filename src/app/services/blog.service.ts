@@ -161,6 +161,17 @@ export class BlogService {
       imageUrl: 'assets/blogs/images/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p-cover.webp',
       tags: ['PLA филамент', 'прозрачни материали', 'настройки за печат', 'материали за 3D печат', 'техники за принтиране', 'PETG', 'постобработка', 'сравнение материали'],
       author: '3D Печат България'
+    },
+        {
+      id: '15',
+      title: 'Bambu Lab A2L срещу A1 и P1S: кой 3D принтер да изберете?',
+      description: 'Сравнение на Bambu Lab A2L с A1 и P1S моделите. Разберете кой 3D принтер е най-подходящ за вашите нужди – характеристики, цени и препоръки.',
+      slug: 'bambu-lab-a2l-sreshtu-a1-i-p1s-koy-3d-printer-da-izberete',
+      route: '/blog/bambu-lab-a2l-sreshtu-a1-i-p1s-koy-3d-printer-da-izberete',
+      date: new Date('2026-10-11'),
+      imageUrl: 'assets/blogs/images/bambu-lab-a2l-sreshtu-a1-i-p1s-koy-3d-printer-da-izberete-cover.webp',
+      tags: ['Bambu Lab', '3D принтери', 'сравнение', 'FDM принтиране', 'технологии', 'преглед', 'избор на принтер', '3D печат'],
+      author: '3D Печат България'
     }
     // Add more blog posts here as you create them
   ];
