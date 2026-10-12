@@ -57,14 +57,14 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;600;700" rel="stylesheet">
 
-  <!-- Site-wide Organization schema — ties the site and its social profiles
+  <!-- Site-wide Organization + LocalBusiness schema — ties the site and its social profiles
        (sameAs) into one brand entity for Google. Separate id from the per-page
        BlogPosting script that SeoService swaps in (#structured-data-jsonld).
        Keep in sync with index.html. -->
   <script type="application/ld+json" id="organization-jsonld">
   {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": ["Organization", "LocalBusiness"],
     "@id": "https://3dpechat.bg/#organization",
     "name": "3D Печат България",
     "alternateName": "3dpechat.bg",
@@ -78,6 +78,10 @@
       "addressLocality": "София",
       "addressCountry": "BG"
     },
+    "areaServed": [
+      { "@type": "City", "name": "София" },
+      { "@type": "Country", "name": "България" }
+    ],
     "sameAs": [
       "https://www.instagram.com/3dpechat.bg",
       "https://www.tiktok.com/@3dpechat.bg",

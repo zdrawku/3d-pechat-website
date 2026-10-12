@@ -1,4 +1,4 @@
-// Regenerates src/llms.txt from the blog post registry in blog.service.ts.
+// Regenerates src/llms.txt from the blog post registry in blog-posts.registry.ts.
 // Run manually: node scripts/generate-llms.js
 // Also called automatically by the auto-blog pipeline and prebuild.
 
@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const SERVICE_FILE = path.join(ROOT, 'src/app/services/blog.service.ts');
+const SERVICE_FILE = path.join(ROOT, 'src/app/services/blog-posts.registry.ts');
 const OUT_FILE = path.join(ROOT, 'src/llms.txt');
 
 // Trailing slashes match the canonical URLs (GitHub Pages 301-redirects the

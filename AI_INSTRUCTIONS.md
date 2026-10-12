@@ -26,7 +26,7 @@ Override topic: set `MANUAL_TOPIC=your topic here` in `.env` before running.
 
 **GitHub Actions** (`.github/workflows/auto-blog.yml`): runs automatically Mon/Thu 9AM UTC and supports `workflow_dispatch` with an optional `topic` input. Requires `ANTHROPIC_API_KEY` repo secret.
 
-> ⚠️ **The scaffolder edits `app.routes.ts` and `blog.service.ts` by regex, so it is coupled to their formatting.** Blog routes are **lazy** — `{ path: '<slug>', loadComponent: () => import('./blog/<slug>/<slug>.component').then(m => m.<Class>) }` — with **no static `import … from './blog/…'` lines** (adding one would pull the chunk into the main bundle and defeat lazy loading). If you reformat either file, update `updateRoutes()`/`updateBlogService()` in `scripts/auto-blog/scaffold-component.js` **and** the anchors in `scripts/auto-blog/preflight.js`. Preflight runs first and fails fast naming the drifted file, so a format change can no longer waste a Claude API call and an image generation before dying. *(This is exactly what broke the pipeline in Aug 2026: the routes had migrated to `loadComponent` while the scaffolder still looked for static imports.)*
+> ⚠️ **The scaffolder edits `app.routes.ts` and `blog-posts.registry.ts` by regex, so it is coupled to their formatting.** Blog routes are **lazy** — `{ path: '<slug>', loadComponent: () => import('./blog/<slug>/<slug>.component').then(m => m.<Class>) }` — with **no static `import … from './blog/…'` lines** (adding one would pull the chunk into the main bundle and defeat lazy loading). If you reformat either file, update `updateRoutes()`/`updateBlogService()` in `scripts/auto-blog/scaffold-component.js` **and** the anchors in `scripts/auto-blog/preflight.js`. Preflight runs first and fails fast naming the drifted file, so a format change can no longer waste a Claude API call and an image generation before dying. *(This is exactly what broke the pipeline in Aug 2026: the routes had migrated to `loadComponent` while the scaffolder still looked for static imports.)*
 
 **Important conventions enforced by the generator** (maintain these manually too):
 - Article markdown must **not** contain inline images (`![...](...)`). Images are added manually after review.
@@ -40,7 +40,7 @@ Only do this if the automated flow is unavailable:
 1.5 Add at least 2 relevant internal links to other blog posts in the markdown body using root-relative blog URLs.
 2. Place cover image at `src/assets/blogs/images/your-slug-cover.png`.
 3. Generate component in `src/app/blog/your-slug/` (TS, HTML, SCSS) — import `RelatedContentComponent` and put `<app-related-content slug="your-slug">` after the `</article>` (copy any existing post's template).
-4. Register in `src/app/services/blog.service.ts` — **include `tags` array**.
+4. Register in `src/app/services/blog-posts.registry.ts` — **include `tags`, `keywords` and `dateModified`**. Bump `dateModified` by hand whenever the post's content changes (it feeds the sitemap `lastmod`; never derive it from git — the deploy checkout is shallow).
 5. Add route in `src/app/app.routes.ts`.
 6. Run `npm run generate-sitemap`.
 
@@ -54,7 +54,7 @@ Only do this if the automated flow is unavailable:
     - **Description**: 150-160 chars.
     - **Canonical URL**: Always add `rel='canonical'`.
     - **Open Graph**: content type `article`, absolute URLs for images.
-    - **Structured Data**: Use `setStructuredData()` in component constructor.
+    - **Structured Data**: the component constructor makes one call, `this.seoService.applyBlogPostSeo('<slug>')`. It reads the post's registry entry and emits the meta tags plus a `BlogPosting` + `BreadcrumbList` `@graph`. Don't hand-write `updateSeo`/`setStructuredData` in post components.
 
 *(Reference: `ARTICLE_CREATION_GUIDE.md` and `SEO_GUIDE.md`)*
 
@@ -103,6 +103,12 @@ Home page carousel images are dynamic.
 - **Generate Sitemap**: `npm run generate-sitemap`
 - **Generate Blog Post**: `npm run generate-blog` (requires `ANTHROPIC_API_KEY` in `.env`)
 - **Lint**: `npm run lint`
+- **Script unit tests**: `npm run test:scripts` (node's built-in runner, `scripts/**/*.test.js`)
+
+### Internal links, redirects, renames
+- Internal links use the canonical **trailing-slash** form (`/blog/slug/`). `generate-blog-content.js` normalises markdown links on every build, and `scripts/check-internal-links.js` (the `postbuild` script) fails the build on any slash-less internal `href` or any `www`/`http` 3dpechat.bg URL in `dist/**/index.html`.
+- GitHub Pages has no server redirects. When a post is renamed or merged, delete/rename it and add a route for the **old path** using `LegacyRedirectComponent` (`data: { to: '/blog/<new>/' }`, see `app.routes.ts`), then record it in `LEGACY_REDIRECTS.md`. Never remove these routes.
+- `BlogService` bundles every article body; **don't import it from code that runs on every page** (e.g. `SeoService`). Post metadata lives in the content-free `blog-posts.registry.ts` for that reason.
 
 ### Key Directories
 - `src/assets/blogs/` - Markdown content

@@ -342,6 +342,8 @@
 // ===================== SHARED BUTTONS =====================
 .btn_primary {
   --ig-size: var(--ig-size-medium);
+  // Rendered as <a igxButton> so the link is crawlable — drop the anchor underline.
+  text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -383,6 +385,7 @@
 
 .btn_ghost {
   --ig-size: var(--ig-size-medium);
+  text-decoration: none;
   height: max-content;
   border-radius: var(--radius-pill);
   padding: rem(12px) rem(24px);

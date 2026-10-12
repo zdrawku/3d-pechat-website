@@ -1,91 +1,86 @@
 const fs = require('fs');
 const path = require('path');
 
-// Read blog service to extract blog posts
-const blogServicePath = path.join(__dirname, '../src/app/services/blog.service.ts');
+// Reads the blog registry (blog-posts.registry.ts) to list the blog posts.
+const registryPath = path.join(__dirname, '../src/app/services/blog-posts.registry.ts');
 const sitemapPath = path.join(__dirname, '../src/sitemap.xml');
+
+// <lastmod> for the six main pages, maintained BY HAND: bump the date when a
+// page's content or template meaningfully changes. Do not derive these from git
+// or from "today": the deploy checkout is shallow (every file would report the
+// deploy date) and a lastmod that changes on every build teaches Google to
+// ignore the field. Blog posts get theirs from `dateModified` in the registry.
+const MAIN_PAGE_LASTMOD = {
+  '/': '2026-10-12',          // hero / CTA buttons became crawlable links
+  '/portfolio/': '2026-10-12', // intro paragraph + section captions
+  '/products/': '2026-10-12',  // StandStrap added
+  '/prices/': '2026-07-31',
+  '/contact/': '2026-10-12',   // H1 + intro
+  '/blog/': '2026-10-12'       // new posts / merged money post
+};
 
 console.log('🔍 Generating sitemap from blog posts...');
 
-// This is a simple parser - adjust if your blog service structure changes
-const blogServiceContent = fs.readFileSync(blogServicePath, 'utf8');
+const registrySource = fs.readFileSync(registryPath, 'utf8');
 
-// Extract blog posts using regex (this matches the blogPosts array structure)
-const blogPostsMatch = blogServiceContent.match(/private blogPosts: BlogPost\[\] = \[([\s\S]*?)\];/);
-
-if (!blogPostsMatch) {
-  console.error('❌ Could not find blogPosts array in blog.service.ts');
+if (!/export const BLOG_POSTS: BlogPost\[\] = \[/.test(registrySource)) {
+  console.error('❌ Could not find the BLOG_POSTS array in blog-posts.registry.ts');
   process.exit(1);
 }
 
-// Parse blog posts (simple extraction)
+// Each registry entry is a flat `{ id: …, route: …, date: new Date('…'), … }` literal.
 const routes = [];
-const routeMatches = blogServiceContent.matchAll(/route: ['"]([^'"]+)['"]/g);
-const dateMatches = blogServiceContent.matchAll(/date: new Date\(['"]([^'"]+)['"]\)/g);
-
-const routesArray = Array.from(routeMatches).map(m => m[1]);
-const datesArray = Array.from(dateMatches).map(m => m[1]);
-
-routesArray.forEach((route, index) => {
-  routes.push({
-    route: route,
-    date: datesArray[index] || new Date().toISOString().split('T')[0]
-  });
-});
+for (const [block] of registrySource.matchAll(/\{\s*id:\s*'[^']*'[\s\S]*?\}/g)) {
+  const route = (block.match(/route:\s*['"]([^'"]+)['"]/) || [])[1];
+  const date = (block.match(/\bdate:\s*new Date\(['"]([^'"]+)['"]\)/) || [])[1];
+  const dateModified = (block.match(/dateModified:\s*new Date\(['"]([^'"]+)['"]\)/) || [])[1];
+  if (!route || !date) {
+    console.error(`❌ Registry entry is missing route or date:\n${block}`);
+    process.exit(1);
+  }
+  routes.push({ route, lastmod: dateModified || date });
+}
 
 console.log(`✅ Found ${routes.length} blog posts`);
 
-// Generate sitemap XML
+const mainPages = [
+  { path: '/', changefreq: 'weekly', priority: '1.0' },
+  { path: '/portfolio/', changefreq: 'daily', priority: '1' },
+  { path: '/products/', changefreq: 'weekly', priority: '0.8' },
+  { path: '/prices/', changefreq: 'monthly', priority: '0.7' },
+  { path: '/contact/', changefreq: 'monthly', priority: '0.6' }
+];
+const blogIndex = { path: '/blog/', changefreq: 'weekly', priority: '0.9' };
+
+for (const page of [...mainPages, blogIndex]) {
+  if (!MAIN_PAGE_LASTMOD[page.path]) {
+    console.error(`❌ MAIN_PAGE_LASTMOD has no entry for ${page.path}`);
+    process.exit(1);
+  }
+}
+
+const urlEntry = ({ loc, lastmod, changefreq, priority }) => `  <url>
+    <loc>https://3dpechat.bg${loc}</loc>
+    <lastmod>${lastmod}T10:00:00+01:00</lastmod>
+    <changefreq>${changefreq}</changefreq>
+    <priority>${priority}</priority>
+  </url>`;
+
 const sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Main Pages -->
-  <url>
-    <loc>https://3dpechat.bg/</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}T10:00:00+01:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://3dpechat.bg/portfolio/</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}T10:00:00+01:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1</priority>
-  </url>
-  <url>
-    <loc>https://3dpechat.bg/products/</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}T10:00:00+01:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://3dpechat.bg/prices/</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}T10:00:00+01:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://3dpechat.bg/contact/</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}T10:00:00+01:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
+${mainPages.map(p => urlEntry({ loc: p.path, lastmod: MAIN_PAGE_LASTMOD[p.path], ...p })).join('\n')}
 
   <!-- Blog Pages -->
-  <url>
-    <loc>https://3dpechat.bg/blog/</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}T10:00:00+01:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-${routes.map(blog => `  <url>
-    <loc>https://3dpechat.bg${blog.route.replace(/\/+$/, '')}/</loc>
-    <lastmod>${blog.date}T10:00:00+01:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>`).join('\n')}
+${urlEntry({ loc: blogIndex.path, lastmod: MAIN_PAGE_LASTMOD[blogIndex.path], ...blogIndex })}
+${routes.map(blog => urlEntry({
+  loc: `${blog.route.replace(/\/+$/, '')}/`,
+  lastmod: blog.lastmod,
+  changefreq: 'monthly',
+  priority: '0.8'
+})).join('\n')}
 </urlset>`;
 
-// Write sitemap
 fs.writeFileSync(sitemapPath, sitemapContent, 'utf8');
 
 console.log('✅ Sitemap generated successfully at:', sitemapPath);

@@ -172,7 +172,7 @@ Infill настройките имат драматичен ефект върх�
 - Използвайте Concentric или Cross модели
 - Избягвайте сложни модели
 
-За повече информация относно избора на материал, разгледайте [разликите между PLA, PLA+, PLA Pro и PLN](/blog/pla-pla-pla-pro-i-pln-razliki-i-izbor/). А ако искате светлината да минава през детайла, препоръката е 100% запълване — повече в статията за [прозрачния и полупрозрачен PLA](/blog/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p/).
+За повече информация относно избора на материал, разгледайте [разликите между PLA, PLA+, PLA Pro и PLN](/blog/pla-pla-pla-pro-i-pln-razliki-i-izbor/). А ако искате светлината да минава през детайла, препоръката е 100% запълване — повече в статията за [прозрачния и полупрозрачен PLA](/blog/prozrachen-i-poluprozrachen-pla-filament-svetlopropuskliv-3d-pechat/).
 
 ## Тестване и оптимизация
 

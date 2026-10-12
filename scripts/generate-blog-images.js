@@ -4,7 +4,7 @@
  * Covers are rendered small (card thumbnails ~400px wide, hero ~800px on retina),
  * so we cap width at 800px and encode WebP q80. The originals were huge PNG/JPG
  * (e.g. 3d-printirani-obuvki-cover-3.png was ~600 KB at 1613px wide). After
- * conversion the originals are deleted and references in blog.service.ts are
+ * conversion the originals are deleted and references in blog-posts.registry.ts are
  * rewritten to the .webp path.
  *
  * Idempotent: files already converted are skipped. Safe to run in prebuild.
@@ -19,7 +19,7 @@ const sharp = require('sharp');
 sharp.cache(false);
 
 const IMAGES_DIR = path.join(__dirname, '../src/assets/blogs/images');
-const BLOG_SERVICE = path.join(__dirname, '../src/app/services/blog.service.ts');
+const BLOG_SERVICE = path.join(__dirname, '../src/app/services/blog-posts.registry.ts');
 const BLOGS_DIR = path.join(__dirname, '../src/assets/blogs');
 const BLOG_COMPONENTS_DIR = path.join(__dirname, '../src/app/blog');
 
@@ -100,7 +100,7 @@ async function unlinkWithRetry(file, attempts = 5) {
 
     await unlinkWithRetry(src);
 
-    // Rewrite any reference to the original file in blog.service.ts
+    // Rewrite any reference to the original file in blog-posts.registry.ts
     serviceContent = serviceContent.split(name).join(webpName);
 
     // Rewrite references in blog markdown files
@@ -120,7 +120,7 @@ async function unlinkWithRetry(file, attempts = 5) {
 
   if (converted > 0) {
     fs.writeFileSync(BLOG_SERVICE, serviceContent);
-    console.log(`\n✓ Updated blog.service.ts references`);
+    console.log(`\n✓ Updated blog-posts.registry.ts references`);
 
     for (const md of mdContents) {
       fs.writeFileSync(md.path, md.content);

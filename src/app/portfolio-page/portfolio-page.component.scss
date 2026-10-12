@@ -83,6 +83,45 @@
   min-width: min-content;
 }
 
+// Intro + per-section captions: readable measure, centred under the headings.
+.portfolio-intro {
+  max-width: rem(760px);
+  margin: 0 auto;
+  padding: rem(24px) rem(32px) 0;
+  color: var(--ig-gray-800);
+  line-height: 1.65;
+  text-align: center;
+  text-wrap: pretty;
+
+  p {
+    margin: 0;
+  }
+
+  // Theme-aware link colour (the browser default blue is unreadable in dark mode).
+  a {
+    color: var(--ig-primary-500);
+    text-underline-offset: 0.2em;
+
+    &:hover,
+    &:focus-visible {
+      text-decoration-thickness: 2px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: rem(20px) rem(16px) 0;
+  }
+}
+
+.portfolio-caption {
+  max-width: rem(640px);
+  margin: 0;
+  color: var(--ig-gray-700);
+  line-height: 1.6;
+  text-align: center;
+  text-wrap: pretty;
+}
+
 .title_4 {
   text-align: center;
   color: var(--ig-gray-800);

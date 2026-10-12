@@ -21,44 +21,7 @@ export class ThreeDPrinterBambuLabX2dPodrobnoRevyuFunktsiiIIzborComponent implem
     private router: Router,
     private seoService: SeoService
   ) {
-    this.seoService.updateSeo({
-      title: '3D принтер Bambu Lab X2D: Ревю, функции и избор | 3D Печат България',
-      description: 'Подробно ревю на 3D принтера Bambu Lab X2D. Характеристики, предимства, недостатъци и съвети за избор. Всичко за високоскоростното 3D принтиране.',
-      keywords: 'Bambu Lab X2D, 3D принтер, 3D принтиране, 3D печат, CoreXY принтер, високоскоростно 3D принтиране, Bambu Lab България, 3D принтер ревю',
-      url: 'https://3dpechat.bg/blog/3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor/',
-      image: 'https://3dpechat.bg/assets/og-image.png',
-      type: 'article',
-      author: '3D Печат България',
-      publishedDate: new Date('2026-06-15').toISOString(),
-      modifiedDate: new Date('2026-06-15').toISOString()
-    });
-
-    this.seoService.setStructuredData({
-      "@context": "https://schema.org",
-      "@type": "BlogPosting",
-      "headline": "3D принтер Bambu Lab X2D: Ревю, функции и избор",
-      "description": "Подробно ревю на 3D принтера Bambu Lab X2D. Характеристики, предимства, недостатъци и съвети за избор. Всичко за високоскоростното 3D принтиране.",
-      "author": {
-        "@type": "Organization",
-        "name": "3D Печат България"
-      },
-      "datePublished": "2026-06-15T00:00:00.000Z",
-      "dateModified": "2026-06-15T00:00:00.000Z",
-      "image": "https://3dpechat.bg/assets/og-image.png",
-      "publisher": {
-        "@type": "Organization",
-        "name": "3D Печат България",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://3dpechat.bg/assets/og-image.png"
-        }
-      },
-      "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": "https://3dpechat.bg/blog/3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor/"
-      },
-      "keywords": "Bambu Lab X2D, 3D принтер, 3D принтиране, 3D печат, CoreXY принтер, високоскоростно 3D принтиране, Bambu Lab България, 3D принтер ревю"
-    });
+    this.seoService.applyBlogPostSeo('3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor');
   }
 
   ngOnInit() {

@@ -18,6 +18,29 @@
   }
 }
 
+// ===================== INTRO =====================
+// Visible on every width (the banner subtitle is hidden on phones), so the
+// services / delivery / response-time copy always reaches the page.
+.contact-intro {
+  max-width: rem(760px);
+  margin: 0 auto rem(32px);
+  color: var(--ig-gray-800);
+  line-height: 1.65;
+  text-align: center;
+  text-wrap: pretty;
+
+  // Theme-aware link colour (the browser default blue is unreadable in dark mode).
+  a {
+    color: var(--ig-primary-500);
+    text-underline-offset: 0.2em;
+
+    &:hover,
+    &:focus-visible {
+      text-decoration-thickness: 2px;
+    }
+  }
+}
+
 // ===================== SHELL =====================
 // A large section-sized panel — defined by its border alone. No box-shadow:
 // a drop shadow on a whole section reads as an oddly floating slab (shadows

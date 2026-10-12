@@ -5,8 +5,20 @@
   </div>
 </header>
 
+<section class="portfolio-intro">
+  <p>
+    Тук са събрани част от проектите, които сме отпечатали по поръчка: практични аксесоари за дома, спорта и хобито, организатори, играчки и подаръци. Всеки детайл започва от готов модел или от идея и се изработва от подбран филамент – можете да го получите в избран цвят и размер. Цената зависи от теглото на модела – вижте <a routerLink="/prices">цените за 3D печат</a> или <a routerLink="/contact">заявете оферта</a> за вашата идея.
+  </p>
+</section>
+
 <div class="row-layout image_gallery_section_template_toys_hand_painting portfolio-first-section">
   <div class="column-layout column_layout_4">
+    <div class="column-layout column_layout_5">
+      <h2 class="title_3">Практични изделия и аксесоари</h2>
+      <p class="portfolio-caption">
+        Разделители за книги, поставки за слушалки, монетници, държачи за спортно оборудване и защити за дронове – функционални детайли, проектирани и отпечатани с мисъл за ежедневната им употреба.
+      </p>
+    </div>
     <div class="masonry-gallery img-focus stagger-in">
       @for (image of carouselImages; track image.src; let i = $index) {
         <div class="masonry-item" [style.--i]="i">
@@ -25,6 +37,9 @@
       <h3 class="title_4">
         Разгледайте нашите уникални играчки, готови за творческо докосване
       </h3>
+      <p class="portfolio-caption">
+        Фигури, отпечатани и готови за боядисване – подходящи за подарък, за деца и за творчески занимания у дома.
+      </p>
     </div>
     <div class="row-layout row_layout_3 img-focus stagger-in stagger-in--auto">
       <img src="/assets/real-images/20251227_201101.webp" alt="Играчка за ръчно рисуване" class="image_7" loading="lazy" />

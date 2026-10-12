@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { IGX_CAROUSEL_DIRECTIVES, IGX_CARD_DIRECTIVES, IgxButtonDirective } from 'igniteui-angular';
 
 import { carouselImages } from './carousel-images';
@@ -8,14 +8,14 @@ import { HappyCustomersComponent } from '../shared/happy-customers/happy-custome
 
 @Component({
   selector: 'app-main-page',
-  imports: [IGX_CAROUSEL_DIRECTIVES, IGX_CARD_DIRECTIVES, IgxButtonDirective, HappyCustomersComponent],
+  imports: [IGX_CAROUSEL_DIRECTIVES, IGX_CARD_DIRECTIVES, IgxButtonDirective, HappyCustomersComponent, RouterLink],
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.scss']
 })
 export class MainPageComponent {
   carouselImages = carouselImages;
 
-  constructor(private router: Router, private seoService: SeoService) {
+  constructor(private seoService: SeoService) {
     this.seoService.updateSeo({
       title: '3D печат и 3D принтиране по поръчка | Професионални услуги',
       description: 'Професионален 3D печат и 3D принтиране по поръчка. Изработка на прототипи, детайли и малки серии с високо качество и бързи срокове.',
@@ -26,11 +26,4 @@ export class MainPageComponent {
     this.seoService.removeStructuredData();
   }
 
-  navigateToPortfolio() {
-    this.router.navigate(['/portfolio']);
-  }
-
-  navigateToContact() {
-    this.router.navigate(['/contact']);
-  }
 }

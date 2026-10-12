@@ -1,6 +1,9 @@
 import { Injectable, Inject } from '@angular/core';
 import { Title, Meta } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
+import { BLOG_POSTS } from './blog-posts.registry';
+
+export const SITE_ORIGIN = 'https://3dpechat.bg';
 
 export interface SeoConfig {
     title: string;
@@ -18,7 +21,7 @@ export interface SeoConfig {
     providedIn: 'root'
 })
 export class SeoService {
-    private readonly defaultImage = 'https://3dpechat.bg/assets/og-image.png';
+    private readonly defaultImage = `${SITE_ORIGIN}/assets/og-image.png`;
     private readonly siteName = '3D Печат България';
 
     constructor(
@@ -78,6 +81,68 @@ export class SeoService {
         }
     }
 
+    /**
+     * One call per blog post: the meta/OG/canonical tags plus a single JSON-LD
+     * `@graph` holding the BlogPosting and its BreadcrumbList, all derived from
+     * the post's entry in blog-posts.registry.ts (the one source of truth for
+     * title, description, keywords, image and dates). Throws on an unknown slug
+     * so a typo fails the prerender instead of shipping a post with no SEO.
+     */
+    public applyBlogPostSeo(slug: string): void {
+        const post = BLOG_POSTS.find(p => p.slug === slug);
+        if (!post) {
+            throw new Error(`applyBlogPostSeo: no post with slug "${slug}" in blog-posts.registry.ts`);
+        }
+
+        const url = `${SITE_ORIGIN}${post.route.replace(/\/+$/, '')}/`;
+        const image = this.absoluteUrl(post.imageUrl) ?? this.defaultImage;
+        const keywords = (post.keywords ?? post.tags ?? []).join(', ');
+        const datePublished = post.date.toISOString();
+        const dateModified = (post.dateModified ?? post.date).toISOString();
+        const brand = { '@type': 'Organization', '@id': `${SITE_ORIGIN}/#organization`, name: this.siteName };
+
+        this.updateSeo({
+            title: post.seoTitle ?? `${post.title} | ${this.siteName}`,
+            description: post.description,
+            keywords,
+            image,
+            url,
+            type: 'article',
+            author: post.author ?? this.siteName,
+            publishedDate: datePublished,
+            modifiedDate: dateModified
+        });
+
+        this.setStructuredData({
+            '@context': 'https://schema.org',
+            '@graph': [
+                {
+                    '@type': 'BlogPosting',
+                    '@id': `${url}#article`,
+                    headline: post.title,
+                    description: post.description,
+                    image,
+                    inLanguage: 'bg',
+                    keywords,
+                    datePublished,
+                    dateModified,
+                    author: brand,
+                    publisher: { ...brand, logo: { '@type': 'ImageObject', url: `${SITE_ORIGIN}/assets/logo.png` } },
+                    mainEntityOfPage: { '@type': 'WebPage', '@id': url }
+                },
+                {
+                    '@type': 'BreadcrumbList',
+                    '@id': `${url}#breadcrumb`,
+                    itemListElement: [
+                        { '@type': 'ListItem', position: 1, name: 'Начало', item: `${SITE_ORIGIN}/` },
+                        { '@type': 'ListItem', position: 2, name: 'Блог', item: `${SITE_ORIGIN}/blog/` },
+                        { '@type': 'ListItem', position: 3, name: post.title, item: url }
+                    ]
+                }
+            ]
+        });
+    }
+
     public setStructuredData(schema: any): void {
         const scriptId = 'structured-data-jsonld';
         let script = this.document.getElementById(scriptId) as HTMLScriptElement;
@@ -98,6 +163,11 @@ export class SeoService {
         if (script) {
             script.remove();
         }
+    }
+
+    private absoluteUrl(path?: string): string | undefined {
+        if (!path) return undefined;
+        return /^https?:\/\//.test(path) ? path : `${SITE_ORIGIN}/${path.replace(/^\//, '')}`;
     }
 
     private updateTag(attr: 'name' | 'property', attrValue: string, content: string): void {

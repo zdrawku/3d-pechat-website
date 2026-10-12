@@ -11,7 +11,7 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '../..');
 const ROUTES_FILE = path.join(ROOT, 'src/app/app.routes.ts');
-const SERVICE_FILE = path.join(ROOT, 'src/app/services/blog.service.ts');
+const SERVICE_FILE = path.join(ROOT, 'src/app/services/blog-posts.registry.ts');
 
 const STATIC_PAGES = [
   { path: '/products/', title: 'Продукти' },
@@ -21,7 +21,7 @@ const STATIC_PAGES = [
   { path: '/blog/', title: 'Блог' }
 ];
 
-/** Existing blog posts as { path, title }, read from blog.service.ts. */
+/** Existing blog posts as { path, title }, read from blog-posts.registry.ts. */
 function getBlogPosts() {
   const src = fs.readFileSync(SERVICE_FILE, 'utf8');
   const posts = [];
@@ -51,8 +51,10 @@ function getValidPaths() {
 function fixInternalLinks(markdown, validPaths = getValidPaths()) {
   const dropped = [];
   const fixed = markdown.replace(
-    /\[([^\]]+)\]\((?:https?:\/\/(?:www\.)?3dpechat\.bg)?(\/[^)\s#?]*)([#?][^)\s]*)?\)/g,
-    (whole, text, rawPath, suffix = '') => {
+    /(!?)\[([^\]]+)\]\((?:https?:\/\/(?:www\.)?3dpechat\.bg)?(\/[^)\s#?]*)([#?][^)\s]*)?\)/g,
+    (whole, bang, text, rawPath, suffix = '') => {
+      // Images and file links (/assets/x.webp, /sitemap.xml) are not pages.
+      if (bang || /\.[a-z0-9]+$/i.test(rawPath)) return whole;
       const canonical = `${rawPath.replace(/\/+$/, '')}/`.replace(/^\/\/$/, '/');
       if (!validPaths.has(canonical)) {
         dropped.push(rawPath);
