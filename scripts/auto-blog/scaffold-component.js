@@ -54,11 +54,12 @@ import { BlogService } from '../../services/blog.service';
 import { MarkdownModule } from 'ngx-markdown';
 import { IgxButtonModule, IgxIconModule } from 'igniteui-angular';
 import { SeoService } from '../../services/seo.service';
+import { RelatedContentComponent } from '../../shared/related-content/related-content.component';
 
 @Component({
   selector: 'app-${slug}',
   standalone: true,
-  imports: [MarkdownModule, IgxButtonModule, IgxIconModule],
+  imports: [MarkdownModule, IgxButtonModule, IgxIconModule, RelatedContentComponent],
   templateUrl: './${slug}.component.html',
   styleUrls: ['./${slug}.component.scss'],
 })
@@ -123,13 +124,16 @@ export class ${pascalName}Component implements OnInit {
 `;
 }
 
-const COMPONENT_HTML = `<article class="blog-container">
+// "Related articles / products" block under the article (see
+// src/app/shared/related-content) — matched automatically, no per-post setup.
+const buildComponentHtml = (slug) => `<article class="blog-container">
     <button igxButton="contained" (click)="goBack()" class="back-button">
         <igx-icon>arrow_back</igx-icon>
         Back to Articles
     </button>
     <markdown [data]="postContent"></markdown>
 </article>
+<app-related-content slug="${slug}"></app-related-content>
 `;
 
 const COMPONENT_SCSS = `// Use shared blog styles
@@ -142,7 +146,7 @@ function writeComponent(slug, pascalName, seo, coverImageAssetPath) {
   const dir = path.join(BLOG_DIR, slug);
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, `${slug}.component.ts`), buildComponentTs(slug, pascalName, seo, coverImageAssetPath), 'utf8');
-  fs.writeFileSync(path.join(dir, `${slug}.component.html`), COMPONENT_HTML, 'utf8');
+  fs.writeFileSync(path.join(dir, `${slug}.component.html`), buildComponentHtml(slug), 'utf8');
   fs.writeFileSync(path.join(dir, `${slug}.component.scss`), COMPONENT_SCSS, 'utf8');
   return dir;
 }

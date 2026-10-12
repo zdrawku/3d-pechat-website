@@ -4,11 +4,12 @@ import { BlogService } from '../../services/blog.service';
 import { MarkdownModule } from 'ngx-markdown';
 import { IgxButtonModule, IgxIconModule } from 'igniteui-angular';
 import { SeoService } from '../../services/seo.service';
+import { RelatedContentComponent } from '../../shared/related-content/related-content.component';
 
 @Component({
   selector: 'app-pla-pla-pla-pro-i-pln-razliki-i-izbor',
   standalone: true,
-  imports: [MarkdownModule, IgxButtonModule, IgxIconModule],
+  imports: [MarkdownModule, IgxButtonModule, IgxIconModule, RelatedContentComponent],
   templateUrl: './pla-pla-pla-pro-i-pln-razliki-i-izbor.component.html',
   styleUrls: ['./pla-pla-pla-pro-i-pln-razliki-i-izbor.component.scss'],
 })

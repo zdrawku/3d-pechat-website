@@ -4,11 +4,12 @@ import { BlogService } from '../../services/blog.service';
 import { MarkdownModule } from 'ngx-markdown';
 import { IgxButtonModule, IgxIconModule } from 'igniteui-angular';
 import { SeoService } from '../../services/seo.service';
+import { RelatedContentComponent } from '../../shared/related-content/related-content.component';
 
 @Component({
   selector: 'app-3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari',
   standalone: true,
-  imports: [MarkdownModule, IgxButtonModule, IgxIconModule],
+  imports: [MarkdownModule, IgxButtonModule, IgxIconModule, RelatedContentComponent],
   templateUrl: './3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari.component.html',
   styleUrls: ['./3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari.component.scss'],
 })

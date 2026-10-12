@@ -4,11 +4,12 @@ import { BlogService } from '../../services/blog.service';
 import { MarkdownModule } from 'ngx-markdown';
 import { IgxButtonModule, IgxIconModule } from 'igniteui-angular';
 import { SeoService } from '../../services/seo.service';
+import { RelatedContentComponent } from '../../shared/related-content/related-content.component';
 
 @Component({
   selector: 'app-izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish',
   standalone: true,
-  imports: [MarkdownModule, IgxButtonModule, IgxIconModule],
+  imports: [MarkdownModule, IgxButtonModule, IgxIconModule, RelatedContentComponent],
   templateUrl: './izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish.component.html',
   styleUrls: ['./izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish.component.scss'],
 })

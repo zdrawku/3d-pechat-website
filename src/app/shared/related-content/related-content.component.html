@@ -1,0 +1,92 @@
+<!--
+  „Свързани статии / продукти" under every blog post (approved design A).
+
+  Ignite UI throughout (igx-card / igx-card-media / igxButton / igx-icon). NB:
+  igx-chip, igx-divider and igx-list are in styles.scss's $exclude-components, so
+  they must not be used here.
+
+  Each card has ONE link — the button — stretched over the whole card in the
+  stylesheet, so the card is fully clickable without two adjacent links to the
+  same URL.
+-->
+@if (posts.length > 0 || products.length > 0) {
+  <section class="rc" aria-label="Още от 3dpechat.bg" data-testid="related-content">
+    <div class="rc_inner">
+      @if (posts.length > 0) {
+        <div class="rc_block">
+          <div class="rc_head">
+            <h2 class="rc_title" id="rc-posts-heading">Продължете да четете</h2>
+            <a igxButton="flat" class="rc_all" routerLink="/blog">
+              Всички статии
+              <igx-icon class="rc_icon" aria-hidden="true">arrow_forward</igx-icon>
+            </a>
+          </div>
+
+          <ul class="rc_posts" aria-labelledby="rc-posts-heading" data-testid="related-posts">
+            @for (post of posts; track post.slug) {
+              <li class="rc_item">
+                <igx-card class="rc_card" elevated>
+                  <igx-card-media height="168px">
+                    <img [src]="imageSrc(post)" alt="" loading="lazy" class="rc_post_img">
+                  </igx-card-media>
+
+                  <igx-card-header class="rc_card_head">
+                    <h3 igxCardHeaderTitle class="rc_card_title">{{ post.title }}</h3>
+                  </igx-card-header>
+
+                  <igx-card-content class="rc_card_body">
+                    <p class="rc_desc">{{ post.description }}</p>
+                  </igx-card-content>
+
+                  <!-- IgxCardFooterDirective defaults to role="footer", which is not
+                       a valid ARIA role (axe: aria-roles) — same override as in
+                       happy-customers. -->
+                  <igx-card-footer class="rc_card_foot" role="presentation">
+                    <a igxButton="flat" class="rc_cta" [routerLink]="post.route"
+                       [attr.aria-label]="'Прочети: ' + post.title">
+                      Прочети
+                      <igx-icon class="rc_icon" aria-hidden="true">arrow_forward</igx-icon>
+                    </a>
+                  </igx-card-footer>
+                </igx-card>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
+      @if (products.length > 0) {
+        <div class="rc_block">
+          <div class="rc_head">
+            <h2 class="rc_title" id="rc-products-heading">Може да ви хареса</h2>
+            <a igxButton="flat" class="rc_all" routerLink="/products">
+              Всички продукти
+              <igx-icon class="rc_icon" aria-hidden="true">arrow_forward</igx-icon>
+            </a>
+          </div>
+
+          <ul class="rc_products" aria-labelledby="rc-products-heading" data-testid="related-products">
+            @for (product of products; track product.id) {
+              <li class="rc_item">
+                <igx-card class="rc_card rc_card--product" elevated [horizontal]="true">
+                  <igx-card-media width="96px" height="96px" class="rc_product_media">
+                    <img [src]="product.frontImage" alt="" loading="lazy" class="rc_product_img">
+                  </igx-card-media>
+
+                  <div class="rc_product_body">
+                    <h3 class="rc_product_title">{{ product.name }}</h3>
+                    <a igxButton="outlined" class="rc_cta rc_cta--product" routerLink="/products"
+                       [fragment]="product.linkId"
+                       [attr.aria-label]="'Виж продукта: ' + product.name">
+                      Виж продукта
+                    </a>
+                  </div>
+                </igx-card>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+  </section>
+}
