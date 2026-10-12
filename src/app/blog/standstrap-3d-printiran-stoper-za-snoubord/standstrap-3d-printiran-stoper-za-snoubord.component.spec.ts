@@ -31,10 +31,11 @@ describe('Standstrap3dPrintiranStoperZaSnoubordComponent', () => {
     expect(video.querySelector('source')!.getAttribute('src')).toBe('assets/blogs/videos/standstrap-na-pistata.mp4');
   });
 
-  it('credits Gripsta and links to the product card', () => {
+  it('credits Gripsta and links to the product card and MakerWorld', () => {
     const md = fixture.componentInstance.postContent + fixture.componentInstance.postContentAfterVideo;
     expect(md).toContain('https://gripsta.com/');
     expect(md).toContain('/products/#standstrap-stoper-za-snoubord');
+    expect(md).toContain('https://makerworld.com/en/models/3427894-standstrap');
   });
 
   it('builds the chrome from Ignite UI components', () => {
