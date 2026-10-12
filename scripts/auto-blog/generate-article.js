@@ -13,7 +13,7 @@ function cleanSlug(slug) {
 }
 
 function buildPrompt(topicObj) {
-  const { topic, summary, sourceUrl, suggestedSlug } = topicObj;
+  const { topic, summary, sourceUrl, suggestedSlug, products } = topicObj;
   const year = new Date().getFullYear();
   const linkTargets = [...getBlogPosts(), ...getStaticPages()]
     .map(p => `   - ${p.path} — ${p.title}`)
@@ -25,7 +25,8 @@ function buildPrompt(topicObj) {
 КОНТЕКСТ/РЕЗЮМЕ: ${summary || '(няма)'}
 ИЗТОЧНИК НА ИДЕЯТА: ${sourceUrl || '(няма)'}
 ПРЕДЛОЖЕН SLUG: ${suggestedSlug}
-
+${products ? `\nСВЪРЗАНИ ПРОДУКТИ ОТ КАТАЛОГА НА САЙТА: ${products}.
+Статията трябва естествено да насочва читателя към тях: поне веднъж линкни [нашите продукти](/products/), а при поръчка по индивидуален модел — [заяви оферта](/contact/). Не измисляй цени и продукти, които не са изброени тук.\n` : ''}
 ТЕКУЩА ГОДИНА: ${year}. Не описвай минали години като бъдеще (напр. „след 2024“) — пиши спрямо текущата година.
 
 ИЗИСКВАНИЯ ЗА СТАТИЯТА (markdown):

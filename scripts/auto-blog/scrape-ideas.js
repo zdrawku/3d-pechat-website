@@ -1,10 +1,12 @@
 // Scrapes Bulgarian 3D printing blogs for fresh article ideas.
-// Falls back to a curated hardcoded list when scraping fails or every idea
-// duplicates an already-published slug.
+// Falls back to catalog-related topics (product-topics.js), then a generic
+// hardcoded list, when scraping fails or every idea duplicates an
+// already-published slug.
 
 const fs = require('fs');
 const path = require('path');
 const fallbackTopics = require('./fallback-topics');
+const productTopics = require('./product-topics');
 
 const SOURCES = [
   {
@@ -150,6 +152,7 @@ async function getTopicIdea() {
   }
 
   const existingSlugs = readExistingSlugs();
+
   const scraped = [];
   for (const src of SOURCES) {
     const items = await scrapeSource(src);
@@ -161,6 +164,18 @@ async function getTopicIdea() {
   if (fresh) {
     console.log(`[scrape-ideas] using scraped topic: ${fresh.topic}`);
     return fresh;
+  }
+
+  // Nothing fresh was scraped (sources down, or every idea already published):
+  // fall back to topics tied to the catalog — they convert better than the
+  // generic list below.
+  const product = pickFresh(
+    [...productTopics].sort(() => Math.random() - 0.5).map(t => ({ ...t, sourceUrl: 'product-topics' })),
+    existingSlugs
+  );
+  if (product) {
+    console.log(`[scrape-ideas] using product topic: ${product.topic}`);
+    return product;
   }
 
   console.warn('[scrape-ideas] falling back to hardcoded topics');

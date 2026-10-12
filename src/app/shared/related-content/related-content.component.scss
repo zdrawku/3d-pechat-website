@@ -1,0 +1,233 @@
+@use "igniteui-angular/theming" as *;
+@use "../../fluid" as *;
+@use "../../sla-hover" as sla;
+
+// „Свързани статии / продукти" under blog posts. Structure comes from Ignite UI
+// components; this file only lays them out and applies the site's tokens, so
+// both themes follow automatically (no separate dark block).
+
+.rc {
+  max-width: rem(1200px);
+  margin: 0 auto;
+  padding: fluid(8px, 16px) fluid(16px, 24px) fluid(40px, 64px);
+}
+
+.rc_inner {
+  display: flex;
+  flex-direction: column;
+  gap: fluid(28px, 40px);
+}
+
+.rc_head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: rem(4px) rem(16px);
+  margin-bottom: rem(12px);
+}
+
+.rc_title {
+  font-size: fluid(21px, 26px);
+  line-height: 1.2;
+  font-weight: 700;
+  color: var(--ig-gray-900);
+  margin: 0;
+  // The article stylesheet's h2 underline is scoped to .blog-container, which
+  // this block sits outside of — nothing to undo here.
+}
+
+// Flat igxButton anchors: keep the hit area / ripple / focus ring, restyle the
+// label to the site's link colour.
+.rc_all,
+.rc_cta {
+  display: inline-flex;
+  align-items: center;
+  gap: rem(6px);
+  text-decoration: none;
+  --foreground: var(--accent-on-light);
+  color: var(--accent-on-light);
+}
+
+:host-context(.dark-theme) .rc_all,
+:host-context(.dark-theme) .rc_cta {
+  --foreground: var(--ig-primary-400);
+  color: var(--ig-primary-400);
+}
+
+.rc_icon {
+  // Set on the icon itself: igx-icon's theme defines its own --ig-icon-color, so a
+  // value inherited from the button never reaches it (arrow would stay teal).
+  --ig-icon-color: var(--accent-on-light);
+  color: var(--accent-on-light);
+  --ig-icon-size: #{rem(18px)};
+  --size: #{rem(18px)};
+  width: rem(18px);
+  height: rem(18px);
+  font-size: rem(18px);
+}
+
+:host-context(.dark-theme) .rc_icon {
+  --ig-icon-color: var(--ig-primary-400);
+  color: var(--ig-primary-400);
+}
+
+.rc_all {
+  font-size: rem(14px);
+  font-weight: 500;
+}
+
+.rc_cta {
+  font-size: rem(13px);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+
+  // Stretched link: the button's hit area grows to the whole card (the card is
+  // position: relative), so the card is clickable though it holds a single link.
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+}
+
+.rc_posts,
+.rc_products {
+  display: grid;
+  // minmax(0, 1fr) — NOT plain 1fr, or long titles stop the columns shrinking
+  // and push the page into a horizontal scrollbar.
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: rem(24px);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rc_item {
+  display: flex;
+}
+
+.rc_card {
+  @include sla.sla-hover;
+
+  position: relative; // anchor for the stretched .rc_cta::after
+  display: flex;
+  width: 100%;
+  border-radius: var(--radius-lg);
+  border-color: var(--ig-gray-300);
+  overflow: hidden;
+
+  &:not(.rc_card--product) {
+    flex-direction: column;
+  }
+}
+
+.rc_post_img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rc_card_head {
+  padding: rem(16px) rem(20px) rem(6px);
+}
+
+.rc_card_title {
+  font-size: rem(18px);
+  line-height: 1.35;
+  font-weight: 700;
+  color: var(--ig-gray-900);
+  margin: 0;
+}
+
+.rc_card_body {
+  padding: 0 rem(20px);
+  flex: 1; // keeps the footers aligned across cards with unequal text
+}
+
+.rc_desc {
+  margin: 0;
+  font-size: rem(14px);
+  line-height: 1.55;
+  color: var(--ig-gray-700);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.rc_card_foot {
+  padding: rem(6px) rem(12px) rem(10px);
+}
+
+// ---- products: compact horizontal card ----
+
+.rc_card--product {
+  align-items: center;
+  gap: rem(16px);
+  padding: rem(16px);
+}
+
+.rc_product_media {
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--ig-gray-200);
+}
+
+.rc_product_img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rc_product_body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: rem(10px);
+  min-width: 0;
+}
+
+.rc_product_title {
+  font-size: rem(16px);
+  line-height: 1.35;
+  font-weight: 700;
+  color: var(--ig-gray-900);
+  margin: 0;
+}
+
+.rc_cta--product {
+  border-radius: var(--radius-pill);
+}
+
+// ---- narrow screens ----
+
+@media (max-width: 900px) {
+  // Articles become a swipeable strip (CSS only — one markup path); products
+  // stack one per row.
+  .rc_posts {
+    display: flex;
+    gap: rem(14px);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    // Bleed to the screen edges so the strip reads as scrollable.
+    margin-inline: calc(-1 * #{fluid(16px, 24px)});
+    padding: 0 fluid(16px, 24px) rem(8px);
+    scroll-padding-inline: fluid(16px, 24px);
+
+    .rc_item {
+      flex: 0 0 min(17.5rem, 80%);
+      scroll-snap-align: start;
+    }
+  }
+
+  .rc_products {
+    grid-template-columns: minmax(0, 1fr);
+    gap: rem(14px);
+  }
+}

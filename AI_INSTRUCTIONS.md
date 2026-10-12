@@ -15,10 +15,10 @@ This file contains the definitive instructions and guidelines for the AI assista
 
 ### Automated Blog Generation (Preferred)
 Run `npm run generate-blog` to fully automate article creation:
-1. **Picks a topic** — scrapes Bulgarian 3D printing sites or falls back to `scripts/auto-blog/fallback-topics.js`.
+1. **Picks a topic** — scrapes Bulgarian 3D printing sites first (current ideas); if nothing fresh comes back it uses catalog-related topics from `scripts/auto-blog/product-topics.js` (gifts, stands, organizers, coin cards… — the prompt then steers the article to `/products/`), and finally the generic `scripts/auto-blog/fallback-topics.js`.
 2. **Generates article** — calls Anthropic Claude API (Bulgarian, SEO-optimised). Requires `ANTHROPIC_API_KEY` in `.env`.
 3. **Generates cover image** — 1200×630 via Pollinations.ai (free, no key); saved to `src/assets/blogs/images/{slug}-cover.png`.
-4. **Scaffolds all Angular files** — component TS/HTML/SCSS in `src/app/blog/{slug}/`.
+4. **Scaffolds all Angular files** — component TS/HTML/SCSS in `src/app/blog/{slug}/`. The template ends with `<app-related-content slug="{slug}">` (3 related articles + 3 catalog products, chosen automatically from tags/title — see `src/app/shared/related-content/`).
 5. **Registers** the post in `BlogService` and `app.routes.ts`.
 6. **Regenerates sitemap** automatically.
 
@@ -39,7 +39,7 @@ Only do this if the automated flow is unavailable:
 1. Create `src/assets/blogs/your-slug.md` — no inline images in body.
 1.5 Add at least 2 relevant internal links to other blog posts in the markdown body using root-relative blog URLs.
 2. Place cover image at `src/assets/blogs/images/your-slug-cover.png`.
-3. Generate component in `src/app/blog/your-slug/` (TS, HTML, SCSS).
+3. Generate component in `src/app/blog/your-slug/` (TS, HTML, SCSS) — import `RelatedContentComponent` and put `<app-related-content slug="your-slug">` after the `</article>` (copy any existing post's template).
 4. Register in `src/app/services/blog.service.ts` — **include `tags` array**.
 5. Add route in `src/app/app.routes.ts`.
 6. Run `npm run generate-sitemap`.

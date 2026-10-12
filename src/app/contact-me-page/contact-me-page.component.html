@@ -9,12 +9,14 @@
         <igx-icon class="info-icon">call</igx-icon>
         <div class="info-text">
           <b>Телефон</b>
-          <span>+359 883 310 616</span>
-          <button igxButton="flat" type="button" class="viber-pill" (click)="openViber()"
-                  [igxTooltipTarget]="viberTooltip">
+          <!-- Static hrefs on purpose: a bound [href] would be sanitized by
+               Angular, which rewrites the viber: scheme to "unsafe:". -->
+          <a href="tel:+359883310616">+359 883 310 616</a>
+          <a igxButton="flat" href="viber://chat?number=%2B359883310616" class="viber-pill"
+             [igxTooltipTarget]="viberTooltip">
             <igx-icon>chat</igx-icon>
             Отвори във Viber
-          </button>
+          </a>
           <div igxTooltip #viberTooltip="tooltip">
             Кликнете за директен чат във Viber
           </div>

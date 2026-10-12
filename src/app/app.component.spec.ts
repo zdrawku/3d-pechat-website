@@ -25,6 +25,14 @@ describe('AppComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('makes the footer phone and Viber entries clickable links', () => {
+    const host: HTMLElement = fixture.nativeElement;
+    expect(host.querySelector('footer a[href="tel:+359883310616"]'))
+      .withContext('footer tel: link').not.toBeNull();
+    expect(host.querySelector('footer a[href="viber://chat?number=%2B359883310616"]'))
+      .withContext('footer Viber link').not.toBeNull();
+  });
+
   describe('outside-click drawer close', () => {
     /** Forces the desktop/mobile branch of the handler's matchMedia check. */
     function setViewport(isDesktop: boolean): void {

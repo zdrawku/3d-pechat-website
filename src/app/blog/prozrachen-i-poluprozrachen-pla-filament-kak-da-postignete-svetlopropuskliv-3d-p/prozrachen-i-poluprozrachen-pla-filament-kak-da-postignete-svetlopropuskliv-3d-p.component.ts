@@ -4,11 +4,12 @@ import { BlogService } from '../../services/blog.service';
 import { MarkdownModule } from 'ngx-markdown';
 import { IgxButtonModule, IgxIconModule } from 'igniteui-angular';
 import { SeoService } from '../../services/seo.service';
+import { RelatedContentComponent } from '../../shared/related-content/related-content.component';
 
 @Component({
   selector: 'app-prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p',
   standalone: true,
-  imports: [MarkdownModule, IgxButtonModule, IgxIconModule],
+  imports: [MarkdownModule, IgxButtonModule, IgxIconModule, RelatedContentComponent],
   templateUrl: './prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p.component.html',
   styleUrls: ['./prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p.component.scss'],
 })

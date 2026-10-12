@@ -59,4 +59,4 @@
 📩 Свържете се с нас днес на:
  <a href="mailto:3dpechat.bg@gmail.com" class="ig-typography__body-2 link_customer_support_footer"> 3dpechat.bg@gmail.com </a>
 
- .. или телефон +359883310616
+ .. или телефон <a href="tel:+359883310616">+359 883 310 616</a>

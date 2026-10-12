@@ -56,6 +56,35 @@
 
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;600;700" rel="stylesheet">
+
+  <!-- Site-wide Organization schema — ties the site and its social profiles
+       (sameAs) into one brand entity for Google. Separate id from the per-page
+       BlogPosting script that SeoService swaps in (#structured-data-jsonld).
+       Keep in sync with index.html. -->
+  <script type="application/ld+json" id="organization-jsonld">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": "https://3dpechat.bg/#organization",
+    "name": "3D Печат България",
+    "alternateName": "3dpechat.bg",
+    "url": "https://3dpechat.bg/",
+    "logo": "https://3dpechat.bg/assets/logo.png",
+    "email": "3dpechat.bg@gmail.com",
+    "telephone": "+359883310616",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Симеоновско шосе 110Б, ет.2",
+      "addressLocality": "София",
+      "addressCountry": "BG"
+    },
+    "sameAs": [
+      "https://www.instagram.com/3dpechat.bg",
+      "https://www.tiktok.com/@3dpechat.bg",
+      "https://makerworld.com/en/@zdkolev"
+    ]
+  }
+  </script>
 </head>
 
 <body class="ig-typography ig-scrollbar">

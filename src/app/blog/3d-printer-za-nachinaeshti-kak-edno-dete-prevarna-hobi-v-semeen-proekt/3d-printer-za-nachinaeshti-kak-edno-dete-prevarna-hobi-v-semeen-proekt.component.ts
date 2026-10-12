@@ -5,10 +5,12 @@ import { MarkdownModule } from 'ngx-markdown';
 import { IgxButtonModule, IgxIconModule } from 'igniteui-angular';
 import { SeoService } from '../../services/seo.service';
 
+
+import { RelatedContentComponent } from '../../shared/related-content/related-content.component';
 @Component({
   selector: 'app-3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt',
   standalone: true,
-  imports: [MarkdownModule, IgxButtonModule, IgxIconModule],
+  imports: [MarkdownModule, IgxButtonModule, IgxIconModule, RelatedContentComponent],
   templateUrl: './3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt.component.html',
   styleUrls: ['./3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt.component.scss'],
 })
