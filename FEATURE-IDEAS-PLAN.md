@@ -8,7 +8,9 @@
 > **Implementation progress:** Ideas **2** (gallery manifest + editor), **3**
 > (products.json + `/add-product` skill + issue-form flow), **4** (review CTA,
 > all three layers) and **5** (Happy Customers section) are shipped. Remaining:
-> **Idea 1** (gift box page). See the build-order table at the bottom.
+> **Idea 1** (gift box page). **Idea 6** (MakerWorld cross-linking triangle) was
+> added 2026-10-11 and is ⬜ proposed, with no design artifact yet. See the
+> build-order table at the bottom.
 
 ## Context (how the site works today — constraints the plan must respect)
 
@@ -476,6 +478,185 @@ customers section"). Low enough friction that a dedicated skill isn't warranted 
 
 ---
 
+## Idea 6 — 🔺 MakerWorld ↔ site ↔ blog: the cross-linking triangle
+
+> Added 2026-10-11. Status: **⬜ proposed — design artifact not yet produced.**
+
+### Polished concept
+
+Every model published on [MakerWorld](https://makerworld.com) becomes the corner
+of a **triangle of three pages that all link to each other**:
+
+```
+            MakerWorld model page
+           ↗                    ↖
+  „Как направих…“ article  ↔  product card on /products
+```
+
+- **Site → MakerWorld** already works (see below). The hard part is the other way.
+- **MakerWorld → site** is what brings traffic. MakerWorld visitors are exactly the
+  target audience: people who care about 3D prints and might want one ready-made.
+- **Blog article per model** is the only page Google can rank for that specific
+  model. Products have no pages of their own (there is only `/products`).
+
+This is probably the strongest of the growth ideas. Most of it costs no code: the
+site side is mostly done, and the MakerWorld side is copy you paste in when you
+upload a model.
+
+### What exists today (verified 2026-10-11)
+
+- `ProductVariant.links?: ProductLink[]`
+  ([`product.model.ts`](src/app/models/product.model.ts)) renders external
+  `igx-icon` buttons with tooltips in the card's top row
+  ([`product-grid.component.html:64`](src/app/shared/product-grid/product-grid.component.html#L64)).
+  `jewelry-stand-watches` already uses it („Виж модела в MakerWorld“). **Adding the
+  link for a new model is a data change only**, with no code. `/add-product` can
+  set it.
+- Every product card has a stable `#linkId` deep link (`/products/#<linkId>`), so
+  it can be the landing target for an article or for MakerWorld.
+- GA4 (`G-YBR644GQL9`) is installed, so UTM-tagged visits show up with no extra setup.
+- The `/products/` canonical is a hard-coded clean URL in
+  [`products-page.component.ts`](src/app/products-page/products-page.component.ts),
+  so `?utm_…` query strings **don't** create duplicate-content URLs.
+- **Gap:** there is **no site-wide `Organization`/`LocalBusiness` JSON-LD** at all.
+  Structured data exists only per blog post (`BlogPosting` via
+  `SeoService.setStructuredData`), so there is no `sameAs` to add MakerWorld to yet.
+- **Gap:** product cards don't link to blog articles, and articles don't
+  systematically link back to product cards.
+
+### The design, in four parts
+
+**Part A — Site → MakerWorld (done, data only).** Keep using `links` in
+[`products.json`](src/data/products.json). Optional polish: a recognisable
+MakerWorld glyph instead of the generic `open_in_new`. Register it once as a custom
+`igx-icon` SVG via `IgxIconService` (still an `igx-icon`, per Rule 1).
+
+**Part B — MakerWorld → site (no code, done on MakerWorld).**
+
+1. **Every model description ends with a call to action to the site**, in a fixed
+   bilingual template. MakerWorld's audience is international, so a Bulgarian-only
+   line would reach only part of it:
+   ```
+   🇧🇬 Готов отпечатан вариант можеш да поръчаш на 3dpechat.bg → <URL>
+   🇬🇧 Want it printed and shipped in Bulgaria? Order at 3dpechat.bg → <URL>
+   📖 How I designed it: <article URL>
+   ```
+2. **The profile bio links to the site** (homepage, with UTM).
+3. **UTM convention, so GA4 shows exactly which model sends visits.**
+   🔵 DECISION: `utm_campaign` = the product's `linkId`, so analytics rows map 1:1
+   to `products.json` entries:
+   ```
+   https://3dpechat.bg/products/?utm_source=makerworld&utm_medium=referral&utm_campaign=jewelry-stand-watches#jewelry-stand-watches
+   https://3dpechat.bg/?utm_source=makerworld&utm_medium=profile&utm_campaign=bio
+   ```
+   (The query string must come **before** the `#fragment`, or browsers drop it.)
+4. **Honest expectations:** MakerWorld outbound links are almost certainly
+   `nofollow`, so they pass little or no ranking signal in Google. The value is
+   **referral traffic from a highly relevant audience**, not SEO link equity. Judge
+   it by GA4 sessions per campaign, not by rankings.
+
+**Part C — „Как направих…“ article per model (the SEO part).**
+
+- One first-person blog post per MakerWorld model: the idea, design process and CAD
+  tool, print settings (layer height, infill, supports), filament, print time,
+  failures and fixes, and real photos.
+- **This is the E-E-A-T signal Google rewards:** original, first-hand experience
+  that nobody else can write. It also catches long-tail searches for that specific
+  model or use case („стойка за часовници 3D печат“).
+- **Each article links to both other corners:** the product card
+  (`/products/#<linkId>`, an internal `routerLink` with the canonical trailing
+  slash, so it is followed and crawlable) and the MakerWorld model page.
+- 🔵 DECISION: **these articles are not generated by the auto-blog pipeline.**
+  Their whole value is the maker's real data and photos. Generic AI copy would throw
+  away the E-E-A-T advantage. Claude can draft from facts and photos you supply
+  (print settings straight from the Bambu Studio project, photos from the printer),
+  and you approve the wording, the same pattern as `/add-product`.
+- **Product → article link:** add an optional `article` field to `ProductVariant`
+  (the blog slug). The card renders it as an **internal** link („Как го направих“).
+  🔵 DECISION: a separate field, not another `links` entry. `links` are external
+  (new tab, `noopener noreferrer`). An article link must be an internal
+  `routerLink` so it stays in the SPA and passes internal link equity.
+- **Article → product/MakerWorld block:** a small reusable „Моделът“ card at the
+  end of each article (`igx-card` with the product photo, an
+  `igxButton="contained"` „Поръчай готов“ → product card, and an
+  `igxButton="outlined"` „Свали от MakerWorld“). It is fed by the product's
+  `linkId`, so the article never duplicates product data.
+- No `Product`/`Review` rich-result markup on the article. It stays `BlogPosting`.
+  Product markup belongs on a page that sells the product.
+
+**Part D — brand presence (MakerWorld as an official profile).**
+
+- `MAKERWORLD_PROFILE_URL` (`https://makerworld.com/en/@zdkolev`) in [`src/data/site-links.ts`](src/data/site-links.ts),
+  next to the Google links, as the single source for every placement.
+- MakerWorld icon link in the **footer** (next to Instagram) and on the **contact
+  page**, using the same `igx-icon` + `igxTooltip` pattern as the existing social
+  links.
+- **New site-wide `LocalBusiness` JSON-LD** with
+  `sameAs: [Instagram, Google Maps profile, MakerWorld, …]`. It goes **statically
+  into `index.html` and `404.html`** (kept in sync, per the standing rule), not
+  through `SeoService.setStructuredData`. That method uses one fixed script id, so
+  each blog post's `BlogPosting` would overwrite it. `sameAs` helps Google connect
+  the brand's profiles into one entity.
+
+### Data: hand-curated JSON, no scraping (Rule 4)
+
+🔵 DECISION: **no new data file.** `products.json` is already the model registry:
+the MakerWorld URL lives in `links`, the article slug in the new `article` field,
+and the profile URL in `site-links.ts`. Nothing is fetched from MakerWorld at build
+time or at runtime. It would break Rule 4, MakerWorld blocks automated requests
+anyway, and a runtime fetch would also need a CSP `connect-src` hole. Download
+counts and likes are **not** mirrored onto the site. They would go stale silently,
+and they are MakerWorld's metric, not ours.
+
+*If a model ever exists on MakerWorld without being a sellable product, revisit
+this: an `available: false` product entry or a small `makerworld.json`.*
+
+### The per-model publishing loop (the workflow this enables)
+
+1. Print and photograph the model.
+2. `/add-product` with the photos, including the MakerWorld link (or leave it empty
+   until step 3).
+3. Upload to MakerWorld. Paste the description template with UTM links (Part B).
+4. Write the „Как направих…“ article from real print data and photos (Part C), and
+   set `article` on the product.
+5. Go back to MakerWorld and fill in the article URL in the description. The
+   triangle is now closed.
+6. `npm run generate-sitemap`, PR, merge.
+
+*Later:* extend `/add-product` (or add a sibling `/maker-story` skill) to run steps
+2–5 as one guided flow: ask for the MakerWorld URL, print settings and filament,
+draft the article and the MakerWorld description text with UTM links already built.
+
+### Options considered and rejected
+
+- **Per-product pages (`/products/<linkId>/`)** would give each model its own
+  indexable page, but with ~12 short product entries they would be thin pages that
+  repeat the card. The article is a richer page for the same purpose. Rejected for
+  now. Revisit if the catalog grows large or products get long-form descriptions.
+- **Syncing model data or stats from MakerWorld** breaks Rule 4, is blocked by
+  MakerWorld, and the data would go stale. Rejected.
+- **Generating the articles with the auto-blog pipeline** throws away the
+  first-hand-experience value that is the point of the articles. Rejected. Claude
+  drafts only from facts you provide.
+
+### Open questions
+
+- ~~MakerWorld profile URL / handle~~ ✅ **Resolved 2026-10-11:** Zdravko provided
+  the profile URL, used for Part D (`MAKERWORLD_PROFILE_URL`) and the bio:
+  ```
+  https://makerworld.com/en/@zdkolev
+  ```
+- Which models to start with. Suggestion: the jewelry stand, since it is already
+  on MakerWorld and already linked from its card.
+
+**Effort estimate:** Part B ≈ XS (copy + convention, no code). Part D ≈ S. Part C
+≈ S–M for the `article` field, the card link and the reusable „Моделът“ block,
+then ~1 h of your time per article. User-facing parts (the footer/contact icon, the
+card's article link, the „Моделът“ block) need a **design artifact first** (Rule 2).
+https://claude.ai/artifact/XcjDAuDJcofVADh3iRJa47?sk=36GmReEBE2qzDuvpfj_34A#page-dcb81aee8d83
+
+---
+
 ## How the ideas reinforce each other
 
 - **Idea 3 Phase 1 (products.json) ships first** — it's the foundation: Idea 1's
@@ -492,6 +673,10 @@ customers section"). Low enough friction that a dedicated skill isn't warranted 
 - The contact-form success prompt (4) fires for gift-box orders (1) too, so the
   most delighted customers — surprise-gift recipients' buyers — get asked at the
   perfect moment.
+- **Idea 6 builds on Idea 3:** `products.json` is the model registry, `/add-product`
+  already sets the MakerWorld `links`, and the per-model publishing loop starts
+  with that skill. The „Как направих…“ articles also give the gift box (1) and the
+  catalog real stories to link to.
 
 ## 🎨 Design artifacts — visual variants per idea
 
@@ -526,6 +711,12 @@ To iterate on any of them, ask Claude to update the artifact — same link is ke
 | 7 | Local drag-drop gallery editor | 2.3 | M | ✅ done |
 | 8 | Issue-form add-from-phone flow (owner-only guard) | 3.3 | M | ✅ done 2026-07-31 |
 | 9 | (Optional) Gift box unboxing gallery, blog post | 1 | S | ⬜ |
+| 10 | MakerWorld description template + UTM convention (off-site, no code) | 6B | XS | ⬜ |
+| 11 | Design artifact: MakerWorld icon, card article link, „Моделът“ block | 6 | S | ⬜ |
+| 12 | `MAKERWORLD_PROFILE_URL` + footer/contact icon + static `LocalBusiness` JSON-LD with `sameAs` | 6D | S | ⬜ |
+| 13 | `article` field on products + card link + reusable „Моделът“ block | 6C | S–M | ⬜ |
+| 14 | First „Как направих…“ article (jewelry stand), close the triangle | 6C | S | ⬜ |
+| 15 | (Optional) extend `/add-product` / `/maker-story` skill for the full loop | 6 | M | ⬜ |
 
 *(Items 3–4 jumped the queue vs. the original order: they're small, independent of
 the JSON refactor, and reviews compound over time — the sooner the CTA ships, the
@@ -594,6 +785,21 @@ Originally made autonomously; **variant choices confirmed by Zdravko on
     **manifest + A** (drag-drop grid), add-product **A + B both mandatory**
     (pasted-image input; owner-only issue guard), review CTA **all three layers**,
     happy customers **A/B on main page + C trust bar on products page**.
+17. *(Idea 6, proposed 2026-10-11, not yet approved)* **MakerWorld data stays
+    hand-curated:** no new data file. The MakerWorld URL lives in the product's
+    `links` field, the article slug in a new `article` field, and the profile URL
+    in `site-links.ts`. No scraping or syncing of stats.
+18. **UTM convention:** `utm_source=makerworld`, `utm_medium=referral|profile`,
+    `utm_campaign=<linkId>`, so GA4 maps 1:1 to products.
+19. **„Как направих…“ articles are written from the maker's real data**, not by
+    the auto-blog pipeline. That first-hand experience is their E-E-A-T value.
+20. **The product → article link is an internal `routerLink`** (new `article`
+    field), not an external `links` entry.
+21. **Site-wide `LocalBusiness` JSON-LD goes static into `index.html`/`404.html`**,
+    because `SeoService.setStructuredData` uses one script id that blog posts
+    would overwrite.
+22. **No per-product pages for now.** Articles are the indexable page per model.
+    *(Revise if the catalog grows large.)*
 
 ### Sources (Ideas 4–5 research)
 
