@@ -172,6 +172,17 @@ export class BlogService {
       imageUrl: 'assets/blogs/images/barzi-i-umni-3d-printeri-cover.webp',
       tags: ['3D принтери', 'Bambu Lab', 'A1 Combo', 'многоцветен печат', 'технологии', 'иновации', 'опит', 'производство'],
       author: '3D Печат България'
+    },
+    {
+      id: '16',
+      title: 'StandStrap: как направих 3D принтиран стопер за сноуборд',
+      description: 'Как проектирах и отпечатах StandStrap — щипка за ръба на сноуборда, която държи дъската на място, докато закопчаваш автоматите прав. Дизайн, настройки за печат и видео.',
+      slug: 'standstrap-3d-printiran-stoper-za-snoubord',
+      route: '/blog/standstrap-3d-printiran-stoper-za-snoubord',
+      date: new Date('2026-10-12'),
+      imageUrl: 'assets/blogs/images/standstrap-3d-printiran-stoper-za-snoubord-cover.webp',
+      tags: ['Сноуборд', '3D печат', 'Собствен дизайн', 'Bambu Studio', 'PLA', 'Зимни спортове', 'Аксесоари', 'MakerWorld'],
+      author: '3D Печат България'
     }
     // Add more blog posts here as you create them
   ];

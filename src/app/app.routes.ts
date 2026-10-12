@@ -97,6 +97,10 @@ export const routes: Routes = [
       {
         path: 'barzi-i-umni-3d-printeri',
         loadComponent: () => import('./blog/barzi-i-umni-3d-printeri/barzi-i-umni-3d-printeri.component').then(m => m.BarziIUmni3dPrinteriComponent)
+      },
+      {
+        path: 'standstrap-3d-printiran-stoper-za-snoubord',
+        loadComponent: () => import('./blog/standstrap-3d-printiran-stoper-za-snoubord/standstrap-3d-printiran-stoper-za-snoubord.component').then(m => m.Standstrap3dPrintiranStoperZaSnoubordComponent)
       }
     ]
   },

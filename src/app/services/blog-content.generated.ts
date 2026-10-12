@@ -13,7 +13,8 @@ import post10 from "../../assets/blogs/kak-da-pechelim-ot-3d-printiraneto.md";
 import post11 from "../../assets/blogs/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model.md";
 import post12 from "../../assets/blogs/pla-pla-pla-pro-i-pln-razliki-i-izbor.md";
 import post13 from "../../assets/blogs/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p.md";
-import post14 from "../../assets/blogs/what-is-3d-printing.md";
+import post14 from "../../assets/blogs/standstrap-3d-printiran-stoper-za-snoubord.md";
+import post15 from "../../assets/blogs/what-is-3d-printing.md";
 
 export const BLOG_CONTENT: Record<string, string> = {
   "3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor": post0,
@@ -30,5 +31,6 @@ export const BLOG_CONTENT: Record<string, string> = {
   "litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model": post11,
   "pla-pla-pla-pro-i-pln-razliki-i-izbor": post12,
   "prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p": post13,
-  "what-is-3d-printing": post14
+  "standstrap-3d-printiran-stoper-za-snoubord": post14,
+  "what-is-3d-printing": post15
 };
