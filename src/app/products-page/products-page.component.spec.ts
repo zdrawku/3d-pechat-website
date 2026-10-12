@@ -26,6 +26,21 @@ describe('ProductsPageComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('sorts A-Я with Bulgarian collation regardless of browser locale', () => {
+    const names = (order: string) => {
+      component.setSortOrder(order);
+      return component.allFilteredProducts.map((p) => p.name);
+    };
+    const bg = (a: string, b: string) => a.localeCompare(b, 'bg');
+    expect(names('asc')).toEqual([...names('asc')].sort(bg));
+    expect(names('desc')).toEqual([...names('asc')].reverse());
+    // Cyrillic names come before Latin ones in 'bg' order.
+    const asc = names('asc');
+    const firstLatin = asc.findIndex((n) => /^[A-Za-z]/.test(n));
+    const lastCyrillic = asc.map((n) => /^[Ѐ-ӿ]/.test(n)).lastIndexOf(true);
+    if (firstLatin !== -1) expect(firstLatin).toBeGreaterThan(lastCyrillic);
+  });
+
   // Foundation #1: products are loaded from src/data/products.json at build time
   // and mapped to runtime variants. These lock in that contract so a future bad
   // JSON edit (or an accidental change to the mapping) fails loudly in CI.

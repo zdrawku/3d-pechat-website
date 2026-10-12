@@ -68,10 +68,13 @@ export class ProductsPageComponent implements OnInit {
       return inName || inDescription || inCustomContentTitle || inCustomContentItems || inTags;
     });
 
+    // Pin the 'bg' collation: without a locale the order follows the visitor's
+    // browser language, and Latin names (e.g. "StandStrap") jump ahead of
+    // Cyrillic ones in non-Bulgarian browsers.
     if (this.sortOrder === 'asc') {
-      filtered = filtered.sort((a, b) => a.name.localeCompare(b.name));
+      filtered = filtered.sort((a, b) => a.name.localeCompare(b.name, 'bg'));
     } else if (this.sortOrder === 'desc') {
-      filtered = filtered.sort((a, b) => b.name.localeCompare(a.name));
+      filtered = filtered.sort((a, b) => b.name.localeCompare(a.name, 'bg'));
     } else if (this.sortOrder === 'newest') {
       filtered = filtered.sort((a, b) => {
         const dateA = a.dateAdded ? new Date(a.dateAdded).getTime() : 0;
