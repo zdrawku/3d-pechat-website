@@ -183,6 +183,17 @@ export class BlogService {
       imageUrl: 'assets/blogs/images/standstrap-3d-printiran-stoper-za-snoubord-cover.webp',
       tags: ['Сноуборд', '3D печат', 'Собствен дизайн', 'Bambu Studio', 'PLA', 'Зимни спортове', 'Аксесоари', 'MakerWorld'],
       author: '3D Печат България'
+    },
+    {
+      id: '17',
+      title: 'Монетна карта за българските евромонети – пълен комплект от 1 цент до 2 евро',
+      description: 'Монетна карта за пълен комплект български евромонети – от 1 цент до 2 евро. 5 варианта от PLA, идеални за подарък и колекция.',
+      slug: 'monetna-karta-bulgarski-evro-moneti',
+      route: '/blog/monetna-karta-bulgarski-evro-moneti',
+      date: new Date('2026-10-12'),
+      imageUrl: 'assets/blogs/images/monetna-karta-bulgarski-evro-moneti-cover.webp',
+      tags: ['монетна карта', 'евромонети', 'България', 'евро', 'колекция', 'подарък', 'PLA', 'MakerWorld'],
+      author: '3D Печат България'
     }
     // Add more blog posts here as you create them
   ];

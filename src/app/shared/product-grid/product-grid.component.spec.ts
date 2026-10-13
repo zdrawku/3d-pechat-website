@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { provideRouter } from '@angular/router';
 
 import { ProductGridComponent } from './product-grid.component';
 import { ProductVariant } from '../../models/product.model';
@@ -22,7 +23,8 @@ describe('ProductGridComponent', () => {
     await TestBed.configureTestingModule({
       // NoopAnimationsModule is required as soon as a card actually renders:
       // igxButton's ripple injects AnimationBuilder (NG03600 without it).
-      imports: [ProductGridComponent, NoopAnimationsModule]
+      imports: [ProductGridComponent, NoopAnimationsModule],
+      providers: [provideRouter([])]
     })
     .compileComponents();
 
@@ -62,6 +64,29 @@ describe('ProductGridComponent', () => {
 
       expect(component.isShowingFront(productA)).toBe(false);
       expect(component.isShowingFront(productB)).toBe(true);
+    });
+  });
+
+  describe('read-more link', () => {
+    it('renders an igxButton link to the article when the product has readMore', () => {
+      component.products = [{
+        ...makeProduct(1),
+        readMore: { label: 'Статия', url: '/blog/statia' }
+      }];
+      fixture.detectChanges();
+
+      const link: HTMLAnchorElement = fixture.nativeElement.querySelector('a[igxButton][data-testid="product-read-more"]');
+      expect(link).toBeTruthy();
+      expect(link.getAttribute('href')).toBe('/blog/statia');
+      expect(link.getAttribute('aria-label')).toBe('Прочети повече: Статия');
+      expect(link.querySelector('igx-icon')).toBeTruthy();
+    });
+
+    it('renders nothing when the product has no readMore', () => {
+      component.products = [makeProduct(1)];
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('[data-testid="product-read-more"]')).toBeNull();
     });
   });
 

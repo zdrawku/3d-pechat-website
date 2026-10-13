@@ -101,6 +101,10 @@ export const routes: Routes = [
       {
         path: 'standstrap-3d-printiran-stoper-za-snoubord',
         loadComponent: () => import('./blog/standstrap-3d-printiran-stoper-za-snoubord/standstrap-3d-printiran-stoper-za-snoubord.component').then(m => m.Standstrap3dPrintiranStoperZaSnoubordComponent)
+      },
+      {
+        path: 'monetna-karta-bulgarski-evro-moneti',
+        loadComponent: () => import('./blog/monetna-karta-bulgarski-evro-moneti/monetna-karta-bulgarski-evro-moneti.component').then(m => m.MonetnaKartaBulgarskiEvroMonetiComponent)
       }
     ]
   },

@@ -279,6 +279,13 @@
   overflow: hidden;
 }
 
+// „Прочети повече“ → related blog article. A flat igxButton so it reads as a
+// quiet text link beside the description, not a second call to action.
+.read-more-link {
+  align-self: flex-start;
+  text-decoration: none;
+}
+
 // Tag chips — quick scannability + reinforces what the search matches on.
 .product-tags {
   display: flex;
