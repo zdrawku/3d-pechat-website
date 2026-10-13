@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { IgxButtonDirective, IGX_CARD_DIRECTIVES, IgxIconComponent, IgxIconButtonDirective, IgxTooltipModule } from 'igniteui-angular';
 
@@ -6,7 +7,7 @@ import { ProductVariant } from '../../models/product.model';
 
 @Component({
   selector: 'app-product-grid',
-  imports: [IgxButtonDirective, IGX_CARD_DIRECTIVES, IgxIconComponent, IgxIconButtonDirective, IgxTooltipModule],
+  imports: [RouterLink, IgxButtonDirective, IGX_CARD_DIRECTIVES, IgxIconComponent, IgxIconButtonDirective, IgxTooltipModule],
   templateUrl: './product-grid.component.html',
   styleUrls: ['./product-grid.component.scss']
 })
