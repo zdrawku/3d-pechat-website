@@ -18,11 +18,23 @@ function trackYoutubeRequests(page: Page): string[] {
   return hits;
 }
 
-function trackCspErrors(page: Page): string[] {
+/**
+ * CSP violations that concern the player: the iframe (`frame-src`) or any
+ * YouTube host. Other violations on the page are deliberately ignored here,
+ * e.g. Google Analytics picks its collect endpoint per region and on CI it hit
+ * `analytics.google.com` / `www.google.com`, which `connect-src` blocks. That
+ * is unrelated to the video and must not fail this test.
+ */
+function trackPlayerCspErrors(page: Page): string[] {
   const errors: string[] = [];
   page.on('console', (msg) => {
-    if (msg.type() === 'error' && /Content Security Policy/i.test(msg.text())) {
-      errors.push(msg.text());
+    const text = msg.text();
+    if (
+      msg.type() === 'error' &&
+      /Content Security Policy/i.test(text) &&
+      (/frame-src/i.test(text) || YOUTUBE_HOSTS.test(text))
+    ) {
+      errors.push(text);
     }
   });
   return errors;
@@ -42,7 +54,7 @@ test.describe('home „Вижте ни в действие“ video', () => {
   });
 
   test('swaps in the nocookie player on click, allowed by the CSP', async ({ page }) => {
-    const cspErrors = trackCspErrors(page);
+    const cspErrors = trackPlayerCspErrors(page);
     await page.goto('/', { waitUntil: 'networkidle' });
 
     const section = page.getByTestId('home-video-section');
