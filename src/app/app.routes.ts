@@ -103,6 +103,10 @@ export const routes: Routes = [
         loadComponent: () => import('./blog/standstrap-3d-printiran-stoper-za-snoubord/standstrap-3d-printiran-stoper-za-snoubord.component').then(m => m.Standstrap3dPrintiranStoperZaSnoubordComponent)
       },
       {
+        path: 'monetna-karta-bulgarski-evro-moneti',
+        loadComponent: () => import('./blog/monetna-karta-bulgarski-evro-moneti/monetna-karta-bulgarski-evro-moneti.component').then(m => m.MonetnaKartaBulgarskiEvroMonetiComponent)
+      },
+      {
         path: '3d-pechat-po-porachka-sofia-video',
         loadComponent: () => import('./blog/3d-pechat-po-porachka-sofia-video/3d-pechat-po-porachka-sofia-video.component').then(m => m.ThreeDPechatPoPorachkaSofiaVideoComponent)
       }

@@ -1,0 +1,18 @@
+<article class="blog-container">
+    <button igxButton="contained" (click)="goBack()" class="back-button">
+        <igx-icon>arrow_back</igx-icon>
+        Back to Articles
+    </button>
+    <markdown [data]="postContent"></markdown>
+    <div class="article-cta">
+        <a igxButton="contained" routerLink="/products" data-testid="article-cta-products">
+            <igx-icon>inventory_2</igx-icon>
+            Към продуктите
+        </a>
+        <a igxButton="outlined" routerLink="/contact" data-testid="article-cta-contact">
+            <igx-icon>call</igx-icon>
+            Контакти
+        </a>
+    </div>
+</article>
+<app-related-content slug="monetna-karta-bulgarski-evro-moneti"></app-related-content>

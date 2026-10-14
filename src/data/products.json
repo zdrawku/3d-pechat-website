@@ -22,7 +22,17 @@
     "dateAdded": "2024-01-01",
     "hasOldCoins": true,
     "hasEuroCoins": true,
-    "tags": ["монетна карта", "българия", "знаме", "колекция", "подарък", "монети"]
+    "readMore": {
+      "label": "Монетна карта за българските евромонети – пълен комплект от 1 цент до 2 евро",
+      "url": "/blog/monetna-karta-bulgarski-evro-moneti"
+    },
+    "tags": ["монетна карта", "българия", "знаме", "колекция", "подарък", "монети"],
+    "links": [
+      {
+        "label": "Виж модела в MakerWorld",
+        "url": "https://makerworld.com/en/models/3435823-coin-card-holder-bulgaria-euro#profileId-3917631"
+      }
+    ]
   },
   {
     "id": 4,
@@ -34,8 +44,16 @@
     "dateAdded": "2024-01-01",
     "hasOldCoins": true,
     "hasEuroCoins": true,
+    "readMore": {
+      "label": "Монетна карта за българските евромонети – пълен комплект от 1 цент до 2 евро",
+      "url": "/blog/monetna-karta-bulgarski-evro-moneti"
+    },
     "tags": ["монетна карта", "българия", "знаме", "колекция", "подарък", "монети"],
     "links": [
+      {
+        "label": "Виж модела в MakerWorld",
+        "url": "https://makerworld.com/en/models/3435823-coin-card-holder-bulgaria-euro#profileId-3917631"
+      },
       {
         "label": "Виж във видеото",
         "url": "https://youtu.be/f8yTuEcOCjU?t=19",
@@ -53,7 +71,17 @@
     "dateAdded": "2024-01-01",
     "hasOldCoins": true,
     "hasEuroCoins": true,
-    "tags": ["монетна карта", "българия", "знаме", "колекция", "подарък", "монети"]
+    "readMore": {
+      "label": "Монетна карта за българските евромонети – пълен комплект от 1 цент до 2 евро",
+      "url": "/blog/monetna-karta-bulgarski-evro-moneti"
+    },
+    "tags": ["монетна карта", "българия", "знаме", "колекция", "подарък", "монети"],
+    "links": [
+      {
+        "label": "Виж модела в MakerWorld",
+        "url": "https://makerworld.com/en/models/3435823-coin-card-holder-bulgaria-euro#profileId-3917631"
+      }
+    ]
   },
   {
     "id": 7,
@@ -76,6 +104,10 @@
         "Специални гравюри или текст"
       ]
     },
+    "readMore": {
+      "label": "Монетна карта за българските евромонети – пълен комплект от 1 цент до 2 евро",
+      "url": "/blog/monetna-karta-bulgarski-evro-moneti"
+    },
     "tags": ["монетна карта", "българия", "знаме", "колекция", "подарък", "монети"]
   },
   {
@@ -96,6 +128,10 @@
         "Правоъгълна карта с наклонено знаме",
         "Правоъгълна монетна карта с наклонено българско знаме (45 градуса)"
       ]
+    },
+    "readMore": {
+      "label": "Монетна карта за българските евромонети – пълен комплект от 1 цент до 2 евро",
+      "url": "/blog/monetna-karta-bulgarski-evro-moneti"
     },
     "tags": ["монетна карта", "българия", "знаме", "колекция", "подарък", "монети", "премиум"]
   },
@@ -242,6 +278,35 @@
       {
         "label": "Виж модела в MakerWorld",
         "url": "https://makerworld.com/en/models/3427894-standstrap-strap-in-standing-snowboard-stopper#profileId-3907449"
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "linkId": "darzhach-za-evro-moneti-fidzhet-spinar",
+    "name": "Държач за евро монети — фиджет спинър",
+    "description": "3D принтиран държач за монети от 2 евро, 1 евро и 50 евроцента, с по около 7 монети във всяко гнездо. Версията спинър се върти между пръстите — с щракащи капачета или с ролков лагер, отпечатан направо в корпуса, без метални части.",
+    "frontImage": "/assets/real-images/darzhach-za-evro-moneti-fidzhet-spinar.webp",
+    "backImage": "/assets/real-images/darzhach-za-evro-moneti-fidzhet-spinar-back.webp",
+    "dateAdded": "2026-10-14",
+    "hasOldCoins": false,
+    "hasEuroCoins": true,
+    "customContent": {
+      "show": true,
+      "title": "Предимства на дизайна:",
+      "items": [
+        "Отделни гнезда за 2 €, 1 € и 50 евроцента — общо до около 24,50 € в монети",
+        "Върти се като фиджет спинър — забавно и успокояващо на бюрото",
+        "Версия с ролков лагер, отпечатан готов в корпуса — без метални части",
+        "Компактен — около 7,5 см в диаметър",
+        "Цвят по избор"
+      ]
+    },
+    "tags": ["монети", "евро", "евромонети", "държач за монети", "спинър", "фиджет спинър", "антистрес", "играчка", "бюро", "подарък"],
+    "links": [
+      {
+        "label": "Виж модела в MakerWorld",
+        "url": "https://makerworld.com/en/models/3435739-euro-coin-holders-up-to-6-coins-fidget-spinners#profileId-3917511"
       }
     ]
   }

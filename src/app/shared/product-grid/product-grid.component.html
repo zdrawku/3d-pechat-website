@@ -84,6 +84,13 @@
         <div #descriptionTooltipRef="tooltip" igxTooltip class="product-tooltip description-tooltip">
           {{ product.description }}
         </div>
+        @if (product.readMore; as readMore) {
+          <a igxButton="flat" class="read-more-link" [routerLink]="readMore.url"
+            [attr.aria-label]="'Прочети повече: ' + readMore.label" data-testid="product-read-more">
+            Прочети повече
+            <igx-icon family="material" aria-hidden="true">arrow_forward</igx-icon>
+          </a>
+        }
         @if (product.tags; as tags) {
           @if (tags.length) {
             <div class="product-tags">

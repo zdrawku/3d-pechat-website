@@ -35,6 +35,20 @@ export interface Product {
    * design. Opened in a new tab with `rel="noopener noreferrer"`.
    */
   links?: ProductLink[];
+  /**
+   * Optional internal link to a related blog article, shown as a „Прочети повече“
+   * link under the description (also gives the article an internal link from the
+   * catalog for SEO). `url` is a root-relative route, e.g. `/blog/<slug>`.
+   */
+  readMore?: ProductReadMore;
+}
+
+/** A „Прочети повече“ pointer from a product card to a blog article. */
+export interface ProductReadMore {
+  /** Article title — read out as context by assistive tech. */
+  label: string;
+  /** Root-relative route of the article. */
+  url: string;
 }
 
 /** An external reference on a product card (model page, video, etc.). */

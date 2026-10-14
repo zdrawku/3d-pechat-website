@@ -12,10 +12,11 @@ import post9 from "../../assets/blogs/infill-pri-3d-pechat-platnost-zdravina-i-f
 import post10 from "../../assets/blogs/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish.md";
 import post11 from "../../assets/blogs/kak-da-pechelim-ot-3d-printiraneto.md";
 import post12 from "../../assets/blogs/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model.md";
-import post13 from "../../assets/blogs/pla-pla-pla-pro-i-pln-razliki-i-izbor.md";
-import post14 from "../../assets/blogs/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p.md";
-import post15 from "../../assets/blogs/standstrap-3d-printiran-stoper-za-snoubord.md";
-import post16 from "../../assets/blogs/what-is-3d-printing.md";
+import post13 from "../../assets/blogs/monetna-karta-bulgarski-evro-moneti.md";
+import post14 from "../../assets/blogs/pla-pla-pla-pro-i-pln-razliki-i-izbor.md";
+import post15 from "../../assets/blogs/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p.md";
+import post16 from "../../assets/blogs/standstrap-3d-printiran-stoper-za-snoubord.md";
+import post17 from "../../assets/blogs/what-is-3d-printing.md";
 
 export const BLOG_CONTENT: Record<string, string> = {
   "3d-pechat-po-porachka-sofia-video": post0,
@@ -31,8 +32,9 @@ export const BLOG_CONTENT: Record<string, string> = {
   "izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish": post10,
   "kak-da-pechelim-ot-3d-printiraneto": post11,
   "litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model": post12,
-  "pla-pla-pla-pro-i-pln-razliki-i-izbor": post13,
-  "prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p": post14,
-  "standstrap-3d-printiran-stoper-za-snoubord": post15,
-  "what-is-3d-printing": post16
+  "monetna-karta-bulgarski-evro-moneti": post13,
+  "pla-pla-pla-pro-i-pln-razliki-i-izbor": post14,
+  "prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p": post15,
+  "standstrap-3d-printiran-stoper-za-snoubord": post16,
+  "what-is-3d-printing": post17
 };

@@ -186,6 +186,17 @@ export class BlogService {
     },
     {
       id: '17',
+      title: 'Монетна карта за българските евромонети – пълен комплект от 1 цент до 2 евро',
+      description: 'Монетна карта за пълен комплект български евромонети – от 1 цент до 2 евро. 5 варианта от PLA, идеални за подарък и колекция.',
+      slug: 'monetna-karta-bulgarski-evro-moneti',
+      route: '/blog/monetna-karta-bulgarski-evro-moneti',
+      date: new Date('2026-10-12'),
+      imageUrl: 'assets/blogs/images/monetna-karta-bulgarski-evro-moneti-cover.webp',
+      tags: ['монетна карта', 'евромонети', 'България', 'евро', 'колекция', 'подарък', 'PLA', 'MakerWorld'],
+      author: '3D Печат България'
+    },
+    {
+      id: '18',
       title: 'Вижте как работим: 3D печат по поръчка в София (видео)',
       description: 'Вижте в 60 секунди наши 3D отпечатани проекти: разделители за книги, монетник „България“ и функционални части. И как протича поръчката от идея до детайл.',
       slug: '3d-pechat-po-porachka-sofia-video',
