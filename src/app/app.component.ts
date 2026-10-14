@@ -2,8 +2,8 @@ import { Component, ElementRef, HostListener, OnInit, PLATFORM_ID, ViewChild, in
 import { isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { IGX_NAVBAR_DIRECTIVES, IGX_NAVIGATION_DRAWER_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxIconComponent, IgxIconService, IgxNavigationDrawerComponent, IgxToggleActionDirective, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
-import { instagram, tiktok } from '@igniteui/material-icons-extended';
-import { GOOGLE_REVIEW_URL } from '../data/site-links';
+import { instagram, tiktok, youtube } from '@igniteui/material-icons-extended';
+import { GOOGLE_REVIEW_URL, YOUTUBE_CHANNEL_URL } from '../data/site-links';
 import { ReviewCtaComponent } from './shared/review-cta/review-cta.component';
 
 @Component({
@@ -24,6 +24,8 @@ export class AppComponent implements OnInit {
   public isDarkTheme = false;
   /** Direct Google write-review link, shared by every review CTA (see site-links). */
   public readonly googleReviewUrl = GOOGLE_REVIEW_URL;
+  /** YouTube channel — navbar + footer icon links (see site-links). */
+  public readonly youtubeChannelUrl = YOUTUBE_CHANNEL_URL;
 
   constructor(
     public router: Router,
@@ -31,6 +33,7 @@ export class AppComponent implements OnInit {
   ) {
     this.iconService.addSvgIconFromText(instagram.name, instagram.value, 'imx-icons');
     this.iconService.addSvgIconFromText(tiktok.name, tiktok.value, 'imx-icons');
+    this.iconService.addSvgIconFromText(youtube.name, youtube.value, 'imx-icons');
   }
 
   private readonly platformId = inject(PLATFORM_ID);

@@ -118,7 +118,31 @@ never improve a customer's wording, and never change the sentiment.
 > Google itself) and it risks a manual action. The section is display-only; the
 > real stars already show on the Business Profile in search results.
 
-### ⚠️ Encoding note
+## `videos.json` — YouTube videos shown on the site
+
+Curated list of videos from the [YouTube channel](https://www.youtube.com/@3dpechatbg)
+(`YOUTUBE_CHANNEL_URL` in [`site-links.ts`](site-links.ts)). Shape:
+[`video.model.ts`](../app/models/video.model.ts). The fields mirror schema.org
+`VideoObject`, so one entry feeds both the player and its structured data.
+
+| Field         | Required | Notes |
+|---------------|----------|-------|
+| `id`          | ✅       | YouTube video ID — the part after `youtu.be/`. |
+| `slug`        | ✅       | Stable kebab-case key for our own references (GA events). |
+| `featured`    | –        | `true` on the **one** video the home page shows. |
+| `title`       | ✅       | Title exactly as published on YouTube. |
+| `description` | ✅       | Bulgarian, 1–2 sentences. |
+| `uploadDate`  | ✅       | ISO 8601 with offset, Sofia time (`2026-10-14T08:15:17+03:00`). |
+| `duration`    | ✅       | ISO 8601 duration (`PT1M1S`). |
+| `poster`      | ✅       | Self-hosted 16:9 webp under `assets/real-images/main-images/` (no leading slash). Download `https://i.ytimg.com/vi/<id>/maxresdefault.jpg` and convert with sharp (≈1280 px, quality ~72). Self-hosting keeps the page free of YouTube requests until the visitor presses play. |
+| `posterAlt`   | ✅       | Bulgarian alt text describing what the frame shows. |
+
+The player must be an Angular component, never an `<iframe>` inside blog
+markdown — `ngx-markdown` sanitises iframes away. Embeds use
+`youtube-nocookie.com`, which is the only YouTube host allowed by the CSP
+`frame-src` in `src/index.html` / `src/404.html`.
+
+## ⚠️ Encoding note (all files here)
 
 These files contain Bulgarian (Cyrillic) text. Edit them with a UTF-8-aware
 editor/tool. Do **not** bulk-edit them via Windows PowerShell 5.1 — it re-encodes

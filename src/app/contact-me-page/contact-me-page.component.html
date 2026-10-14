@@ -49,6 +49,15 @@
         <div igxTooltip #tiktokTooltip="tooltip">
           Гледайте видеа от нашите 3D печат проекти в TikTok
         </div>
+
+        <button igxButton="flat" type="button" class="social-pill" (click)="openYouTube()"
+                [igxTooltipTarget]="youtubeTooltip" data-testid="youtube-contact-button">
+          <igx-icon family="imx-icons" name="youtube"></igx-icon>
+          YouTube
+        </button>
+        <div igxTooltip #youtubeTooltip="tooltip">
+          Гледайте как работим в нашия YouTube канал
+        </div>
       </div>
 
       <p class="response-note">

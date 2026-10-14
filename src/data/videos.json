@@ -1,0 +1,15 @@
+{
+  "videos": [
+    {
+      "id": "f8yTuEcOCjU",
+      "slug": "promo-2026-10",
+      "featured": true,
+      "title": "3D печат по поръчка в София | Прототипи, части и подаръци – 3dpechat.bg",
+      "description": "Професионален 3D печат и 3D принтиране по поръчка в София – прототипи, функционални части, макети, подаръци и малки серии.",
+      "uploadDate": "2026-10-14T08:15:17+03:00",
+      "duration": "PT1M1S",
+      "poster": "assets/real-images/main-images/promo-video-poster.webp",
+      "posterAlt": "Кадър от видеото: 3D печат по поръчка в София – монетна карта, дрон и други проекти на 3dpechat.bg"
+    }
+  ]
+}

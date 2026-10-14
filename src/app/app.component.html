@@ -35,6 +35,15 @@
   <div igxTooltip #tiktokNavTooltip="tooltip">
     Гледайте ни в TikTok
   </div>
+
+  <a [href]="youtubeChannelUrl" target="_blank" rel="noopener noreferrer"
+     igxIconButton="flat" class="icon_button_5" aria-label="YouTube канал"
+     [igxTooltipTarget]="youtubeNavTooltip" data-testid="youtube-nav-link">
+    <igx-icon class="icon" family="imx-icons" name="youtube"></igx-icon>
+  </a>
+  <div igxTooltip #youtubeNavTooltip="tooltip">
+    Гледайте ни в YouTube
+  </div>
   
   <button class="theme-switch" [class.is-dark]="isDarkTheme" (click)="toggleTheme()"
           aria-label="Смени тема" [igxTooltipTarget]="themeTooltip" data-testid="theme-toggle">
@@ -168,6 +177,15 @@
               </a>
               <div igxTooltip #tiktokFooterTooltip="tooltip">
                 TikTok: Видеа от 3D печат процеса
+              </div>
+
+              <a [href]="youtubeChannelUrl" target="_blank" rel="noopener noreferrer"
+                 aria-label="YouTube канал" [igxTooltipTarget]="youtubeFooterTooltip"
+                 data-testid="youtube-footer-link">
+                <igx-icon class="icon_site_footer" family="imx-icons" name="youtube"></igx-icon>
+              </a>
+              <div igxTooltip #youtubeFooterTooltip="tooltip">
+                YouTube: Видеа от нашата работилница
               </div>
             </div>
           </div>
