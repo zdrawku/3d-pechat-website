@@ -1,7 +1,9 @@
 # YouTube Integration Plan — channel on the site + promoting the launch video
 
-> Drafted 2026-10-14 by Claude (Fable) for an implementing agent. Status: **⬜ plan
-> approved by Zdravko, nothing implemented yet.** Work through the phases in
+> Drafted 2026-10-14 by Claude (Fable) for an implementing agent. Status:
+> **Phase 0 ✅ built 2026-10-14** (branch `zkolev/youtube-channel`, not merged).
+> **Phase 1 🟡 design artifact published, awaiting approval:**
+> https://claude.ai/artifact/FND8e5YZAk6wRq8iUozfgA (recommends A + „Абонирай се“). Work through the phases in
 > order; **Phase 1 ends with a hard stop for design approval** (CLAUDE.md Rule 2).
 >
 > Read [`CLAUDE.md`](CLAUDE.md) first. Every rule there applies, and three of
