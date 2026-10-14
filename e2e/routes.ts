@@ -34,6 +34,7 @@ export const BLOG_ROUTES: RouteSpec[] = [
   '/blog/3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor',
   '/blog/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt',
   '/blog/infill-pri-3d-pechat-platnost-zdravina-i-filament',
+  '/blog/3d-pechat-po-porachka-sofia-video',
 ].map((path) => ({ path }));
 
 export const ALL_ROUTES: RouteSpec[] = [...CORE_ROUTES, ...BLOG_ROUTES];

@@ -5,6 +5,7 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { ProductsPageComponent } from './products-page.component';
 import { Product, ProductVariant } from '../models/product.model';
 import productsData from '../../data/products.json';
+import { VIDEOS } from '../shared/youtube-embed/video.util';
 
 describe('ProductsPageComponent', () => {
   let component: ProductsPageComponent;
@@ -74,6 +75,32 @@ describe('ProductsPageComponent', () => {
       const linkIds = component.productVariants.map((p) => p.linkId);
       expect(new Set(ids).size).toBe(ids.length);
       expect(new Set(linkIds).size).toBe(linkIds.length);
+    });
+
+    // „Виж във видеото“ convention (Idea 7): a play_circle link that opens one
+    // of our curated videos at the second the product appears.
+    it('points every „Виж във видеото“ link at a curated video and timestamp', () => {
+      const videoIds = new Set(VIDEOS.map((v) => v.id));
+      const videoLinks = component.productVariants.flatMap((p) =>
+        (p.links ?? []).filter((l) => l.icon === 'play_circle').map((l) => ({ product: p.linkId, link: l }))
+      );
+      expect(videoLinks.map((v) => v.product).sort()).toEqual(['razdeliteli-za-knigi', 'variant-2']);
+      for (const { product, link } of videoLinks) {
+        expect(link.label).withContext(product).toBe('Виж във видеото');
+        const m = /^https:\/\/youtu\.be\/([\w-]{11})\?t=(\d+)$/.exec(link.url);
+        expect(m).withContext(`${product}: youtu.be/<id>?t=<seconds>`).not.toBeNull();
+        expect(videoIds.has(m![1])).withContext(`${product}: video is in videos.json`).toBeTrue();
+      }
+    });
+
+    it('renders the video link as an Ignite icon button on the product card', () => {
+      const card = fixture.nativeElement.querySelector('#razdeliteli-za-knigi') as HTMLElement | null;
+      expect(card).withContext('book-dividers card').not.toBeNull();
+      const link = card!.querySelector<HTMLAnchorElement>('a[data-testid="product-external-link"][href*="youtu.be"]');
+      expect(link).withContext('video link on the card').not.toBeNull();
+      expect(link!.getAttribute('aria-label')).toBe('Виж във видеото');
+      expect(link!.getAttribute('rel')).toContain('noopener');
+      expect(link!.querySelector('igx-icon')?.textContent?.trim()).toBe('play_circle');
     });
 
     it('supports the optional featured / pageUrl MAIN-product fields', () => {

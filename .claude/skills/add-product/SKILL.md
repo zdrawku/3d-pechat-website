@@ -23,6 +23,11 @@ Plus a brief from the user: what the thing is, roughly. Anything else
 (`name`, `description`, `tags`, `featured`, MakerWorld link…) is optional — you
 draft it and they approve.
 
+If the product appears in one of our YouTube videos (`src/data/videos.json`),
+ask for the second it shows up and add a `links` entry
+`{ "label": "Виж във видеото", "url": "https://youtu.be/<id>?t=<seconds>", "icon": "play_circle" }`.
+The products-page spec checks this format.
+
 ## Steps
 
 ### 1. Gather and confirm inputs

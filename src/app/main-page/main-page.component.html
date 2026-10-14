@@ -126,6 +126,34 @@
   </div>
 </section>
 
+<!-- VIDEO — approved design „A“ (Idea 7, FEATURE-IDEAS-PLAN.md): its own
+     section right after the process steps, so the visitor sees the four steps
+     in practice. Poster only until play is pressed (app-youtube-embed), so it
+     adds no YouTube request to the page load. Grid areas put the heading
+     ABOVE the player on phones and beside it on desktop. -->
+<section class="home_section video_section" aria-labelledby="home-video-heading" data-testid="home-video-section">
+  <div class="section_inner video_inner">
+    <div class="video_head">
+      <p class="section_eyebrow">Видео</p>
+      <h2 class="section_heading" id="home-video-heading">Вижте ни в действие</h2>
+    </div>
+    <app-youtube-embed class="video_player" [video]="featuredVideo"></app-youtube-embed>
+    <p class="video_desc">
+      За 60 секунди: как превръщаме идея в готов детайл — прототипи, функционални части, макети и подаръци, отпечатани в София.
+    </p>
+    <div class="hero_cta_row video_cta">
+      <button igxButton="contained" type="button" class="btn_primary" (click)="navigateToContact()">
+        Заяви оферта →
+      </button>
+      <a igxButton="outlined" class="btn_ghost video_subscribe" [href]="youtubeSubscribeUrl"
+         target="_blank" rel="noopener noreferrer" data-testid="home-video-subscribe">
+        <igx-icon family="imx-icons" name="youtube"></igx-icon>
+        Абонирай се
+      </a>
+    </div>
+  </div>
+</section>
+
 <!-- ABOUT + GALLERY -->
 <section class="row-layout image_gallery_section_template_1">
   <div class="about_inner">

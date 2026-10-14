@@ -32,7 +32,7 @@ which maps each entry to a runtime `ProductVariant` by adding `showFront: true`.
 | `pageUrl`        | –        | Gives the product its own page (e.g. `/gift-box`) instead of the default „order via `/contact`“ prefill flow. Used with `featured` for MAIN products. |
 | `customContent`  | –        | `{ show, title, items[] }` — an extra bulleted info tooltip on the card. |
 | `tags`           | –        | Bulgarian keywords; searchable and shown as chips (first 3, then `+N`). |
-| `links`          | –        | External references shown as icon buttons in the card's top row: `[{ label, url, icon? }]`. E.g. a MakerWorld/Printables model page. `label` is the tooltip/aria text; `icon` is an optional Material icon name (defaults to `open_in_new`). Opened in a new tab with `rel="noopener noreferrer"`. |
+| `links`          | –        | External references shown as icon buttons in the card's top row: `[{ label, url, icon? }]`. E.g. a MakerWorld/Printables model page. `label` is the tooltip/aria text; `icon` is an optional Material icon name (defaults to `open_in_new`). Opened in a new tab with `rel="noopener noreferrer"`. **Video convention:** if the product appears in one of our videos (`videos.json`), add `{ "label": "Виж във видеото", "url": "https://youtu.be/<id>?t=<seconds>", "icon": "play_circle" }`. |
 
 > `showFront` is **not** a data field — it is runtime UI state added by the
 > component. Don't put it in the JSON.
@@ -136,6 +136,12 @@ Curated list of videos from the [YouTube channel](https://www.youtube.com/@3dpec
 | `duration`    | ✅       | ISO 8601 duration (`PT1M1S`). |
 | `poster`      | ✅       | Self-hosted 16:9 webp under `assets/real-images/main-images/` (no leading slash). Download `https://i.ytimg.com/vi/<id>/maxresdefault.jpg` and convert with sharp (≈1280 px, quality ~72). Self-hosting keeps the page free of YouTube requests until the visitor presses play. |
 | `posterAlt`   | ✅       | Bulgarian alt text describing what the frame shows. |
+
+Used by `app-youtube-embed` (`src/app/shared/youtube-embed/`) on the home
+page („Вижте ни в действие“) and in the video article
+`/blog/3d-pechat-po-porachka-sofia-video/`, and by `videoObjectSchema()` for
+their `VideoObject` structured data. Products that appear in a video link to
+the right second via `links` (see the products table above).
 
 The player must be an Angular component, never an `<iframe>` inside blog
 markdown — `ngx-markdown` sanitises iframes away. Embeds use

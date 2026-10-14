@@ -1,0 +1,28 @@
+<article class="blog-container">
+    <button igxButton="contained" (click)="goBack()" class="back-button">
+        <igx-icon>arrow_back</igx-icon>
+        Back to Articles
+    </button>
+    <markdown [data]="postContent"></markdown>
+    <app-youtube-embed class="blog-video" [video]="video" data-testid="article-video"></app-youtube-embed>
+    <markdown [data]="postContentAfterVideo"></markdown>
+</article>
+<!-- Outside .blog-container on purpose: blog-styles colours every <a> inside
+     it with the primary colour, which would paint the contained button's label
+     orange-on-orange (axe color-contrast). -->
+<nav class="article-cta" aria-label="Следващи стъпки" data-testid="article-cta">
+    <a igxButton="contained" routerLink="/products" data-testid="article-cta-products">
+        <igx-icon>inventory_2</igx-icon>
+        Към продуктите
+    </a>
+    <a igxButton="outlined" routerLink="/contact" data-testid="article-cta-contact">
+        <igx-icon>call</igx-icon>
+        Контакти
+    </a>
+    <a igxButton="outlined" [href]="youtubeSubscribeUrl" target="_blank" rel="noopener noreferrer"
+       data-testid="article-cta-subscribe">
+        <igx-icon family="imx-icons" name="youtube"></igx-icon>
+        Абонирай се в YouTube
+    </a>
+</nav>
+<app-related-content [slug]="slug"></app-related-content>

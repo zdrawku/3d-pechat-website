@@ -2,8 +2,15 @@
 
 > Drafted 2026-10-14 by Claude (Fable) for an implementing agent. Status:
 > **Phase 0 ✅ built 2026-10-14** (branch `zkolev/youtube-channel`, not merged).
-> **Phase 1 🟡 design artifact published, awaiting approval:**
-> https://claude.ai/artifact/FND8e5YZAk6wRq8iUozfgA (recommends A + „Абонирай се“). Work through the phases in
+> **Phase 1 ✅ approved 2026-10-14:** A + „Абонирай се“, own section, nothing replaced
+> (https://claude.ai/artifact/FND8e5YZAk6wRq8iUozfgA).
+> **Phases 2 and 3 ✅ built 2026-10-14**, uncommitted, awaiting Zdravko's review.
+> Video contents and timestamps (from the storyboard frames): 0:09 book dividers,
+> 0:13 pull-up bar handles, 0:17 prototypes, 0:19 coin card „България“,
+> 0:23 collector models, 0:27 coin organizer, 0:31 functional parts, 0:33 how we
+> work, 0:45 portfolio, 0:49 reviews, 0:53 CTA. Only the book dividers and the
+> Bulgaria-map coin card (`variant-2`) are catalog products. **Phase 4** (off-site
+> promotion checklist, §8) is still for Zdravko to do. Work through the phases in
 > order; **Phase 1 ends with a hard stop for design approval** (CLAUDE.md Rule 2).
 >
 > Read [`CLAUDE.md`](CLAUDE.md) first. Every rule there applies, and three of

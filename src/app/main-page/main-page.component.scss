@@ -1,6 +1,7 @@
 @use "igniteui-angular/theming" as *;
 @use '../fluid' as *;
 @use '../sla-hover' as sla;
+@use '../button-tones' as *;
 
 :host {
   height: 100%;
@@ -509,6 +510,84 @@
   font-size: rem(13px);
   color: var(--ig-gray-700);
   line-height: 1.5;
+}
+
+// ===================== VIDEO („Вижте ни в действие“) =====================
+// Transparent like the props section — the body's dotted texture shows through.
+// Desktop: player left spanning all rows, heading/description/buttons stacked
+// and vertically centred on the right (the empty first/last rows centre them).
+// Phone: heading, then player, then description and buttons (approved order).
+.video_inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  grid-template-rows: 1fr auto auto auto 1fr;
+  grid-template-areas:
+    "player ."
+    "player head"
+    "player desc"
+    "player cta"
+    "player .";
+  column-gap: rem(40px);
+
+  @media (max-width: 860px) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-template-areas:
+      "head"
+      "player"
+      "desc"
+      "cta";
+  }
+}
+
+.video_head {
+  grid-area: head;
+  min-width: 0;
+
+  @media (max-width: 860px) {
+    margin-bottom: rem(20px);
+  }
+}
+
+.video_player {
+  grid-area: player;
+  align-self: center;
+  min-width: 0;
+}
+
+.video_desc {
+  grid-area: desc;
+  margin: rem(14px) 0 0;
+  max-width: 52ch;
+  font-size: rem(15px);
+  line-height: 1.6;
+  color: var(--ig-gray-700);
+
+  @media (max-width: 860px) {
+    margin-top: rem(18px);
+  }
+}
+
+.video_cta {
+  grid-area: cta;
+  margin-top: rem(22px);
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+
+    > * {
+      width: 100%;
+    }
+  }
+}
+
+// AA-safe teal (the default outlined teal is ~2.9:1 on paper) + icon gap.
+.video_subscribe {
+  @include teal-outlined-button;
+
+  igx-icon {
+    margin-right: rem(6px);
+  }
 }
 
 // ===================== ABOUT + GALLERY =====================

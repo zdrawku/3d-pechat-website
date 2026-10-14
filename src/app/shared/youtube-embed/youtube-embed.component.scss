@@ -1,0 +1,123 @@
+@use "igniteui-angular/theming" as *;
+@use "../../sla-hover" as sla;
+
+:host {
+  display: block;
+}
+
+// The card keeps the site's card radius/shadow and the shared hover beam.
+.video-card {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  background: var(--ig-gray-900);
+
+  @include sla.sla-hover();
+}
+
+// Fixed 16:9 box: the poster and the iframe occupy exactly the same space,
+// so swapping one for the other never shifts the page.
+.video-card__media {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.video-card__poster,
+.video-card__frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video-card__poster {
+  object-fit: cover;
+  cursor: pointer;
+}
+
+// Blog articles style every <img> inside .blog-container (margin, radius,
+// shadow, width caps via ::ng-deep). The poster must fill the 16:9 box
+// exactly, so neutralise those with a more specific selector.
+.video-card .video-card__media .video-card__poster {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+// Full-size layer over the poster (see the template comment). It lets clicks
+// through to the poster; only the play button inside takes pointer events.
+// igx-card-media sets line-height: 0, so restore it for the chip text.
+.video-card__overlay {
+  position: absolute;
+  inset: 0;
+  line-height: normal;
+  pointer-events: none;
+}
+
+// Brand-orange play button, styled only through the contained icon button's
+// own theme variables. Only primary-500 has a contrast colour tuned for BOTH
+// palettes (white in light, near-black in dark; see the .dark-theme block in
+// styles.scss), so every state stays on 500 and hover feedback comes from the
+// scale + violet beam instead of a darker shade.
+.video-card__play {
+  --ig-contained-icon-button-size: #{rem(64px)};
+  --ig-contained-icon-button-background: var(--ig-primary-500);
+  --ig-contained-icon-button-foreground: var(--ig-primary-500-contrast);
+  --ig-contained-icon-button-hover-background: var(--ig-primary-500);
+  --ig-contained-icon-button-hover-foreground: var(--ig-primary-500-contrast);
+  --ig-contained-icon-button-focus-background: var(--ig-primary-500);
+  --ig-contained-icon-button-focus-foreground: var(--ig-primary-500-contrast);
+  --ig-contained-icon-button-focus-hover-background: var(--ig-primary-500);
+  --ig-contained-icon-button-focus-hover-foreground: var(--ig-primary-500-contrast);
+  --ig-contained-icon-button-active-background: var(--ig-primary-500);
+  --ig-contained-icon-button-active-foreground: var(--ig-primary-500-contrast);
+  --ig-contained-icon-button-border-radius: 50%;
+  --ig-icon-size: #{rem(36px)};
+
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  box-shadow: 0 rem(4px) rem(16px) rgba(0, 0, 0, 0.35);
+  pointer-events: auto;
+  transition: scale 0.2s ease;
+
+  &:focus-visible {
+    outline: rem(3px) solid var(--ig-primary-500-contrast);
+    outline-offset: rem(3px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.video-card:hover .video-card__play {
+  scale: 1.08;
+
+  @media (prefers-reduced-motion: reduce) {
+    scale: 1;
+  }
+}
+
+// Length chip, bottom-right, on a fixed dark scrim so it reads on any poster.
+.video-card__duration {
+  position: absolute;
+  right: rem(10px);
+  bottom: rem(10px);
+  padding: rem(4px) rem(7px);
+  border-radius: rem(4px);
+  background: rgba(0, 0, 0, 0.74);
+  color: #fff;
+  font-size: rem(12px);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  pointer-events: none;
+}

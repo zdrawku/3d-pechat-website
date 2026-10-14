@@ -34,7 +34,14 @@
     "dateAdded": "2024-01-01",
     "hasOldCoins": true,
     "hasEuroCoins": true,
-    "tags": ["монетна карта", "българия", "знаме", "колекция", "подарък", "монети"]
+    "tags": ["монетна карта", "българия", "знаме", "колекция", "подарък", "монети"],
+    "links": [
+      {
+        "label": "Виж във видеото",
+        "url": "https://youtu.be/f8yTuEcOCjU?t=19",
+        "icon": "play_circle"
+      }
+    ]
   },
   {
     "id": 6,
@@ -200,7 +207,14 @@
     "dateAdded": "2026-08-03",
     "hasOldCoins": false,
     "hasEuroCoins": false,
-    "tags": ["книгоразделител", "разделител", "книга"]
+    "tags": ["книгоразделител", "разделител", "книга"],
+    "links": [
+      {
+        "label": "Виж във видеото",
+        "url": "https://youtu.be/f8yTuEcOCjU?t=9",
+        "icon": "play_circle"
+      }
+    ]
   },
   {
     "id": 15,

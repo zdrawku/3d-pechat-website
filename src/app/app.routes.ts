@@ -101,6 +101,10 @@ export const routes: Routes = [
       {
         path: 'standstrap-3d-printiran-stoper-za-snoubord',
         loadComponent: () => import('./blog/standstrap-3d-printiran-stoper-za-snoubord/standstrap-3d-printiran-stoper-za-snoubord.component').then(m => m.Standstrap3dPrintiranStoperZaSnoubordComponent)
+      },
+      {
+        path: '3d-pechat-po-porachka-sofia-video',
+        loadComponent: () => import('./blog/3d-pechat-po-porachka-sofia-video/3d-pechat-po-porachka-sofia-video.component').then(m => m.ThreeDPechatPoPorachkaSofiaVideoComponent)
       }
     ]
   },
