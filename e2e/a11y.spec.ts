@@ -13,13 +13,24 @@ import { CORE_ROUTES } from './routes';
  */
 const SEVERITY_GATE = new Set(['serious', 'critical']);
 
-for (const route of CORE_ROUTES) {
+// Core pages scan the whole document. The video article scans only what it
+// adds (player + closing buttons): blog articles share older, known issues in
+// the markdown link styling and the related-content cards that are tracked
+// separately and would otherwise mask regressions in the new parts.
+const A11Y_TARGETS: { path: string; include?: string[] }[] = [
+  ...CORE_ROUTES.map(({ path }) => ({ path })),
+  { path: '/blog/3d-pechat-po-porachka-sofia-video', include: ['app-youtube-embed', '[data-testid="article-cta"]'] },
+];
+
+for (const route of A11Y_TARGETS) {
   test(`a11y: ${route.path} has no serious/critical violations`, async ({ page }) => {
     await page.goto(route.path, { waitUntil: 'networkidle' });
 
-    const results = await new AxeBuilder({ page })
-      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
-      .analyze();
+    let axe = new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']);
+    for (const selector of route.include ?? []) {
+      axe = axe.include(selector);
+    }
+    const results = await axe.analyze();
 
     const blocking = results.violations.filter((v) => SEVERITY_GATE.has(v.impact ?? ''));
 

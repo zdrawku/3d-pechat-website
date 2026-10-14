@@ -281,9 +281,30 @@
 
 // „Прочети повече“ → related blog article. A flat igxButton so it reads as a
 // quiet text link beside the description, not a second call to action.
+// The flat button's default teal (#0EA5A5) is only 2.87:1 on the card — use
+// the site's link colour instead (same as related-content's .rc_cta).
 .read-more-link {
   align-self: flex-start;
   text-decoration: none;
+  --foreground: var(--accent-on-light);
+  color: var(--accent-on-light);
+
+  igx-icon {
+    // igx-icon's theme defines its own --ig-icon-color, so a value inherited
+    // from the button never reaches it — set it on the icon itself.
+    --ig-icon-color: var(--accent-on-light);
+    color: var(--accent-on-light);
+  }
+}
+
+:host-context(.dark-theme) .read-more-link {
+  --foreground: var(--ig-primary-400);
+  color: var(--ig-primary-400);
+
+  igx-icon {
+    --ig-icon-color: var(--ig-primary-400);
+    color: var(--ig-primary-400);
+  }
 }
 
 // Tag chips — quick scannability + reinforces what the search matches on.

@@ -1,0 +1,48 @@
+// Colour tones for igxButton, set ONLY through the button's own theme
+// variables (no component internals). Both mixins also drop the browser's
+// link underline, for when the button is an <a>.
+//
+// Usage: `@use "../button-tones" as *;` then
+//        `.my-link { @include primary-contained-button; }`
+
+// Brand orange. Only primary-500 has a contrast colour tuned for BOTH palettes
+// (white in light, near-black in dark; see the .dark-theme block in
+// styles.scss), so every state stays on 500.
+@mixin primary-contained-button {
+  --ig-contained-button-background: var(--ig-primary-500);
+  --ig-contained-button-hover-background: var(--ig-primary-500);
+  --ig-contained-button-focus-background: var(--ig-primary-500);
+  --ig-contained-button-focus-hover-background: var(--ig-primary-500);
+  --ig-contained-button-focus-visible-background: var(--ig-primary-500);
+  --ig-contained-button-active-background: var(--ig-primary-500);
+  --ig-contained-button-foreground: var(--ig-primary-500-contrast);
+  --ig-contained-button-hover-foreground: var(--ig-primary-500-contrast);
+  --ig-contained-button-focus-foreground: var(--ig-primary-500-contrast);
+  --ig-contained-button-focus-hover-foreground: var(--ig-primary-500-contrast);
+  --ig-contained-button-focus-visible-foreground: var(--ig-primary-500-contrast);
+  --ig-contained-button-active-foreground: var(--ig-primary-500-contrast);
+  --ig-contained-button-icon-color: var(--ig-primary-500-contrast);
+  --ig-contained-button-icon-color-hover: var(--ig-primary-500-contrast);
+  text-decoration: none;
+}
+
+// Teal outline that passes WCAG AA. Ignite's default outlined button uses the
+// secondary colour (#0EA5A5 in light), only ~2.9:1 on the paper background
+// (axe color-contrast). `--accent-teal-on-tint` (styles.scss) is the AA-safe
+// teal for both palettes: #0F6E6A in light, #2DD4BF in dark.
+@mixin teal-outlined-button($color: var(--accent-teal-on-tint)) {
+  --ig-outlined-button-foreground: #{$color};
+  --ig-outlined-button-hover-foreground: #{$color};
+  --ig-outlined-button-focus-foreground: #{$color};
+  --ig-outlined-button-focus-hover-foreground: #{$color};
+  --ig-outlined-button-focus-visible-foreground: #{$color};
+  --ig-outlined-button-active-foreground: #{$color};
+  --ig-outlined-button-icon-color: #{$color};
+  --ig-outlined-button-icon-color-hover: #{$color};
+  --ig-outlined-button-border-color: #{$color};
+  --ig-outlined-button-hover-border-color: #{$color};
+  --ig-outlined-button-focus-border-color: #{$color};
+  --ig-outlined-button-focus-visible-border-color: #{$color};
+  --ig-outlined-button-active-border-color: #{$color};
+  text-decoration: none;
+}

@@ -53,6 +53,11 @@
       {
         "label": "Виж модела в MakerWorld",
         "url": "https://makerworld.com/en/models/3435823-coin-card-holder-bulgaria-euro#profileId-3917631"
+      },
+      {
+        "label": "Виж във видеото",
+        "url": "https://youtu.be/f8yTuEcOCjU?t=19",
+        "icon": "play_circle"
       }
     ]
   },
@@ -238,7 +243,14 @@
     "dateAdded": "2026-08-03",
     "hasOldCoins": false,
     "hasEuroCoins": false,
-    "tags": ["книгоразделител", "разделител", "книга"]
+    "tags": ["книгоразделител", "разделител", "книга"],
+    "links": [
+      {
+        "label": "Виж във видеото",
+        "url": "https://youtu.be/f8yTuEcOCjU?t=9",
+        "icon": "play_circle"
+      }
+    ]
   },
   {
     "id": 15,

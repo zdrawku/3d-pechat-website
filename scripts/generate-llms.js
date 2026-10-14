@@ -20,6 +20,15 @@ const MAIN_PAGES = [
   { url: 'https://3dpechat.bg/blog/', label: 'Блог', desc: 'Статии за 3D принтиране на български език.' },
 ];
 
+// Official profiles — keep in sync with the Organization `sameAs` in
+// src/index.html / src/404.html.
+const PROFILES = [
+  { url: 'https://www.youtube.com/@3dpechatbg', label: 'YouTube', desc: 'Видеа от работилницата и проектите ни.' },
+  { url: 'https://www.instagram.com/3dpechat.bg', label: 'Instagram', desc: 'Снимки на реализирани проекти.' },
+  { url: 'https://www.tiktok.com/@3dpechat.bg', label: 'TikTok', desc: 'Кратки видеа от процеса на 3D печат.' },
+  { url: 'https://makerworld.com/en/@zdkolev', label: 'MakerWorld', desc: 'Наши 3D модели за изтегляне и принтиране.' },
+];
+
 function parseBlogPosts(src) {
   // Extract each { id: '...', title: '...', description: '...', route: '...' } block
   const posts = [];
@@ -52,6 +61,10 @@ function generate() {
     '## Основни страници',
     '',
     ...MAIN_PAGES.map(p => `- [${p.label}](${p.url}): ${p.desc}`),
+    '',
+    '## Профили',
+    '',
+    ...PROFILES.map(p => `- [${p.label}](${p.url}): ${p.desc}`),
     '',
     '## Блог статии',
     '',

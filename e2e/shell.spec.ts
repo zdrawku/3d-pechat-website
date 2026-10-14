@@ -84,6 +84,12 @@ test.describe('external links', () => {
     await expect(instagram).toHaveAttribute('rel', /noopener/);
     await expect(tiktok).toHaveAttribute('rel', /noopener/);
 
+    // YouTube handle has no dot (@3dpechatbg) — unlike Instagram/TikTok.
+    const youtube = page.locator('a[href="https://www.youtube.com/@3dpechatbg"]');
+    await expect(youtube).toHaveCount(2); // navbar + footer
+    await expect(youtube.first()).toHaveAttribute('target', '_blank');
+    await expect(youtube.first()).toHaveAttribute('rel', /noopener/);
+
     // Footer contact links.
     await expect(page.locator('a[href="mailto:3dpechat.bg@gmail.com"]').first()).toBeVisible();
     await expect(page.locator('a[href^="viber:"]').first()).toBeVisible();
@@ -95,5 +101,6 @@ test.describe('external links', () => {
     // Viber/Instagram/TikTok are opened via JS handlers (buttons), so assert
     // the buttons are present rather than href navigation.
     await expect(page.getByRole('button', { name: /Viber/i })).toBeVisible();
+    await expect(page.getByTestId('youtube-contact-button')).toBeVisible();
   });
 });

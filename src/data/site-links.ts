@@ -28,3 +28,19 @@ export const GOOGLE_REVIEW_URL =
  */
 export const GOOGLE_MAPS_PROFILE_URL =
   'https://www.google.com/maps/place/3dpechat/@42.640588,23.3342435,554m/data=!3m1!1e3!4m8!3m7!1s0x40aa8563a6769d67:0x88d6c4d6579a104b!8m2!3d42.640588!4d23.3342435!9m1!1b1!16s%2Fg%2F11zcr3g4my';
+
+/**
+ * YouTube channel „3D Печат Услуги". Note the handle is `@3dpechatbg` with **no
+ * dot** — unlike Instagram/TikTok (`3dpechat.bg`). YouTube handles can't contain
+ * a dot, so don't "fix" it to match the others.
+ *
+ * Channel ID `UCe-6sDdk9n6nORVaUIjvsRQ` (stable even if the handle is renamed).
+ */
+export const YOUTUBE_CHANNEL_URL = 'https://www.youtube.com/@3dpechatbg';
+
+/**
+ * Same channel, but YouTube opens the "Subscribe?" confirmation straight away.
+ * Use it for explicit „Абонирай се" CTAs; use {@link YOUTUBE_CHANNEL_URL} for
+ * plain "visit the channel" icon links.
+ */
+export const YOUTUBE_SUBSCRIBE_URL = 'https://www.youtube.com/@3dpechatbg?sub_confirmation=1';

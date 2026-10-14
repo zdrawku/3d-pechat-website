@@ -47,6 +47,18 @@ test.describe('SEO metadata', () => {
     }
   });
 
+  test('Organization JSON-LD links every official profile via sameAs', async ({ page }) => {
+    await page.goto('/');
+    const raw = await page.locator('script#organization-jsonld').textContent();
+    const org = JSON.parse(raw ?? '{}');
+    expect(org['@type']).toBe('Organization');
+    expect(org.sameAs).toEqual(expect.arrayContaining([
+      'https://www.instagram.com/3dpechat.bg',
+      'https://www.tiktok.com/@3dpechat.bg',
+      'https://www.youtube.com/@3dpechatbg',
+    ]));
+  });
+
   test('robots.txt is served and references the sitemap', async ({ request }) => {
     const res = await request.get('/robots.txt');
     expect(res.status()).toBe(200);

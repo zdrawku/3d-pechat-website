@@ -38,5 +38,16 @@ describe('ContactMePageComponent', () => {
       expect(viber!.getAttribute('href')).toBe('viber://chat?number=%2B359883310616');
       expect(viber!.hasAttribute('igxButton')).withContext('styled via igxButton').toBeTrue();
     });
+
+    it('offers a YouTube social pill built from Ignite components that opens the channel', () => {
+      const pill = host().querySelector<HTMLButtonElement>('[data-testid="youtube-contact-button"]');
+      expect(pill).withContext('YouTube pill').not.toBeNull();
+      expect(pill!.hasAttribute('igxButton')).withContext('styled via igxButton').toBeTrue();
+      expect(pill!.querySelector('igx-icon[name="youtube"]')).withContext('YouTube igx-icon').not.toBeNull();
+
+      const open = spyOn(window, 'open');
+      pill!.click();
+      expect(open).toHaveBeenCalledWith('https://www.youtube.com/@3dpechatbg', '_blank');
+    });
   });
 });

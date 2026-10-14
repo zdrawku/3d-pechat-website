@@ -5,7 +5,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
 import { SeoService } from '../services/seo.service';
 import { environment } from '../../environments/environment';
-import { GOOGLE_REVIEW_URL } from '../../data/site-links';
+import { GOOGLE_REVIEW_URL, YOUTUBE_CHANNEL_URL } from '../../data/site-links';
 
 declare const hcaptcha: {
   render(container: string | HTMLElement, options: Record<string, unknown>): string;
@@ -50,11 +50,12 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
   email = '3dpechat.bg@gmail.com';
   instagramUrl = 'https://www.instagram.com/3dpechat.bg';
   tiktokUrl = 'https://www.tiktok.com/@3dpechat.bg';
+  youtubeUrl = YOUTUBE_CHANNEL_URL;
 
   constructor(private router: Router, private seoService: SeoService) {
     this.seoService.updateSeo({
       title: 'Контакти - 3D Печат България',
-      description: 'Свържете се с нас за 3D печат услуги. Телефон, имейл, Viber, Instagram и TikTok. Бързо и лесно поръчайте вашия 3D принтиран продукт.',
+      description: 'Свържете се с нас за 3D печат услуги. Телефон, имейл, Viber, Instagram, TikTok и YouTube. Бързо и лесно поръчайте вашия 3D принтиран продукт.',
       keywords: '3D печат контакти, поръчка 3D печат, 3D принтиране поръчка, свържете се с нас',
       url: 'https://3dpechat.bg/contact/',
       type: 'website'
@@ -147,6 +148,10 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
 
   openTikTok(): void {
     window.open(this.tiktokUrl, '_blank');
+  }
+
+  openYouTube(): void {
+    window.open(this.youtubeUrl, '_blank');
   }
 
   // Called by the hidden <input type="file"> in the template (see .file-dropzone

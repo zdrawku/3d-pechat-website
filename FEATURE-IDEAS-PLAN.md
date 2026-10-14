@@ -9,8 +9,10 @@
 > (products.json + `/add-product` skill + issue-form flow), **4** (review CTA,
 > all three layers) and **5** (Happy Customers section) are shipped. Remaining:
 > **Idea 1** (gift box page). **Idea 6** (MakerWorld cross-linking triangle) was
-> added 2026-10-11 and is ⬜ proposed, with no design artifact yet. See the
-> build-order table at the bottom.
+> added 2026-10-11 and is ⬜ proposed, with no design artifact yet. **Idea 7**
+> (YouTube channel + promo video) was added 2026-10-14: variant **A + „Абонирай се“**
+> approved by Zdravko the same day; phases 0–3 are built on `zkolev/youtube-channel`
+> and awaiting his review. See the build-order table at the bottom.
 
 ## Context (how the site works today — constraints the plan must respect)
 
@@ -657,6 +659,48 @@ https://claude.ai/artifact/XcjDAuDJcofVADh3iRJa47?sk=36GmReEBE2qzDuvpfj_34A#page
 
 ---
 
+## Idea 7 — ▶️ YouTube channel + promo video
+
+> Added 2026-10-14. Status: **✅ variant approved 2026-10-14; phases 0–3 built, awaiting review before merge.**
+> Full step-by-step plan: [`YOUTUBE-INTEGRATION-PLAN.md`](YOUTUBE-INTEGRATION-PLAN.md).
+
+The business opened a YouTube channel, [`@3dpechatbg`](https://www.youtube.com/@3dpechatbg)
+(no dot in the handle, unlike Instagram/TikTok), with a 61-second promo video,
+[`f8yTuEcOCjU`](https://youtu.be/f8yTuEcOCjU). Goal: make the channel part of the
+site's brand footprint and turn the video into an on-site conversion asset.
+
+- **Phase 0 — plumbing ✅ built 2026-10-14** (branch `zkolev/youtube-channel`):
+  YouTube icon link in navbar, footer and contact page (copy of the TikTok
+  treatment); `YOUTUBE_CHANNEL_URL` / `YOUTUBE_SUBSCRIBE_URL` in `site-links.ts`;
+  `src/data/videos.json` + self-hosted webp poster; Organization `sameAs` and CSP
+  `frame-src https://www.youtube-nocookie.com` in `index.html` + `404.html`;
+  llms.txt „Профили“ section; unit + Playwright coverage.
+- **Phase 1 — design artifact ✅ approved 2026-10-14:**
+  [▶️ YouTube Video Placement](https://claude.ai/artifact/FND8e5YZAk6wRq8iUozfgA). Shows four home-page placements, the
+  click-to-play player states, the article CTA and the product-card video link.
+- **Phase 2 — player component + home placement ✅ built 2026-10-14:**
+  `app-youtube-embed` (`src/app/shared/youtube-embed/`, poster first, nocookie
+  iframe on click, GA4 `video_start`) in its own „Вижте ни в действие“ section
+  between „Как работим“ and „За технологията“; nothing existing replaced.
+  `VideoObject` JSON-LD on the home page.
+- **Phase 3 — article + product-card links ✅ built 2026-10-14:**
+  [`/blog/3d-pechat-po-porachka-sofia-video/`](src/assets/blogs/3d-pechat-po-porachka-sofia-video.md)
+  with the player, a timestamped list of what the video shows, the order
+  process, FAQ, and `BlogPosting` + `VideoObject` + `FAQPage` JSON-LD.
+  „Виж във видеото“ (`play_circle`) links on the two catalog products that
+  appear in the video: `razdeliteli-za-knigi` (0:09) and `variant-2` (0:19).
+  Timestamps were read from YouTube's storyboard frames.
+- **Phase 4 — off-site promotion checklist** (YouTube Studio, Shorts, GBP post, UTM).
+
+✅ APPROVED 2026-10-14: **A — own section „Вижте ни в действие“ between
+„Как работим“ and „За технологията“, not replacing anything**, with the button
+label **„Абонирай се“**. The article and the „Виж във видеото“ card links were
+approved in the same reply. B (video replaces the hero picture) is marked not
+recommended because it drops the approved 7Г animation and moves the poster
+into the LCP slot.
+
+---
+
 ## How the ideas reinforce each other
 
 - **Idea 3 Phase 1 (products.json) ships first** — it's the foundation: Idea 1's
@@ -694,6 +738,7 @@ variant. All five were produced and **approved by Zdravko on 2026-07-13**:
 | 4 · Review CTA | [⭐ Google Review CTA](https://claude.ai/code/artifact/1e006177-f26d-48e2-a41c-493e64bd1270) | A footer block · B contact-success prompt · C snackbar · D modal (rejected) | **all three layers (A+B+C)**; D stays rejected |
 | 5 · Happy customers | [💬 Happy Customers Section](https://claude.ai/code/artifact/f12dfc8a-7da8-4cf2-bf78-e74389cc9e7a) | A card grid · B mobile carousel · C compact trust bar | **A (collapsing to B on mobile) on main page + C trust bar on products page**, one component, one `reviews.json` |
 | Hero print animation | [🖨️ Hero анимация — 3D печат ефекти](https://claude.ai/code/artifact/c107c8e6-da1d-4b48-a233-d86443f30e9c) | 6 base effects + combined 7А/7Б/7В/7Г (violet SLA beam × nozzle color × fine-layer steps × shuttle range) | **7Г — violet beam rises bottom-up in 34 fine steps, orange nozzle shuttles only over the printer area; loops infinitely, 7s per cycle** ✅ implemented 2026-07-14 |
+| 7 · YouTube video | [▶️ YouTube Video Placement](https://claude.ai/artifact/FND8e5YZAk6wRq8iUozfgA) | A own section after „Как работим“ · B replaces hero picture · C replaces the „За технологията“ gallery · D slim band under the hero; + player states, article CTA, product-card link, button label | **A + „Абонирай се“** ✅ approved 2026-10-14, implemented the same day |
 | Card hover effect | [🖨️ Hero анимация — 3D печат ефекти](https://claude.ai/code/artifact/c107c8e6-da1d-4b48-a233-d86443f30e9c) (hover section) | full SLA sweep → subtler → no transform, unified across elements | **Faint violet beam sweeps bottom-up once per hover-enter + soft shadow deepen; no movement. Identical on `prop_card`, `process_step`, `.masonry-item`, `.tier-card` via `src/app/_sla-hover.scss` mixin (tier-card uses inner `.sla-sweep` layer so the featured badge isn't clipped)** ✅ implemented 2026-07-14 |
 
 To iterate on any of them, ask Claude to update the artifact — same link is kept.
@@ -717,6 +762,11 @@ To iterate on any of them, ask Claude to update the artifact — same link is ke
 | 13 | `article` field on products + card link + reusable „Моделът“ block | 6C | S–M | ⬜ |
 | 14 | First „Как направих…“ article (jewelry stand), close the triangle | 6C | S | ⬜ |
 | 15 | (Optional) extend `/add-product` / `/maker-story` skill for the full loop | 6 | M | ⬜ |
+| 16 | YouTube links site-wide, `videos.json`, poster, `sameAs`, CSP (phase 0) | 7 | S | ✅ built 2026-10-14, not merged |
+| 17 | Design artifact: video placement + player states (phase 1) | 7 | S | ✅ approved 2026-10-14 |
+| 18 | `app-youtube-embed` facade + home placement + `VideoObject` (phase 2) | 7 | M | ✅ built 2026-10-14, not merged |
+| 19 | Article around the video + product-card video links (phase 3) | 7 | S–M | ✅ built 2026-10-14, not merged |
+| 20 | Off-site promotion checklist (phase 4, no code) | 7 | XS | ⬜ |
 
 *(Items 3–4 jumped the queue vs. the original order: they're small, independent of
 the JSON refactor, and reviews compound over time — the sooner the CTA ships, the

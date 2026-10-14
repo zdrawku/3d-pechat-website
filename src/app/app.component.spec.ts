@@ -33,6 +33,24 @@ describe('AppComponent', () => {
       .withContext('footer Viber link').not.toBeNull();
   });
 
+  it('links the YouTube channel from the navbar and footer as Ignite icon links', () => {
+    const host: HTMLElement = fixture.nativeElement;
+    const links = Array.from(
+      host.querySelectorAll<HTMLAnchorElement>('a[href="https://www.youtube.com/@3dpechatbg"]')
+    );
+    expect(links.length).withContext('navbar + footer YouTube links').toBeGreaterThanOrEqual(2);
+    for (const link of links) {
+      expect(link.getAttribute('target')).toBe('_blank');
+      expect(link.getAttribute('rel')).toContain('noopener');
+      expect(link.getAttribute('aria-label')).withContext('accessible name').toBeTruthy();
+      expect(link.querySelector('igx-icon[name="youtube"]'))
+        .withContext('uses the imx-icons YouTube igx-icon, not an inline SVG').not.toBeNull();
+    }
+    const navLink = host.querySelector('[data-testid="youtube-nav-link"]');
+    expect(navLink?.hasAttribute('igxIconButton')).withContext('navbar link styled via igxIconButton').toBeTrue();
+    expect(host.querySelector('footer [data-testid="youtube-footer-link"]')).withContext('footer link').not.toBeNull();
+  });
+
   describe('outside-click drawer close', () => {
     /** Forces the desktop/mobile branch of the handler's matchMedia check. */
     function setViewport(isDesktop: boolean): void {

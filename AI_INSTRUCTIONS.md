@@ -85,6 +85,17 @@ Home page carousel images are dynamic.
 
 *(Reference: `CAROUSEL_IMAGES.md`)*
 
+### YouTube video (`app-youtube-embed`)
+Click-to-play player for our YouTube videos (home „Вижте ни в действие“ section, video blog article).
+- **Location**: `src/app/shared/youtube-embed/` (component + `video.util.ts`).
+- **Data**: `src/data/videos.json` (see `src/data/README.md`). `FEATURED_VIDEO` is the one with `featured: true`.
+- **Usage**: `<app-youtube-embed [video]="video"></app-youtube-embed>`.
+- **Behaviour**: renders only the self-hosted poster until play is pressed, then swaps in a `youtube-nocookie.com` iframe. No YouTube request on page load, fixed 16:9 box, GA4 `video_start` event.
+- **Structured data**: `videoObjectSchema(video)` returns a `VideoObject` for `SeoService.setStructuredData()`.
+- **Never** put an `<iframe>` in blog markdown: ngx-markdown sanitises it away. Split the markdown at a `<!-- video -->` marker and place the component in the template (see `3d-pechat-po-porachka-sofia-video`).
+- **CSP**: `youtube-nocookie.com` is the only YouTube host in `frame-src` (`index.html` + `404.html`).
+- **Product cards**: a product that appears in a video gets a `links` entry `{ "label": "Виж във видеото", "url": "https://youtu.be/<id>?t=<seconds>", "icon": "play_circle" }` (guarded by the products-page spec).
+
 ---
 
 ## ⚡ Performance & Optimization

@@ -1,0 +1,28 @@
+<igx-card class="video-card" [class.is-playing]="playing" data-testid="youtube-embed">
+  <!-- igx-card-media defaults to role="img", which may not contain the play
+       button (axe: nested-interactive). The poster's alt text and the button's
+       label carry the meaning, so the wrapper itself has no role. -->
+  <igx-card-media class="video-card__media" role="none">
+    @if (playing) {
+      <iframe class="video-card__frame" [src]="embedSrc" [title]="video.title"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+              allowfullscreen referrerpolicy="strict-origin-when-cross-origin"
+              data-testid="youtube-iframe"></iframe>
+    } @else {
+      <!-- Clicking anywhere on the poster plays too; the button is the keyboard target. -->
+      <img class="video-card__poster" [src]="video.poster" [alt]="video.posterAlt"
+           width="1280" height="720" loading="lazy" decoding="async" (click)="play()" />
+      <!-- Ignite sizes every direct child of igx-card-media to 100% × 100%
+           (.igx-card__media > *). The overlay is that full-size child, so the
+           play button and the length chip inside it keep their own size. -->
+      <div class="video-card__overlay">
+        <button type="button" igxIconButton="contained" class="video-card__play"
+                [attr.aria-label]="'Пусни видеото: ' + video.title" (click)="play()"
+                data-testid="youtube-play">
+          <igx-icon>play_arrow</igx-icon>
+        </button>
+        <span class="video-card__duration" aria-hidden="true">{{ durationLabel }}</span>
+      </div>
+    }
+  </igx-card-media>
+</igx-card>

@@ -194,6 +194,17 @@ export class BlogService {
       imageUrl: 'assets/blogs/images/monetna-karta-bulgarski-evro-moneti-cover.webp',
       tags: ['монетна карта', 'евромонети', 'България', 'евро', 'колекция', 'подарък', 'PLA', 'MakerWorld'],
       author: '3D Печат България'
+    },
+    {
+      id: '18',
+      title: 'Вижте как работим: 3D печат по поръчка в София (видео)',
+      description: 'Вижте в 60 секунди наши 3D отпечатани проекти: разделители за книги, монетник „България“ и функционални части. И как протича поръчката от идея до детайл.',
+      slug: '3d-pechat-po-porachka-sofia-video',
+      route: '/blog/3d-pechat-po-porachka-sofia-video',
+      date: new Date('2026-10-14'),
+      imageUrl: 'assets/blogs/images/3d-pechat-po-porachka-sofia-video-cover.webp',
+      tags: ['Видео', 'YouTube', '3D печат', 'София', 'По поръчка', 'Прототипи', 'Подаръци', 'Монетна карта', 'Разделители за книги'],
+      author: '3D Печат България'
     }
     // Add more blog posts here as you create them
   ];
