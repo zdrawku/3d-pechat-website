@@ -7,7 +7,7 @@
 
 <section class="portfolio-intro">
   <p>
-    Тук са събрани част от проектите, които сме отпечатали по поръчка: практични аксесоари за дома, спорта и хобито, организатори, играчки и подаръци. Всеки детайл започва от готов модел или от идея и се изработва от подбран филамент – можете да го получите в избран цвят и размер. Цената зависи от теглото на модела – вижте <a routerLink="/prices">цените за 3D печат</a> или <a routerLink="/contact">заявете оферта</a> за вашата идея.
+    Тук са събрани част от проектите, които сме отпечатали по поръчка: практични аксесоари за дома, спорта и хобито, организатори, играчки и подаръци. Всеки детайл започва от готов модел или от идея и се изработва от подбран филамент – можете да го получите в избран цвят и размер, а цената зависи от теглото на модела.
   </p>
 </section>
 
@@ -24,6 +24,29 @@
         <div class="masonry-item" [style.--i]="i">
           <img [src]="image.src" [alt]="image.alt || ('3D печат проект ' + (i + 1))" class="masonry-image" loading="lazy" />
         </div>
+        <!-- Quote CTA (shared .cta-band) spanning the wall after ~4 rows of
+             photos: after 4 at 1 column, 9 at 2, 13 at 3. One copy per column
+             count; CSS shows only the one matching the current layout. 9 and 13
+             (not 8 and 12) leave the smallest gap under the shortest column
+             with the current photo set; retune if the photos change a lot. -->
+        @if (i === 3 || i === 8 || i === 12) {
+          <div class="cta-band portfolio-cta" [attr.data-after]="i + 1" data-testid="portfolio-cta">
+            <p class="cta-band__title">Харесва ли ви някой от проектите?</p>
+            <p class="cta-band__desc">
+              Ще го отпечатаме в избран цвят и размер – или ще изработим нещо по ваша идея.
+            </p>
+            <div class="cta-band__actions">
+              <a igxButton="contained" routerLink="/contact" class="cta-band__btn">
+                <igx-icon aria-hidden="true">request_quote</igx-icon>
+                Заявете оферта
+              </a>
+              <a igxButton="outlined" routerLink="/prices" class="portfolio-cta__prices">
+                <igx-icon aria-hidden="true">scale</igx-icon>
+                Цени за 3D печат
+              </a>
+            </div>
+          </div>
+        }
       }
     </div>
   </div>

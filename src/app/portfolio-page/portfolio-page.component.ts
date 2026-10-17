@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { IgxButtonDirective, IgxIconComponent } from 'igniteui-angular';
 
 import { carouselImages } from './carousel-images';
 import { SeoService } from '../services/seo.service';
 
 @Component({
   selector: 'app-portfolio-page',
-  imports: [RouterLink],
+  imports: [RouterLink, IgxButtonDirective, IgxIconComponent],
   templateUrl: './portfolio-page.component.html',
   styleUrls: ['./portfolio-page.component.scss']
 })

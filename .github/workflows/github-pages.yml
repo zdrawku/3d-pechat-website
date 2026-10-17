@@ -3,7 +3,12 @@ name: Deploy GitHub Pages
 on:
   push:
     branches: [ main ]
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      indexnow_all:
+        description: 'Submit EVERY sitemap URL to IndexNow (Bing) after deploying, not just new/changed ones'
+        type: boolean
+        default: false
 
 jobs:
   build-and-deploy:
@@ -52,6 +57,21 @@ jobs:
         # Ensure this path matches where your index.html is
         path: ./dist/${{ env.PROJECT_NAME }}/browser
 
+    # The live sitemap BEFORE this deploy, so IndexNow only gets URLs that are
+    # new or whose <lastmod> changed. Missing (first deploy) → all URLs.
+    - name: Save the live sitemap for the IndexNow diff
+      run: curl -fsS https://3dpechat.bg/sitemap.xml -o "$RUNNER_TEMP/prev-sitemap.xml" || true
+
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4
+
+    # Pings Bing (and other IndexNow engines) about new/changed pages. Never
+    # fails the deploy: the script always exits 0 and logs problems as warnings.
+    - name: Notify IndexNow
+      continue-on-error: true
+      run: >
+        node scripts/indexnow.js
+        --sitemap ./dist/${{ env.PROJECT_NAME }}/browser/sitemap.xml
+        --prev "$RUNNER_TEMP/prev-sitemap.xml"
+        ${{ inputs.indexnow_all && '--all' || '' }}

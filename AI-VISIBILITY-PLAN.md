@@ -4,12 +4,18 @@
 > **Status (2026-10-17):**
 > - **Phase 0:** all decisions are in (see the Decisions log). Only the owner's
 >   baseline prompt run is still open.
-> - **Phase 1:** Steps 1.1–1.9 were implemented **in one batch** at the owner's
->   request, together with the D3/D4 content fixes. They are uncommitted on
->   `discoverability-ai-improvements`, awaiting one code review. See the
->   "Implemented 2026-10-17" note in Phase 1.
-> - `zkolev/seo-fixes` was **not** merged. Its changes were ported file by file
->   into the working tree.
+> - **Phase 1:** ✅ merged to `main` (PR #45, `a1606b3`) and live, together
+>   with the D3/D4 content fixes and the agent instructions (CLAUDE.md Rule 5).
+>   `zkolev/seo-fixes` was **not** merged; its changes were ported file by file.
+>   Still owner-side: the Search Console steps and the slashes in the Google
+>   listing description (Step 1.1).
+> - **Phase 2:** code implemented 2026-10-17 (2.1–2.5), uncommitted on
+>   `discoverability-ai-improvements`, awaiting review. 2.6 (small logo) and the
+>   header title „3D Печат услуги“ are left for the owner. The GBP updates are
+>   owner-side.
+> - **Phase 3:** agent part (3.1–3.3) implemented 2026-10-17, uncommitted. The
+>   Bing Webmaster Tools, Bing Places and Apple Business Connect steps are
+>   owner-side.
 >
 > **Workflow (the owner's rule):**
 > - All work happens on the `discoverability-ai-improvements` branch.
@@ -495,6 +501,29 @@ primary category, a description, the services list, and 10+ real photos of work
 and the workshop. **Don't add keywords to the GBP name.** It breaks Google's
 guidelines and risks suspension.
 
+**Implemented 2026-10-17 (uncommitted, awaiting review):**
+- `scripts/generate-business-schema.js` (+ test, in prebuild) writes the
+  `LocalBusiness` block and `og:site_name` into both HTML files, and refuses
+  review/rating keys.
+- `og:site_name` and the schema publisher/author are now „3dpechat“. **Title
+  suffixes stay „3D Печат България“** (`business.json.titleBrand`), so no page
+  title changes.
+- llms.txt is generated from `business.json`: H1, summary, a new `## Факти`
+  section and profiles from `sameAs`. The Prices description was corrected to
+  "по грамаж".
+- The footer address and the contact intro's address and hours come from
+  `business.json` through `src/data/business.ts` (`openingHoursLabel()`).
+- `areaServed` is structured (`{type, name}`), and `titleBrand` was added.
+- **Tests:**
+  - e2e: LocalBusiness matches `business.json`, `404.html` schema matches
+    home, no review markup on any route, and llms.txt carries the facts.
+  - Karma: footer address, contact intro, `business.ts`.
+- **Not done (owner):**
+  - 2.6, the small square logo.
+  - The header title „3D Печат услуги“, a visible brand string to decide on.
+  - The GBP updates.
+  - The validators after deploy.
+
 **Done when:** the owner has reviewed and committed the changes, they're
 deployed, the validators are clean, and the GBP is updated.
 
@@ -541,6 +570,24 @@ resubmits every URL):
     with `continue-on-error: true`.
   - Add a `workflow_dispatch` boolean input `indexnow_all` that passes `--all`.
     The owner uses it once after the first deploy.
+
+**Implemented 2026-10-17 (uncommitted, awaiting review):**
+- Key file `public/889d7f7784930214bdb308e7e3458e37.txt`. `angular.json` now
+  copies `public/*.txt` to the site root; before this, only `CNAME` was copied.
+- `scripts/indexnow.js` (+ 7 tests):
+  - It also takes `--dry-run`.
+  - It checks the key file is live before posting, and always exits 0.
+  - `npm run indexnow` runs it.
+- `github-pages.yml`:
+  - saves the live sitemap before deploying
+  - runs the "Notify IndexNow" step after `deploy-pages` with
+    `continue-on-error`
+  - has a `workflow_dispatch` input, `indexnow_all`
+- An e2e test checks that the key file is served.
+- A dry run against the live sitemap found no changed URLs. Phase 1 is
+  already live and Phase 2 changes no `<lastmod>`. So after deploying Phase 2,
+  **run the deploy workflow once with `indexnow_all`**, so Bing re-crawls every
+  page with the new schema.
 
 **Done when:** the first run logs 200/202, and Bing Webmaster Tools → IndexNow
 shows the URLs as received.

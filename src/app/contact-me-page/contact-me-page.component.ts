@@ -2,10 +2,11 @@ import { Component, OnDestroy, OnInit, PLATFORM_ID, inject } from '@angular/core
 import { isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
-import { IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
+import { IGX_CARD_DIRECTIVES, IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
 import { SeoService } from '../services/seo.service';
 import { environment } from '../../environments/environment';
 import { GOOGLE_REVIEW_URL, YOUTUBE_CHANNEL_URL } from '../../data/site-links';
+import { BUSINESS, openingHoursLabel } from '../../data/business';
 
 declare const hcaptcha: {
   render(container: string | HTMLElement, options: Record<string, unknown>): string;
@@ -14,9 +15,11 @@ declare const hcaptcha: {
 
 const HCAPTCHA_CALLBACK = 'onHcaptchaLoad';
 
+const capitalize = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1);
+
 @Component({
   selector: 'app-contact-me-page',
-  imports: [IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective, FormsModule, RouterLink],
+  imports: [IGX_CARD_DIRECTIVES, IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective, FormsModule, RouterLink],
   templateUrl: './contact-me-page.component.html',
   styleUrls: ['./contact-me-page.component.scss']
 })
@@ -46,6 +49,11 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
 
   /** Direct Google write-review link, shared by every review CTA (see site-links). */
   public readonly googleReviewUrl = GOOGLE_REVIEW_URL;
+  /** Info-panel address + hours — from business.json so they match the schema and the map listing. */
+  public readonly displayAddress = BUSINESS.displayAddress;
+  public readonly mapUrl = BUSINESS.hasMap;
+  /** „Всеки ден от 9:00 до 18:00“ — capitalised, since it stands alone under its label. */
+  public readonly openingHours = capitalize(openingHoursLabel());
 
   email = '3dpechat.bg@gmail.com';
   instagramUrl = 'https://www.instagram.com/3dpechat.bg';

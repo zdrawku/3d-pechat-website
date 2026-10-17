@@ -1,4 +1,6 @@
 @use "igniteui-angular/theming" as *;
+@use '../fluid' as *;
+@use '../sla-hover' as sla;
 :host {
   display: block;
   // Transparent — the dotted texture is painted once on <body> (see styles.scss).
@@ -19,26 +21,16 @@
 }
 
 // ===================== INTRO =====================
-// Visible on every width (the banner subtitle is hidden on phones), so the
-// services / delivery / response-time copy always reaches the page.
+// A short lead, left-aligned across the full width of the contact panel below
+// so it takes two lines on desktop. Visible on every width — the banner
+// subtitle is hidden on phones. The longer practical copy lives in the info
+// panel and the „Добре е да знаете“ cards, where it scans.
 .contact-intro {
-  max-width: rem(760px);
-  margin: 0 auto rem(32px);
+  margin: 0 0 rem(32px);
   color: var(--ig-gray-800);
-  line-height: 1.65;
-  text-align: center;
+  font-size: fluid(15px, 17px);
+  line-height: 1.6;
   text-wrap: pretty;
-
-  // Theme-aware link colour (the browser default blue is unreadable in dark mode).
-  a {
-    color: var(--ig-primary-500);
-    text-underline-offset: 0.2em;
-
-    &:hover,
-    &:focus-visible {
-      text-decoration-thickness: 2px;
-    }
-  }
 }
 
 // ===================== SHELL =====================
@@ -278,6 +270,94 @@
   &:disabled {
     opacity: 0.7;
     cursor: not-allowed;
+  }
+}
+
+// ===================== GOOD TO KNOW =====================
+// Delivery / quote / price cards under the form — same recipe as the homepage
+// value-prop cards (.prop_card), with an igx-icon in the tinted tile.
+.contact-how {
+  margin-top: fluid(40px, 56px);
+}
+
+.contact-how__title {
+  margin: 0 0 rem(20px);
+  color: var(--ig-gray-900);
+}
+
+.contact-how__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  // Intrinsic 3 → 1 columns, no breakpoints.
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, rem(240px)), 1fr));
+  gap: rem(18px);
+
+  // The <li> stays for list semantics; the card fills it for equal heights.
+  > li {
+    display: flex;
+
+    > igx-card {
+      width: 100%;
+    }
+  }
+}
+
+.how-card {
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-lg);
+
+  @include sla.sla-hover;
+
+  // After the mixin, which resets the border to transparent for its hover swap.
+  border: rem(1px) solid var(--ig-gray-300);
+}
+
+.how-card__body {
+  padding: rem(24px) rem(20px);
+}
+
+// Children are scoped under .how-card (0,3,0 with Angular's attribute) so they
+// out-specify the type scale's `.ig-typography .igx-card-content > :not(igx-icon)`
+// (0,2,1), which would otherwise reset every direct child to body-2 — no !important.
+.how-card .how-card__icon {
+  width: rem(46px);
+  height: rem(46px);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: rem(14px);
+  background: color-mix(in srgb, var(--ig-primary-500) 14%, transparent);
+  // AA-safe orange on its own tint (plain primary-500 is ~4.3:1 here).
+  --ig-icon-color: var(--accent-on-tint);
+  --ig-icon-size: #{rem(22px)};
+}
+
+.how-card .how-card__title {
+  margin: 0 0 rem(6px);
+  font-size: rem(16px);
+  font-weight: 700;
+  color: var(--ig-gray-900);
+}
+
+.how-card .how-card__text {
+  margin: 0;
+  font-size: rem(14px);
+  line-height: 1.55;
+  color: var(--ig-gray-700);
+
+  // Theme-aware link colour (the browser default blue is unreadable in dark mode).
+  a {
+    color: var(--ig-primary-500);
+    text-underline-offset: 0.2em;
+
+    &:hover,
+    &:focus-visible {
+      text-decoration-thickness: 2px;
+    }
   }
 }
 

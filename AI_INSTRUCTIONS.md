@@ -3,7 +3,7 @@
 This file contains the definitive instructions and guidelines for the AI assistant working on the **3D Pechat Website**.
 
 ## 🚨 Critical Rules
-1. **Sync 404.html & index.html**: Keep `404.html` in sync with `index.html`. Anytime you change `index.html` (meta tags, CSP, scripts, etc.), copy those changes to `404.html` immediately.
+1. **Sync 404.html & index.html**: Keep `404.html` in sync with `index.html`. Anytime you change `index.html` (meta tags, CSP, scripts, etc.), copy those changes to `404.html` immediately. Exception: the `organization-jsonld` LocalBusiness block and `og:site_name` are **generated** into both files from `src/data/business.json` by `npm run generate-business-schema` (part of prebuild). Edit the JSON, never the block.
 2. **Sitemap**: Always run `npm run generate-sitemap` after adding routes or blog posts. `<lastmod>` is never the build date: posts use `dateModified` from `blog-posts.registry.ts`, main pages use the hand-maintained `MAIN_PAGE_LASTMOD` map in `scripts/generate-sitemap.js`. Bump the right one whenever content really changes.
 3. **Images**: Always use `assets/` (no leading slash) for image paths in markdown or HTML to ensure they load correctly in all environments. Use kebab-case for filenames.
 4. **Styles**: Prefer using shared styles (e.g., `src/app/blog/shared/blog-styles.scss`) over ad-hoc styling.
@@ -114,6 +114,8 @@ Click-to-play player for our YouTube videos (home „Вижте ни в дейс
 - **Start Dev**: `npm start`
 - **Build Prod**: `npm run build`
 - **Generate Sitemap**: `npm run generate-sitemap`
+- **Generate LocalBusiness schema**: `npm run generate-business-schema` (from `src/data/business.json`, in prebuild)
+- **IndexNow (Bing)**: `npm run indexnow -- --sitemap src/sitemap.xml --dry-run`. The deploy workflow runs it after every deploy for new/changed URLs; trigger the workflow manually with `indexnow_all` to resubmit everything.
 - **Generate Blog Post**: `npm run generate-blog` (requires `ANTHROPIC_API_KEY` in `.env`)
 - **Lint**: `npm run lint`
 - **Script unit tests**: `npm run test:scripts` (node's built-in runner, `scripts/**/*.test.js`)

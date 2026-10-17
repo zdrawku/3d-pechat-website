@@ -1,5 +1,11 @@
 @use "igniteui-angular/theming" as *;
 @use '../sla-hover' as sla;
+@use '../fluid' as *;
+@use '../button-tones' as *;
+
+// Width of the photo wall; the intro and section text share it so every left
+// edge lines up.
+$wall-width: 1100px;
 
 :host {
   height: 100%;
@@ -53,12 +59,17 @@
   flex-basis: 0;
 }
 
+// Section heading + caption: left-aligned on the photo wall's width, so the
+// text edges line up with the photos below.
 .column_layout_5 {
   justify-content: flex-start;
-  align-items: center;
+  align-items: flex-start;
   align-content: flex-start;
   gap: rem(8px);
   position: relative;
+  width: 100%;
+  max-width: rem($wall-width);
+  margin-inline: auto;
   min-width: rem(50px);
   min-height: rem(50px);
   flex-shrink: 0;
@@ -77,53 +88,39 @@
 }
 
 .title_3 {
-  text-align: center;
+  text-align: start;
   color: var(--ig-gray-900);
   height: max-content;
   min-width: min-content;
 }
 
-// Intro + per-section captions: readable measure, centred under the headings.
+// Intro: left-aligned and as wide as the photo wall (wall + the sections'
+// 32px side padding), so it runs end to end in a few lines.
 .portfolio-intro {
-  max-width: rem(760px);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: calc(#{rem($wall-width)} + #{rem(64px)});
   margin: 0 auto;
   padding: rem(24px) rem(32px) 0;
   color: var(--ig-gray-800);
-  line-height: 1.65;
-  text-align: center;
-  text-wrap: pretty;
+  font-size: fluid(15px, 17px);
+  line-height: 1.6;
 
   p {
     margin: 0;
-  }
-
-  // Theme-aware link colour (the browser default blue is unreadable in dark mode).
-  a {
-    color: var(--ig-primary-500);
-    text-underline-offset: 0.2em;
-
-    &:hover,
-    &:focus-visible {
-      text-decoration-thickness: 2px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    padding: rem(20px) rem(16px) 0;
+    text-wrap: pretty;
   }
 }
 
 .portfolio-caption {
-  max-width: rem(640px);
   margin: 0;
   color: var(--ig-gray-700);
   line-height: 1.6;
-  text-align: center;
   text-wrap: pretty;
 }
 
 .title_4 {
-  text-align: center;
+  text-align: start;
   color: var(--ig-gray-800);
   height: max-content;
   min-width: min-content;
@@ -163,7 +160,7 @@
 // fine here and is the trade for not cropping the photos to a fixed ratio.
 .masonry-gallery {
   width: 100%;
-  max-width: rem(1100px);
+  max-width: rem($wall-width);
   margin: 0 auto;
   column-count: 3;
   column-gap: rem(16px);
@@ -203,5 +200,82 @@
   display: block;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
+}
+
+// Quote CTA inside the wall — the shared .cta-band (styles.scss), spanning
+// every column after ~4 rows of photos. The template renders one copy after
+// photo 4, 9 and 13; only the copy matching the current column count shows
+// (breakpoints mirror .masonry-gallery above). Scoped under .masonry-gallery so
+// it out-specifies the global .cta-band, `.stagger-in > *` and
+// `.ig-typography p` rules — no !important.
+.masonry-gallery .portfolio-cta {
+  display: none;
+  column-span: all;
+  margin: rem(8px) 0 rem(24px);
+  padding: rem(32px) rem(28px);
+  animation: none; // the load-time stagger would play off-screen
+
+  &[data-after="13"] {
+    display: block;
+  }
+
+  @media (max-width: 768px) {
+    &[data-after="13"] {
+      display: none;
+    }
+
+    &[data-after="9"] {
+      display: block;
+    }
+  }
+
+  @media (max-width: 420px) {
+    &[data-after="9"] {
+      display: none;
+    }
+
+    &[data-after="4"] {
+      display: block;
+    }
+  }
+
+  .cta-band__title {
+    font-size: fluid(20px, 25.6px);
+    font-weight: 750;
+    line-height: 1.3;
+  }
+
+  // `.ig-typography p { margin: 0 }` would drop the band's auto side margins
+  // and push the description off-centre.
+  .cta-band__desc {
+    margin: rem(8px) auto 0;
+  }
+
+  .cta-band__actions {
+    margin-top: rem(20px);
+  }
+
+  .cta-band__btn {
+    gap: rem(8px);
+    --ig-icon-size: #{rem(18px)};
+    --ig-contained-button-icon-color: var(--accent-on-light);
+    --ig-contained-button-icon-color-hover: var(--accent-on-light);
+  }
+}
+
+// Second action: white outline on the orange band, toned through the outlined
+// button's own variables (button-tones), pill-shaped like .cta-band__btn.
+.portfolio-cta__prices {
+  @include teal-outlined-button(#fff);
+  --ig-outlined-button-hover-background: rgba(255, 255, 255, 0.12);
+  --ig-outlined-button-focus-background: rgba(255, 255, 255, 0.12);
+  --ig-size: var(--ig-size-medium);
+  --ig-icon-size: #{rem(18px)};
+  gap: rem(8px);
+  height: max-content;
+  padding: rem(13px) rem(28px);
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  font-size: rem(14.4px);
 }
 

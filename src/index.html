@@ -72,7 +72,7 @@
   <meta property="og:image:alt" content="3D печат и 3D принтиране - професионални услуги">
   <meta property="og:url" content="https://3dpechat.bg/">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="3D печат услуги">
+  <meta property="og:site_name" content="3dpechat">
   <meta property="og:locale" content="bg_BG">
   <meta property="og:locale:alternate" content="en_US">
 
@@ -81,27 +81,115 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-  <!-- Site-wide Organization schema — ties the site and its social profiles
-       (sameAs) into one brand entity for Google. Separate id from the per-page
-       BlogPosting script that SeoService swaps in (#structured-data-jsonld).
-       Keep in sync with 404.html. -->
+  <!-- Site-wide LocalBusiness schema — ties the site, the map listing and the
+       social profiles (sameAs) into one business entity. GENERATED from
+       src/data/business.json by scripts/generate-business-schema.js (prebuild),
+       together with og:site_name, in both index.html and 404.html. Don't
+       hand-edit it. Separate id from the per-page script that SeoService swaps
+       in (#structured-data-jsonld). -->
   <script type="application/ld+json" id="organization-jsonld">
   {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": "LocalBusiness",
     "@id": "https://3dpechat.bg/#organization",
-    "name": "3D Печат България",
-    "alternateName": "3dpechat.bg",
+    "name": "3dpechat",
+    "alternateName": [
+      "3dpechat.bg",
+      "3D Печат България"
+    ],
     "url": "https://3dpechat.bg/",
     "logo": "https://3dpechat.bg/assets/logo.png",
-    "email": "3dpechat.bg@gmail.com",
+    "image": "https://3dpechat.bg/assets/og-image.png",
     "telephone": "+359883310616",
+    "email": "3dpechat.bg@gmail.com",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Симеоновско шосе 110Б, ет.2",
+      "streetAddress": "бул. „Симеоновско шосе“ 110 б, ет. 2",
       "addressLocality": "София",
+      "postalCode": "1700",
+      "addressRegion": "София-град",
       "addressCountry": "BG"
     },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 42.640588,
+      "longitude": 23.3342435
+    },
+    "hasMap": "https://www.google.com/maps?cid=9860284859046039627",
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "opens": "09:00",
+        "closes": "18:00"
+      }
+    ],
+    "priceRange": "€",
+    "areaServed": [
+      {
+        "@type": "City",
+        "name": "София"
+      },
+      {
+        "@type": "Country",
+        "name": "България"
+      }
+    ],
+    "knowsAbout": [
+      "FDM 3D печат"
+    ],
+    "makesOffer": [
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "3D печат по поръчка"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Прототипи"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Функционални детайли и резервни части"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Малки серии"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Персонализирани подаръци"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "3D моделиране по идея, скица или снимка"
+        }
+      }
+    ],
     "sameAs": [
       "https://www.instagram.com/3dpechat.bg",
       "https://www.tiktok.com/@3dpechat.bg",

@@ -1,5 +1,10 @@
 import { test, expect } from '@playwright/test';
+import fs from 'node:fs';
+import path from 'node:path';
 import { ALL_ROUTES } from './routes';
+
+// The one source of truth for the business identity (CLAUDE.md Rule 5).
+const business = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'src/data/business.json'), 'utf8'));
 
 /**
  * SEO guardrails. These protect the prerendered <head> — the meta tags,
@@ -71,16 +76,72 @@ test.describe('SEO metadata', () => {
     }
   });
 
-  test('Organization JSON-LD links every official profile via sameAs', async ({ page }) => {
+  test('LocalBusiness JSON-LD matches business.json (name, contacts, address, geo, profiles)', async ({ page }) => {
     await page.goto('/');
     const raw = await page.locator('script#organization-jsonld').textContent();
     const org = JSON.parse(raw ?? '{}');
-    expect(org['@type']).toBe('Organization');
-    expect(org.sameAs).toEqual(expect.arrayContaining([
-      'https://www.instagram.com/3dpechat.bg',
-      'https://www.tiktok.com/@3dpechat.bg',
-      'https://www.youtube.com/@3dpechatbg',
-    ]));
+    expect(org['@type']).toBe('LocalBusiness');
+    expect(org['@id']).toBe('https://3dpechat.bg/#organization');
+    expect(org.name).toBe(business.name);
+    expect(org.telephone).toBe(business.telephone);
+    expect(org.address.postalCode).toBe('1700');
+    expect(org.address.streetAddress).toBe(business.address.streetAddress);
+    expect(org.geo).toEqual(expect.objectContaining({ latitude: business.geo.latitude, longitude: business.geo.longitude }));
+    expect(org.openingHoursSpecification[0]).toEqual(expect.objectContaining({ opens: '09:00', closes: '18:00' }));
+    expect(org.sameAs).toEqual(business.sameAs);
+    await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute('content', business.name);
+  });
+
+  test('404.html carries the same LocalBusiness JSON-LD as the home page', async ({ page, request }) => {
+    await page.goto('/');
+    const home = JSON.parse((await page.locator('script#organization-jsonld').textContent()) ?? '{}');
+    const html = await (await request.get('/404.html')).text();
+    const match = html.match(/id="organization-jsonld">([\s\S]*?)<\/script>/);
+    expect(match, 'organization-jsonld in 404.html').not.toBeNull();
+    expect(JSON.parse(match![1])).toEqual(home);
+  });
+
+  // Self-serving review markup for our own Google reviews risks a manual
+  // penalty (CLAUDE.md, "Other standing rules") — guard every page's JSON-LD.
+  test('no page emits Review or AggregateRating structured data', async ({ page }) => {
+    const offenders: string[] = [];
+    const walk = (node: unknown, where: string): void => {
+      if (Array.isArray(node)) return node.forEach((n) => walk(n, where));
+      if (node && typeof node === 'object') {
+        for (const [key, value] of Object.entries(node)) {
+          if (key === 'aggregateRating' || key === 'review' || value === 'Review' || value === 'AggregateRating') {
+            offenders.push(`${where}: ${key}`);
+          }
+          walk(value, where);
+        }
+      }
+    };
+    for (const route of ALL_ROUTES) {
+      await page.goto(route.path);
+      for (const raw of await page.locator('script[type="application/ld+json"]').allTextContents()) {
+        walk(JSON.parse(raw), route.path);
+      }
+    }
+    expect(offenders).toEqual([]);
+  });
+
+  test('llms.txt is generated from business.json (name, facts, profiles)', async ({ request }) => {
+    const res = await request.get('/llms.txt');
+    expect(res.status()).toBe(200);
+    const text = await res.text();
+    expect(text.startsWith(`# ${business.name}`)).toBe(true);
+    for (const fact of business.facts) expect(text).toContain(fact);
+    for (const url of business.sameAs) expect(text).toContain(url);
+    expect(text).not.toMatch(/SLA и SLS/);
+  });
+
+  // IndexNow (scripts/indexnow.js) verifies ownership by fetching this file.
+  test('the IndexNow key file is deployed at the site root', async ({ request }) => {
+    const keyFile = fs.readdirSync(path.resolve(process.cwd(), 'public')).find((f) => /^[0-9a-f]{32}\.txt$/.test(f));
+    expect(keyFile, 'public/<32 hex>.txt').toBeTruthy();
+    const res = await request.get(`/${keyFile}`);
+    expect(res.status()).toBe(200);
+    expect((await res.text()).trim()).toBe(keyFile!.replace('.txt', ''));
   });
 
   test('robots.txt is served and references the sitemap', async ({ request }) => {
