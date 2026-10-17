@@ -6,8 +6,11 @@
 </header>
 
 <div class="contact-page">
+  <!-- A short lead only: address and hours sit in the info panel, delivery /
+       quote / price in the „Добре е да знаете“ cards under the form. Same copy
+       as the old one-paragraph intro, split so it scans. -->
   <p class="contact-intro" data-testid="contact-intro">
-    Търсите 3D печат по поръчка? Изработваме прототипи, функционални детайли, подаръци и малки серии – от готов 3D модел или само от идея. Работим всеки ден от 9:00 до 18:00 в София (кв. Витоша, бул. „Симеоновско шосе“ 110 б, ет. 2). В София предаваме готовите поръчки лично или с градски куриер – по уговорка по телефона или със съобщение, а в останалата част от страната изпращаме с Еконт или Спиди. Най-бързо ще ни откриете по телефон или във Viber, но можете да пишете и по имейл или през формата по-долу. Обичайно отговаряме до 24 часа. Ако вече имате модел, посочете цвета, размерите и желания срок – така ще получите оферта още с първия ни отговор. Цената се изчислява по грамаж – вижте <a routerLink="/prices">цените</a>, а в <a routerLink="/portfolio">портфолиото</a> ще откриете какво сме изработвали досега.
+    Търсите 3D печат по поръчка? Изработваме прототипи, функционални детайли, подаръци и малки серии – от готов 3D модел или само от идея. Най-бързо ще ни откриете по телефон или във Viber, но можете да пишете и по имейл или през формата по-долу.
   </p>
 
   <div class="contact-shell">
@@ -39,6 +42,23 @@
         <div class="info-text">
           <b>Email</b>
           <a href="mailto:3dpechat.bg@gmail.com">3dpechat.bg&#64;gmail.com</a>
+        </div>
+      </div>
+
+      <!-- Address + hours come from business.json, like the footer and the schema. -->
+      <div class="info-row" data-testid="contact-address">
+        <igx-icon class="info-icon">location_on</igx-icon>
+        <div class="info-text">
+          <b>Адрес</b>
+          <a [href]="mapUrl" target="_blank" rel="noopener noreferrer">{{ displayAddress }}</a>
+        </div>
+      </div>
+
+      <div class="info-row" data-testid="contact-hours">
+        <igx-icon class="info-icon">schedule</igx-icon>
+        <div class="info-text">
+          <b>Работно време</b>
+          <span>{{ openingHours }}</span>
         </div>
       </div>
 
@@ -217,4 +237,45 @@
       </form>
     </div>
   </div>
+
+  <!-- Practical details, one igx-card each (same look as the homepage value
+       props). Copy stays within business.json facts (CLAUDE.md Rule 5). -->
+  <section class="contact-how" aria-labelledby="contact-how-title" data-testid="contact-how">
+    <h2 class="contact-how__title" id="contact-how-title">Добре е да знаете</h2>
+    <ul class="contact-how__grid">
+      <li>
+        <igx-card class="how-card">
+          <igx-card-content class="how-card__body">
+            <span class="how-card__icon"><igx-icon aria-hidden="true">local_shipping</igx-icon></span>
+            <h3 class="how-card__title">Доставка</h3>
+            <p class="how-card__text">
+              В София предаваме готовите поръчки лично или с градски куриер – по уговорка по телефона или със съобщение. В останалата част от страната изпращаме с Еконт или Спиди.
+            </p>
+          </igx-card-content>
+        </igx-card>
+      </li>
+      <li>
+        <igx-card class="how-card">
+          <igx-card-content class="how-card__body">
+            <span class="how-card__icon"><igx-icon aria-hidden="true">request_quote</igx-icon></span>
+            <h3 class="how-card__title">Оферта с първия отговор</h3>
+            <p class="how-card__text">
+              Ако вече имате модел, посочете цвета, размерите и желания срок – така ще получите оферта още с първия ни отговор.
+            </p>
+          </igx-card-content>
+        </igx-card>
+      </li>
+      <li>
+        <igx-card class="how-card">
+          <igx-card-content class="how-card__body">
+            <span class="how-card__icon"><igx-icon aria-hidden="true">scale</igx-icon></span>
+            <h3 class="how-card__title">Цена по грамаж</h3>
+            <p class="how-card__text">
+              Цената се изчислява по грамаж – вижте <a routerLink="/prices">цените</a>, а в <a routerLink="/portfolio">портфолиото</a> ще откриете какво сме изработвали досега.
+            </p>
+          </igx-card-content>
+        </igx-card>
+      </li>
+    </ul>
+  </section>
 </div>

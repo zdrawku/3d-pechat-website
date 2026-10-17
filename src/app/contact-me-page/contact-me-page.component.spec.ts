@@ -5,6 +5,7 @@ import { provideRouter } from '@angular/router';
 
 import { IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective } from 'igniteui-angular';
 import { ContactMePageComponent } from './contact-me-page.component';
+import { BUSINESS, openingHoursLabel } from '../../data/business';
 
 describe('ContactMePageComponent', () => {
   let component: ContactMePageComponent;
@@ -33,17 +34,51 @@ describe('ContactMePageComponent', () => {
       expect(h1s[0].textContent).toContain('Контакти');
     });
 
-    it('has an intro of 80-150 words covering delivery, response time and address', () => {
-      const intro = (fixture.nativeElement as HTMLElement).querySelector('[data-testid="contact-intro"]')!;
-      const text = intro.textContent!.trim();
-      const words = text.split(/\s+/).length;
-      expect(words).withContext('intro word count').toBeGreaterThanOrEqual(80);
-      expect(words).withContext('intro word count').toBeLessThanOrEqual(150);
+    const host = (): HTMLElement => fixture.nativeElement;
+    const wordCount = (el: Element): number => el.textContent!.trim().split(/\s+/).length;
+
+    it('keeps the intro to a short lead, with 80-150 words of copy across lead and cards', () => {
+      const intro = host().querySelector('[data-testid="contact-intro"]')!;
+      const how = host().querySelector('[data-testid="contact-how"]')!;
+      expect(intro.textContent).toContain('3D печат по поръчка');
+      expect(intro.textContent).toContain('Viber');
+      expect(wordCount(intro)).withContext('lead word count').toBeLessThanOrEqual(50);
+
+      // The copy that used to be one long paragraph still reaches the page.
+      const words = wordCount(intro) + wordCount(how);
+      expect(words).withContext('lead + cards word count').toBeGreaterThanOrEqual(80);
+      expect(words).withContext('lead + cards word count').toBeLessThanOrEqual(150);
+    });
+
+    it('shows the address, hours and response time in the info panel', () => {
+      // Address and hours come from business.json, like the footer and the schema.
+      const address = host().querySelector('[data-testid="contact-address"]')!;
+      expect(address.textContent).toContain(BUSINESS.displayAddress);
+      expect(address.querySelector('a')?.getAttribute('href')).toBe(BUSINESS.hasMap);
+      expect(address.querySelector('igx-icon')).withContext('Ignite icon').not.toBeNull();
+
+      const hours = host().querySelector('[data-testid="contact-hours"]')!;
+      expect(hours.textContent!.toLowerCase()).toContain(openingHoursLabel().toLowerCase());
+      expect(hours.textContent).toContain('9:00 до 18:00');
+
+      expect(host().querySelector('.response-note')?.textContent).toContain('24 часа');
+    });
+
+    it('builds the delivery / quote / price cards from Ignite UI components', () => {
+      const how = host().querySelector('[data-testid="contact-how"]')!;
+      const cards = how.querySelectorAll('igx-card');
+      expect(cards.length).toBe(3);
+      cards.forEach(card => {
+        expect(card.querySelector('igx-card-content')).withContext('igx-card-content').not.toBeNull();
+        expect(card.querySelector('igx-icon')).withContext('igx-icon').not.toBeNull();
+      });
+
+      const text = how.textContent!;
       expect(text).toContain('София');
       expect(text).toContain('куриер');
-      expect(text).toContain('24 часа');
-      expect(text).toContain('кв. Витоша, бул. „Симеоновско шосе“ 110 б, ет. 2');
-      expect(text).toContain('9:00 до 18:00');
+      expect(text).toContain('Еконт или Спиди');
+      expect(text).toContain('грамаж');
+      expect(Array.from(how.querySelectorAll('a'), a => a.getAttribute('href'))).toEqual(['/prices', '/portfolio']);
     });
 
     it('tells visitors to send model files by email or Viber (the form takes no attachments)', () => {

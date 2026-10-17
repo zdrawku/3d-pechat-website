@@ -46,6 +46,11 @@
                 "glob": "CNAME",
                 "input": "public",
                 "output": "/"
+              },
+              {
+                "glob": "*.txt",
+                "input": "public",
+                "output": "/"
               }
             ],
             "styles": [

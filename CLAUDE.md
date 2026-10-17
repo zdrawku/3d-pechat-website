@@ -83,9 +83,17 @@ source; never duplicate or hand-write it elsewhere. The full plan is
    descriptions, FAQ, llms.txt) may state only what its `facts` say and never
    what `neverClaim` lists. In short: **FDM only, PLA stocked (other materials
    bought per order), no SLA/SLS/scanning, no same-day promises, no invoices.**
-   Never invent a price, time or size. The auto-blog prompt reads this file;
-   when a fact changes, change it there, then fix existing copy that says
-   otherwise.
+   Never invent a price, time or size. Generated from it:
+   - the `LocalBusiness` JSON-LD and `og:site_name` in `index.html`/`404.html`
+     (`scripts/generate-business-schema.js`, run in prebuild). **Never hand-edit
+     the `organization-jsonld` block.**
+   - llms.txt
+   - the footer address, and the contact intro's address and hours (via
+     `src/data/business.ts`)
+   - the auto-blog prompt
+
+   When a fact changes, change it there, rebuild, then fix any hand-written
+   copy that still says otherwise.
 2. **Blog post metadata/SEO → [`blog-posts.registry.ts`](src/app/services/blog-posts.registry.ts).**
    A post component makes one call: `seoService.applyBlogPostSeo('<slug>')`.
    It emits the meta tags, canonical and a `BlogPosting` + `BreadcrumbList`
@@ -98,7 +106,9 @@ source; never duplicate or hand-write it elsewhere. The full plan is
    post's content changes substantively, bump its `dateModified` in the
    registry. When a main page changes, bump its entry in `MAIN_PAGE_LASTMOD` in
    [`scripts/generate-sitemap.js`](scripts/generate-sitemap.js). These feed the
-   sitemap, the schema and (Phase 3) IndexNow, so a fake date is a bug.
+   sitemap, the schema and IndexNow, so a fake date is a bug. After every deploy
+   the workflow pings Bing via IndexNow (`scripts/indexnow.js`) for URLs whose
+   `<lastmod>` changed. Keep exactly one `public/<32-hex>.txt` key file.
 4. **URLs end with `/`.** `TrailingSlashUrlSerializer` adds the slash to
    `routerLink`s (keep `routerLink` values slash-free). Markdown links must be
    written as `/blog/<slug>/`. `postbuild` (`scripts/check-internal-links.js`)
@@ -122,7 +132,8 @@ dark at desktop and mobile widths. Report failures with their output.
 
 ## Other standing rules
 
-- Keep `404.html` in sync with `index.html` (meta tags, CSP, scripts).
+- Keep `404.html` in sync with `index.html` (meta tags, CSP, scripts). The
+  LocalBusiness JSON-LD and `og:site_name` in both are generated; don't edit them.
 - Run `npm run generate-sitemap` after adding routes or blog posts (a new main
   route also needs a `MAIN_PAGE_LASTMOD` entry, or the generator exits).
 - Image paths in markdown/HTML use `assets/…` (no leading slash), kebab-case,

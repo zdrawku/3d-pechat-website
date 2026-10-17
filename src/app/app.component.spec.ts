@@ -5,6 +5,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { IGX_NAVBAR_DIRECTIVES, IgxIconComponent, IgxButtonDirective, IgxIconButtonDirective, IGX_NAVIGATION_DRAWER_DIRECTIVES } from 'igniteui-angular';
 import { AppComponent } from './app.component';
+import { BUSINESS } from '../data/business';
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -31,6 +32,11 @@ describe('AppComponent', () => {
       .withContext('footer tel: link').not.toBeNull();
     expect(host.querySelector('footer a[href="viber://chat?number=%2B359883310616"]'))
       .withContext('footer Viber link').not.toBeNull();
+  });
+
+  it('shows the footer address from business.json (matches the schema and map listing)', () => {
+    const address = (fixture.nativeElement as HTMLElement).querySelector('footer [data-testid="footer-address"]');
+    expect(address?.textContent?.trim()).toBe(BUSINESS.displayAddress);
   });
 
   it('links the YouTube channel from the navbar and footer as Ignite icon links', () => {

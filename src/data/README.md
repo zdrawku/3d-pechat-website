@@ -156,9 +156,15 @@ It's the reason AI assistants and search engines see one consistent business
 
 - **Identity:** `name` („3dpechat“, exactly as on the Google listing),
   `alternateName`, `telephone`, `email`, `address`, `displayAddress`, `geo`,
-  `hasMap`, `openingHours`, `priceRange`, `areaServed`, `sameAs`. Phase 2 of
-  the plan wires these into the `LocalBusiness` JSON-LD, the footer and
-  llms.txt. Until then, `index.html`/`404.html` still carry the old schema.
+  `hasMap`, `openingHours`, `priceRange`, `areaServed`, `sameAs`.
+  - `scripts/generate-business-schema.js` (prebuild) writes them into the
+    `LocalBusiness` JSON-LD and `og:site_name` of `index.html`/`404.html`.
+  - `generate-llms.js` builds llms.txt from them.
+  - Components read them through [`business.ts`](business.ts) (`BUSINESS`,
+    `openingHoursLabel()`): the footer address, and the contact intro's address
+    and hours.
+- **`titleBrand`:** the suffix in page `<title>`s („… | 3D Печат България“).
+  It's separate from `name` so a rename doesn't rewrite every title.
 - **`technologies`, `services`:** what we actually do (FDM only).
 - **`facts`:** Bulgarian sentences that copy may state: materials, prices,
   minimum order, lead times, files, size, delivery, payment, hours. The
@@ -166,10 +172,10 @@ It's the reason AI assistants and search engines see one consistent business
 - **`neverClaim`:** things no copy may say: SLA/SLS/scanning as our service,
   same-day work, invoices, unconfirmed modeling prices, invented reviews.
 
-**When a fact changes:** edit it here first, then search the site and blog for
-copy that still says the old thing. Copy elsewhere isn't generated from this
-file yet (the contact intro, the Sofia blog post and the prices page minimum
-repeat some facts by hand).
+**When a fact changes:** edit it here first and rebuild, then search the site
+and blog for hand-written copy that still says the old thing. The Sofia blog
+post, the rest of the contact intro and the prices page minimum repeat some
+facts by hand. A prices spec fails if the minimum and the fact disagree.
 
 ## ⚠️ Encoding note (all files here)
 

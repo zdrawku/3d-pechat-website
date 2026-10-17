@@ -4,6 +4,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { IGX_NAVBAR_DIRECTIVES, IGX_NAVIGATION_DRAWER_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxIconComponent, IgxIconService, IgxNavigationDrawerComponent, IgxToggleActionDirective, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
 import { instagram, tiktok, youtube } from '@igniteui/material-icons-extended';
 import { GOOGLE_REVIEW_URL, YOUTUBE_CHANNEL_URL } from '../data/site-links';
+import { BUSINESS } from '../data/business';
 import { ReviewCtaComponent } from './shared/review-cta/review-cta.component';
 
 @Component({
@@ -24,6 +25,8 @@ export class AppComponent implements OnInit {
   public isDarkTheme = false;
   /** Direct Google write-review link, shared by every review CTA (see site-links). */
   public readonly googleReviewUrl = GOOGLE_REVIEW_URL;
+  /** Footer address — from business.json so it matches the schema and the map listing. */
+  public readonly displayAddress = BUSINESS.displayAddress;
   /** YouTube channel — navbar + footer icon links (see site-links). */
   public readonly youtubeChannelUrl = YOUTUBE_CHANNEL_URL;
 

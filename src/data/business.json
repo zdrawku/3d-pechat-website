@@ -1,6 +1,7 @@
 {
   "name": "3dpechat",
   "alternateName": ["3dpechat.bg", "3D Печат България"],
+  "titleBrand": "3D Печат България",
   "url": "https://3dpechat.bg/",
   "telephone": "+359883310616",
   "email": "3dpechat.bg@gmail.com",
@@ -20,7 +21,10 @@
     { "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], "opens": "09:00", "closes": "18:00" }
   ],
   "priceRange": "€",
-  "areaServed": ["София", "България"],
+  "areaServed": [
+    { "type": "City", "name": "София" },
+    { "type": "Country", "name": "България" }
+  ],
   "technologies": ["FDM"],
   "services": [
     "3D печат по поръчка",

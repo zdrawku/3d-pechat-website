@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@angular/core';
 import { Title, Meta } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 import { BLOG_POSTS } from './blog-posts.registry';
+import business from '../../data/business.json';
 
 export const SITE_ORIGIN = 'https://3dpechat.bg';
 
@@ -42,7 +43,10 @@ export interface SeoConfig {
 })
 export class SeoService {
     private readonly defaultImage = `${SITE_ORIGIN}/assets/og-image.png`;
-    private readonly siteName = '3D Печат България';
+    /** Entity name (og:site_name, schema publisher/author) — must match the map listing. */
+    private readonly siteName = business.name;
+    /** Brand suffix in <title>s; kept separate so a rename doesn't rewrite every title. */
+    private readonly titleBrand = business.titleBrand;
 
     constructor(
         private title: Title,
@@ -123,7 +127,7 @@ export class SeoService {
         const brand = { '@type': 'Organization', '@id': `${SITE_ORIGIN}/#organization`, name: this.siteName };
 
         this.updateSeo({
-            title: post.seoTitle ?? `${post.title} | ${this.siteName}`,
+            title: post.seoTitle ?? `${post.title} | ${this.titleBrand}`,
             description: post.description,
             keywords,
             image,

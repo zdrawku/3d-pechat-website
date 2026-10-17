@@ -32,10 +32,26 @@ describe('PortfolioPageComponent', () => {
     expect(el.querySelectorAll('.portfolio-caption').length).toBe(h2s.length);
   });
 
-  it('links to prices and contact from the intro', () => {
-    const hrefs = Array.from(
-      (fixture.nativeElement as HTMLElement).querySelectorAll('.portfolio-intro a'),
-    ).map(a => a.getAttribute('href'));
-    expect(hrefs).toEqual(['/prices', '/contact']);
+  it('puts the quote CTA inside the photo wall after ~4 rows (4, 9, 13 photos; one per column count)', () => {
+    const gallery = (fixture.nativeElement as HTMLElement).querySelector('.masonry-gallery')!;
+    const children = Array.from(gallery.children);
+    const bands = gallery.querySelectorAll<HTMLElement>('[data-testid="portfolio-cta"]');
+    expect(Array.from(bands, b => b.dataset['after'])).toEqual(['4', '9', '13']);
+
+    bands.forEach(band => {
+      const photosBefore = children.slice(0, children.indexOf(band))
+        .filter(el => el.classList.contains('masonry-item')).length;
+      expect(photosBefore).withContext(`photos before band ${band.dataset['after']}`).toBe(Number(band.dataset['after']));
+    });
+  });
+
+  it('links to contact and prices from the CTA with Ignite UI buttons', () => {
+    const band = (fixture.nativeElement as HTMLElement).querySelector('[data-testid="portfolio-cta"]')!;
+    const links = Array.from(band.querySelectorAll<HTMLAnchorElement>('a'));
+    expect(links.map(a => a.getAttribute('href'))).toEqual(['/contact', '/prices']);
+    links.forEach(a => {
+      expect(a.hasAttribute('igxButton')).withContext('styled via igxButton').toBeTrue();
+      expect(a.querySelector('igx-icon')).withContext('igx-icon').not.toBeNull();
+    });
   });
 });
