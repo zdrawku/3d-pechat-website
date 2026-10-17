@@ -8,15 +8,24 @@ import { test, expect } from '@playwright/test';
  */
 test.describe('prices calculator', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/prices');
+    // networkidle = the lazy page chunk has loaded and the prerendered page is
+    // hydrated, so typing and the igx-select react (same as a11y/smoke specs).
+    await page.goto('/prices', { waitUntil: 'networkidle' });
   });
 
   // The tier picker is an igx-select (not a native <select>), so it's driven by
   // opening the dropdown and clicking the option instead of Playwright's
   // selectOption(). Each igx-select-item carries data-testid="calc-tier-<id>".
+  // A click that lands while the previous dropdown is still animating closed is
+  // swallowed, so open until the option is visible, then wait for it to close.
   async function selectTier(page: import('@playwright/test').Page, id: string) {
-    await page.getByTestId('calc-tier').click();
-    await page.getByTestId(`calc-tier-${id}`).click();
+    const option = page.getByTestId(`calc-tier-${id}`);
+    await expect(async () => {
+      if (!(await option.isVisible())) await page.getByTestId('calc-tier').click();
+      await expect(option).toBeVisible({ timeout: 1_000 });
+    }).toPass({ timeout: 10_000 });
+    await option.click();
+    await expect(option).toBeHidden();
   }
 
   test('computes total for grams × selected tier', async ({ page }) => {

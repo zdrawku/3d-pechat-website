@@ -1,0 +1,33 @@
+name: Live site check
+
+# Weekly read-only check of https://3dpechat.bg for everything that keeps the
+# site discoverable by search engines and AI assistants: crawler access, the
+# LocalBusiness schema vs src/data/business.json, every sitemap URL (200,
+# self-canonical, canonical links, no review markup), legacy redirects,
+# llms.txt, the IndexNow key, the FAQ and the English page.
+# See scripts/check-live-site.js and AI-VISIBILITY-PLAN.md (Phase 7).
+#
+# Not part of the deploy job on purpose: GitHub Pages' CDN can serve the old
+# version for a few minutes after a deploy, which would make it flaky. Run it
+# manually (Actions → Live site check → Run workflow) ~10 minutes after a deploy.
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'   # Mondays 06:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check the live site
+        run: npm run check:live

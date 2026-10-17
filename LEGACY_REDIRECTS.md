@@ -17,6 +17,7 @@ inbound links to the new pages. Add new rows when you rename or merge a post.
 |---|---|---|---|
 | `https://3dpechat.bg/blog/how-to-make-money-3d-printing/` | `https://3dpechat.bg/blog/kak-da-pechelim-ot-3d-printiraneto/` | Merged: unique licensing, GPSR/CE and pricing material folded into the kept post | 2026-10-12 |
 | `https://3dpechat.bg/blog/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p/` | `https://3dpechat.bg/blog/prozrachen-i-poluprozrachen-pla-filament-svetlopropuskliv-3d-pechat/` | Renamed: the old slug was cut mid-word (`…-3d-p`) | 2026-10-12 |
+| `https://3dpechat.bg/blog/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt/` | `https://3dpechat.bg/blog/barzi-i-umni-3d-printeri/` | Removed: auto-generated story about a person who isn't real („Мартин“); redirects to the closest live topic (beginner printer at home) | 2026-10-17 |
 
 ## Search Console checklist
 

@@ -1,0 +1,287 @@
+@use "igniteui-angular/theming" as *;
+@use "../fluid" as *;
+@use "../sla-hover" as sla;
+@use "../button-tones" as *;
+
+// The English landing (design variant A). Cards and tokens match the
+// contact / FAQ cards so /en/ reads as part of the same site.
+:host {
+  display: block;
+}
+
+.en-page {
+  max-width: rem(1120px);
+  margin: 0 auto;
+  padding: fluid(32px, 56px) rem(24px) rem(64px);
+
+  @media (max-width: 480px) {
+    padding-inline: rem(16px);
+  }
+}
+
+// ===================== HERO =====================
+.en-hero {
+  padding: fluid(28px, 48px) fluid(20px, 40px);
+  border-radius: var(--radius-xl);
+  background: var(--bg-hero);
+  border: rem(1px) solid var(--line, var(--ig-gray-300));
+}
+
+.en-eyebrow {
+  margin: 0 0 rem(10px);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: rem(12px);
+  font-weight: 700;
+  color: var(--accent-on-tint);
+}
+
+// Scoped under .en-hero so it out-specifies the type scale's `.ig-typography h1`.
+.en-hero .en-title {
+  margin: 0;
+  max-width: 22ch;
+  font-size: fluid(28px, 44px);
+  line-height: 1.12;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ig-gray-900);
+  text-wrap: balance;
+}
+
+.en-lead {
+  margin: rem(16px) 0 0;
+  max-width: 62ch;
+  font-size: fluid(16px, 18px);
+  line-height: 1.6;
+  color: var(--ig-gray-700);
+}
+
+.en-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: rem(12px);
+  margin-top: rem(24px);
+}
+
+.en-cta {
+  --ig-size: var(--ig-size-medium);
+  border-radius: var(--radius-pill);
+  padding: rem(12px) rem(24px);
+  font-weight: 700;
+  gap: rem(6px);
+}
+
+.en-cta--primary {
+  @include primary-contained-button;
+}
+
+.en-cta--ghost {
+  @include teal-outlined-button;
+}
+
+.en-note {
+  margin: rem(16px) 0 0;
+  font-size: rem(14px);
+  color: var(--ig-gray-700);
+}
+
+// ===================== SECTIONS =====================
+.en-section {
+  margin-top: fluid(36px, 56px);
+}
+
+.en-section__title {
+  margin: 0 0 rem(20px);
+  color: var(--ig-gray-900);
+}
+
+.en-grid {
+  list-style: none;
+  margin-bottom: 0;
+  padding: 0;
+  display: grid;
+  gap: rem(18px);
+}
+
+// Intrinsic 4 → 2 → 1 and 2 → 1 columns, no breakpoints.
+.en-grid--4 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, rem(220px)), 1fr));
+}
+
+.en-grid--2 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, rem(380px)), 1fr));
+}
+
+.en-grid > li {
+  display: flex;
+}
+
+// ===================== CARDS =====================
+.en-card {
+  flex: 1;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-lg);
+
+  @include sla.sla-hover;
+
+  // After the mixin, which resets the border to transparent for its hover swap.
+  border: rem(1px) solid var(--ig-gray-300);
+}
+
+.en-card__body {
+  padding: rem(24px) rem(20px);
+}
+
+// Children are scoped under .en-card (0,3,0 with Angular's attribute) so they
+// out-specify the type scale's `.ig-typography .igx-card-content > :not(igx-icon)`.
+.en-card .en-card__icon {
+  width: rem(46px);
+  height: rem(46px);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: rem(14px);
+  background: color-mix(in srgb, var(--ig-primary-500) 14%, transparent);
+  --ig-icon-color: var(--accent-on-tint);
+  --ig-icon-size: #{rem(22px)};
+}
+
+.en-card .en-card__title {
+  margin: 0 0 rem(6px);
+  font-size: rem(16px);
+  font-weight: 700;
+  color: var(--ig-gray-900);
+}
+
+.en-card .en-card__heading {
+  margin: 0 0 rem(12px);
+  font-size: rem(20px);
+  font-weight: 700;
+  color: var(--ig-gray-900);
+}
+
+.en-card .en-card__text {
+  margin: 0;
+  font-size: rem(14px);
+  line-height: 1.55;
+  color: var(--ig-gray-700);
+}
+
+.en-card .en-list {
+  margin: 0 0 rem(14px);
+  padding-left: rem(18px);
+  display: flex;
+  flex-direction: column;
+  gap: rem(8px);
+  font-size: rem(15px);
+  line-height: 1.55;
+  color: var(--ig-gray-700);
+}
+
+.en-link,
+.en-back a,
+.en-contact__facts a {
+  color: var(--accent-on-tint);
+  font-weight: 700;
+  text-underline-offset: 0.2em;
+
+  &:hover,
+  &:focus-visible {
+    text-decoration-thickness: 2px;
+  }
+}
+
+// ===================== STEPS =====================
+.en-step {
+  flex-direction: column;
+  gap: rem(8px);
+}
+
+// Colours come from the avatar's own bgColor / color inputs (see the template).
+.en-step__num {
+  margin-bottom: rem(4px);
+  font-weight: 700;
+}
+
+.en-step__title {
+  margin: 0;
+  font-size: rem(16px);
+  font-weight: 700;
+  color: var(--ig-gray-900);
+}
+
+.en-step__text {
+  margin: 0;
+  font-size: rem(14px);
+  line-height: 1.55;
+  color: var(--ig-gray-700);
+}
+
+// ===================== CONTACT =====================
+.en-contact {
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  border: rem(1px) solid var(--ig-gray-300);
+  border-radius: var(--radius-xl);
+}
+
+.en-contact__body {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, rem(320px)), 1fr));
+  gap: rem(28px);
+  padding: fluid(24px, 36px);
+}
+
+.en-contact .en-contact__title {
+  margin: 0 0 rem(10px);
+  color: var(--ig-gray-900);
+}
+
+.en-contact .en-contact__text {
+  margin: 0 0 rem(18px);
+  line-height: 1.55;
+  color: var(--ig-gray-700);
+}
+
+.en-contact .en-contact__facts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: rem(14px);
+  font-size: rem(15px);
+  line-height: 1.5;
+  color: var(--ig-gray-700);
+
+  li {
+    display: flex;
+    gap: rem(12px);
+    align-items: flex-start;
+    --ig-icon-color: var(--accent-on-tint);
+    --ig-icon-size: #{rem(22px)};
+  }
+
+  // Label above value; the inline wrapper keeps "phone · Viber" on one line.
+  li > span {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .en-contact__inline {
+    display: block;
+  }
+
+  b {
+    color: var(--ig-gray-900);
+  }
+}
+
+.en-back {
+  margin: rem(32px) 0 0;
+  font-size: rem(15px);
+  color: var(--ig-gray-700);
+}

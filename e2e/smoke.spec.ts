@@ -83,7 +83,7 @@ test.describe('navigation', () => {
     await page.goto('/');
 
     for (const route of CORE_ROUTES) {
-      if (route.path === '/') continue;
+      if (route.path === '/' || route.inDrawer === false) continue;
       // Drawer chips carry the destination as routerLink; click by href.
       // Hrefs render with a canonical trailing slash (see
       // TrailingSlashUrlSerializer), so match either form.

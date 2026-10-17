@@ -9,13 +9,21 @@
 >   `zkolev/seo-fixes` was **not** merged; its changes were ported file by file.
 >   Still owner-side: the Search Console steps and the slashes in the Google
 >   listing description (Step 1.1).
-> - **Phase 2:** code implemented 2026-10-17 (2.1–2.5), uncommitted on
->   `discoverability-ai-improvements`, awaiting review. 2.6 (small logo) and the
->   header title „3D Печат услуги“ are left for the owner. The GBP updates are
->   owner-side.
-> - **Phase 3:** agent part (3.1–3.3) implemented 2026-10-17, uncommitted. The
->   Bing Webmaster Tools, Bing Places and Apple Business Connect steps are
->   owner-side.
+> - **Phases 2 and 3:** ✅ merged (PR #46, `f418174`) and live; `npm run
+>   check:live` passed 44/44 on 2026-10-17. 2.6 (512 px logo) was done in the
+>   Phase 4–7 batch. Owner-side still open: GBP updates, Bing Webmaster Tools,
+>   Bing Places, Apple Business Connect, and one manual deploy run with
+>   `indexnow_all`.
+> - **Phases 4–7:** implemented 2026-10-17, uncommitted on
+>   `discoverability-ai-improvements`, awaiting review. The owner asked the
+>   agent to decide open questions itself; every such decision is in the
+>   Decisions log, marked „agent“.
+>   - Design canvas: https://claude.ai/artifact/G9ZMwauxMhKhvngFyvZ4W7. The agent
+>     picked FAQ A, `/en/` A and card A.
+>   - Phase 4: the FAQ on `/prices/` and the buyer-intent topic queue.
+>   - Phase 5: `/en/`.
+>   - Phase 6: drafts handed over outside the repo.
+>   - Phase 7: the live-site check and its weekly workflow.
 >
 > **Workflow (the owner's rule):**
 > - All work happens on the `discoverability-ai-improvements` branch.
@@ -134,14 +142,12 @@ schema.
 - **Replies** within 24 h; the consultation is free.
 - **Files:** STL, 3MF (preferred), OBJ, STEP. The contact form takes **no**
   attachments (Web3Forms Pro feature), so files go by email or Viber.
-- **3D modeling:**
-  - Small edits to a ready model are free.
-  - Modeling from a sketch or photo adds 10 € to the end price; complex work is
-    15–25 €/hour.
-  - The customer always gets a fixed quote before work starts.
-  - The owner also wrote: „Изработка на кратък модел и бърза ориентировъчна
-    оферта е безплатно.“ ⚠ That conflicts with the 10 € rule. **Confirm the
-    exact wording before using it in Phase 4.**
+- **3D modeling (final, owner 2026-10-17):** the initial offer is free. The
+  modeling price depends on the complexity, meaning the time spent modeling, and
+  the customer learns it from the offer before work starts. **No fixed price
+  figure** (the earlier 10 € / 15–25 €/h suggestion is dropped).
+- **Languages (owner 2026-10-17):** inquiries are answered in Bulgarian and
+  English.
 - **Materials:** PLA is the main material and the only one stocked. The printer
   can also print others (e.g. PETG, TPU), which are bought on demand for a
   specific order.
@@ -152,8 +158,8 @@ schema.
   - The rest of Bulgaria: Econt or Speedy, to an office, an address or a parcel
     locker. The customer pays the courier's rate, and cash on delivery is
     available.
-  - Free shipping over 100 €. The owner listed this under Sofia; the copy
-    assumes Sofia only. ⚠ Confirm.
+  - **Free delivery over 100 € anywhere in Bulgaria** (owner, 2026-10-17). Below
+    100 € the courier's rate applies.
 - **Payment:** cash on pickup, Revolut transfer, or cash on delivery through the
   courier.
 - **Invoices:** none for now (sole trader). The owner states the given prices
@@ -653,12 +659,42 @@ auto-blog pipeline or by hand)
   - „3D печат по идея или снимка: как работи 3D моделирането по поръчка“
   - „3D печат за фирми: прототипи и малки серии в София“
 
+**Implemented 2026-10-17 (uncommitted).** The agent picked the variant; the
+owner asked it to decide.
+- **4.1:** the [design canvas](https://claude.ai/artifact/G9ZMwauxMhKhvngFyvZ4W7)
+  shows FAQ A/B/C, recorded in `FEATURE-IDEAS-PLAN.md`. **A** was built. The
+  owner had already added visible hours and address to `/contact/` (commit
+  `91bbcc1`).
+- **4.2:**
+  - `src/data/faq.json` has 10 Q&A.
+  - `app-faq` (`src/app/shared/faq/`) renders them as always-visible
+    `igx-card`s on `/prices/`, with FAQPage JSON-LD via `faqPageSchema(FAQ)`.
+  - llms.txt gets a „Често задавани въпроси“ section.
+  - `faq.spec.ts` is the facts guard.
+  - The calculator minimum now reads `business.json`.
+- **4.3:** `scripts/auto-blog/service-topics.js` queues 4 buyer-intent topics:
+  spare part, modeling from a photo, price per gram, file formats. Each has a
+  fixed slug. The pipeline (1st/11th/21st of the month) takes them first and
+  opens each post as a PR for review. The B2B topic was dropped because no
+  invoices are issued.
+
 **Done when:** the FAQ is live, the validators are clean, and at least one
 backlog post is published.
 
 ---
 
 ## Phase 5 — English landing page `/en/` (only if D5 is yes; design first) ⛔
+
+**Implemented 2026-10-17 (uncommitted).** Variant A was picked by the agent.
+- `src/app/en-page/` has Ignite cards, avatars and button links. Every number
+  comes from new structured `business.json` fields.
+- `SeoService.updateSeo({ locale, alternates })` sets `<html lang>`,
+  `og:locale` and hreflang. `HOME_LANGUAGE_ALTERNATES` is used on `/` and
+  `/en/`; every other page resets to Bulgarian with no hreflang.
+- The footer gets an „English“ link. Sitemap, llms.txt, e2e routes, the a11y
+  scan and SEO tests were added.
+- ⚠ The copy says "Write to us in English": the owner must confirm English
+  inquiries are answered.
 
 **Why:** English questions ("3D printing service Sofia") from expats and foreign
 companies have nothing on the site to match.
@@ -695,8 +731,9 @@ and hands them over **without committing them**.
 - [ ] Every profile links to `https://3dpechat.bg/` under the canonical name:
   YouTube About and **every** video description, Instagram and TikTok bios, the
   MakerWorld profile and each model's description.
-- [ ] A Facebook business page (none exists in `sameAs` today) with identical
-  name, address and phone. Add it to `business.json.sameAs` once it's live.
+- [x] ~~A Facebook business page~~: **not for now** (owner, 2026-10-17). If one
+  is created later, use identical name, address and phone, and add it to
+  `business.json.sameAs`.
 - [ ] Established Bulgarian business directories (for example Златни страници /
   goldenpages.bg, plus 2–3 others), with identical name, address and phone. No
   paid link farms. The agent generates a submission sheet from `business.json`:
@@ -718,9 +755,43 @@ and hands them over **without committing them**.
   customer-facing, so it needs a design artifact first. Reply to every review.
   **Never incentivize or fake reviews.**
 
+**Prepared 2026-10-17.** The off-site kit was handed to the owner outside the
+repo; it's the agent's session scratchpad, so copy it somewhere permanent. It
+contains:
+- **Listing sheet:** canonical name, address, phone and hours, BG/EN short and
+  long descriptions (no URLs in the GBP description), services, and photo
+  notes. Google wants JPG/PNG; the repo's photos are WebP.
+- **Priority list:** Google → Bing Places → **Golden Pages** (Google's
+  attribution page names goldenpages.bg as a source of its Bulgarian listing
+  data) → Apple → Facebook → Foursquare → OSM.
+- **Two pitches:** (a) the euro coin card. (b) **StandStrap**, replacing the
+  family story: that post was auto-generated and its „Мартин“ is probably not
+  real, so it can't be pitched.
+- **Review-request templates:** Viber, email and in person, with no gating and
+  no incentives.
+- **Profile texts:** a GBP post with slash links, Instagram, TikTok, YouTube
+  About plus a video footer, and MakerWorld.
+- **Review card:** variant A on the design canvas. Make the QR code in Chrome
+  (Share → Create QR code).
+
 ---
 
 ## Phase 7 — Monitoring (set up in Phase 0, then repeat monthly)
+
+**Implemented 2026-10-17:**
+- `scripts/check-live-site.js` (`npm run check:live`, +5 tests) is a read-only
+  production check:
+  - 8 crawler user agents get the full page
+  - the schema matches `business.json`, and `404.html` matches home
+  - every sitemap URL returns 200, is self-canonical, has canonical links and
+    no review markup
+  - slash-less URLs 301, and legacy redirects work
+  - llms.txt has every fact, and the IndexNow key is served
+  - the address and minimum-order copy are right, and the FAQ and `/en/` are
+    present (once deployed)
+- `.github/workflows/live-site-check.yml` runs it every Monday at 06:00 UTC and
+  on demand.
+- The GA4 channel group and the prompt panel stay owner tasks.
 
 - **GA4**: Explore → Session source / medium, filtered by the regex
   `chatgpt|openai|perplexity|gemini|copilot|claude|bing`. ChatGPT appends
@@ -783,13 +854,27 @@ and hands them over **without committing them**.
 | D2 | Opening hours | Every day, 9:00–18:00, matching the Google listing. No „по предварителна уговорка“. | 2026-10-17 |
 | D3 | Technologies offered | FDM only. No SLA, SLS or 3D scanning. | 2026-10-17 |
 | D4a | `priceRange` | `€` (0.80–1.50 € per 10 g; 3 € minimum order) | 2026-10-17 |
-| D4b | FAQ facts | See Phase 0 „D4b: the owner's answers“. Two ⚠ items to confirm: the free short model vs 10 € modeling, and whether free shipping over 100 € is Sofia-only | 2026-10-17 |
+| D4b | FAQ facts | See Phase 0 „D4b: the owner's answers“. All confirmed: free initial offer with modeling priced by complexity/time (no figure), free delivery over 100 € in all of Bulgaria, replies in Bulgarian and English | 2026-10-17 |
 | — | Phase 1 delivery | Implement Steps 1.1–1.9 at once and review them together | 2026-10-17 |
 | D5 | English `/en/` page | Yes, in Phase 5 | 2026-10-17 |
 | D6 | Display address string | „кв. Витоша, бул. „Симеоновско шосе“ 110 б, ет. 2, 1700 София“ | 2026-10-17 |
 | — | `zkolev/seo-fixes` | Don't merge wholesale; port step by step (Phase 1, Steps 1.1–1.9) | 2026-10-17 |
 | — | Workflow | All work on `discoverability-ai-improvements`; the agent never commits; the owner reviews and commits | 2026-10-17 |
 | — | Baseline prompt panel | The owner runs it and shares the results | 2026-10-17 |
+| A1 (agent) | Variants for Phases 4–6 | FAQ A (cards on /prices/), /en/ A (full landing), review card A (85×55 mm); [canvas](https://claude.ai/artifact/G9ZMwauxMhKhvngFyvZ4W7) | 2026-10-17 |
+| A2 | 3D modeling wording | **Owner:** the initial offer is free; the modeling price depends on complexity (time spent) and comes with the offer. No price figure anywhere. Updated in facts, `neverClaim`, the FAQ, `/en/`, the topic queue and the canvas | 2026-10-17 |
+| A3 | Free delivery over 100 € | ~~Sofia only (agent)~~ → **all of Bulgaria** (owner). `freeDeliveryOverEur`; copy updated in business.json facts, the FAQ, `/en/`, the contact Доставка card and the Sofia blog post | 2026-10-17 |
+| A4 | Invoices in the FAQ / `/en/` | Stated honestly: „Към момента не издаваме фактури“ / "We don't issue invoices at the moment". **Confirmed by the owner** | 2026-10-17 |
+| A5 | Header / footer / YouTube name „3D Печат Услуги“ | Visible text unchanged; added to `alternateName` so machines see one entity. **Confirmed by the owner (keep)** | 2026-10-17 |
+| A6 (agent) | Schema logo | `assets/logo-512.png` (70.5 KB, from the 1631 px logo) | 2026-10-17 |
+| A7 | `/en/` reply language | **Owner: yes, English inquiries are answered.** Now a `business.json` fact, `languages: ["bg","en"]`, and `knowsLanguage` in the schema | 2026-10-17 |
+| A8 (agent) | Buyer-intent posts | Queued 4 topics for the auto-blog pipeline instead of hand-writing; dropped the B2B topic (no invoices) | 2026-10-17 |
+| A9 (agent) | Second press pitch | StandStrap instead of the auto-generated „Мартин“ family story | 2026-10-17 |
+| O1 (owner) | „Мартин“ post | **Removed.** Its URL is a legacy redirect to `/blog/barzi-i-umni-3d-printeri/` (closest live topic), recorded in `LEGACY_REDIRECTS.md`. The A1 Combo post's link to it now points to `/blog/what-is-3d-printing/`. IndexNow now also submits removed URLs, so Bing re-crawls the old one | 2026-10-17 |
+| O2 (owner) | Facebook page | Not for now | 2026-10-17 |
+| O3 (owner) | Invented examples in „3D принтиране в София“ | **Removed** the „реални бизнеси“ section: the architecture-studio and electronics-startup stories. The price-per-gram calculation stays, reworded as an explicit hypothetical („Колко струва малка серия? Примерно изчисление“) | 2026-10-17 |
+| O4 (owner) | StandStrap press pitch | Confirmed as written (the owner snowboards) | 2026-10-17 |
+| A10 (agent) | Page titles | Unchanged („… \| 3D Печат България“ via `titleBrand`); only the entity name is „3dpechat“ | 2026-10-17 |
 
 ## Monitoring log
 

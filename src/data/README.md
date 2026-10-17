@@ -166,16 +166,37 @@ It's the reason AI assistants and search engines see one consistent business
 - **`titleBrand`:** the suffix in page `<title>`s („… | 3D Печат България“).
   It's separate from `name` so a rename doesn't rewrite every title.
 - **`technologies`, `services`:** what we actually do (FDM only).
+- **Structured numbers:** `pricing` (`perTenGrams`, `minimumOrder`),
+  `leadTimeWorkingDays`, `rushSurchargePercent`, `maxPieceCm`,
+  `freeDeliveryOverEur` (all of Bulgaria), `fileFormats`, `replyWithinHours`,
+  `displayAddressEn`.
+  - The prices calculator and the English page `/en/` read these instead of
+    hard-coding numbers.
+  - `business.spec.ts` checks that each one also appears in the Bulgarian
+    `facts`, so the two forms can't disagree.
 - **`facts`:** Bulgarian sentences that copy may state: materials, prices,
-  minimum order, lead times, files, size, delivery, payment, hours. The
-  auto-blog prompt embeds them verbatim (`generate-article.test.js` checks it).
+  minimum order, lead times, files, modeling, size, delivery, payment,
+  invoices, hours. The auto-blog prompt embeds them verbatim
+  (`generate-article.test.js` checks it), and llms.txt lists them.
 - **`neverClaim`:** things no copy may say: SLA/SLS/scanning as our service,
   same-day work, invoices, unconfirmed modeling prices, invented reviews.
 
-**When a fact changes:** edit it here first and rebuild, then search the site
-and blog for hand-written copy that still says the old thing. The Sofia blog
-post, the rest of the contact intro and the prices page minimum repeat some
-facts by hand. A prices spec fails if the minimum and the fact disagree.
+**When a fact changes:** edit it here first (the prose fact **and** its
+structured number), rebuild, then update `faq.json` and search the site and
+blog for hand-written copy that still says the old thing. The Sofia blog post
+and the contact page cards repeat some facts by hand.
+
+## `faq.json` — the „Често задавани въпроси“ on /prices/
+
+6–10 `{ id, icon, question, answer }` entries.
+- **Where it appears:** rendered by `app-faq` (`src/app/shared/faq/`) as
+  always-visible Ignite cards; mirrored 1:1 as FAQPage JSON-LD on the prices
+  page; listed in llms.txt.
+- **Writing answers:** state only what `business.json` facts say.
+  `faq.spec.ts` fails on any number the facts don't contain, and on SLA/SLS,
+  scanning, same-day or invoice offers.
+- **Fields:** `icon` is a Material icon name. `id` is the anchor
+  (`/prices/#faq-<id>`), so keep it stable.
 
 ## ⚠️ Encoding note (all files here)
 

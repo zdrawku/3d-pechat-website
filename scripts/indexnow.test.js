@@ -22,10 +22,19 @@ test('parses loc and lastmod from a sitemap', () => {
   assert.deepEqual(parseSitemap(''), []);
 });
 
-test('submits only new URLs and URLs whose lastmod changed', () => {
+test('submits new URLs, URLs whose lastmod changed, and URLs removed from the sitemap', () => {
   const prev = sitemap([['https://3dpechat.bg/', '2026-10-12'], ['https://3dpechat.bg/prices/', '2026-07-31'], ['https://3dpechat.bg/old/', '2026-01-01']]);
   const next = sitemap([['https://3dpechat.bg/', '2026-10-12'], ['https://3dpechat.bg/prices/', '2026-10-17'], ['https://3dpechat.bg/blog/new-post/', '2026-10-17']]);
-  assert.deepEqual(changedUrls(prev, next), ['https://3dpechat.bg/prices/', 'https://3dpechat.bg/blog/new-post/']);
+  assert.deepEqual(changedUrls(prev, next), [
+    'https://3dpechat.bg/prices/',
+    'https://3dpechat.bg/blog/new-post/',
+    'https://3dpechat.bg/old/' // removed → re-crawled, finds its redirect
+  ]);
+});
+
+test('an unchanged sitemap submits nothing', () => {
+  const same = sitemap([['https://3dpechat.bg/', '2026-10-12'], ['https://3dpechat.bg/blog/', '2026-10-12']]);
+  assert.deepEqual(changedUrls(same, same), []);
 });
 
 test('with no previous sitemap every URL counts as changed', () => {

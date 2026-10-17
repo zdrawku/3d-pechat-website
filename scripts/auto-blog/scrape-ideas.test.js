@@ -1,7 +1,8 @@
 // Run with `npm run test:scripts` (node's built-in test runner).
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { slugify, truncateSlug } = require('./scrape-ideas');
+const { slugify, truncateSlug, pickFresh, pickServiceTopic, readExistingSlugs } = require('./scrape-ideas');
+const serviceTopics = require('./service-topics');
 
 test('slugify transliterates Bulgarian and kebab-cases', () => {
   assert.equal(slugify('Литофан с 3D принтиране'), 'litofan-s-3d-printirane');
@@ -35,4 +36,29 @@ test('truncateSlug hard-cuts a single over-long word instead of returning ""', (
 
 test('truncateSlug never leaves a trailing hyphen', () => {
   assert.ok(!truncateSlug(`${'a'.repeat(70)}-${'b'.repeat(40)}`).endsWith('-'));
+});
+
+test('a topic with a fixed slug keeps it and is marked lockSlug', () => {
+  const picked = pickFresh([{ topic: 'Нещо съвсем друго', slug: 'fixed-slug' }], new Set());
+  assert.equal(picked.suggestedSlug, 'fixed-slug');
+  assert.equal(picked.lockSlug, true);
+  assert.equal(pickFresh([{ topic: 'Литофан с 3D принтиране' }], new Set()).lockSlug, false);
+});
+
+test('service topics are taken in order and skipped once published', () => {
+  const [first, second] = serviceTopics;
+  assert.equal(pickServiceTopic(new Set()).suggestedSlug, first.slug);
+  assert.equal(pickServiceTopic(new Set([first.slug])).suggestedSlug, second.slug);
+  assert.equal(pickServiceTopic(new Set(serviceTopics.map((t) => t.slug))), null);
+});
+
+test('service topics have unique, valid slugs not already in the registry', () => {
+  const slugs = serviceTopics.map((t) => t.slug);
+  assert.equal(new Set(slugs).size, slugs.length);
+  const existing = readExistingSlugs();
+  for (const s of slugs) {
+    assert.match(s, /^[a-z0-9]+(-[a-z0-9]+)*$/);
+    assert.ok(s.length <= 80, s);
+    assert.ok(!existing.has(s), `${s} is already published — remove it from service-topics.js`);
+  }
 });

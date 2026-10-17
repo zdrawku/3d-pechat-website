@@ -27,7 +27,8 @@
     "e2e:visual": "playwright test --project=visual",
     "e2e:visual:update": "playwright test --project=visual --update-snapshots",
     "lighthouse": "lhci autorun",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "check:live": "node scripts/check-live-site.js"
   },
   "private": true,
   "dependencies": {

@@ -26,6 +26,22 @@ export function faqPageSchema(items: { question: string; answer: string }[]): Re
     };
 }
 
+/** A language version of the current page, emitted as <link rel="alternate" hreflang>. */
+export interface LanguageAlternate {
+    hreflang: 'bg' | 'en' | 'x-default';
+    href: string;
+}
+
+/**
+ * The home page and its English counterpart (/en/) declare each other, with
+ * Bulgarian as the default for everyone else (AI-VISIBILITY-PLAN.md Phase 5).
+ */
+export const HOME_LANGUAGE_ALTERNATES: LanguageAlternate[] = [
+    { hreflang: 'bg', href: `${SITE_ORIGIN}/` },
+    { hreflang: 'en', href: `${SITE_ORIGIN}/en/` },
+    { hreflang: 'x-default', href: `${SITE_ORIGIN}/` }
+];
+
 export interface SeoConfig {
     title: string;
     description: string;
@@ -36,7 +52,13 @@ export interface SeoConfig {
     author?: string;
     publishedDate?: string;
     modifiedDate?: string;
+    /** Page language: sets <html lang> and og:locale. Defaults to Bulgarian. */
+    locale?: 'bg' | 'en';
+    /** Language versions of this page; omitted = none (every navigation clears them). */
+    alternates?: LanguageAlternate[];
 }
+
+const OG_LOCALE = { bg: 'bg_BG', en: 'en_US' } as const;
 
 @Injectable({
     providedIn: 'root'
@@ -92,6 +114,14 @@ export class SeoService {
 
         // 8. Site Name
         this.updateTag('property', 'og:site_name', this.siteName);
+
+        // 8b. Language: <html lang>, og:locale and hreflang alternates. Set on
+        // every navigation, so leaving /en/ restores Bulgarian and drops the links.
+        const locale = config.locale ?? 'bg';
+        this.document.documentElement.setAttribute('lang', locale);
+        this.updateTag('property', 'og:locale', OG_LOCALE[locale]);
+        this.updateTag('property', 'og:locale:alternate', OG_LOCALE[locale === 'bg' ? 'en' : 'bg']);
+        this.setLanguageAlternates(config.alternates ?? []);
 
         // 9. Article specific tags
         if (config.publishedDate) {
@@ -152,7 +182,7 @@ export class SeoService {
                     datePublished,
                     dateModified,
                     author: brand,
-                    publisher: { ...brand, logo: { '@type': 'ImageObject', url: `${SITE_ORIGIN}/assets/logo.png` } },
+                    publisher: { ...brand, logo: { '@type': 'ImageObject', url: business.logo } },
                     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
                     ...extras.article
                 },
@@ -200,6 +230,19 @@ export class SeoService {
     private updateTag(attr: 'name' | 'property', attrValue: string, content: string): void {
         if (content) {
             this.meta.updateTag({ [attr]: attrValue, content: content });
+        }
+    }
+
+    private setLanguageAlternates(alternates: LanguageAlternate[]): void {
+        this.document.head
+            .querySelectorAll('link[rel="alternate"][hreflang]')
+            .forEach(link => link.remove());
+        for (const { hreflang, href } of alternates) {
+            const link = this.document.createElement('link');
+            link.setAttribute('rel', 'alternate');
+            link.setAttribute('hreflang', hreflang);
+            link.setAttribute('href', href);
+            this.document.head.appendChild(link);
         }
     }
 

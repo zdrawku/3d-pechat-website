@@ -29,6 +29,7 @@ test('builds a LocalBusiness from business.json with the stable @id', () => {
   assert.deepEqual(s.sameAs, business.sameAs);
   assert.deepEqual(s.openingHoursSpecification[0].dayOfWeek, business.openingHours[0].days);
   assert.deepEqual(s.areaServed.map((a) => a['@type']), ['City', 'Country']);
+  assert.deepEqual(s.knowsLanguage, business.languages);
 });
 
 test('never emits review or aggregateRating markup', () => {

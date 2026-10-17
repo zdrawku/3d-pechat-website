@@ -6,7 +6,8 @@
 // Usage (the deploy workflow runs this after `deploy-pages`):
 //   node scripts/indexnow.js --sitemap <built sitemap.xml> [--prev <live sitemap before deploy>] [--all] [--dry-run]
 //
-// Only URLs that are new or whose <lastmod> changed versus --prev are sent;
+// Only URLs that are new, whose <lastmod> changed, or that were removed versus
+// --prev are sent;
 // --all sends every URL (first run, or a manual re-submit). This relies on the
 // hand-maintained, honest <lastmod> dates (CLAUDE.md Rule 5) — a build-date
 // lastmod would resubmit everything on every deploy.
@@ -34,12 +35,20 @@ function parseSitemap(xml) {
   })).filter((u) => u.loc);
 }
 
-/** URLs in nextXml that are new or whose lastmod differs from prevXml. */
+/**
+ * URLs to tell IndexNow about: new in nextXml, lastmod changed, or removed
+ * (in prevXml but gone from nextXml). IndexNow wants deletions too — the
+ * engine re-crawls and finds the legacy-redirect stub or the 404.
+ */
 function changedUrls(prevXml, nextXml) {
   const before = new Map(parseSitemap(prevXml).map((u) => [u.loc, u.lastmod]));
-  return parseSitemap(nextXml)
+  const after = parseSitemap(nextXml);
+  const now = new Set(after.map((u) => u.loc));
+  const changed = after
     .filter((u) => !before.has(u.loc) || before.get(u.loc) !== u.lastmod)
     .map((u) => u.loc);
+  const removed = [...before.keys()].filter((loc) => !now.has(loc));
+  return [...changed, ...removed];
 }
 
 /** The IndexNow key from public/<key>.txt (file name and content must match). */
