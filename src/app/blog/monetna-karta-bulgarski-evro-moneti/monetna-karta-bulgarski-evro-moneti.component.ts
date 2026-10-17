@@ -3,8 +3,10 @@ import { Router, RouterLink } from '@angular/router';
 import { BlogService } from '../../services/blog.service';
 import { MarkdownModule } from 'ngx-markdown';
 import { IgxButtonModule, IgxIconModule } from 'igniteui-angular';
-import { SeoService } from '../../services/seo.service';
+import { SeoService, faqPageSchema } from '../../services/seo.service';
 import { RelatedContentComponent } from '../../shared/related-content/related-content.component';
+
+const SLUG = 'monetna-karta-bulgarski-evro-moneti';
 
 /**
  * MakerWorld model link, substituted for `{{MAKERWORLD_URL}}` in the article.
@@ -41,13 +43,6 @@ export const FAQ: { question: string; answer: string }[] = [
   }
 ];
 
-const TITLE = 'Монетна карта за български евромонети | 3D Печат България';
-const HEADLINE = 'Монетна карта за българските евромонети – пълен комплект от 1 цент до 2 евро';
-const DESCRIPTION = 'Монетна карта за пълен комплект български евромонети – от 1 цент до 2 евро. 5 варианта от PLA, идеални за подарък и колекция.';
-const KEYWORDS = 'монетна карта, български евромонети, комплект евромонети, карта за монети, подарък за колекционер, 3D принтирана монетна карта, 3D печат България';
-const URL = 'https://3dpechat.bg/blog/monetna-karta-bulgarski-evro-moneti/';
-const IMAGE = 'https://3dpechat.bg/assets/blogs/images/monetna-karta-bulgarski-evro-moneti-cover.webp';
-
 @Component({
   selector: 'app-monetna-karta-bulgarski-evro-moneti',
   standalone: true,
@@ -63,52 +58,12 @@ export class MonetnaKartaBulgarskiEvroMonetiComponent implements OnInit {
     private router: Router,
     private seoService: SeoService
   ) {
-    this.seoService.updateSeo({
-      title: TITLE,
-      description: DESCRIPTION,
-      keywords: KEYWORDS,
-      url: URL,
-      image: IMAGE,
-      type: 'article',
-      author: '3D Печат България',
-      publishedDate: new Date('2026-10-12').toISOString(),
-      modifiedDate: new Date('2026-10-12').toISOString()
-    });
-
-    // One JSON-LD block carrying both types the article needs.
-    this.seoService.setStructuredData({
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "Article",
-          "headline": HEADLINE,
-          "description": DESCRIPTION,
-          "author": { "@type": "Organization", "name": "3D Печат България" },
-          "datePublished": "2026-10-12T00:00:00.000Z",
-          "dateModified": "2026-10-12T00:00:00.000Z",
-          "image": IMAGE,
-          "publisher": {
-            "@type": "Organization",
-            "name": "3D Печат България",
-            "logo": { "@type": "ImageObject", "url": "https://3dpechat.bg/assets/og-image.png" }
-          },
-          "mainEntityOfPage": { "@type": "WebPage", "@id": URL },
-          "keywords": KEYWORDS
-        },
-        {
-          "@type": "FAQPage",
-          "mainEntity": FAQ.map(({ question, answer }) => ({
-            "@type": "Question",
-            "name": question,
-            "acceptedAnswer": { "@type": "Answer", "text": answer }
-          }))
-        }
-      ]
-    });
+    // Meta + BlogPosting/BreadcrumbList from the registry, plus the visible FAQ.
+    this.seoService.applyBlogPostSeo(SLUG, { graph: [faqPageSchema(FAQ)] });
   }
 
   ngOnInit() {
-    this.blogService.getPost('monetna-karta-bulgarski-evro-moneti').subscribe(data => {
+    this.blogService.getPost(SLUG).subscribe(data => {
       this.postContent = data.replace(
         /<!-- makerworld -->([\s\S]*?)<!-- \/makerworld -->/,
         (_, section: string) => MAKERWORLD_URL ? section.replaceAll('{{MAKERWORLD_URL}}', MAKERWORLD_URL) : ''

@@ -31,5 +31,6 @@ jobs:
         # cache: 'npm' # enable after committing lock file from first install
     - run: npm i # replace with 'npm ci' after committing lock file from first install
     - run: npm run lint
+    - run: npm run test:scripts
     - run: npm run build
     # - run: npm run test -- --watch=false --browsers ChromeHeadless

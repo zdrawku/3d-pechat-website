@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
 import { IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
 import { SeoService } from '../services/seo.service';
@@ -16,7 +16,7 @@ const HCAPTCHA_CALLBACK = 'onHcaptchaLoad';
 
 @Component({
   selector: 'app-contact-me-page',
-  imports: [IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective, FormsModule],
+  imports: [IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective, FormsModule, RouterLink],
   templateUrl: './contact-me-page.component.html',
   styleUrls: ['./contact-me-page.component.scss']
 })

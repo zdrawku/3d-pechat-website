@@ -21,7 +21,6 @@ export const CORE_ROUTES: RouteSpec[] = [
 ];
 
 export const BLOG_ROUTES: RouteSpec[] = [
-  '/blog/how-to-make-money-3d-printing',
   '/blog/what-is-3d-printing',
   '/blog/3d-printing-in-sofia-for-your-project',
   '/blog/3d-printing-technologies',
@@ -34,6 +33,7 @@ export const BLOG_ROUTES: RouteSpec[] = [
   '/blog/3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor',
   '/blog/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt',
   '/blog/infill-pri-3d-pechat-platnost-zdravina-i-filament',
+  '/blog/prozrachen-i-poluprozrachen-pla-filament-svetlopropuskliv-3d-pechat',
   '/blog/3d-pechat-po-porachka-sofia-video',
 ].map((path) => ({ path }));
 

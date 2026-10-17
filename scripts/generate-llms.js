@@ -1,4 +1,4 @@
-// Regenerates src/llms.txt from the blog post registry in blog.service.ts.
+// Regenerates src/llms.txt from the blog post registry in blog-posts.registry.ts.
 // Run manually: node scripts/generate-llms.js
 // Also called automatically by the auto-blog pipeline and prebuild.
 
@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const SERVICE_FILE = path.join(ROOT, 'src/app/services/blog.service.ts');
+const SERVICE_FILE = path.join(ROOT, 'src/app/services/blog-posts.registry.ts');
 const OUT_FILE = path.join(ROOT, 'src/llms.txt');
 
 // Trailing slashes match the canonical URLs (GitHub Pages 301-redirects the
@@ -40,7 +40,7 @@ function parseBlogPosts(src) {
     const route = (block[0].match(/route:\s*'([^']*)'/) || [])[1];
     if (title && route) {
       posts.push({
-        url: `https://3dpechat.bg${route}/`,
+        url: `https://3dpechat.bg${route.replace(/\/+$/, '')}/`,
         title: title.replace(/\\'/g, "'"),
         desc: description ? description.replace(/\\'/g, "'") : '',
       });
@@ -56,7 +56,7 @@ function generate() {
   const lines = [
     '# 3D Печат България',
     '',
-    '> Професионални услуги за 3D принтиране в България. Предлагаме FDM, SLA и SLS печат с бърза доставка в София и цялата страна.',
+    '> Професионални услуги за 3D принтиране в България. Печатаме по FDM технология, основно с PLA (други материали – при заявка), с доставка в София и в цялата страна.',
     '',
     '## Основни страници',
     '',

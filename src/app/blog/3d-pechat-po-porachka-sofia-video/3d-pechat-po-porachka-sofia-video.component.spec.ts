@@ -48,9 +48,9 @@ describe('ThreeDPechatPoPorachkaSofiaVideoComponent', () => {
       expect(markdown()).toContain(answer);
     }
     const data = JSON.parse(document.getElementById('structured-data-jsonld')?.textContent ?? '{}');
-    const types = (data['@graph'] as { '@type': string }[]).map((n) => n['@type']);
-    expect(types).toEqual(['BlogPosting', 'VideoObject', 'FAQPage']);
-    const faq = data['@graph'][2];
+    const graph = data['@graph'] as { '@type': string }[];
+    expect(graph.map((n) => n['@type'])).toEqual(['BlogPosting', 'BreadcrumbList', 'VideoObject', 'FAQPage']);
+    const faq = graph.find((n) => n['@type'] === 'FAQPage') as any;
     expect(faq.mainEntity.map((q: { name: string }) => q.name)).toEqual(FAQ.map((f) => f.question));
   });
 

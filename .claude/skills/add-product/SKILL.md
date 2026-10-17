@@ -50,8 +50,11 @@ From the photos and the brief, draft:
   (object, use case, room, occasion, "подарък" when it fits).
 
 Match the tone of existing entries in `products.json` — warm, plain, no
-marketing hyperbole. **Show the drafted copy to the user and get explicit
-approval before saving.** They may edit any field.
+marketing hyperbole. Any claim about material, lead time, delivery or price
+must match `facts` in [`src/data/business.json`](../../../src/data/business.json)
+and avoid everything in its `neverClaim`. Default material is **PLA**; name
+another only if the brief says so. **Show the drafted copy to the user and get
+explicit approval before saving.** They may edit any field.
 
 Bulgarian text is non-negotiable here: the whole site is in Bulgarian.
 

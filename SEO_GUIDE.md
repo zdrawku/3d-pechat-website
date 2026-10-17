@@ -1,5 +1,13 @@
 # SEO Configuration for Blog Pages
 
+> ⚠️ **Updated 2026-10-17. [`CLAUDE.md`](CLAUDE.md) Rule 5 wins wherever this guide disagrees.**
+> Per-post SEO (title, description, keywords, canonical with trailing slash,
+> Open Graph, `BlogPosting` + `BreadcrumbList` JSON-LD) is emitted at prerender
+> time by `SeoService.applyBlogPostSeo('<slug>')` from `blog-posts.registry.ts`.
+> Never hand-write meta tags or JSON-LD in a post component. Business claims
+> come from `src/data/business.json`. SSR/prerender is already in place
+> (`outputMode: "static"`).
+
 > **📘 Looking to add a new article?** See the comprehensive [ARTICLE_CREATION_GUIDE.md](./ARTICLE_CREATION_GUIDE.md) for complete step-by-step instructions on creating blog posts, including content structure, image optimization, and component setup.
 
 ## ✅ Already Implemented
@@ -37,17 +45,15 @@ All blog components have proper meta tags:
 
 **Quick checklist:**
 
-1. ✅ **Add to blog service** (`src/app/services/blog.service.ts`)
-   - Include proper title, description, and tags
-   - Set correct date and route
+1. ✅ **Add to the blog registry** (`src/app/services/blog-posts.registry.ts`)
+   - Include title, description, `tags`, `keywords`, `date` and `dateModified`
+   - Bump `dateModified` whenever the content changes substantively
 
-2. ✅ **Set meta tags** in component TypeScript
+2. ✅ **One SEO call** in the component constructor
    ```typescript
-   this.title.setTitle('Your SEO Title Here');
-   this.meta.addTags([
-     { name: 'description', content: 'Your meta description' },
-     { name: 'keywords', content: 'keyword1, keyword2, keyword3' }
-   ]);
+   this.seoService.applyBlogPostSeo('your-article-slug');
+   // with a visible FAQ / video:
+   // this.seoService.applyBlogPostSeo(slug, { graph: [faqPageSchema(FAQ)] });
    ```
 
 3. ✅ **Update sitemap** - Run before deploying:
@@ -63,63 +69,13 @@ All blog components have proper meta tags:
 
 ### Priority: HIGH
 
-#### 1. Add Structured Data (JSON-LD)
-Add schema.org markup to blog pages for rich snippets:
+#### 1–3. Structured data, canonical URLs, Open Graph: ✅ done centrally
+All three are emitted for every post by `SeoService.applyBlogPostSeo()`:
+- **JSON-LD:** a `BlogPosting` + `BreadcrumbList` `@graph`, with the publisher as the site-wide `#organization`.
+- **Canonical:** `https://3dpechat.bg/blog/<slug>/`, with the trailing slash.
+- **Open Graph and Twitter:** the tags, with absolute image URLs.
 
-```typescript
-// In your blog component
-private addStructuredData(): void {
-  const script = this.renderer.createElement('script');
-  script.type = 'application/ld+json';
-  script.text = JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    "headline": "Your Blog Title",
-    "description": "Your blog description",
-    "author": {
-      "@type": "Organization",
-      "name": "3D Печат България"
-    },
-    "datePublished": "2026-02-08",
-    "dateModified": "2026-02-08",
-    "image": "https://3dpechat.bg/assets/blog-image.jpg",
-    "publisher": {
-      "@type": "Organization",
-      "name": "3D Печат България",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "http://3dpechat.bg/assets/og-image.png"
-      }
-    }
-  });
-  this.renderer.appendChild(document.head, script);
-}
-```
-
-#### 2. Add Canonical URLs
-Prevent duplicate content issues:
-
-```typescript
-// In each blog component
-this.meta.addTag({ rel: 'canonical', href: 'https://3dpechat.bg/blog/your-blog-url' });
-```
-
-#### 3. Open Graph Tags (Social Media)
-For better social media sharing:
-
-```typescript
-this.meta.addTags([
-  { property: 'og:type', content: 'article' },
-  { property: 'og:title', content: 'Your Blog Title' },
-  { property: 'og:description', content: 'Your description' },
-  { property: 'og:url', content: 'https://3dpechat.bg/blog/your-blog' },
-  { property: 'og:image', content: 'https://3dpechat.bg/assets/blog-image.jpg' },
-  { name: 'twitter:card', content: 'summary_large_image' },
-  { name: 'twitter:title', content: 'Your Blog Title' },
-  { name: 'twitter:description', content: 'Your description' },
-  { name: 'twitter:image', content: 'https://3dpechat.bg/assets/blog-image.jpg' }
-]);
-```
+**Do not add them per component.** A second canonical or JSON-LD block would conflict. Post-specific schema (FAQPage, VideoObject) goes through `applyBlogPostSeo(slug, { graph: [...] })`.
 
 ### Priority: MEDIUM
 
@@ -231,9 +187,9 @@ npm run generate-sitemap
 ### Adding New Blog - Checklist
 - [ ] Create component files
 - [ ] Create markdown content
-- [ ] Add to blog.service.ts
-- [ ] Add to app.routes.ts
-- [ ] Set proper meta tags
+- [ ] Add to blog-posts.registry.ts (with `keywords` + `dateModified`)
+- [ ] Add a lazy `loadComponent` route to app.routes.ts
+- [ ] Call `applyBlogPostSeo('<slug>')` (no hand-written meta tags)
 - [ ] Run generate-sitemap
 - [ ] Test locally
 - [ ] Deploy

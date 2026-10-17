@@ -1,6 +1,6 @@
 // Preflight checks for the auto-blog pipeline.
 //
-// The scaffolder edits app.routes.ts and blog.service.ts by regex, so it is
+// The scaffolder edits app.routes.ts and blog-posts.registry.ts by regex, so it is
 // coupled to their current formatting. When those files get refactored (as
 // happened when blog routes moved to lazy `loadComponent`), the regexes stop
 // matching and the run dies *after* burning a Claude API call and an image
@@ -12,7 +12,7 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '../..');
 const ROUTES_FILE = path.join(ROOT, 'src/app/app.routes.ts');
-const SERVICE_FILE = path.join(ROOT, 'src/app/services/blog.service.ts');
+const SERVICE_FILE = path.join(ROOT, 'src/app/services/blog-posts.registry.ts');
 
 /** Anchors the scaffolder relies on, each with a repair hint. */
 const CHECKS = [
@@ -35,11 +35,11 @@ const CHECKS = [
   },
   {
     file: SERVICE_FILE,
-    label: 'blog.service.ts',
+    label: 'blog-posts.registry.ts',
     pattern: /(\/\/ Add more blog posts here)|(\n\s*\];)/,
     hint:
       'the `// Add more blog posts here` marker (or a closing `];` of the ' +
-      'blogPosts array) — updateBlogService() inserts the new entry there'
+      'BLOG_POSTS array) — updateBlogService() inserts the new entry there'
   }
 ];
 

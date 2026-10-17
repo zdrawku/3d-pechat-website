@@ -4,7 +4,7 @@ import { MarkdownModule } from 'ngx-markdown';
 import { IgxButtonDirective, IgxIconComponent } from 'igniteui-angular';
 
 import { BlogService } from '../../services/blog.service';
-import { SeoService } from '../../services/seo.service';
+import { SeoService, faqPageSchema } from '../../services/seo.service';
 import { RelatedContentComponent } from '../../shared/related-content/related-content.component';
 import { YoutubeEmbedComponent } from '../../shared/youtube-embed/youtube-embed.component';
 import { FEATURED_VIDEO, videoObjectSchema } from '../../shared/youtube-embed/video.util';
@@ -27,14 +27,6 @@ export const FAQ: { question: string; answer: string }[] = [
     answer: 'Обичайно отговаряме до 24 часа – по имейл, Viber или Instagram.'
   }
 ];
-
-const TITLE = 'Видео: 3D печат по поръчка в София | 3D Печат България';
-const HEADLINE = 'Вижте как работим: 3D печат по поръчка в София (видео)';
-const DESCRIPTION = 'Вижте в 60 секунди наши 3D отпечатани проекти: разделители за книги, монетник „България“ и функционални части. И как протича поръчката от идея до детайл.';
-const KEYWORDS = '3D печат по поръчка, 3D печат София, 3D принтиране видео, 3D отпечатани проекти, разделители за книги, монетник България, прототипи, 3D Печат България';
-const URL = `https://3dpechat.bg/blog/${SLUG}/`;
-const IMAGE = `https://3dpechat.bg/assets/blogs/images/${SLUG}-cover.webp`;
-const PUBLISHED = '2026-10-14T00:00:00.000Z';
 
 /**
  * Article built around the promo video (Idea 7, phase 3). It gives the video a
@@ -64,50 +56,12 @@ export class ThreeDPechatPoPorachkaSofiaVideoComponent implements OnInit {
     private router: Router,
     private seoService: SeoService
   ) {
-    this.seoService.updateSeo({
-      title: TITLE,
-      description: DESCRIPTION,
-      keywords: KEYWORDS,
-      url: URL,
-      image: IMAGE,
-      type: 'article',
-      author: '3D Печат България',
-      publishedDate: PUBLISHED,
-      modifiedDate: PUBLISHED
-    });
-
-    // One JSON-LD block: the article, the video it is built around (so the
-    // page can earn a video result), and the visible FAQ.
-    this.seoService.setStructuredData({
-      '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'BlogPosting',
-          headline: HEADLINE,
-          description: DESCRIPTION,
-          author: { '@type': 'Organization', name: '3D Печат България' },
-          datePublished: PUBLISHED,
-          dateModified: PUBLISHED,
-          image: IMAGE,
-          publisher: {
-            '@type': 'Organization',
-            name: '3D Печат България',
-            logo: { '@type': 'ImageObject', url: 'https://3dpechat.bg/assets/og-image.png' }
-          },
-          mainEntityOfPage: { '@type': 'WebPage', '@id': URL },
-          video: { '@id': videoObjectSchema(this.video)['@id'] },
-          keywords: KEYWORDS
-        },
-        videoObjectSchema(this.video),
-        {
-          '@type': 'FAQPage',
-          mainEntity: FAQ.map(({ question, answer }) => ({
-            '@type': 'Question',
-            name: question,
-            acceptedAnswer: { '@type': 'Answer', text: answer }
-          }))
-        }
-      ]
+    // Meta + BlogPosting/BreadcrumbList from the registry, plus the video it is
+    // built around (so the page can earn a video result) and the visible FAQ.
+    const video = videoObjectSchema(this.video);
+    this.seoService.applyBlogPostSeo(SLUG, {
+      article: { video: { '@id': video['@id'] } },
+      graph: [video, faqPageSchema(FAQ)]
     });
   }
 

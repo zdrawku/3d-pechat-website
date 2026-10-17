@@ -7,16 +7,15 @@ import post4 from "../../assets/blogs/3d-printing-technologies.md";
 import post5 from "../../assets/blogs/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari.md";
 import post6 from "../../assets/blogs/3d-printirani-obuvki.md";
 import post7 from "../../assets/blogs/barzi-i-umni-3d-printeri.md";
-import post8 from "../../assets/blogs/how-to-make-money.md";
-import post9 from "../../assets/blogs/infill-pri-3d-pechat-platnost-zdravina-i-filament.md";
-import post10 from "../../assets/blogs/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish.md";
-import post11 from "../../assets/blogs/kak-da-pechelim-ot-3d-printiraneto.md";
-import post12 from "../../assets/blogs/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model.md";
-import post13 from "../../assets/blogs/monetna-karta-bulgarski-evro-moneti.md";
-import post14 from "../../assets/blogs/pla-pla-pla-pro-i-pln-razliki-i-izbor.md";
-import post15 from "../../assets/blogs/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p.md";
-import post16 from "../../assets/blogs/standstrap-3d-printiran-stoper-za-snoubord.md";
-import post17 from "../../assets/blogs/what-is-3d-printing.md";
+import post8 from "../../assets/blogs/infill-pri-3d-pechat-platnost-zdravina-i-filament.md";
+import post9 from "../../assets/blogs/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish.md";
+import post10 from "../../assets/blogs/kak-da-pechelim-ot-3d-printiraneto.md";
+import post11 from "../../assets/blogs/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model.md";
+import post12 from "../../assets/blogs/monetna-karta-bulgarski-evro-moneti.md";
+import post13 from "../../assets/blogs/pla-pla-pla-pro-i-pln-razliki-i-izbor.md";
+import post14 from "../../assets/blogs/prozrachen-i-poluprozrachen-pla-filament-svetlopropuskliv-3d-pechat.md";
+import post15 from "../../assets/blogs/standstrap-3d-printiran-stoper-za-snoubord.md";
+import post16 from "../../assets/blogs/what-is-3d-printing.md";
 
 export const BLOG_CONTENT: Record<string, string> = {
   "3d-pechat-po-porachka-sofia-video": post0,
@@ -27,14 +26,13 @@ export const BLOG_CONTENT: Record<string, string> = {
   "3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari": post5,
   "3d-printirani-obuvki": post6,
   "barzi-i-umni-3d-printeri": post7,
-  "how-to-make-money": post8,
-  "infill-pri-3d-pechat-platnost-zdravina-i-filament": post9,
-  "izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish": post10,
-  "kak-da-pechelim-ot-3d-printiraneto": post11,
-  "litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model": post12,
-  "monetna-karta-bulgarski-evro-moneti": post13,
-  "pla-pla-pla-pro-i-pln-razliki-i-izbor": post14,
-  "prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p": post15,
-  "standstrap-3d-printiran-stoper-za-snoubord": post16,
-  "what-is-3d-printing": post17
+  "infill-pri-3d-pechat-platnost-zdravina-i-filament": post8,
+  "izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish": post9,
+  "kak-da-pechelim-ot-3d-printiraneto": post10,
+  "litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model": post11,
+  "monetna-karta-bulgarski-evro-moneti": post12,
+  "pla-pla-pla-pro-i-pln-razliki-i-izbor": post13,
+  "prozrachen-i-poluprozrachen-pla-filament-svetlopropuskliv-3d-pechat": post14,
+  "standstrap-3d-printiran-stoper-za-snoubord": post15,
+  "what-is-3d-printing": post16
 };

@@ -58,6 +58,16 @@ const SOURCES = [
 
 const FETCH_TIMEOUT_MS = 15_000;
 
+const MAX_SLUG_LENGTH = 80;
+
+/** Truncates at a word boundary: never leaves a half word like "…-svetlopropuskliv-3d-p". */
+function truncateSlug(slug, max = MAX_SLUG_LENGTH) {
+  if (slug.length <= max) return slug;
+  // A hyphen right after the cut means the first `max` chars end on a whole word.
+  const cut = slug[max] === '-' ? max : slug.lastIndexOf('-', max);
+  return slug.slice(0, cut > 0 ? cut : max).replace(/-+$/, '');
+}
+
 function slugify(text) {
   // Transliteration of Bulgarian Cyrillic to Latin so slugs stay URL-friendly.
   const map = {
@@ -66,7 +76,7 @@ function slugify(text) {
     т: 't', у: 'u', ф: 'f', х: 'h', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'sht',
     ъ: 'a', ь: 'y', ю: 'yu', я: 'ya'
   };
-  return text
+  const slug = text
     .toLowerCase()
     .split('')
     .map(ch => map[ch] ?? ch)
@@ -74,12 +84,12 @@ function slugify(text) {
     .replace(/[^a-z0-9\s-]/g, '')
     .trim()
     .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .slice(0, 80);
+    .replace(/-+/g, '-');
+  return truncateSlug(slug);
 }
 
 function readExistingSlugs() {
-  const servicePath = path.resolve(__dirname, '../../src/app/services/blog.service.ts');
+  const servicePath = path.resolve(__dirname, '../../src/app/services/blog-posts.registry.ts');
   const content = fs.readFileSync(servicePath, 'utf8');
   const slugs = new Set();
   const re = /slug:\s*'([^']+)'/g;
@@ -191,7 +201,7 @@ async function getTopicIdea() {
   return fb;
 }
 
-module.exports = { getTopicIdea, slugify, readExistingSlugs };
+module.exports = { getTopicIdea, slugify, truncateSlug, readExistingSlugs };
 
 if (require.main === module) {
   getTopicIdea()

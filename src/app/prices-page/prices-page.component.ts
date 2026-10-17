@@ -69,6 +69,9 @@ export class PricesPageComponent {
     { name: 'Розово', image: '/assets/Auto generated image for ce6479fc-7167-4df3-abfb-e2d8e063bbb1-ee4a6898-fdc4-42a4-ac67-9bf9990ab2f4.png' }
   ];
 
+  /** Minimum order value in €: any non-empty order costs at least this much. */
+  public readonly minimumOrder = 3;
+
   public grams = 124;
   public selectedTierId = this.tiers[3].id; // Многоцветно (+ Труд), matches the original default example
 
@@ -76,7 +79,7 @@ export class PricesPageComponent {
     this.seoService.updateSeo({
       title: 'Цени за 3D печат - 3D Печат България',
       description: 'Вижте нашите цени за 3D печат услуги. Калкулатор за изчисляване на цена на 3D принтиране по грамаж и материал.',
-      keywords: '3D печат цени, цена 3D принтиране, калкулатор 3D печат, PLA цена, ABS цена, PETG цена',
+      keywords: '3D печат цени, цена 3D принтиране, калкулатор 3D печат, PLA цена, цена на грам, минимална поръчка',
       url: 'https://3dpechat.bg/prices/',
       type: 'website'
     });
@@ -87,10 +90,18 @@ export class PricesPageComponent {
     return this.tiers.find(t => t.id === this.selectedTierId) ?? this.tiers[0];
   }
 
-  // (grams / 10) * price per 10g
+  // (grams / 10) * price per 10g, before the minimum order is applied
+  public get weightPrice(): number {
+    return Math.max(this.grams || 0, 0) / 10 * this.selectedTier.pricePerTenGrams;
+  }
+
+  /** True when the weight price is below the minimum, so the minimum is charged. */
+  public get minimumApplies(): boolean {
+    return this.weightPrice > 0 && this.weightPrice < this.minimumOrder;
+  }
+
   public get totalPrice(): string {
-    const total = ((this.grams || 0) / 10) * this.selectedTier.pricePerTenGrams;
-    return total.toFixed(2);
+    return (this.minimumApplies ? this.minimumOrder : this.weightPrice).toFixed(2);
   }
 
   public selectTier(tierId: string): void {

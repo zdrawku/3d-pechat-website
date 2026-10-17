@@ -23,44 +23,7 @@ export class Standstrap3dPrintiranStoperZaSnoubordComponent implements OnInit {
     private router: Router,
     private seoService: SeoService
   ) {
-    this.seoService.updateSeo({
-      title: 'StandStrap: как направих 3D принтиран стопер за сноуборд | 3D Печат България',
-      description: 'Как проектирах и отпечатах StandStrap — щипка за ръба на сноуборда, която държи дъската на място, докато закопчаваш автоматите прав. Дизайн, настройки за печат и видео.',
-      keywords: 'стопер за сноуборд, сноуборд аксесоар, 3D принтиран сноуборд аксесоар, StandStrap, закопчаване на автомати, Bambu Studio, PLA, 3D печат България',
-      url: 'https://3dpechat.bg/blog/standstrap-3d-printiran-stoper-za-snoubord/',
-      image: 'https://3dpechat.bg/assets/blogs/images/standstrap-3d-printiran-stoper-za-snoubord-cover.webp',
-      type: 'article',
-      author: '3D Печат България',
-      publishedDate: new Date('2026-10-12').toISOString(),
-      modifiedDate: new Date('2026-10-12').toISOString()
-    });
-
-    this.seoService.setStructuredData({
-      "@context": "https://schema.org",
-      "@type": "BlogPosting",
-      "headline": "StandStrap: как направих 3D принтиран стопер за сноуборд",
-      "description": "Как проектирах и отпечатах StandStrap — щипка за ръба на сноуборда, която държи дъската на място, докато закопчаваш автоматите прав. Дизайн, настройки за печат и видео.",
-      "author": {
-        "@type": "Organization",
-        "name": "3D Печат България"
-      },
-      "datePublished": "2026-10-12T00:00:00.000Z",
-      "dateModified": "2026-10-12T00:00:00.000Z",
-      "image": "https://3dpechat.bg/assets/blogs/images/standstrap-3d-printiran-stoper-za-snoubord-cover.webp",
-      "publisher": {
-        "@type": "Organization",
-        "name": "3D Печат България",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://3dpechat.bg/assets/og-image.png"
-        }
-      },
-      "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": "https://3dpechat.bg/blog/standstrap-3d-printiran-stoper-za-snoubord/"
-      },
-      "keywords": "стопер за сноуборд, сноуборд аксесоар, 3D принтиран сноуборд аксесоар, StandStrap, закопчаване на автомати, Bambu Studio, PLA, 3D печат България"
-    });
+    this.seoService.applyBlogPostSeo('standstrap-3d-printiran-stoper-za-snoubord');
   }
 
   ngOnInit() {
