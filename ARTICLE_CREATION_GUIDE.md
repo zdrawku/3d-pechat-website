@@ -1,6 +1,15 @@
 # Complete Guide: Adding New Articles to 3D Печат Website
 
-**Last Updated:** February 8, 2026
+**Last Updated:** October 17, 2026
+
+> ⚠️ **[`CLAUDE.md`](CLAUDE.md) Rule 5 and [`AI_INSTRUCTIONS.md`](AI_INSTRUCTIONS.md) win wherever this guide disagrees.**
+> In short:
+> - Post metadata lives in `blog-posts.registry.ts`, not `blog.service.ts`.
+> - A post component calls `applyBlogPostSeo('<slug>')` and never hand-writes meta tags or JSON-LD.
+> - Routes are lazy `loadComponent`.
+> - Internal links and canonicals end in `/`.
+> - Service claims come from `src/data/business.json`.
+> - The preferred way to add a post is `npm run generate-blog`.
 
 This guide provides a step-by-step process for adding new blog articles to the 3D Печат website. Follow these instructions carefully to ensure proper SEO, styling, and functionality.
 
@@ -45,16 +54,18 @@ src/
 │   │   │   ├── what-is-3d-printing.component.html
 │   │   │   ├── what-is-3d-printing.component.scss
 │   │   │   └── what-is-3d-printing.component.spec.ts
-│   │   └── how-to-make-money-with3d-printing/  # Another article
+│   │   └── kak-da-pechelim-ot-3d-printiraneto/  # Another article
 │   ├── services/
-│   │   └── blog.service.ts               # Register articles here
+│   │   ├── blog-posts.registry.ts        # Register articles here (metadata + SEO source)
+│   │   ├── seo.service.ts                # applyBlogPostSeo(), faqPageSchema()
+│   │   └── blog.service.ts               # Serves bundled markdown (don't register here)
 │   ├── models/
 │   │   └── blog-post.model.ts            # BlogPost interface
 │   └── app.routes.ts                     # Add routes here
 ├── assets/
 │   └── blogs/
 │       ├── what-is-3d-printing.md        # Markdown content
-│       ├── how-to-make-money.md          # Markdown content
+│       ├── kak-da-pechelim-ot-3d-printiraneto.md  # Markdown content
 │       └── images/                       # Blog-specific images
 │           ├── hero-image-how-to-make-money.png
 │           └── design-is-from-question.png
@@ -168,66 +179,38 @@ Create four files:
 #### 3.2: TypeScript Component (`your-article-slug.component.ts`)
 
 ```typescript
-import { Component, OnInit, Renderer2, Inject } from '@angular/core';
-import { Meta, Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { BlogService } from '../../services/blog.service';
 import { MarkdownModule } from 'ngx-markdown';
 import { IgxButtonModule, IgxIconModule } from 'igniteui-angular';
-import { DOCUMENT } from '@angular/common';
+import { SeoService } from '../../services/seo.service';
+import { RelatedContentComponent } from '../../shared/related-content/related-content.component';
 
 @Component({
   selector: 'app-your-article-slug',
   standalone: true,
-  imports: [MarkdownModule, IgxButtonModule, IgxIconModule],
+  imports: [MarkdownModule, IgxButtonModule, IgxIconModule, RelatedContentComponent],
   templateUrl: './your-article-slug.component.html',
   styleUrls: ['./your-article-slug.component.scss'],
 })
 export class YourArticleSlugComponent implements OnInit {
   postContent = '';
-  
+
   constructor(
-    private meta: Meta,
-    private title: Title,
     private blogService: BlogService,
-    private route: ActivatedRoute,
     private router: Router,
-    private renderer: Renderer2,
-    @Inject(DOCUMENT) private document: Document
+    private seoService: SeoService
   ) {
-    // SEO Title (appears in browser tab and search results)
-    this.title.setTitle('Your SEO Optimized Title - 3D Печат България');
-    
-    // Meta Tags for SEO and Social Sharing
-    this.meta.addTags([
-      // Basic SEO
-      { name: 'description', content: 'Your compelling 150-160 character description here.' },
-      { name: 'keywords', content: 'keyword1, keyword2, keyword3, 3D принтиране' },
-      
-      // Canonical URL (prevent duplicate content)
-      { rel: 'canonical', href: 'https://3dpechat.bg/blog/your-article-slug' },
-      
-      // Open Graph Tags (Facebook, LinkedIn)
-      { property: 'og:type', content: 'article' },
-      { property: 'og:title', content: 'Your SEO Optimized Title' },
-      { property: 'og:description', content: 'Your description here' },
-      { property: 'og:url', content: 'https://3dpechat.bg/blog/your-article-slug' },
-      { property: 'og:image', content: 'https://3dpechat.bg/assets/blogs/images/your-hero-image.png' },
-      
-      // Twitter Card Tags
-      { name: 'twitter:card', content: 'summary_large_image' },
-      { name: 'twitter:title', content: 'Your SEO Optimized Title' },
-      { name: 'twitter:description', content: 'Your description here' },
-      { name: 'twitter:image', content: 'https://3dpechat.bg/assets/blogs/images/your-hero-image.png' }
-    ]);
-    
-    // Add structured data for rich snippets
-    this.addStructuredData();
+    // Title, description, keywords, canonical (with trailing slash), Open Graph,
+    // Twitter and a BlogPosting + BreadcrumbList JSON-LD @graph, all from the
+    // post's entry in blog-posts.registry.ts. Rendered at prerender time.
+    this.seoService.applyBlogPostSeo('your-article-slug');
   }
 
   ngOnInit() {
     // Load markdown content - slug must match the .md filename
-    this.blogService.getPost("your-article-slug").subscribe(data => {
+    this.blogService.getPost('your-article-slug').subscribe(data => {
       this.postContent = data;
     });
   }
@@ -235,49 +218,17 @@ export class YourArticleSlugComponent implements OnInit {
   goBack(): void {
     this.router.navigate(['/blog']);
   }
-
-  private addStructuredData(): void {
-    const blogPost = this.blogService.getPostByRoute('/blog/your-article-slug');
-    if (!blogPost) return;
-
-    const script = this.renderer.createElement('script');
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "BlogPosting",
-      "headline": blogPost.title,
-      "description": blogPost.description,
-      "author": {
-        "@type": "Organization",
-        "name": blogPost.author || "3D Печат България"
-      },
-      "datePublished": blogPost.date.toISOString(),
-      "dateModified": blogPost.date.toISOString(),
-      "image": "https://3dpechat.bg/assets/blogs/images/your-hero-image.png",
-      "publisher": {
-        "@type": "Organization",
-        "name": "3D Печат България",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://3dpechat.bg/assets/og-image.png"
-        }
-      },
-      "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": `https://3dpechat.bg${blogPost.route}`
-      },
-      "keywords": blogPost.tags?.join(', ') || ''
-    });
-    this.renderer.appendChild(this.document.head, script);
-  }
 }
 ```
 
 **Key Points:**
 - Replace all `your-article-slug` with actual slug
 - Replace `YourArticleSlugComponent` with PascalCase class name
-- Update ALL meta tag content
-- Ensure image URLs are correct and absolute (with https://)
+- **Never** call `updateSeo`/`setStructuredData`/`meta.addTags` in a post. All SEO comes from the registry entry (Step 4).
+- A post with a visible FAQ or a video passes extra schema:
+  `applyBlogPostSeo(slug, { graph: [faqPageSchema(FAQ), videoObjectSchema(video)] })`. See
+  `monetna-karta-bulgarski-evro-moneti` and `3d-pechat-po-porachka-sofia-video`.
+- A slug missing from the registry throws and fails the build on purpose.
 - The `getPost()` slug parameter must match your `.md` filename
 
 #### 3.3: HTML Template (`your-article-slug.component.html`)
@@ -290,6 +241,7 @@ export class YourArticleSlugComponent implements OnInit {
     </button>
     <markdown [data]="postContent"></markdown>
 </article>
+<app-related-content slug="your-article-slug"></app-related-content>
 ```
 
 **Important:**
@@ -315,33 +267,36 @@ export class YourArticleSlugComponent implements OnInit {
 
 ---
 
-### Step 4: Register in Blog Service
+### Step 4: Register in the Blog Registry
 
-**File:** `src/app/services/blog.service.ts`
+**File:** `src/app/services/blog-posts.registry.ts`
 
-Add your article to the `blogPosts` array:
+Add your article to the `BLOG_POSTS` array, above the
+`// Add more blog posts here as you create them` marker. The scripts parse this
+file by regex, so keep the shape:
 
 ```typescript
-private blogPosts: BlogPost[] = [
-  // ... existing posts
   {
-    id: '3', // Increment the ID
+    id: '19', // Next free ID
     title: 'Your Full Article Title - Include Keywords',
-    description: 'Compelling description under 160 characters that appears in search results.',
+    description: 'Compelling description, 150-160 characters, shown in search results.',
+    seoTitle: 'Optional <title> when it must differ from "<title> | <brand>"',
     slug: 'your-article-slug', // Must match .md filename
-    route: '/blog/your-article-slug', // Must match route in app.routes.ts
-    date: new Date('2026-02-08'), // Publication date
-    tags: ['3D принтиране', 'keyword2', 'keyword3'], // For filtering
-    author: '3D Печат България'
-  }
-];
+    route: '/blog/your-article-slug', // No trailing slash here; the canonical adds it
+    date: new Date('2026-10-17'), // Publication date
+    imageUrl: 'assets/blogs/images/your-article-slug-cover.webp',
+    tags: ['3D принтиране', 'keyword2', 'keyword3'], // Card labels
+    author: '3D Печат България',
+    keywords: ['keyword1', 'keyword2', '3D печат'], // SEO meta keywords
+    dateModified: new Date('2026-10-17') // Bump on every substantive content edit
+  },
 ```
 
 **Notes:**
 - `slug` must match your `.md` filename (without extension)
 - `route` must match the route in `app.routes.ts`
-- `tags` are used for search/filtering in the blog list page
-- Keep description under 160 characters for optimal display in search results
+- `dateModified` feeds the sitemap `<lastmod>`, the schema and `article:modified_time`. Bump it by hand when the content changes. Never use the build date.
+- `blog-posts.registry.spec.ts` checks unique ids/slugs/routes, that the markdown exists, and that `dateModified` isn't before `date`
 
 ---
 
@@ -349,29 +304,21 @@ private blogPosts: BlogPost[] = [
 
 **File:** `src/app/app.routes.ts`
 
-Import your component at the top:
-
-```typescript
-import { YourArticleSlugComponent } from './blog/your-article-slug/your-article-slug.component';
-```
-
-Add route in the `blog` children array:
+Add a **lazy** route in the `blog` children array. Do **not** add a static
+`import … from './blog/…'` line at the top: it pulls the article into the main
+bundle and breaks the auto-blog scaffolder.
 
 ```typescript
 {
-  path: 'blog',
-  children: [
-    { path: '', component: BlogListPageComponent, data: { text: 'Blog' } },
-    // ... existing routes
-    { path: 'your-article-slug', component: YourArticleSlugComponent }
-  ]
-}
+  path: 'your-article-slug',
+  loadComponent: () => import('./blog/your-article-slug/your-article-slug.component').then(m => m.YourArticleSlugComponent)
+},
 ```
 
 **Important:**
-- Route path must match the slug in `blog.service.ts`
+- Route path must match the slug in `blog-posts.registry.ts`
 - No leading slash in the path
-- Order doesn't matter, but keep alphabetical for readability
+- Renaming or removing a post later? Keep the old path as a `LegacyRedirectComponent` route and record it in `LEGACY_REDIRECTS.md`. See CLAUDE.md Rule 5.
 
 ---
 
@@ -384,8 +331,8 @@ npm run generate-sitemap
 ```
 
 This automatically:
-- Scans all routes in `app.routes.ts`
-- Generates `src/sitemap.xml`
+- Reads every post (route + `dateModified`) from `blog-posts.registry.ts`
+- Generates `src/sitemap.xml`, with main-page dates from the hand-maintained `MAIN_PAGE_LASTMOD` in `scripts/generate-sitemap.js`
 - Includes proper priorities and change frequencies
 
 **Verify:**
@@ -512,68 +459,21 @@ The shared styles automatically handle:
 
 ### Meta Tag Checklist
 
-Every article must have:
+You don't write any of these tags. `applyBlogPostSeo('<slug>')` produces all
+of them from the post's registry entry. Fill the entry well:
 
-#### 1. Title Tag
-```typescript
-this.title.setTitle('Your Title - 3D Печат България');
-```
-- **Length:** 50-60 characters
-- **Include:** Main keyword + brand
-- **Example:** "Как да изберете 3D принтер 2026 - 3D Печат"
+| Registry field | Produces | Guidance |
+|---|---|---|
+| `title` (or `seoTitle`) | `<title>`, `og:title`, `twitter:title`, schema `headline` | 50–60 characters, main keyword. Without `seoTitle` the title becomes `<title> \| <brand>`. |
+| `description` | meta description, `og:`/`twitter:description` | 150–160 characters, main keyword plus a reason to click |
+| `keywords` | meta keywords, schema `keywords` | 5–10 Bulgarian phrases, broad and specific mixed |
+| `route` | canonical, `og:url`, breadcrumb | Written without the slash; the output is `https://3dpechat.bg/blog/<slug>/` |
+| `imageUrl` | `og:image`, `twitter:image`, schema `image` | 1200×630, WebP, under 300 KB, `assets/…` path |
+| `date` / `dateModified` | `article:published_time` / `modified_time`, schema dates, sitemap `<lastmod>` | Bump `dateModified` on every substantive edit |
 
-#### 2. Meta Description
-```typescript
-{ name: 'description', content: 'Your description here.' }
-```
-- **Length:** 150-160 characters
-- **Include:** Main keyword, call to action
-- **Compelling:** Encourage clicks from search results
-
-#### 3. Keywords
-```typescript
-{ name: 'keywords', content: 'keyword1, keyword2, keyword3' }
-```
-- **Count:** 5-10 relevant keywords
-- **Mix:** Broad and specific terms
-- **Bulgarian:** Use Bulgarian keywords for Bulgarian content
-
-#### 4. Canonical URL
-```typescript
-{ rel: 'canonical', href: 'https://3dpechat.bg/blog/your-article-slug' }
-```
-- **Prevents:** Duplicate content issues
-- **Always:** Use absolute URL with https://
-
-#### 5. Open Graph Tags
-For social media previews (Facebook, LinkedIn):
-
-```typescript
-{ property: 'og:type', content: 'article' },
-{ property: 'og:title', content: 'Your Title' },
-{ property: 'og:description', content: 'Your description' },
-{ property: 'og:url', content: 'https://3dpechat.bg/blog/your-slug' },
-{ property: 'og:image', content: 'https://3dpechat.bg/assets/blogs/images/hero.png' }
-```
-
-**Image Requirements:**
-- **Size:** 1200x630px (recommended)
-- **Format:** JPG or PNG
-- **Size:** Under 300KB
-
-#### 6. Twitter Card Tags
-```typescript
-{ name: 'twitter:card', content: 'summary_large_image' },
-{ name: 'twitter:title', content: 'Your Title' },
-{ name: 'twitter:description', content: 'Your description' },
-{ name: 'twitter:image', content: 'https://3dpechat.bg/assets/blogs/images/hero.png' }
-```
-
-#### 7. Structured Data (JSON-LD)
-Added automatically via `addStructuredData()` method
-- Provides rich snippets in search results
-- Shows author, date, publisher info
-- Improves click-through rates
+Structured data is a `BlogPosting` + `BreadcrumbList` `@graph`. Add FAQ or
+video schema with `applyBlogPostSeo(slug, { graph: [...] })`, never with a
+second JSON-LD block.
 
 ---
 
@@ -674,8 +574,9 @@ npm run serve:ssr
 **Problem:** 404 error or markdown doesn't load
 **Solution:** Ensure these match exactly:
 - `.md` filename (without extension)
-- `slug` in `blog.service.ts`
-- `route` path in `blog.service.ts`
+- `slug` in `blog-posts.registry.ts`
+- `route` path in `blog-posts.registry.ts`
+- `applyBlogPostSeo()` parameter in component
 - Route in `app.routes.ts`
 - `getPost()` parameter in component
 
@@ -733,9 +634,9 @@ npm run serve:ssr
 2. 🖼️ Add optimized images to `assets/blogs/images/`
 3. 📁 Create component folder `app/blog/your-slug/`
 4. 💻 Create `.ts`, `.html`, `.scss` files
-5. 🏷️ Add meta tags and structured data
-6. 📝 Register in `blog.service.ts`
-7. 🛣️ Add route to `app.routes.ts`
+5. 🏷️ Call `applyBlogPostSeo('<slug>')` in the constructor (no hand-written meta tags)
+6. 📝 Register in `blog-posts.registry.ts` (with `keywords` and `dateModified`)
+7. 🛣️ Add a lazy `loadComponent` route to `app.routes.ts`
 8. 🗺️ Run `npm run generate-sitemap`
 9. ✅ Test locally
 10. 🚀 Deploy

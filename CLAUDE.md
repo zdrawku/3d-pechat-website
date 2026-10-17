@@ -70,17 +70,61 @@ no database.** Content is curated JSON imported at build time — products
 files. Build-time import (not runtime fetch) keeps the prerendered HTML complete
 for SEO. See [`src/data/README.md`](src/data/README.md).
 
+## 🚨 Rule 5 — Facts, blog SEO and URLs have one source each
+
+This site is recommended by AI assistants (ChatGPT etc.) because its pages,
+schema and listings agree with each other. Each item below has exactly one
+source; never duplicate or hand-write it elsewhere. The full plan is
+[`AI-VISIBILITY-PLAN.md`](AI-VISIBILITY-PLAN.md).
+
+1. **Business facts → [`src/data/business.json`](src/data/business.json).**
+   Services, technology, materials, prices, minimum order, lead times, files,
+   size, delivery, payment, hours, address. Any copy (pages, blog posts, product
+   descriptions, FAQ, llms.txt) may state only what its `facts` say and never
+   what `neverClaim` lists. In short: **FDM only, PLA stocked (other materials
+   bought per order), no SLA/SLS/scanning, no same-day promises, no invoices.**
+   Never invent a price, time or size. The auto-blog prompt reads this file;
+   when a fact changes, change it there, then fix existing copy that says
+   otherwise.
+2. **Blog post metadata/SEO → [`blog-posts.registry.ts`](src/app/services/blog-posts.registry.ts).**
+   A post component makes one call: `seoService.applyBlogPostSeo('<slug>')`.
+   It emits the meta tags, canonical and a `BlogPosting` + `BreadcrumbList`
+   `@graph` at prerender time. **Never hand-write `updateSeo`/`setStructuredData`
+   in a post.** Extra schema goes through the second argument:
+   `applyBlogPostSeo(slug, { graph: [faqPageSchema(FAQ), videoObjectSchema(v)], article: { … } })`.
+   A slug missing from the registry fails the build on purpose. Never import
+   `BlogService` (bundles all articles) into code that runs on every page.
+3. **"Last updated" dates are hand-maintained, never the build date.** When a
+   post's content changes substantively, bump its `dateModified` in the
+   registry. When a main page changes, bump its entry in `MAIN_PAGE_LASTMOD` in
+   [`scripts/generate-sitemap.js`](scripts/generate-sitemap.js). These feed the
+   sitemap, the schema and (Phase 3) IndexNow, so a fake date is a bug.
+4. **URLs end with `/`.** `TrailingSlashUrlSerializer` adds the slash to
+   `routerLink`s (keep `routerLink` values slash-free). Markdown links must be
+   written as `/blog/<slug>/`. `postbuild` (`scripts/check-internal-links.js`)
+   fails the build on any slash-less internal link.
+5. **Never break an indexed URL.** To rename, merge or remove a post or route,
+   keep the old path as a `LegacyRedirectComponent` route in `app.routes.ts`
+   (`data: { to: '/new/path/' }`) and record it in
+   [`LEGACY_REDIRECTS.md`](LEGACY_REDIRECTS.md). GitHub Pages can't do server
+   redirects, and these routes stay forever.
+
+How to add a blog post step by step: [`AI_INSTRUCTIONS.md`](AI_INSTRUCTIONS.md)
+§ Content Management. `ARTICLE_CREATION_GUIDE.md` and `SEO_GUIDE.md` are older
+and lose to this rule wherever they disagree.
+
 ## Verify before claiming done
 
 `npm run build` **and** `npm test -- --watch=false --browsers=ChromeHeadless`
-must both pass. For user-facing changes also look at the result — `npx ng serve`
+must both pass, plus `npm run test:scripts` when you touch `scripts/`. For user-facing changes also look at the result — `npx ng serve`
 plus a Playwright screenshot (Playwright is already a dependency) in light and
 dark at desktop and mobile widths. Report failures with their output.
 
 ## Other standing rules
 
 - Keep `404.html` in sync with `index.html` (meta tags, CSP, scripts).
-- Run `npm run generate-sitemap` after adding routes or blog posts.
+- Run `npm run generate-sitemap` after adding routes or blog posts (a new main
+  route also needs a `MAIN_PAGE_LASTMOD` entry, or the generator exits).
 - Image paths in markdown/HTML use `assets/…` (no leading slash), kebab-case,
   WebP preferred.
 - No `schema.org` `Review`/`AggregateRating` markup for Google-sourced reviews —

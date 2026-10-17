@@ -2,6 +2,9 @@
 
 const { slugify } = require('./scrape-ideas');
 const { getBlogPosts, getStaticPages, fixInternalLinks } = require('./internal-links');
+// The one source of truth for what the business offers. Every claim the article
+// makes about our services must come from here (see CLAUDE.md, Rule 5).
+const business = require('../../src/data/business.json');
 
 const MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-5-20250929';
 
@@ -28,6 +31,12 @@ function buildPrompt(topicObj) {
 ${products ? `\nСВЪРЗАНИ ПРОДУКТИ ОТ КАТАЛОГА НА САЙТА: ${products}.
 Статията трябва естествено да насочва читателя към тях: поне веднъж линкни [нашите продукти](/products/), а при поръчка по индивидуален модел — [заяви оферта](/contact/). Не измисляй цени и продукти, които не са изброени тук.\n` : ''}
 ТЕКУЩА ГОДИНА: ${year}. Не описвай минали години като бъдеще (напр. „след 2024“) — пиши спрямо текущата година.
+
+ФАКТИ ЗА НАШИЯ БИЗНЕС (${business.name}) — единственият източник за нашите услуги, цени, срокове, материали и доставка:
+${business.facts.map(f => `- ${f}`).join('\n')}
+НИКОГА НЕ ТВЪРДИ (дори косвено):
+${business.neverClaim.map(c => `- ${c}`).join('\n')}
+Когато статията говори за нашите услуги, използвай само фактите по-горе. Ако нещо не е там — не го обещавай.
 
 ИЗИСКВАНИЯ ЗА СТАТИЯТА (markdown):
 1. Започни с "# " и заглавието (на български).
@@ -156,4 +165,4 @@ async function generateArticle(topicObj) {
   };
 }
 
-module.exports = { generateArticle, cleanSlug };
+module.exports = { generateArticle, cleanSlug, buildPrompt };

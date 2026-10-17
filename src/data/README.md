@@ -148,6 +148,29 @@ markdown — `ngx-markdown` sanitises iframes away. Embeds use
 `youtube-nocookie.com`, which is the only YouTube host allowed by the CSP
 `frame-src` in `src/index.html` / `src/404.html`.
 
+## `business.json` — what the business is and offers (one source of truth)
+
+The single place for the business identity and every claim about the service.
+It's the reason AI assistants and search engines see one consistent business
+(see `CLAUDE.md` Rule 5 and `AI-VISIBILITY-PLAN.md`).
+
+- **Identity:** `name` („3dpechat“, exactly as on the Google listing),
+  `alternateName`, `telephone`, `email`, `address`, `displayAddress`, `geo`,
+  `hasMap`, `openingHours`, `priceRange`, `areaServed`, `sameAs`. Phase 2 of
+  the plan wires these into the `LocalBusiness` JSON-LD, the footer and
+  llms.txt. Until then, `index.html`/`404.html` still carry the old schema.
+- **`technologies`, `services`:** what we actually do (FDM only).
+- **`facts`:** Bulgarian sentences that copy may state: materials, prices,
+  minimum order, lead times, files, size, delivery, payment, hours. The
+  auto-blog prompt embeds them verbatim (`generate-article.test.js` checks it).
+- **`neverClaim`:** things no copy may say: SLA/SLS/scanning as our service,
+  same-day work, invoices, unconfirmed modeling prices, invented reviews.
+
+**When a fact changes:** edit it here first, then search the site and blog for
+copy that still says the old thing. Copy elsewhere isn't generated from this
+file yet (the contact intro, the Sofia blog post and the prices page minimum
+repeat some facts by hand).
+
 ## ⚠️ Encoding note (all files here)
 
 These files contain Bulgarian (Cyrillic) text. Edit them with a UTF-8-aware

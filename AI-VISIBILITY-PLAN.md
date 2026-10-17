@@ -335,9 +335,15 @@ Deviations and additions to the steps above:
   - „3D сканиране“, „ABS печат“ and „PETG печат“ removed from the meta keywords
   - ABS/PETG removed from the prices page keywords
   - the llms.txt summary changed to FDM/PLA
+- **Agent instructions (added the same day, on the owner's request):**
+  - `CLAUDE.md` **Rule 5** covers business facts, the blog registry and its
+    trade-offs, hand-maintained dates, trailing slashes and legacy redirects.
+  - `AI_INSTRUCTIONS.md`, `ARTICLE_CREATION_GUIDE.md`, `SEO_GUIDE.md`, the
+    `add-product` skill and `src/data/README.md` were updated to match.
+  - The auto-blog prompt embeds `business.json` `facts`/`neverClaim`, guarded by
+    `generate-article.test.js`.
+  - A prices spec ties the calculator minimum to the `business.json` fact.
 - **Not done:**
-  - `ARTICLE_CREATION_GUIDE.md` and `SEO_GUIDE.md` still say to register posts
-    in `blog.service.ts`; it should now be `blog-posts.registry.ts`.
   - Visual baselines were not regenerated. They are Linux-rendered in CI, so
     after pushing, run the "visual" workflow with `update_baselines` for home,
     contact, portfolio and prices.
@@ -361,6 +367,11 @@ committed.
 **Why:** an assistant links the listing and the site to one business only when
 name, address and phone match. Today four names and two address forms are in
 circulation.
+
+> ✅ **2.1 data done early (2026-10-17):** `src/data/business.json` exists with
+> every value below plus `facts` and `neverClaim` (the copy rules), and the
+> auto-blog prompt already reads it. Phase 2 only has to **wire** it into the
+> JSON-LD, the footer, the contact intro and llms.txt (2.2–2.5).
 
 **2.1 Single source of truth: `src/data/business.json`** (Rule 4)
 ```jsonc

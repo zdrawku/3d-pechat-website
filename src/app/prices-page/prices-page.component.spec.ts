@@ -4,6 +4,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { IGX_CARD_DIRECTIVES, IgxAvatarComponent, IgxIconComponent, IGX_INPUT_GROUP_DIRECTIVES, IGX_SELECT_DIRECTIVES } from 'igniteui-angular';
 import { PricesPageComponent } from './prices-page.component';
+import business from '../../data/business.json';
 
 describe('PricesPageComponent', () => {
   let component: PricesPageComponent;
@@ -56,6 +57,10 @@ describe('PricesPageComponent', () => {
 
     it('always states the minimum order value', () => {
       expect(el().querySelector('[data-testid="calc-minimum-rule"]')?.textContent).toContain('3.00 €');
+    });
+
+    it('matches the minimum order in business.json (the source for all copy)', () => {
+      expect(business.facts.join(' ')).toContain(`Минималната стойност на поръчка е ${component.minimumOrder} €`);
     });
   });
 });
