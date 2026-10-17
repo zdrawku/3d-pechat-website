@@ -9,15 +9,27 @@
 >   `zkolev/seo-fixes` was **not** merged; its changes were ported file by file.
 >   Still owner-side: the Search Console steps and the slashes in the Google
 >   listing description (Step 1.1).
-> - **Phases 2 and 3:** ✅ merged (PR #46, `f418174`) and live; `npm run
->   check:live` passed 44/44 on 2026-10-17. 2.6 (512 px logo) was done in the
->   Phase 4–7 batch. Owner-side still open: GBP updates, Bing Webmaster Tools,
->   Bing Places, Apple Business Connect, and one manual deploy run with
->   `indexnow_all`.
-> - **Phases 4–7:** implemented 2026-10-17, uncommitted on
->   `discoverability-ai-improvements`, awaiting review. The owner asked the
->   agent to decide open questions itself; every such decision is in the
->   Decisions log, marked „agent“.
+> - **Phases 2 and 3:** ✅ merged (PR #46, `f418174`) and live. 2.6 (512 px
+>   logo) was done in the Phase 4–7 batch. On 2026-10-17 the agent ran the
+>   deploy with `indexnow_all` (23 URLs, HTTP 200). Owner-side still open: GBP
+>   updates, Bing Webmaster Tools, Bing Places, Apple Business Connect.
+> - **Phases 4–7:** ✅ merged (PR #47, `006233a`) and live. Checked on
+>   production 2026-10-17:
+>   - `npm run check:live` 48/48.
+>   - validator.schema.org: 0 errors / 0 warnings on `/`, `/prices/`, `/en/`.
+>   - Google Rich Results Test: all valid (`/` Local business + Organization +
+>     Videos; `/prices/` and `/en/` Local business + Organization). Google
+>     doesn't show FAQ rich results for non-government/health sites; expected.
+>   - Visual baselines regenerated (`ac26305` on main).
+>   - Search Console: indexing requested for `/en/` and `/prices/`.
+>   - **GSC findings:** the submitted sitemap is `https://3dpechat.bg/sitemap`.
+>     It resolves, but Google last read it on 2026-07-08, so the slash URLs were
+>     "unknown to Google". 14 pages indexed, 15 not. 12 are "Page with
+>     redirect" (expected for redirect URLs). 3 are "Redirect error" on
+>     `/blog`, `/contact`, `/products`, last crawled 2026-07-09; those are
+>     stale and now 301 correctly, so they need „Validate fix“.
+>   - The owner asked the agent to decide open questions itself; every such
+>     decision is in the Decisions log, marked „agent“.
 >   - Design canvas: https://claude.ai/artifact/G9ZMwauxMhKhvngFyvZ4W7. The agent
 >     picked FAQ A, `/en/` A and card A.
 >   - Phase 4: the FAQ on `/prices/` and the buyer-intent topic queue.
