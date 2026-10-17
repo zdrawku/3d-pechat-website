@@ -31,6 +31,12 @@ export const routes: Routes = [
     data: { text: 'Contact' }
   },
   {
+    // The one English page (AI-VISIBILITY-PLAN.md Phase 5); hreflang-paired with '/'.
+    path: 'en',
+    loadComponent: () => import('./en-page/en-page.component').then(m => m.EnPageComponent),
+    data: { text: 'English' }
+  },
+  {
     path: 'blog',
     children: [
       {
@@ -51,6 +57,14 @@ export const routes: Routes = [
         path: 'prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p',
         loadComponent: () => import('./shared/legacy-redirect/legacy-redirect.component').then(m => m.LegacyRedirectComponent),
         data: { to: '/blog/prozrachen-i-poluprozrachen-pla-filament-svetlopropuskliv-3d-pechat/' }
+      },
+      {
+        // Removed 2026-10-17: an auto-generated story about a person who isn't
+        // real (business.json neverClaim). Its closest live topic is the A1 Combo
+        // beginner-printer post.
+        path: '3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt',
+        loadComponent: () => import('./shared/legacy-redirect/legacy-redirect.component').then(m => m.LegacyRedirectComponent),
+        data: { to: '/blog/barzi-i-umni-3d-printeri/' }
       },
       {
         path: 'what-is-3d-printing',
@@ -91,10 +105,6 @@ export const routes: Routes = [
       {
         path: '3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor',
         loadComponent: () => import('./blog/3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor/3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor.component').then(m => m.ThreeDPrinterBambuLabX2dPodrobnoRevyuFunktsiiIIzborComponent)
-      },
-      {
-        path: '3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt',
-        loadComponent: () => import('./blog/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt.component').then(m => m.ThreeDPrinterZaNachinaeshtiKakEdnoDetePrevarnaHobiVSemeenProektComponent)
       },
       {
         path: 'infill-pri-3d-pechat-platnost-zdravina-i-filament',

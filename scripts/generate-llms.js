@@ -9,6 +9,7 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const SERVICE_FILE = path.join(ROOT, 'src/app/services/blog-posts.registry.ts');
 const BUSINESS_FILE = path.join(ROOT, 'src/data/business.json');
+const FAQ_FILE = path.join(ROOT, 'src/data/faq.json');
 const OUT_FILE = path.join(ROOT, 'src/llms.txt');
 
 // Trailing slashes match the canonical URLs (GitHub Pages 301-redirects the
@@ -20,6 +21,7 @@ const MAIN_PAGES = [
   { url: 'https://3dpechat.bg/prices/', label: 'Цени', desc: 'Цени за 3D печат по грамаж и онлайн калкулатор.' },
   { url: 'https://3dpechat.bg/contact/', label: 'Контакти', desc: 'Форма за запитване и контактна информация.' },
   { url: 'https://3dpechat.bg/blog/', label: 'Блог', desc: 'Статии за 3D принтиране на български език.' },
+  { url: 'https://3dpechat.bg/en/', label: 'English', desc: 'Кратко представяне на английски: услуги, цени, срокове, доставка и контакти.' },
 ];
 
 // Labels for the official profiles. The URLs themselves come from `sameAs` in
@@ -63,6 +65,7 @@ function generate() {
   const src = fs.readFileSync(SERVICE_FILE, 'utf8');
   const posts = parseBlogPosts(src);
   const business = JSON.parse(fs.readFileSync(BUSINESS_FILE, 'utf8'));
+  const faq = JSON.parse(fs.readFileSync(FAQ_FILE, 'utf8'));
   const phone = business.telephone.replace(/^\+359(\d{3})(\d{3})(\d{3})$/, '+359 $1 $2 $3');
 
   const lines = [
@@ -78,6 +81,12 @@ function generate() {
     '',
     ...business.facts.map(f => `- ${f}`),
     `- Контакти: телефон и Viber ${phone}, имейл ${business.email}.`,
+    '',
+    '## Често задавани въпроси',
+    '',
+    'Същите отговори са видими на https://3dpechat.bg/prices/#faq.',
+    '',
+    ...faq.map(f => `- **${f.question}** ${f.answer}`),
     '',
     '## Профили',
     '',

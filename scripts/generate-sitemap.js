@@ -16,7 +16,8 @@ const MAIN_PAGE_LASTMOD = {
   '/products/': '2026-10-14',  // euro coin holder added
   '/prices/': '2026-10-17',    // 3 € minimum order in the calculator
   '/contact/': '2026-10-17',   // H1 + intro + file note
-  '/blog/': '2026-10-17'       // new posts / merged money post
+  '/blog/': '2026-10-17',      // new posts / merged money post
+  '/en/': '2026-10-17'         // English landing page created (Phase 5)
 };
 
 console.log('🔍 Generating sitemap from blog posts...');
@@ -48,7 +49,8 @@ const mainPages = [
   { path: '/portfolio/', changefreq: 'daily', priority: '1' },
   { path: '/products/', changefreq: 'weekly', priority: '0.8' },
   { path: '/prices/', changefreq: 'monthly', priority: '0.7' },
-  { path: '/contact/', changefreq: 'monthly', priority: '0.6' }
+  { path: '/contact/', changefreq: 'monthly', priority: '0.6' },
+  { path: '/en/', changefreq: 'monthly', priority: '0.6' }
 ];
 const blogIndex = { path: '/blog/', changefreq: 'weekly', priority: '0.9' };
 
@@ -84,4 +86,4 @@ ${routes.map(blog => urlEntry({
 fs.writeFileSync(sitemapPath, sitemapContent, 'utf8');
 
 console.log('✅ Sitemap generated successfully at:', sitemapPath);
-console.log(`📝 Total URLs: ${routes.length + 6} (${routes.length} blog posts + 6 main pages)`);
+console.log(`📝 Total URLs: ${routes.length + mainPages.length + 1} (${routes.length} blog posts + ${mainPages.length + 1} main pages)`);

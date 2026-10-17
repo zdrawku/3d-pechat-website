@@ -150,19 +150,6 @@ export const BLOG_POSTS: BlogPost[] = [
     dateModified: new Date('2026-06-15')
   },
   {
-    id: '12',
-    title: '3D принтер за начинаещи: от детско хоби в семеен бизнес',
-    description: 'Вдъхновяваща история как 12-годишно дете превърна 3D принтирането в семеен проект. Практични съвети за избор на първи 3D принтер и стартиране.',
-    slug: '3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt',
-    route: '/blog/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt',
-    date: new Date('2026-06-22'),
-    imageUrl: 'assets/blogs/images/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt-cover.webp',
-    tags: ['3D принтер', 'начинаещи', 'семеен проект', 'деца и 3D печат', 'хоби', 'практични съвети', 'история на успеха', 'избор на принтер'],
-    author: '3D Печат България',
-    keywords: ['3D принтер за начинаещи', '3D принтиране', 'детски проект 3D печат', 'първи 3D принтер', 'семеен бизнес 3D', 'как да започна 3D принтиране', '3D печат за деца'],
-    dateModified: new Date('2026-06-22')
-  },
-  {
     id: '13',
     title: 'Infill при 3D печат: плътност, здравина и филамент',
     description: 'Научете как infill плътността влияе върху здравината, теглото и разхода на филамент при 3D принтиране. Практически съвети за избор на правилните настройки.',
@@ -199,7 +186,7 @@ export const BLOG_POSTS: BlogPost[] = [
     tags: ['3D принтери', 'Bambu Lab', 'A1 Combo', 'многоцветен печат', 'технологии', 'иновации', 'опит', 'производство'],
     author: '3D Печат България',
     keywords: ['Bambu Lab A1 Combo', 'A1 Combo ревю', 'бързи 3D принтери', 'умни 3D принтери', 'AMS lite', 'многоцветен 3D печат', '3D принтер за дома', '3D принтиране', '3D печат'],
-    dateModified: new Date('2026-10-11')
+    dateModified: new Date('2026-10-17')
   },
   {
     id: '16',

@@ -31,6 +31,12 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
+  <url>
+    <loc>https://3dpechat.bg/en/</loc>
+    <lastmod>2026-10-17T10:00:00+01:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
 
   <!-- Blog Pages -->
   <url>
@@ -100,12 +106,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://3dpechat.bg/blog/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt/</loc>
-    <lastmod>2026-06-22T10:00:00+01:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://3dpechat.bg/blog/infill-pri-3d-pechat-platnost-zdravina-i-filament/</loc>
     <lastmod>2026-07-06T10:00:00+01:00</lastmod>
     <changefreq>monthly</changefreq>
@@ -119,7 +119,7 @@
   </url>
   <url>
     <loc>https://3dpechat.bg/blog/barzi-i-umni-3d-printeri/</loc>
-    <lastmod>2026-10-11T10:00:00+01:00</lastmod>
+    <lastmod>2026-10-17T10:00:00+01:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

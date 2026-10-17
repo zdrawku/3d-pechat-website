@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Meta, Title } from '@angular/platform-browser';
-import { SeoService, faqPageSchema } from './seo.service';
+import { HOME_LANGUAGE_ALTERNATES, SeoService, faqPageSchema } from './seo.service';
 import { BLOG_POSTS } from './blog-posts.registry';
 
 /**
@@ -56,6 +56,38 @@ describe('SeoService', () => {
 
     service.removeStructuredData();
     expect(document.getElementById('structured-data-jsonld')).toBeNull();
+  });
+
+  describe('language (Phase 5)', () => {
+    const hreflangs = () =>
+      Array.from(document.head.querySelectorAll('link[rel="alternate"][hreflang]')).map(l => l.getAttribute('hreflang'));
+
+    afterEach(() => {
+      document.documentElement.setAttribute('lang', 'bg');
+      document.head.querySelectorAll('link[rel="alternate"][hreflang]').forEach(l => l.remove());
+    });
+
+    it('sets <html lang>, og:locale and hreflang links for an English page', () => {
+      service.updateSeo({ title: 'T', description: 'D', locale: 'en', alternates: HOME_LANGUAGE_ALTERNATES });
+      expect(document.documentElement.getAttribute('lang')).toBe('en');
+      expect(meta.getTag('property="og:locale"')?.content).toBe('en_US');
+      expect(meta.getTag('property="og:locale:alternate"')?.content).toBe('bg_BG');
+      expect(hreflangs()).toEqual(['bg', 'en', 'x-default']);
+    });
+
+    it('defaults back to Bulgarian with no hreflang on the next page', () => {
+      service.updateSeo({ title: 'T', description: 'D', locale: 'en', alternates: HOME_LANGUAGE_ALTERNATES });
+      service.updateSeo({ title: 'T2', description: 'D2' });
+      expect(document.documentElement.getAttribute('lang')).toBe('bg');
+      expect(meta.getTag('property="og:locale"')?.content).toBe('bg_BG');
+      expect(hreflangs()).toEqual([]);
+    });
+
+    it('never duplicates hreflang links on repeated calls', () => {
+      service.updateSeo({ title: 'T', description: 'D', alternates: HOME_LANGUAGE_ALTERNATES });
+      service.updateSeo({ title: 'T', description: 'D', alternates: HOME_LANGUAGE_ALTERNATES });
+      expect(hreflangs()).toEqual(['bg', 'en', 'x-default']);
+    });
   });
 
   describe('applyBlogPostSeo', () => {

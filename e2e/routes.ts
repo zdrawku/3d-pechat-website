@@ -9,6 +9,8 @@ export interface RouteSpec {
   heading?: string;
   /** Substring expected in document <title>. */
   title?: string;
+  /** False for pages reachable from the footer only (not a drawer chip), e.g. /en. */
+  inDrawer?: boolean;
 }
 
 export const CORE_ROUTES: RouteSpec[] = [
@@ -18,6 +20,7 @@ export const CORE_ROUTES: RouteSpec[] = [
   { path: '/prices', title: 'Цени' },
   { path: '/contact', heading: 'Свържете се', title: 'Контакти' },
   { path: '/blog', title: 'Блог' },
+  { path: '/en', heading: 'Custom 3D printing', title: 'Custom 3D Printing', inDrawer: false },
 ];
 
 export const BLOG_ROUTES: RouteSpec[] = [
@@ -31,7 +34,6 @@ export const BLOG_ROUTES: RouteSpec[] = [
   '/blog/pla-pla-pla-pro-i-pln-razliki-i-izbor',
   '/blog/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model',
   '/blog/3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor',
-  '/blog/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt',
   '/blog/infill-pri-3d-pechat-platnost-zdravina-i-filament',
   '/blog/prozrachen-i-poluprozrachen-pla-filament-svetlopropuskliv-3d-pechat',
   '/blog/3d-pechat-po-porachka-sofia-video',

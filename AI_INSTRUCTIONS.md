@@ -16,7 +16,7 @@ This file contains the definitive instructions and guidelines for the AI assista
 
 ### Automated Blog Generation (Preferred)
 Run `npm run generate-blog` to fully automate article creation:
-1. **Picks a topic** — scrapes Bulgarian 3D printing sites first (current ideas); if nothing fresh comes back it uses catalog-related topics from `scripts/auto-blog/product-topics.js` (gifts, stands, organizers, coin cards… — the prompt then steers the article to `/products/`), and finally the generic `scripts/auto-blog/fallback-topics.js`.
+1. **Picks a topic** — first the **buyer-intent backlog** in `scripts/auto-blog/service-topics.js` (pre-order questions such as price, spare parts, modeling from a photo, file formats), in order, until each is published. Each has a fixed `slug` that the generator keeps, so the dedupe stays exact. Then it scrapes Bulgarian 3D printing sites (current ideas). If nothing fresh comes back it uses catalog-related topics from `scripts/auto-blog/product-topics.js` (gifts, stands, organizers, coin cards… — the prompt then steers the article to `/products/`), and finally the generic `scripts/auto-blog/fallback-topics.js`.
 2. **Generates article** — calls Anthropic Claude API (Bulgarian, SEO-optimised). Requires `ANTHROPIC_API_KEY` in `.env`. The prompt (`scripts/auto-blog/generate-article.js`) embeds `facts` and `neverClaim` from `src/data/business.json`, and `generate-article.test.js` fails if they go missing. Review generated posts for service claims anyway.
 3. **Generates cover image** — 1200×630 via Pollinations.ai (free, no key); saved to `src/assets/blogs/images/{slug}-cover.png`.
 4. **Scaffolds all Angular files** — component TS/HTML/SCSS in `src/app/blog/{slug}/`. The template ends with `<app-related-content slug="{slug}">` (3 related articles + 3 catalog products, chosen automatically from tags/title — see `src/app/shared/related-content/`).
@@ -25,7 +25,7 @@ Run `npm run generate-blog` to fully automate article creation:
 
 Override topic: set `MANUAL_TOPIC=your topic here` in `.env` before running.
 
-**GitHub Actions** (`.github/workflows/auto-blog.yml`): runs automatically Mon/Thu 9AM UTC and supports `workflow_dispatch` with an optional `topic` input. Requires `ANTHROPIC_API_KEY` repo secret.
+**GitHub Actions** (`.github/workflows/auto-blog.yml`): runs automatically on the 1st, 11th and 21st of each month at 09:00 UTC, opens a PR for review, and supports `workflow_dispatch` with an optional `topic` input. Requires `ANTHROPIC_API_KEY` repo secret.
 
 > ⚠️ **The scaffolder edits `app.routes.ts` and `blog-posts.registry.ts` by regex, so it is coupled to their formatting.** Blog routes are **lazy** — `{ path: '<slug>', loadComponent: () => import('./blog/<slug>/<slug>.component').then(m => m.<Class>) }` — with **no static `import … from './blog/…'` lines** (adding one would pull the chunk into the main bundle and defeat lazy loading). If you reformat either file, update `updateRoutes()`/`updateBlogService()` in `scripts/auto-blog/scaffold-component.js` **and** the anchors in `scripts/auto-blog/preflight.js`. Preflight runs first and fails fast naming the drifted file, so a format change can no longer waste a Claude API call and an image generation before dying. *(This is exactly what broke the pipeline in Aug 2026: the routes had migrated to `loadComponent` while the scaffolder still looked for static imports.)*
 
@@ -116,6 +116,15 @@ Click-to-play player for our YouTube videos (home „Вижте ни в дейс
 - **Generate Sitemap**: `npm run generate-sitemap`
 - **Generate LocalBusiness schema**: `npm run generate-business-schema` (from `src/data/business.json`, in prebuild)
 - **IndexNow (Bing)**: `npm run indexnow -- --sitemap src/sitemap.xml --dry-run`. The deploy workflow runs it after every deploy for new/changed URLs; trigger the workflow manually with `indexnow_all` to resubmit everything.
+- **Live site check**: `npm run check:live`. It's a read-only crawl of https://3dpechat.bg covering crawler access (Googlebot, bingbot, OAI-SearchBot, PerplexityBot, ClaudeBot…), the schema vs `business.json`, every sitemap URL, redirects, llms.txt, the IndexNow key, the FAQ and `/en/`. `.github/workflows/live-site-check.yml` runs it every Monday; run it by hand ~10 minutes after a deploy.
+
+### FAQ and the English page
+- **FAQ** — `src/data/faq.json` (6–10 Q&A) is rendered by `app-faq` (`src/app/shared/faq/`) on `/prices/` as always-visible `igx-card`s, mirrored as FAQPage JSON-LD via `faqPageSchema(FAQ)`, and copied into llms.txt.
+  - Answers may only state `business.json` facts. `src/data/faq.spec.ts` fails if an answer uses a number the facts don't contain, or mentions SLA/SLS, scanning, same-day work or invoices (except "не издаваме фактури").
+  - Don't switch the FAQ to an accordion: collapsed answers drop out of the prerendered HTML.
+- **English page** — `/en/` (`src/app/en-page/`) is the only English page; the rest of the site stays Bulgarian.
+  - It's paired with `/` through hreflang (`HOME_LANGUAGE_ALTERNATES` in `seo.service.ts`). `updateSeo({ locale: 'en', alternates })` sets `<html lang>`, `og:locale` and the `<link rel="alternate" hreflang>` tags; every other page resets them to Bulgarian with no hreflang.
+  - All its numbers come from `business.json` (`pricing`, `leadTimeWorkingDays`, `rushSurchargePercent`, `maxPieceCm`, `freeDeliveryOverEur`, `fileFormats`, `replyWithinHours`, `displayAddressEn`). `business.spec.ts` checks that those structured values also appear in the Bulgarian `facts`.
 - **Generate Blog Post**: `npm run generate-blog` (requires `ANTHROPIC_API_KEY` in `.env`)
 - **Lint**: `npm run lint`
 - **Script unit tests**: `npm run test:scripts` (node's built-in runner, `scripts/**/*.test.js`)

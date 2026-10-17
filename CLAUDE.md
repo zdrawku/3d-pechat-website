@@ -82,18 +82,23 @@ source; never duplicate or hand-write it elsewhere. The full plan is
    size, delivery, payment, hours, address. Any copy (pages, blog posts, product
    descriptions, FAQ, llms.txt) may state only what its `facts` say and never
    what `neverClaim` lists. In short: **FDM only, PLA stocked (other materials
-   bought per order), no SLA/SLS/scanning, no same-day promises, no invoices.**
+   bought per order), no SLA/SLS/scanning, no same-day promises, no invoices, no
+   fixed modeling prices (the offer is free; modeling is priced by complexity).**
    Never invent a price, time or size. Generated from it:
    - the `LocalBusiness` JSON-LD and `og:site_name` in `index.html`/`404.html`
      (`scripts/generate-business-schema.js`, run in prebuild). **Never hand-edit
      the `organization-jsonld` block.**
    - llms.txt
-   - the footer address, and the contact intro's address and hours (via
+   - the footer address, and the contact page's address and hours (via
      `src/data/business.ts`)
+   - every number on the English page `/en/` and the calculator's minimum order
+     (structured fields such as `pricing` and `leadTimeWorkingDays`)
    - the auto-blog prompt
 
-   When a fact changes, change it there, rebuild, then fix any hand-written
-   copy that still says otherwise.
+   The FAQ lives in [`src/data/faq.json`](src/data/faq.json). It's shown on
+   `/prices/` as FAQPage schema, and `faq.spec.ts` blocks numbers that aren't in
+   the facts. When a fact changes, change it in `business.json`, rebuild, then
+   fix `faq.json` and any hand-written copy that still says otherwise.
 2. **Blog post metadata/SEO → [`blog-posts.registry.ts`](src/app/services/blog-posts.registry.ts).**
    A post component makes one call: `seoService.applyBlogPostSeo('<slug>')`.
    It emits the meta tags, canonical and a `BlogPosting` + `BreadcrumbList`
@@ -128,7 +133,9 @@ and lose to this rule wherever they disagree.
 `npm run build` **and** `npm test -- --watch=false --browsers=ChromeHeadless`
 must both pass, plus `npm run test:scripts` when you touch `scripts/`. For user-facing changes also look at the result — `npx ng serve`
 plus a Playwright screenshot (Playwright is already a dependency) in light and
-dark at desktop and mobile widths. Report failures with their output.
+dark at desktop and mobile widths. Report failures with their output. After a
+deploy, `npm run check:live` verifies production read-only (crawler access,
+schema vs `business.json`, every sitemap URL, redirects, llms.txt, FAQ, `/en/`).
 
 ## Other standing rules
 

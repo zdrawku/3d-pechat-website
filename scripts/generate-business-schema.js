@@ -47,6 +47,8 @@ function buildSchema(b) {
     priceRange: b.priceRange,
     areaServed: b.areaServed.map((a) => ({ '@type': a.type, name: a.name })),
     knowsAbout: b.technologies.map((t) => `${t} 3D печат`),
+    // Languages we answer inquiries in (BCP 47), e.g. ["bg", "en"].
+    knowsLanguage: b.languages,
     makesOffer: b.services.map((name) => ({
       '@type': 'Offer',
       itemOffered: { '@type': 'Service', name }

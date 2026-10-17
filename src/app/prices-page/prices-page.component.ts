@@ -2,7 +2,9 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { IgxIconComponent, IgxButtonDirective, IGX_INPUT_GROUP_DIRECTIVES, IGX_SELECT_DIRECTIVES, IGX_CARD_DIRECTIVES } from 'igniteui-angular';
-import { SeoService } from '../services/seo.service';
+import { SeoService, faqPageSchema } from '../services/seo.service';
+import { FAQ, FaqComponent } from '../shared/faq/faq.component';
+import { BUSINESS } from '../../data/business';
 
 interface PricingTier {
   id: string;
@@ -18,7 +20,7 @@ interface PricingTier {
 
 @Component({
   selector: 'app-prices-page',
-  imports: [FormsModule, IgxIconComponent, IgxButtonDirective, IGX_INPUT_GROUP_DIRECTIVES, IGX_SELECT_DIRECTIVES, IGX_CARD_DIRECTIVES],
+  imports: [FormsModule, IgxIconComponent, IgxButtonDirective, IGX_INPUT_GROUP_DIRECTIVES, IGX_SELECT_DIRECTIVES, IGX_CARD_DIRECTIVES, FaqComponent],
   templateUrl: './prices-page.component.html',
   styleUrls: ['./prices-page.component.scss']
 })
@@ -69,8 +71,8 @@ export class PricesPageComponent {
     { name: 'Розово', image: '/assets/Auto generated image for ce6479fc-7167-4df3-abfb-e2d8e063bbb1-ee4a6898-fdc4-42a4-ac67-9bf9990ab2f4.png' }
   ];
 
-  /** Minimum order value in €: any non-empty order costs at least this much. */
-  public readonly minimumOrder = 3;
+  /** Minimum order value in €: any non-empty order costs at least this much (business.json). */
+  public readonly minimumOrder = BUSINESS.pricing.minimumOrder;
 
   public grams = 124;
   public selectedTierId = this.tiers[3].id; // Многоцветно (+ Труд), matches the original default example
@@ -78,12 +80,13 @@ export class PricesPageComponent {
   constructor(private router: Router, private seoService: SeoService) {
     this.seoService.updateSeo({
       title: 'Цени за 3D печат - 3D Печат България',
-      description: 'Вижте нашите цени за 3D печат услуги. Калкулатор за изчисляване на цена на 3D принтиране по грамаж и материал.',
+      description: 'Цени за 3D печат по грамаж – от 0,80 € до 1,50 € на 10 г, минимална поръчка 3 €. Калкулатор и отговори на често задавани въпроси.',
       keywords: '3D печат цени, цена 3D принтиране, калкулатор 3D печат, PLA цена, цена на грам, минимална поръчка',
       url: 'https://3dpechat.bg/prices/',
       type: 'website'
     });
-    this.seoService.removeStructuredData();
+    // The visible FAQ (<app-faq>) mirrored 1:1 as FAQPage structured data.
+    this.seoService.setStructuredData({ '@context': 'https://schema.org', ...faqPageSchema(FAQ) });
   }
 
   public get selectedTier(): PricingTier {

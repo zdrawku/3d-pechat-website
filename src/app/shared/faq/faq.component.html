@@ -1,0 +1,19 @@
+<section class="faq" id="faq" aria-labelledby="faq-title" data-testid="faq">
+  <h2 class="faq__title" id="faq-title">{{ heading }}</h2>
+  <p class="faq__intro">{{ intro }}</p>
+  <ul class="faq__grid">
+    @for (item of items; track item.id) {
+      <li [id]="'faq-' + item.id">
+        <igx-card class="faq-card">
+          <igx-card-content class="faq-card__body">
+            <span class="faq-card__icon"><igx-icon aria-hidden="true">{{ item.icon }}</igx-icon></span>
+            <div class="faq-card__text">
+              <h3 class="faq-card__question">{{ item.question }}</h3>
+              <p class="faq-card__answer">{{ item.answer }}</p>
+            </div>
+          </igx-card-content>
+        </igx-card>
+      </li>
+    }
+  </ul>
+</section>

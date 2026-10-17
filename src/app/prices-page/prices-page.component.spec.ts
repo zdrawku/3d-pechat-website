@@ -4,6 +4,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { IGX_CARD_DIRECTIVES, IgxAvatarComponent, IgxIconComponent, IGX_INPUT_GROUP_DIRECTIVES, IGX_SELECT_DIRECTIVES } from 'igniteui-angular';
 import { PricesPageComponent } from './prices-page.component';
+import { FAQ } from '../shared/faq/faq.component';
 import business from '../../data/business.json';
 
 describe('PricesPageComponent', () => {
@@ -60,7 +61,27 @@ describe('PricesPageComponent', () => {
     });
 
     it('matches the minimum order in business.json (the source for all copy)', () => {
+      expect(component.minimumOrder).toBe(business.pricing.minimumOrder);
       expect(business.facts.join(' ')).toContain(`Минималната стойност на поръчка е ${component.minimumOrder} €`);
+    });
+  });
+
+  it('prices its tiers exactly as business.json does', () => {
+    expect(component.tiers.map(t => t.pricePerTenGrams)).toEqual(business.pricing.perTenGrams);
+  });
+
+  describe('FAQ', () => {
+    it('shows the FAQ section with every question', () => {
+      const el: HTMLElement = fixture.nativeElement;
+      expect(el.querySelector('app-faq section#faq')).withContext('<app-faq>').not.toBeNull();
+      expect(el.querySelectorAll('app-faq igx-card').length).toBe(FAQ.length);
+    });
+
+    it('mirrors the visible FAQ 1:1 as FAQPage structured data', () => {
+      const data = JSON.parse(document.getElementById('structured-data-jsonld')?.textContent ?? '{}');
+      expect(data['@type']).toBe('FAQPage');
+      expect(data.mainEntity.map((q: { name: string }) => q.name)).toEqual(FAQ.map(f => f.question));
+      expect(data.mainEntity.map((q: { acceptedAnswer: { text: string } }) => q.acceptedAnswer.text)).toEqual(FAQ.map(f => f.answer));
     });
   });
 });

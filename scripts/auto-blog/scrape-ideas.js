@@ -1,12 +1,14 @@
-// Scrapes Bulgarian 3D printing blogs for fresh article ideas.
-// Falls back to catalog-related topics (product-topics.js), then a generic
-// hardcoded list, when scraping fails or every idea duplicates an
+// Picks the next article topic. Order: MANUAL_TOPIC → the buyer-intent backlog
+// (service-topics.js, until each is published) → fresh ideas scraped from
+// Bulgarian 3D printing blogs → catalog-related topics (product-topics.js) →
+// a generic hardcoded list, when scraping fails or every idea duplicates an
 // already-published slug.
 
 const fs = require('fs');
 const path = require('path');
 const fallbackTopics = require('./fallback-topics');
 const productTopics = require('./product-topics');
+const serviceTopics = require('./service-topics');
 
 const SOURCES = [
   {
@@ -143,11 +145,18 @@ async function scrapeSource(source) {
 
 function pickFresh(candidates, existingSlugs) {
   for (const c of candidates) {
-    const slug = slugify(c.topic);
+    // A topic with a fixed `slug` (service-topics.js) keeps it: the generator
+    // won't let the model rename it, so this dedupe stays exact.
+    const slug = c.slug || slugify(c.topic);
     if (!slug || existingSlugs.has(slug)) continue;
-    return { ...c, suggestedSlug: slug };
+    return { ...c, suggestedSlug: slug, lockSlug: Boolean(c.slug) };
   }
   return null;
+}
+
+/** The first buyer-intent topic not yet published, in priority order (no shuffle). */
+function pickServiceTopic(existingSlugs) {
+  return pickFresh(serviceTopics.map(t => ({ ...t, sourceUrl: 'service-topics' })), existingSlugs);
 }
 
 async function getTopicIdea() {
@@ -162,6 +171,14 @@ async function getTopicIdea() {
   }
 
   const existingSlugs = readExistingSlugs();
+
+  // Buyer-intent backlog first (AI-VISIBILITY-PLAN.md Phase 4.3): these answer
+  // pre-order questions, which is what AI assistants quote.
+  const service = pickServiceTopic(existingSlugs);
+  if (service) {
+    console.log(`[scrape-ideas] using service topic: ${service.topic}`);
+    return service;
+  }
 
   const scraped = [];
   for (const src of SOURCES) {
@@ -201,7 +218,7 @@ async function getTopicIdea() {
   return fb;
 }
 
-module.exports = { getTopicIdea, slugify, truncateSlug, readExistingSlugs };
+module.exports = { getTopicIdea, slugify, truncateSlug, readExistingSlugs, pickFresh, pickServiceTopic };
 
 if (require.main === module) {
   getTopicIdea()

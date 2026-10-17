@@ -103,7 +103,9 @@ test.describe('SEO metadata', () => {
 
   // Self-serving review markup for our own Google reviews risks a manual
   // penalty (CLAUDE.md, "Other standing rules") — guard every page's JSON-LD.
-  test('no page emits Review or AggregateRating structured data', async ({ page }) => {
+  // Reads the prerendered HTML over HTTP (what crawlers get) — one request per
+  // route instead of a full browser navigation, so it stays well inside the timeout.
+  test('no page emits Review or AggregateRating structured data', async ({ request }) => {
     const offenders: string[] = [];
     const walk = (node: unknown, where: string): void => {
       if (Array.isArray(node)) return node.forEach((n) => walk(n, where));
@@ -117,8 +119,10 @@ test.describe('SEO metadata', () => {
       }
     };
     for (const route of ALL_ROUTES) {
-      await page.goto(route.path);
-      for (const raw of await page.locator('script[type="application/ld+json"]').allTextContents()) {
+      const html = await (await request.get(route.path.replace(/\/?$/, '/'))).text();
+      const blocks = [...html.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)];
+      expect(blocks.length, `JSON-LD on ${route.path}`).toBeGreaterThan(0);
+      for (const [, raw] of blocks) {
         walk(JSON.parse(raw), route.path);
       }
     }
@@ -133,6 +137,41 @@ test.describe('SEO metadata', () => {
     for (const fact of business.facts) expect(text).toContain(fact);
     for (const url of business.sameAs) expect(text).toContain(url);
     expect(text).not.toMatch(/SLA и SLS/);
+  });
+
+  // Phase 5: the home page and /en/ declare each other; every other page has
+  // no hreflang and stays Bulgarian (SeoService resets both on navigation).
+  for (const [route, lang, locale] of [['/', 'bg', 'bg_BG'], ['/en/', 'en', 'en_US']] as const) {
+    test(`${route} has lang="${lang}", og:locale ${locale} and the bg/en/x-default hreflang pair`, async ({ page }) => {
+      await page.goto(route);
+      await expect(page.locator('html')).toHaveAttribute('lang', lang);
+      await expect(page.locator('meta[property="og:locale"]')).toHaveAttribute('content', locale);
+      const alt = (h: string) => page.locator(`link[rel="alternate"][hreflang="${h}"]`);
+      await expect(alt('bg')).toHaveAttribute('href', 'https://3dpechat.bg/');
+      await expect(alt('en')).toHaveAttribute('href', 'https://3dpechat.bg/en/');
+      await expect(alt('x-default')).toHaveAttribute('href', 'https://3dpechat.bg/');
+    });
+  }
+
+  test('pages other than the home pair carry no hreflang and stay Bulgarian', async ({ page }) => {
+    await page.goto('/prices/');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'bg');
+    await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(0);
+  });
+
+  test('/prices/ shows every faq.json question and mirrors them as FAQPage JSON-LD', async ({ page }) => {
+    const faq = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'src/data/faq.json'), 'utf8')) as { question: string; answer: string }[];
+    await page.goto('/prices/');
+    const section = page.locator('section#faq');
+    await expect(section).toBeVisible();
+    for (const { question, answer } of faq) {
+      await expect(section.getByRole('heading', { name: question })).toBeVisible();
+      await expect(section.getByText(answer)).toBeVisible();
+    }
+    const raw = await page.locator('script#structured-data-jsonld').textContent();
+    const data = JSON.parse(raw ?? '{}');
+    expect(data['@type']).toBe('FAQPage');
+    expect(data.mainEntity.map((q: { name: string }) => q.name)).toEqual(faq.map((q) => q.question));
   });
 
   // IndexNow (scripts/indexnow.js) verifies ownership by fetching this file.

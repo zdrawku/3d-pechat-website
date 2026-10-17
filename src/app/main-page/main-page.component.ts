@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { IGX_CAROUSEL_DIRECTIVES, IGX_CARD_DIRECTIVES, IgxButtonDirective, IgxIconComponent } from 'igniteui-angular';
 
 import { carouselImages } from './carousel-images';
-import { SeoService } from '../services/seo.service';
+import { HOME_LANGUAGE_ALTERNATES, SeoService } from '../services/seo.service';
 import { HappyCustomersComponent } from '../shared/happy-customers/happy-customers.component';
 import { YoutubeEmbedComponent } from '../shared/youtube-embed/youtube-embed.component';
 import { FEATURED_VIDEO, videoObjectSchema } from '../shared/youtube-embed/video.util';
@@ -27,7 +27,9 @@ export class MainPageComponent {
       description: 'Професионален 3D печат и 3D принтиране по поръчка. Изработка на прототипи, детайли и малки серии с високо качество и бързи срокове.',
       keywords: '3D печат, 3D принтиране, 3D печат по поръчка, 3D принтиране услуги, 3D прототипиране, 3D печат София',
       url: 'https://3dpechat.bg/',
-      type: 'website'
+      type: 'website',
+      // The home page and /en/ declare each other (hreflang bg / en / x-default).
+      alternates: HOME_LANGUAGE_ALTERNATES
     });
     // VideoObject for the promo video in the „Вижте ни в действие“ section.
     // setStructuredData replaces whatever per-page JSON-LD the previous route

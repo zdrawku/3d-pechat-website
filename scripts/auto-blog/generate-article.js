@@ -142,7 +142,11 @@ async function generateArticle(topicObj) {
     console.warn(`[generate-article] unwrapped ${dropped.length} link(s) to non-existent pages: ${dropped.join(', ')}`);
   }
 
-  const finalSlug = cleanSlug(slugify(meta.slug || topicObj.suggestedSlug || topicObj.topic));
+  // A locked slug (service-topics.js) wins over the model's suggestion, so the
+  // topic dedupe in scrape-ideas.js stays exact.
+  const finalSlug = cleanSlug(slugify(
+    (topicObj.lockSlug && topicObj.suggestedSlug) || meta.slug || topicObj.suggestedSlug || topicObj.topic
+  ));
   if (!finalSlug) throw new Error('Failed to derive a valid slug');
 
   const publishDate = new Date().toISOString().slice(0, 10);
