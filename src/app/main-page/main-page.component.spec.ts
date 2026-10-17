@@ -1,9 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { provideRouter, UrlSerializer } from '@angular/router';
 
 import { IgxButtonDirective, IGX_CAROUSEL_DIRECTIVES } from 'igniteui-angular';
 import { MainPageComponent } from './main-page.component';
+import { TrailingSlashUrlSerializer } from '../trailing-slash-url-serializer';
 
 describe('MainPageComponent', () => {
   let component: MainPageComponent;
@@ -11,7 +13,8 @@ describe('MainPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MainPageComponent, NoopAnimationsModule, FormsModule, ReactiveFormsModule, IgxButtonDirective, IGX_CAROUSEL_DIRECTIVES]
+      imports: [MainPageComponent, NoopAnimationsModule, FormsModule, ReactiveFormsModule, IgxButtonDirective, IGX_CAROUSEL_DIRECTIVES],
+      providers: [provideRouter([]), { provide: UrlSerializer, useClass: TrailingSlashUrlSerializer }]
     })
     .compileComponents();
 
@@ -43,7 +46,7 @@ describe('MainPageComponent', () => {
     it('builds the section from Ignite UI components', () => {
       const el = section();
       expect(el.querySelector('app-youtube-embed igx-card')).withContext('player card').not.toBeNull();
-      expect(el.querySelector('button[igxButton="contained"]')).withContext('offer CTA').not.toBeNull();
+      expect(el.querySelector('a[igxButton="contained"][href="/contact/"]')).withContext('offer CTA link').not.toBeNull();
       expect(el.querySelector('a[igxButton="outlined"] igx-icon[name="youtube"]'))
         .withContext('subscribe button with YouTube igx-icon').not.toBeNull();
     });
@@ -62,5 +65,23 @@ describe('MainPageComponent', () => {
       expect(data['@type']).toBe('VideoObject');
       expect(data.contentUrl).toBe('https://www.youtube.com/watch?v=f8yTuEcOCjU');
     });
+  });
+
+  // The hero, video and final-CTA actions must be real links: Googlebot only follows
+  // <a href>, and a (click) handler on a <button> left the homepage with no
+  // crawlable path to /contact or /portfolio.
+  it('exposes crawlable Ignite UI links to contact and portfolio', () => {
+    const el: HTMLElement = fixture.nativeElement;
+    const hrefs = (selector: string) =>
+      Array.from(el.querySelectorAll<HTMLAnchorElement>(selector)).map(a => a.getAttribute('href'));
+
+    expect(hrefs('a[igxButton][href]')).toEqual(
+      jasmine.arrayContaining(['/contact/', '/portfolio/'])
+    );
+    expect(el.querySelector('.hero_cta_row a.btn_primary')?.getAttribute('href')).toBe('/contact/');
+    expect(el.querySelector('.hero_cta_row a.btn_ghost')?.getAttribute('href')).toBe('/portfolio/');
+    expect(el.querySelector('.cta-band a.cta-band__btn[href="/contact/"]')).not.toBeNull();
+    // (the carousel renders its own prev/next igxButton <button>s, so scope to the CTAs)
+    expect(el.querySelectorAll('.hero_cta_row button, .cta-band button').length).toBe(0);
   });
 });

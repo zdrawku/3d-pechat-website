@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 /**
  * Prices calculator coverage. The calculation is
- *   total = (grams / 10) * pricePerTenGrams
+ *   total = max((grams / 10) * pricePerTenGrams, 3.00) for a non-empty order
  * (see prices-page.component.ts totalPrice getter). Tier rates:
  *   single-basic 0.80, multi-basic 1.00, single-complex 1.25, multi-complex 1.50.
  */
@@ -32,6 +32,19 @@ test.describe('prices calculator', () => {
     // Change grams → 250g / 10 * 1.50 = 37.50
     await page.getByTestId('calc-grams').fill('250');
     await expect(page.getByTestId('calc-total')).toHaveText(/37\.50\s*€/);
+  });
+
+  test('charges the 3 € minimum for small orders', async ({ page }) => {
+    // 10g / 10 * 0.80 = 0.80 → below the minimum, so 3.00 is charged
+    await page.getByTestId('calc-grams').fill('10');
+    await selectTier(page, 'single-basic');
+    await expect(page.getByTestId('calc-total')).toHaveText(/3\.00\s*€/);
+    await expect(page.getByTestId('calc-minimum')).toBeVisible();
+
+    // 50g / 10 * 0.80 = 4.00 → above the minimum, notice disappears
+    await page.getByTestId('calc-grams').fill('50');
+    await expect(page.getByTestId('calc-total')).toHaveText(/4\.00\s*€/);
+    await expect(page.getByTestId('calc-minimum')).toHaveCount(0);
   });
 
   test('handles empty grams as zero, not NaN', async ({ page }) => {

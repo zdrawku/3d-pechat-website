@@ -21,44 +21,7 @@ export class IzglazhdaneNaPlaPri3dPrintiraneRaboteshtiMetodiZaGladakFinishCompon
     private router: Router,
     private seoService: SeoService
   ) {
-    this.seoService.updateSeo({
-      title: 'Изглаждане на PLA при 3D принтиране: 7 работещи метода | 3D Печат България',
-      description: 'Научете как да постигнете перфектно гладък финиш на PLA отпечатъци. Практично ръководство с работещи методи за изглаждане при 3D принтиране в домашни условия.',
-      keywords: 'изглаждане на PLA, 3D принтиране, 3D печат, постобработка 3D принт, гладък финиш PLA, PLA filament, 3D принтер, шлайфане PLA',
-      url: 'https://3dpechat.bg/blog/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish/',
-      image: 'https://3dpechat.bg/assets/blogs/images/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish-cover.webp',
-      type: 'article',
-      author: '3D Печат България',
-      publishedDate: new Date('2026-06-02').toISOString(),
-      modifiedDate: new Date('2026-06-02').toISOString()
-    });
-
-    this.seoService.setStructuredData({
-      "@context": "https://schema.org",
-      "@type": "BlogPosting",
-      "headline": "Изглаждане на PLA при 3D принтиране: 7 работещи метода",
-      "description": "Научете как да постигнете перфектно гладък финиш на PLA отпечатъци. Практично ръководство с работещи методи за изглаждане при 3D принтиране в домашни условия.",
-      "author": {
-        "@type": "Organization",
-        "name": "3D Печат България"
-      },
-      "datePublished": "2026-06-02T00:00:00.000Z",
-      "dateModified": "2026-06-02T00:00:00.000Z",
-      "image": "https://3dpechat.bg/assets/blogs/images/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish-cover.webp",
-      "publisher": {
-        "@type": "Organization",
-        "name": "3D Печат България",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://3dpechat.bg/assets/og-image.png"
-        }
-      },
-      "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": "https://3dpechat.bg/blog/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish/"
-      },
-      "keywords": "изглаждане на PLA, 3D принтиране, 3D печат, постобработка 3D принт, гладък финиш PLA, PLA filament, 3D принтер, шлайфане PLA"
-    });
+    this.seoService.applyBlogPostSeo('izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish');
   }
 
   ngOnInit() {

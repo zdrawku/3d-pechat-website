@@ -3,211 +3,12 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { BlogPost } from '../models/blog-post.model';
 import { BLOG_CONTENT } from './blog-content.generated';
+import { BLOG_POSTS } from './blog-posts.registry';
 
 @Injectable({ providedIn: 'root' })
 export class BlogService {
-  // Central registry of all blog posts
-  private blogPosts: BlogPost[] = [
-    {
-      id: '1',
-      title: 'Как да печелите пари с 3D принтер - Пълен гайд 2026',
-      description: 'Научете как да печелите пари с вашия 3D принтер, как да продавате 3D принтирани продукти легално и безопасно. Пълен гайд за 2025.',
-      slug: 'how-to-make-money',
-      route: '/blog/how-to-make-money-3d-printing',
-      date: new Date('2026-01-15'),
-      imageUrl: 'assets/blogs/images/hero-image-how-to-make-money.webp',
-      tags: ['3D принтиране', 'бизнес', 'печалба', 'легалност'],
-      author: '3D Печат България'
-    },
-    {
-      id: '2',
-      title: 'Какво представлява 3D принтирането? - Пълно ръководство 2026',
-      description: 'Научете всичко за 3D принтирането - как работи, какви са видовете технологии, приложения и бъдещето на адитивното производство.',
-      slug: 'what-is-3d-printing',
-      route: '/blog/what-is-3d-printing',
-      date: new Date('2026-02-08'),
-      imageUrl: 'assets/blogs/images/additive-printing.webp',
-      tags: ['3D принтиране', '3D принтер', 'технология', 'адитивно производство'],
-      author: '3D Печат България'
-    },
-    {
-      id: '3',
-      title: '3D принтиране в София: Защо да изберете локални услуги за вашия проект?',
-      description: '3D принтиране в София с бърза доставка и професионално изпълнение. Открийте предимствата на локалните услуги спрямо онлайн платформите.',
-      slug: '3d-printing-in-sofia-for-your-project',
-      route: '/blog/3d-printing-in-sofia-for-your-project',
-      date: new Date('2026-02-02'),
-      imageUrl: 'assets/blogs/images/design-is-from-question.webp',
-      tags: ['3D принтиране София', '3D печат', 'локални услуги', 'експресна доставка', 'архитектурен макет'],
-      author: '3D Печат България'
-    },
-    {
-      id: '4',
-      title: 'Технологии за 3D принтиране: FDM vs SLA vs SLS — Кое за какво?',
-      description: 'Разберете разликите между FDM, SLA, SLS и другите 3D принтиране технологии. Кога коя е по-подходяща, какви материали се използват и как да изберете правилно.',
-      slug: '3d-printing-technologies',
-      route: '/blog/3d-printing-technologies',
-      date: new Date('2026-03-05'),
-      imageUrl: 'assets/blogs/images/SLA.webp',
-      tags: ['3d принтиране', '3d принтиране технологии', 'FDM', 'SLA', 'SLS', 'DLP', 'материали', 'адитивно производство'],
-      author: '3D Печат България'
-    },
-    {
-      id: '5',
-      title: '3D Принтирани Обувки – Бъдещето на Обувната Индустрия',
-      description: 'Открийте как 3D принтирането революционизира производството на обувки. Технологии, предимства, приложения и възможности за персонализация в България.',
-      slug: '3d-printirani-obuvki',
-      route: '/blog/3d-printirani-obuvki',
-      date: new Date('2026-06-02'),
-      imageUrl: 'assets/blogs/images/3d-printirani-obuvki-cover-3.webp',
-      author: '3D Печат България',
-      tags: ['3D принтирани обувки', '3D печат обувки', 'персонализирани обувки', 'TPU', 'SLS', 'обувна индустрия']
-    },
-    {
-      id: '6',
-      title: 'Изглаждане на PLA при 3D принтиране: 7 работещи метода',
-      description: 'Научете как да постигнете перфектно гладък финиш на PLA отпечатъци. Практично ръководство с работещи методи за изглаждане при 3D принтиране в домашни условия.',
-      slug: 'izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish',
-      route: '/blog/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish',
-      date: new Date('2026-06-02'),
-      imageUrl: 'assets/blogs/images/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish-cover.webp',
-      tags: ['PLA филамент', 'постобработка', 'изглаждане', '3D принтиране', 'финиш', 'туториал', 'съвети', 'техники'],
-      author: '3D Печат България'
-    },
-    {
-      id: '7',
-      title: '3D принтиране на Warhammer фигурки',
-      description: 'Открийте как да принтирате Warhammer фигурки, терен и аксесоари с 3D принтер. Практичен гид с препоръки за модели, материали и настройки за печат.',
-      slug: '3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari',
-      route: '/blog/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari',
-      date: new Date('2026-06-03'),
-      imageUrl: 'assets/blogs/images/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari-cover.webp',
-      tags: ['Warhammer', '3D принтиране', 'Миниатюри', 'Настолни игри', 'Resin печат', 'Фигурки', 'Терен', 'Аксесоари'],
-      author: '3D Печат България'
-    },
-    {
-      id: '8',
-      title: 'Как да печелим от 3D принтирането – Пълен наръчник',
-      description: 'Открийте 7-те най-печеливши начина да превърнете 3D принтера си в източник на доход. Практични съвети, реални примери и стратегии за успех в България.',
-      slug: 'kak-da-pechelim-ot-3d-printiraneto',
-      route: '/blog/kak-da-pechelim-ot-3d-printiraneto',
-      date: new Date('2026-06-08'),
-      imageUrl: 'assets/real-images/general-images/1.webp',
-      tags: ['3D принтиране', 'бизнес', 'печалба', '3D принтер', 'услуги', 'предприемачество', 'технологии', 'пари'],
-      author: '3D Печат България'
-    },
-    {
-      id: '9',
-      title: 'PLA, PLA+, PLA Pro и PLN: разлики и избор за 3D печат',
-      description: 'Научете всичко за различните типове PLA филамент – PLA, PLA+, PLA Pro и PLN. Практично ръководство за избор на правилния материал за вашия 3D принтер.',
-      slug: 'pla-pla-pla-pro-i-pln-razliki-i-izbor',
-      route: '/blog/pla-pla-pla-pro-i-pln-razliki-i-izbor',
-      date: new Date('2026-06-04'),
-      imageUrl: 'assets/real-images/general-images/20250201_145113.webp',
-      tags: ['PLA', 'филамент', '3D печат', 'материали', 'ръководство', 'PLA+', 'PLA Pro', 'PLN'],
-      author: '3D Печат България'
-    },
-    {
-      id: '10',
-      title: 'Литофан с 3D принтиране: превърни снимка в светещ модел',
-      description: 'Научи как да създадеш уникален литофан с 3D принтер. Пълно ръководство за превръщане на любима снимка в светещ 3D модел – стъпка по стъпка инструкции.',
-      slug: 'litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model',
-      route: '/blog/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model',
-      date: new Date('2026-06-02'),
-      imageUrl: 'assets/blogs/images/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model-cover.webp',
-      tags: ['литофан', '3D принтиране', 'подаръци', 'DIY проекти', 'персонализирани модели', '3D модели', 'уроци', 'начинаещи'],
-      author: '3D Печат България'
-    },
-        {
-      id: '11',
-      title: '3D принтер Bambu Lab X2D: Ревю, функции и избор',
-      description: 'Подробно ревю на 3D принтера Bambu Lab X2D. Характеристики, предимства, недостатъци и съвети за избор. Всичко за високоскоростното 3D принтиране.',
-      slug: '3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor',
-      route: '/blog/3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor',
-      date: new Date('2026-06-15'),
-      imageUrl: 'assets/blogs/images/Bambu-Lab-X2D.webp',
-      tags: ['Bambu Lab', '3D принтери', 'Ревюта', 'CoreXY', 'Високоскоростен печат', '3D печат', 'Технологии'],
-      author: '3D Печат България'
-    },
-        {
-      id: '12',
-      title: '3D принтер за начинаещи: от детско хоби в семеен бизнес',
-      description: 'Вдъхновяваща история как 12-годишно дете превърна 3D принтирането в семеен проект. Практични съвети за избор на първи 3D принтер и стартиране.',
-      slug: '3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt',
-      route: '/blog/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt',
-      date: new Date('2026-06-22'),
-      imageUrl: 'assets/blogs/images/3d-printer-za-nachinaeshti-kak-edno-dete-prevarna-hobi-v-semeen-proekt-cover.webp',
-      tags: ['3D принтер', 'начинаещи', 'семеен проект', 'деца и 3D печат', 'хоби', 'практични съвети', 'история на успеха', 'избор на принтер'],
-      author: '3D Печат България'
-    },
-        {
-      id: '13',
-      title: 'Infill при 3D печат: плътност, здравина и филамент',
-      description: 'Научете как infill плътността влияе върху здравината, теглото и разхода на филамент при 3D принтиране. Практически съвети за избор на правилните настройки.',
-      slug: 'infill-pri-3d-pechat-platnost-zdravina-i-filament',
-      route: '/blog/infill-pri-3d-pechat-platnost-zdravina-i-filament',
-      date: new Date('2026-07-06'),
-      imageUrl: 'assets/blogs/images/infill-pri-3d-pechat-platnost-zdravina-i-filament-cover.webp',
-      tags: ['Infill', '3D печат', 'Настройки', 'Филамент', 'Здравина', 'Оптимизация', 'Практически съвети', 'Качество'],
-      author: '3D Печат България'
-    },
-        {
-      id: '14',
-      title: 'Прозрачен PLA филамент: как да постигнете светлопропусклив 3D печат',
-      description: 'Практическо ръководство за 3D принтиране с прозрачен и полупрозрачен PLA филамент. Настройки, техники и сравнение с PETG и ABS за оптимални резултати.',
-      slug: 'prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p',
-      route: '/blog/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p',
-      date: new Date('2026-08-03'),
-      imageUrl: 'assets/blogs/images/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p-cover.webp',
-      tags: ['PLA филамент', 'прозрачни материали', 'настройки за печат', 'материали за 3D печат', 'техники за принтиране', 'PETG', 'постобработка', 'сравнение материали'],
-      author: '3D Печат България'
-    },
-    {
-      id: '15',
-      title: 'По-бързи и по-умни 3D принтери: опитът ни с Bambu Lab A1 Combo',
-      description: 'Как 3D принтерите станаха бързи, тихи и умни – тенденциите и реалният ни опит с Bambu Lab A1 Combo у дома. Предимства, ограничения и съвети.',
-      slug: 'barzi-i-umni-3d-printeri',
-      route: '/blog/barzi-i-umni-3d-printeri',
-      date: new Date('2026-10-11'),
-      imageUrl: 'assets/blogs/images/barzi-i-umni-3d-printeri-cover.webp',
-      tags: ['3D принтери', 'Bambu Lab', 'A1 Combo', 'многоцветен печат', 'технологии', 'иновации', 'опит', 'производство'],
-      author: '3D Печат България'
-    },
-    {
-      id: '16',
-      title: 'StandStrap: как направих 3D принтиран стопер за сноуборд',
-      description: 'Как проектирах и отпечатах StandStrap — щипка за ръба на сноуборда, която държи дъската на място, докато закопчаваш автоматите прав. Дизайн, настройки за печат и видео.',
-      slug: 'standstrap-3d-printiran-stoper-za-snoubord',
-      route: '/blog/standstrap-3d-printiran-stoper-za-snoubord',
-      date: new Date('2026-10-12'),
-      imageUrl: 'assets/blogs/images/standstrap-3d-printiran-stoper-za-snoubord-cover.webp',
-      tags: ['Сноуборд', '3D печат', 'Собствен дизайн', 'Bambu Studio', 'PLA', 'Зимни спортове', 'Аксесоари', 'MakerWorld'],
-      author: '3D Печат България'
-    },
-    {
-      id: '17',
-      title: 'Монетна карта за българските евромонети – пълен комплект от 1 цент до 2 евро',
-      description: 'Монетна карта за пълен комплект български евромонети – от 1 цент до 2 евро. 5 варианта от PLA, идеални за подарък и колекция.',
-      slug: 'monetna-karta-bulgarski-evro-moneti',
-      route: '/blog/monetna-karta-bulgarski-evro-moneti',
-      date: new Date('2026-10-12'),
-      imageUrl: 'assets/blogs/images/monetna-karta-bulgarski-evro-moneti-cover.webp',
-      tags: ['монетна карта', 'евромонети', 'България', 'евро', 'колекция', 'подарък', 'PLA', 'MakerWorld'],
-      author: '3D Печат България'
-    },
-    {
-      id: '18',
-      title: 'Вижте как работим: 3D печат по поръчка в София (видео)',
-      description: 'Вижте в 60 секунди наши 3D отпечатани проекти: разделители за книги, монетник „България“ и функционални части. И как протича поръчката от идея до детайл.',
-      slug: '3d-pechat-po-porachka-sofia-video',
-      route: '/blog/3d-pechat-po-porachka-sofia-video',
-      date: new Date('2026-10-14'),
-      imageUrl: 'assets/blogs/images/3d-pechat-po-porachka-sofia-video-cover.webp',
-      tags: ['Видео', 'YouTube', '3D печат', 'София', 'По поръчка', 'Прототипи', 'Подаръци', 'Монетна карта', 'Разделители за книги'],
-      author: '3D Печат България'
-    }
-    // Add more blog posts here as you create them
-  ];
+  // Central registry of all blog posts lives in blog-posts.registry.ts
+  private blogPosts: BlogPost[] = BLOG_POSTS;
 
 
   getPost(slug: string): Observable<string> {
@@ -227,6 +28,10 @@ export class BlogService {
 
   getPostById(id: string): BlogPost | undefined {
     return this.blogPosts.find(post => post.id === id);
+  }
+
+  getPostBySlug(slug: string): BlogPost | undefined {
+    return this.blogPosts.find(post => post.slug === slug);
   }
 
   getPostByRoute(route: string): BlogPost | undefined {

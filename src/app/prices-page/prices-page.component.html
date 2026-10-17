@@ -80,7 +80,17 @@
       </div>
 
       <p class="calculator-example">
-        {{ grams }}гр / 10 &times; {{ selectedTier.pricePerTenGrams.toFixed(2) }}€ = {{ totalPrice }}€ — ориентировъчна цена, финалната се потвърждава при заявка.
+        {{ grams }}гр / 10 &times; {{ selectedTier.pricePerTenGrams.toFixed(2) }}€ = {{ weightPrice.toFixed(2) }}€ — ориентировъчна цена, финалната се потвърждава при заявка.
+      </p>
+
+      @if (minimumApplies) {
+        <p class="calculator-minimum" data-testid="calc-minimum">
+          <igx-icon>info</igx-icon>
+          Под минималната стойност на поръчка – таксуваме {{ minimumOrder.toFixed(2) }} €.
+        </p>
+      }
+      <p class="calculator-example calculator-rule" data-testid="calc-minimum-rule">
+        Минимална стойност на поръчка: {{ minimumOrder.toFixed(2) }} €.
       </p>
 
       <div class="calculator-cta">

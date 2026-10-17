@@ -35,6 +35,30 @@ test.describe('SEO metadata', () => {
     });
   }
 
+  // Mirrors scripts/check-internal-links.js (the postbuild guard). Internal
+  // page links must carry the trailing slash GitHub Pages canonicalises to, and
+  // 3dpechat.bg URLs must be https without www — see that script for the rules.
+  for (const route of ALL_ROUTES) {
+    test(`${route.path} links internally with canonical URLs`, async ({ page }) => {
+      await page.goto(route.path);
+
+      const hrefs = await page.$$eval('[href]', (els) =>
+        els.map((el) => (el.getAttribute('href') ?? '').trim()),
+      );
+      const slashless = hrefs.filter((href) => {
+        if (!href.startsWith('/') || href.startsWith('//')) return false;
+        const pathname = href.split(/[?#]/, 1)[0];
+        if (pathname === '' || pathname.endsWith('/')) return false;
+        return !pathname.slice(pathname.lastIndexOf('/') + 1).includes('.');
+      });
+      expect(slashless, `slash-less internal hrefs on ${route.path}`).toEqual([]);
+
+      const html = await page.content();
+      const badHosts = html.match(/https?:\/\/www\.3dpechat\.bg|http:\/\/(?:www\.)?3dpechat\.bg/gi) ?? [];
+      expect(badHosts, `non-canonical 3dpechat.bg URLs on ${route.path}`).toEqual([]);
+    });
+  }
+
   test('sitemap.xml lists every core and blog route', async ({ request, baseURL }) => {
     const res = await request.get('/sitemap.xml');
     expect(res.status()).toBe(200);

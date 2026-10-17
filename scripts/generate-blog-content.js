@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { fixInternalLinks, getValidPaths } = require('./auto-blog/internal-links');
 
 // Blog article bodies must be available during prerendering (SSG), where
 // runtime HTTP fetches don't happen. This generates a TS module that imports
@@ -14,6 +15,27 @@ console.log('🔍 Generating blog content map from markdown files...');
 const files = fs.readdirSync(blogsDir)
   .filter(f => f.endsWith('.md'))
   .sort();
+
+// Normalise internal links in the markdown itself (absolute 3dpechat.bg URLs and
+// slash-less paths -> canonical root-relative "/blog/slug/"), so hand-written and
+// generated posts can't reintroduce links that GitHub Pages 301-redirects.
+// Unknown internal links are unwrapped to plain text — reported loudly.
+const validPaths = getValidPaths();
+let rewritten = 0;
+for (const file of files) {
+  const filePath = path.join(blogsDir, file);
+  const original = fs.readFileSync(filePath, 'utf8');
+  const { markdown, dropped } = fixInternalLinks(original, validPaths);
+  if (markdown !== original) {
+    fs.writeFileSync(filePath, markdown, 'utf8');
+    rewritten++;
+    console.log(`🔗 Normalised internal links in ${file}`);
+  }
+  for (const link of dropped) {
+    console.warn(`⚠️  ${file}: unknown internal link "${link}" was unwrapped to plain text`);
+  }
+}
+if (rewritten) console.log(`🔗 Normalised links in ${rewritten} markdown file(s)`);
 
 const imports = files
   .map((file, i) => `import post${i} from ${JSON.stringify(`../../assets/blogs/${file}`)};`)

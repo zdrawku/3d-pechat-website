@@ -1,4 +1,15 @@
+<header class="page-banner">
+  <div class="page-banner__titles">
+    <h1 class="page-banner__title">Контакти – 3D печат по поръчка в София</h1>
+    <p class="page-banner__subtitle">Телефон, Viber, имейл или формата за запитване</p>
+  </div>
+</header>
+
 <div class="contact-page">
+  <p class="contact-intro" data-testid="contact-intro">
+    Търсите 3D печат по поръчка? Изработваме прототипи, функционални детайли, подаръци и малки серии – от готов 3D модел или само от идея. Работим всеки ден от 9:00 до 18:00 в София (кв. Витоша, бул. „Симеоновско шосе“ 110 б, ет. 2). В София предаваме готовите поръчки лично или с градски куриер – по уговорка по телефона или със съобщение, а в останалата част от страната изпращаме с Еконт или Спиди. Най-бързо ще ни откриете по телефон или във Viber, но можете да пишете и по имейл или през формата по-долу. Обичайно отговаряме до 24 часа. Ако вече имате модел, посочете цвета, размерите и желания срок – така ще получите оферта още с първия ни отговор. Цената се изчислява по грамаж – вижте <a routerLink="/prices">цените</a>, а в <a routerLink="/portfolio">портфолиото</a> ще откриете какво сме изработвали досега.
+  </p>
+
   <div class="contact-shell">
     <!-- Info panel -->
     <div class="contact-info">
@@ -143,6 +154,17 @@
           </div>
           -->
         </div>
+
+        <!-- The form can't take attachments (see above), so model files go by
+             email or Viber. Keep this in sync with the FAQ facts in
+             AI-VISIBILITY-PLAN.md (D4b). -->
+        <p class="file-note" data-testid="contact-file-note">
+          <igx-icon>attach_file</igx-icon>
+          <span>
+            Имате 3D модел (STL, 3MF, OBJ или STEP), скица или снимка? Формата не приема прикачени файлове –
+            изпратете ги на <a href="mailto:3dpechat.bg@gmail.com">3dpechat.bg&#64;gmail.com</a> или във Viber.
+          </span>
+        </p>
 
         <div id="hcaptcha-container"></div>
 

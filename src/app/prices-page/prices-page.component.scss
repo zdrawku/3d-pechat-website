@@ -314,6 +314,24 @@
   margin: rem(18px) 0 0;
 }
 
+// The always-visible minimum-order rule sits right under the estimate line.
+.calculator-rule {
+  margin-top: rem(6px);
+}
+
+// Shown only when the weight price is below the minimum order value.
+.calculator-minimum {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: rem(6px);
+  margin: rem(10px) 0 0;
+  font-size: rem(13px);
+  font-weight: 600;
+  color: var(--ig-primary-500);
+  --ig-icon-size: #{rem(16px)};
+}
+
 .calculator-cta {
   text-align: center;
   margin-top: rem(22px);

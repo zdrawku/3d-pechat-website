@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Meta, Title } from '@angular/platform-browser';
-import { SeoService } from './seo.service';
+import { SeoService, faqPageSchema } from './seo.service';
+import { BLOG_POSTS } from './blog-posts.registry';
 
 /**
  * Unit tests for SeoService — the meta-tag/title/canonical logic that protects
@@ -55,5 +56,75 @@ describe('SeoService', () => {
 
     service.removeStructuredData();
     expect(document.getElementById('structured-data-jsonld')).toBeNull();
+  });
+
+  describe('applyBlogPostSeo', () => {
+    const SLUG = 'kak-da-pechelim-ot-3d-printiraneto';
+    const URL = 'https://3dpechat.bg/blog/kak-da-pechelim-ot-3d-printiraneto/';
+    const graph = (): any[] =>
+      JSON.parse(document.getElementById('structured-data-jsonld')!.textContent!)['@graph'];
+
+    afterEach(() => service.removeStructuredData());
+
+    it('sets meta, canonical (with trailing slash) and og:type article from the registry', () => {
+      const post = BLOG_POSTS.find(p => p.slug === SLUG)!;
+      service.applyBlogPostSeo(SLUG);
+
+      expect(title.getTitle()).toBe(`${post.title} | 3D Печат България`);
+      expect(meta.getTag('name="description"')?.content).toBe(post.description);
+      expect(meta.getTag('property="og:type"')?.content).toBe('article');
+      expect(meta.getTag('property="og:url"')?.content).toBe(URL);
+      expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(URL);
+      expect(meta.getTag('name="keywords"')?.content).toBe(post.keywords!.join(', '));
+      expect(meta.getTag('property="article:modified_time"')?.content).toBe(post.dateModified!.toISOString());
+    });
+
+    it('uses the registry seoTitle verbatim when a post defines one', () => {
+      const post = BLOG_POSTS.find(p => p.seoTitle)!;
+      service.applyBlogPostSeo(post.slug);
+      expect(title.getTitle()).toBe(post.seoTitle!);
+    });
+
+    it('emits BlogPosting and BreadcrumbList in a single @graph', () => {
+      service.applyBlogPostSeo(SLUG);
+
+      expect(document.querySelectorAll('script[type="application/ld+json"]#structured-data-jsonld').length).toBe(1);
+      const types = graph().map(node => node['@type']);
+      expect(types).toEqual(['BlogPosting', 'BreadcrumbList']);
+
+      const posting = graph()[0];
+      expect(posting.mainEntityOfPage['@id']).toBe(URL);
+      expect(posting.dateModified).toBe(BLOG_POSTS.find(p => p.slug === SLUG)!.dateModified!.toISOString());
+      expect(posting.image).toMatch(/^https:\/\/3dpechat\.bg\//);
+
+      const crumbs = graph()[1].itemListElement;
+      expect(crumbs.map((c: any) => c.item)).toEqual(['https://3dpechat.bg/', 'https://3dpechat.bg/blog/', URL]);
+      expect(crumbs.map((c: any) => c.position)).toEqual([1, 2, 3]);
+    });
+
+    it('works for every registered post', () => {
+      for (const post of BLOG_POSTS) {
+        service.applyBlogPostSeo(post.slug);
+        expect(graph()[0].headline).withContext(post.slug).toBe(post.title);
+        expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href'))
+          .withContext(post.slug)
+          .toMatch(/^https:\/\/3dpechat\.bg\/blog\/[a-z0-9-]+\/$/);
+      }
+    });
+
+    it('merges post-specific schema into the same @graph', () => {
+      service.applyBlogPostSeo(SLUG, {
+        article: { video: { '@id': 'https://3dpechat.bg/#video-x' } },
+        graph: [faqPageSchema([{ question: 'В?', answer: 'О.' }])]
+      });
+
+      expect(graph().map(node => node['@type'])).toEqual(['BlogPosting', 'BreadcrumbList', 'FAQPage']);
+      expect(graph()[0].video).toEqual({ '@id': 'https://3dpechat.bg/#video-x' });
+      expect(graph()[2].mainEntity[0].acceptedAnswer.text).toBe('О.');
+    });
+
+    it('throws for an unknown slug so a typo fails the prerender', () => {
+      expect(() => service.applyBlogPostSeo('no-such-post')).toThrowError(/no post with slug/);
+    });
   });
 });

@@ -7,7 +7,7 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '../..');
 const BLOG_DIR = path.join(ROOT, 'src/app/blog');
 const ASSETS_DIR = path.join(ROOT, 'src/assets/blogs');
-const SERVICE_FILE = path.join(ROOT, 'src/app/services/blog.service.ts');
+const SERVICE_FILE = path.join(ROOT, 'src/app/services/blog-posts.registry.ts');
 const ROUTES_FILE = path.join(ROOT, 'src/app/app.routes.ts');
 
 function pascalCaseFromSlug(slug) {
@@ -42,12 +42,9 @@ function writeMarkdown(slug, markdown) {
   return file;
 }
 
-function buildComponentTs(slug, pascalName, seo, coverImageAssetPath) {
-  const isoDate = new Date(seo.publishDate).toISOString();
-  const headline = seo.title.replace(/'/g, "\\'");
-  const description = seo.description.replace(/'/g, "\\'");
-  const keywords = seo.keywords.replace(/'/g, "\\'");
-  const coverImageUrl = `https://3dpechat.bg/${coverImageAssetPath || 'assets/og-image.png'}`;
+function buildComponentTs(slug, pascalName) {
+  // All SEO (title, description, canonical, OG tags, BlogPosting + BreadcrumbList
+  // JSON-LD) comes from this post's entry in blog-posts.registry.ts via one call.
   return `import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BlogService } from '../../services/blog.service';
@@ -71,44 +68,7 @@ export class ${pascalName}Component implements OnInit {
     private router: Router,
     private seoService: SeoService
   ) {
-    this.seoService.updateSeo({
-      title: '${headline} | 3D Печат България',
-      description: '${description}',
-      keywords: '${keywords}',
-      url: 'https://3dpechat.bg/blog/${slug}/',
-      image: '${coverImageUrl}',
-      type: 'article',
-      author: '3D Печат България',
-      publishedDate: new Date('${seo.publishDate}').toISOString(),
-      modifiedDate: new Date('${seo.publishDate}').toISOString()
-    });
-
-    this.seoService.setStructuredData({
-      "@context": "https://schema.org",
-      "@type": "BlogPosting",
-      "headline": "${headline}",
-      "description": "${description}",
-      "author": {
-        "@type": "Organization",
-        "name": "3D Печат България"
-      },
-      "datePublished": "${isoDate}",
-      "dateModified": "${isoDate}",
-      "image": "${coverImageUrl}",
-      "publisher": {
-        "@type": "Organization",
-        "name": "3D Печат България",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://3dpechat.bg/assets/og-image.png"
-        }
-      },
-      "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": "https://3dpechat.bg/blog/${slug}/"
-      },
-      "keywords": "${keywords}"
-    });
+    this.seoService.applyBlogPostSeo('${slug}');
   }
 
   ngOnInit() {
@@ -142,10 +102,10 @@ const COMPONENT_SCSS = `// Use shared blog styles
 // Add any component-specific styles below if needed
 `;
 
-function writeComponent(slug, pascalName, seo, coverImageAssetPath) {
+function writeComponent(slug, pascalName) {
   const dir = path.join(BLOG_DIR, slug);
   fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(path.join(dir, `${slug}.component.ts`), buildComponentTs(slug, pascalName, seo, coverImageAssetPath), 'utf8');
+  fs.writeFileSync(path.join(dir, `${slug}.component.ts`), buildComponentTs(slug, pascalName), 'utf8');
   fs.writeFileSync(path.join(dir, `${slug}.component.html`), buildComponentHtml(slug), 'utf8');
   fs.writeFileSync(path.join(dir, `${slug}.component.scss`), COMPONENT_SCSS, 'utf8');
   return dir;
@@ -162,30 +122,33 @@ function updateBlogService(slug, seo, coverImageAssetPath) {
   const ids = [...src.matchAll(/id:\s*'(\d+)'/g)].map(m => parseInt(m[1], 10));
   const nextId = String((ids.length ? Math.max(...ids) : 0) + 1);
 
-  const tagsLiteral = `[${seo.tags.map(t => `'${escapeForSingleQuotes(t)}'`).join(', ')}]`;
-  const entry = `    {
-      id: '${nextId}',
-      title: '${escapeForSingleQuotes(seo.title)}',
-      description: '${escapeForSingleQuotes(seo.description)}',
-      slug: '${slug}',
-      route: '/blog/${slug}',
-      date: new Date('${seo.publishDate}'),
-      imageUrl: '${coverImageAssetPath || 'assets/og-image.png'}',
-      tags: ${tagsLiteral},
-      author: '3D Печат България'
-    }`;
+  const literal = list => `[${list.map(t => `'${escapeForSingleQuotes(t)}'`).join(', ')}]`;
+  const keywords = String(seo.keywords || '').split(',').map(k => k.trim()).filter(Boolean);
+  const entry = `  {
+    id: '${nextId}',
+    title: '${escapeForSingleQuotes(seo.title)}',
+    description: '${escapeForSingleQuotes(seo.description)}',
+    slug: '${slug}',
+    route: '/blog/${slug}',
+    date: new Date('${seo.publishDate}'),
+    imageUrl: '${coverImageAssetPath || 'assets/og-image.png'}',
+    tags: ${literal(seo.tags)},
+    author: '3D Печат България',
+    keywords: ${literal(keywords)},
+    dateModified: new Date('${seo.publishDate}')
+  }`;
 
   // Insert before the "// Add more blog posts here" comment if it exists,
-  // otherwise before the closing `];` of the blogPosts array.
+  // otherwise before the closing `];` of the BLOG_POSTS array. The previous
+  // entry is followed by a comma already, so only add one if it's missing.
   const marker = '// Add more blog posts here';
   let updated;
   if (src.includes(marker)) {
-    // Append a comma to the closing brace of the previous entry, then insert new entry
-    updated = src.replace(/(})(\s*\n\s*\/\/ Add more blog posts here)/, `$1,\n${entry}$2`);
+    updated = src.replace(/(})(,?)(\s*\n\s*\/\/ Add more blog posts here)/, `$1,\n${entry},$3`);
   } else {
-    updated = src.replace(/(\n\s*)\];/, `\n    ${entry}$1];`);
+    updated = src.replace(/(\n\s*)\];/, `,\n${entry}$1];`);
   }
-  if (updated === src) throw new Error('Could not insert blog entry into blog.service.ts');
+  if (updated === src) throw new Error('Could not insert blog entry into blog-posts.registry.ts');
   fs.writeFileSync(SERVICE_FILE, updated, 'utf8');
   return nextId;
 }
@@ -237,7 +200,7 @@ function scaffoldArticle(article, coverImagePath) {
   const { assetPath } = require('./generate-image');
   const coverAsset = coverImagePath ? assetPath(slug) : 'assets/og-image.png';
   const mdPath = writeMarkdown(slug, article.markdown);
-  const compDir = writeComponent(slug, pascalName, seo, coverAsset);
+  const compDir = writeComponent(slug, pascalName);
   const id = updateBlogService(slug, seo, coverAsset);
   updateRoutes(slug, pascalName);
 

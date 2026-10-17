@@ -61,7 +61,7 @@ async function main() {
   console.log('::endgroup::');
 
   // The cover arrives from Pollinations as JPEG/PNG. Convert it to WebP and let
-  // the converter rewrite every reference (blog.service.ts, markdown, the blog
+  // the converter rewrite every reference (blog-posts.registry.ts, markdown, the blog
   // component's og:image + JSON-LD) so the PR needs no manual image fixup.
   console.log('::group::Optimize blog images');
   const blogImagesScript = path.resolve(__dirname, '../generate-blog-images.js');

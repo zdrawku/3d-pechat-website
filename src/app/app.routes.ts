@@ -38,9 +38,19 @@ export const routes: Routes = [
         loadComponent: () => import('./blog-list-page/blog-list-page.component').then(m => m.BlogListPageComponent),
         data: { text: 'Blog' }
       },
+      // ---- Legacy URLs (renamed / merged posts) -------------------------------
+      // GitHub Pages can't 301, so each old path is a prerendered stub that
+      // meta-refreshes to `data.to` — see shared/legacy-redirect. Keep these
+      // forever, and list new ones in LEGACY_REDIRECTS.md.
       {
         path: 'how-to-make-money-3d-printing',
-        loadComponent: () => import('./blog/how-to-make-money-with3d-printing/how-to-make-money-with3d-printing').then(m => m.HowToMakeMoneyWith3dPrinting)
+        loadComponent: () => import('./shared/legacy-redirect/legacy-redirect.component').then(m => m.LegacyRedirectComponent),
+        data: { to: '/blog/kak-da-pechelim-ot-3d-printiraneto/' }
+      },
+      {
+        path: 'prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p',
+        loadComponent: () => import('./shared/legacy-redirect/legacy-redirect.component').then(m => m.LegacyRedirectComponent),
+        data: { to: '/blog/prozrachen-i-poluprozrachen-pla-filament-svetlopropuskliv-3d-pechat/' }
       },
       {
         path: 'what-is-3d-printing',
@@ -91,8 +101,8 @@ export const routes: Routes = [
         loadComponent: () => import('./blog/infill-pri-3d-pechat-platnost-zdravina-i-filament/infill-pri-3d-pechat-platnost-zdravina-i-filament.component').then(m => m.InfillPri3dPechatPlatnostZdravinaIFilamentComponent)
       },
       {
-        path: 'prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p',
-        loadComponent: () => import('./blog/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p/prozrachen-i-poluprozrachen-pla-filament-kak-da-postignete-svetlopropuskliv-3d-p.component').then(m => m.ProzrachenIPoluprozrachenPlaFilamentKakDaPostigneteSvetlopropuskliv3dPComponent)
+        path: 'prozrachen-i-poluprozrachen-pla-filament-svetlopropuskliv-3d-pechat',
+        loadComponent: () => import('./blog/prozrachen-i-poluprozrachen-pla-filament-svetlopropuskliv-3d-pechat/prozrachen-i-poluprozrachen-pla-filament-svetlopropuskliv-3d-pechat.component').then(m => m.ProzrachenIPoluprozrachenPlaFilamentSvetlopropuskliv3dPechatComponent)
       },
       {
         path: 'barzi-i-umni-3d-printeri',
