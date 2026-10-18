@@ -1,0 +1,62 @@
+[
+  {
+    "id": "price",
+    "icon": "scale",
+    "question": "How much does 3D printing cost?",
+    "answer": "The price is calculated by weight: from €0.80 to €1.50 per 10 g depending on the tier, and the minimum order value is €3. You can see an estimate straight away in the calculator on this page."
+  },
+  {
+    "id": "lead-time",
+    "icon": "schedule",
+    "question": "How long does an order take?",
+    "answer": "Small parts take 1–3 working days, larger parts and small batches 3–7 working days. A rush order is possible when the schedule allows, for a 30% surcharge."
+  },
+  {
+    "id": "no-model",
+    "icon": "draw",
+    "question": "Do I need a ready 3D model?",
+    "answer": "No. An order can start from a ready 3D model, a sketch, a photo or an idea. The initial quote is free; the price of modelling depends on its complexity – the time the modelling takes – and you learn it from the quote before we start."
+  },
+  {
+    "id": "files",
+    "icon": "description",
+    "question": "Which files do you accept?",
+    "answer": "STL, 3MF (preferred), OBJ and STEP. Send them by email or Viber – the contact form doesn't accept attachments."
+  },
+  {
+    "id": "materials",
+    "icon": "layers",
+    "question": "Which materials do you print with?",
+    "answer": "We print with FDM technology, mainly in PLA – it is in stock in standard colours and covers the needs of most orders. Other materials, such as PETG or TPU, are possible on request – we buy them specially for the order."
+  },
+  {
+    "id": "size",
+    "icon": "straighten",
+    "question": "What is the maximum size of a part?",
+    "answer": "Up to 25 × 25 × 25 cm in one piece. Larger items are printed in parts and glued together."
+  },
+  {
+    "id": "delivery",
+    "icon": "local_shipping",
+    "question": "How do I get my order?",
+    "answer": "In Sofia – in person or by city courier, arranged by phone or message. Anywhere else in Bulgaria we ship with Econt or Speedy to an office, an address or a parcel locker, with cash on delivery available. Delivery is free anywhere in Bulgaria for orders over €100; below that amount the courier's rate applies."
+  },
+  {
+    "id": "payment",
+    "icon": "payments",
+    "question": "How can I pay?",
+    "answer": "In cash on pick-up, by Revolut transfer, or cash on delivery when the courier brings your order."
+  },
+  {
+    "id": "business",
+    "icon": "business_center",
+    "question": "Do you work with companies and small batches?",
+    "answer": "Yes – we make prototypes, functional parts and small batches for companies as well as for private customers. We don't issue invoices at the moment."
+  },
+  {
+    "id": "contact",
+    "icon": "chat",
+    "question": "How quickly do you reply?",
+    "answer": "Usually within 24 hours, and the consultation is free. We work every day from 9:00 to 18:00 and answer in English and Bulgarian – the quickest way to reach us is by phone or Viber."
+  }
+]

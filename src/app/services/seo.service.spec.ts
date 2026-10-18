@@ -1,7 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { Meta, Title } from '@angular/platform-browser';
-import { HOME_LANGUAGE_ALTERNATES, SeoService, faqPageSchema } from './seo.service';
+import { PAGE_PATHS, SeoService, faqPageSchema } from './seo.service';
 import { BLOG_POSTS } from './blog-posts.registry';
+import { I18nService } from '../i18n/i18n.service';
+import { LOCALIZED_PAGES } from '../i18n/locales';
 
 /**
  * Unit tests for SeoService — the meta-tag/title/canonical logic that protects
@@ -58,35 +60,64 @@ describe('SeoService', () => {
     expect(document.getElementById('structured-data-jsonld')).toBeNull();
   });
 
-  describe('language (Phase 5)', () => {
-    const hreflangs = () =>
-      Array.from(document.head.querySelectorAll('link[rel="alternate"][hreflang]')).map(l => l.getAttribute('hreflang'));
+  describe('languages (src/i18n)', () => {
+    const alternates = () =>
+      Array.from(document.head.querySelectorAll('link[rel="alternate"][hreflang]'))
+        .map(l => `${l.getAttribute('hreflang')} ${l.getAttribute('href')}`);
+    const ogAlternates = () => meta.getTags('property="og:locale:alternate"').map(t => t.content);
 
     afterEach(() => {
       document.documentElement.setAttribute('lang', 'bg');
       document.head.querySelectorAll('link[rel="alternate"][hreflang]').forEach(l => l.remove());
     });
 
-    it('sets <html lang>, og:locale and hreflang links for an English page', () => {
-      service.updateSeo({ title: 'T', description: 'D', locale: 'en', alternates: HOME_LANGUAGE_ALTERNATES });
-      expect(document.documentElement.getAttribute('lang')).toBe('en');
-      expect(meta.getTag('property="og:locale"')?.content).toBe('en_US');
-      expect(meta.getTag('property="og:locale:alternate"')?.content).toBe('bg_BG');
-      expect(hreflangs()).toEqual(['bg', 'en', 'x-default']);
+    it('pairs a page that exists in every language with its versions, Bulgarian as x-default', () => {
+      service.updateSeo({ title: 'T', description: 'D', url: 'https://3dpechat.bg/prices/' });
+      expect(alternates()).toEqual([
+        'bg https://3dpechat.bg/prices/',
+        'en https://3dpechat.bg/en/prices/',
+        'x-default https://3dpechat.bg/prices/'
+      ]);
+      expect(meta.getTag('property="og:locale"')?.content).toBe('bg_BG');
+      expect(ogAlternates()).toEqual(['en_US']);
     });
 
-    it('defaults back to Bulgarian with no hreflang on the next page', () => {
-      service.updateSeo({ title: 'T', description: 'D', locale: 'en', alternates: HOME_LANGUAGE_ALTERNATES });
-      service.updateSeo({ title: 'T2', description: 'D2' });
-      expect(document.documentElement.getAttribute('lang')).toBe('bg');
+    it('drops hreflang and og:locale:alternate on a Bulgarian-only page (the blog)', () => {
+      service.updateSeo({ title: 'T', description: 'D', url: 'https://3dpechat.bg/prices/' });
+      service.updateSeo({ title: 'T2', description: 'D2', url: 'https://3dpechat.bg/blog/what-is-3d-printing/' });
+      expect(alternates()).toEqual([]);
+      expect(ogAlternates()).toEqual([]);
       expect(meta.getTag('property="og:locale"')?.content).toBe('bg_BG');
-      expect(hreflangs()).toEqual([]);
     });
 
     it('never duplicates hreflang links on repeated calls', () => {
-      service.updateSeo({ title: 'T', description: 'D', alternates: HOME_LANGUAGE_ALTERNATES });
-      service.updateSeo({ title: 'T', description: 'D', alternates: HOME_LANGUAGE_ALTERNATES });
-      expect(hreflangs()).toEqual(['bg', 'en', 'x-default']);
+      service.updateSeo({ title: 'T', description: 'D', url: 'https://3dpechat.bg/' });
+      service.updateSeo({ title: 'T', description: 'D', url: 'https://3dpechat.bg/' });
+      expect(alternates().length).toBe(3);
+      expect(ogAlternates()).toEqual(['en_US']);
+    });
+
+    it('applies a page’s translated meta, canonical and og:locale in the active language', async () => {
+      await TestBed.inject(I18nService).use('en');
+      service.applyPageSeo('prices', { min: '0.80', max: '1.50', minOrder: '3' });
+
+      expect(title.getTitle()).toBe('3D Printing Prices and Calculator | 3dpechat.bg');
+      expect(meta.getTag('name="description"')?.content)
+        .toBe('3D printing priced by weight – from €0.80 to €1.50 per 10 g, minimum order €3. Price calculator and answers to frequently asked questions.');
+      expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe('https://3dpechat.bg/en/prices/');
+      expect(meta.getTag('property="og:locale"')?.content).toBe('en_US');
+      expect(ogAlternates()).toEqual(['bg_BG']);
+      expect(alternates()).toContain('en https://3dpechat.bg/en/prices/');
+    });
+
+    it('applies the Bulgarian meta unchanged on Bulgarian pages', () => {
+      service.applyPageSeo('home');
+      expect(title.getTitle()).toBe('3D печат и 3D принтиране по поръчка | Професионални услуги');
+      expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe('https://3dpechat.bg/');
+    });
+
+    it('lists exactly the pages of src/i18n/locales.json as PAGE_PATHS', () => {
+      expect([...LOCALIZED_PAGES].sort()).toEqual(Object.values(PAGE_PATHS).sort());
     });
   });
 

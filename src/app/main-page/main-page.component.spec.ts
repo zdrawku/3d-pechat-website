@@ -6,6 +6,8 @@ import { provideRouter, UrlSerializer } from '@angular/router';
 import { IgxButtonDirective, IGX_CAROUSEL_DIRECTIVES } from 'igniteui-angular';
 import { MainPageComponent } from './main-page.component';
 import { TrailingSlashUrlSerializer } from '../trailing-slash-url-serializer';
+import { I18nService } from '../i18n/i18n.service';
+import { BUSINESS } from '../../data/business';
 
 describe('MainPageComponent', () => {
   let component: MainPageComponent;
@@ -83,5 +85,29 @@ describe('MainPageComponent', () => {
     expect(el.querySelector('.cta-band a.cta-band__btn[href="/contact/"]')).not.toBeNull();
     // (the carousel renders its own prev/next igxButton <button>s, so scope to the CTAs)
     expect(el.querySelectorAll('.hero_cta_row button, .cta-band button').length).toBe(0);
+  });
+
+  describe('in English (/en/)', () => {
+    beforeEach(async () => {
+      await TestBed.inject(I18nService).use('en');
+      fixture = TestBed.createComponent(MainPageComponent);
+      fixture.detectChanges();
+    });
+
+    afterEach(() => document.documentElement.setAttribute('lang', 'bg'));
+
+    it('is the English home page, linking to the English pages', () => {
+      const el: HTMLElement = fixture.nativeElement;
+      expect(el.querySelector('h1.hero_title')?.textContent?.trim()).toBe('Professional custom 3D printing');
+      expect(el.querySelector('.hero_cta_row a.btn_primary')?.getAttribute('href')).toBe('/en/contact/');
+      expect(el.querySelector('.hero_cta_row a.btn_ghost')?.getAttribute('href')).toBe('/en/portfolio/');
+      expect(el.querySelector('.hero_note')?.textContent).toContain(`Reply within ${BUSINESS.replyWithinHours} h`);
+    });
+
+    it('keeps the video’s own (Bulgarian) title in its structured data', () => {
+      const data = JSON.parse(document.getElementById('structured-data-jsonld')?.textContent ?? '{}');
+      expect(data['@type']).toBe('VideoObject');
+      expect(data.inLanguage).toBe('bg');
+    });
   });
 });

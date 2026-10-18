@@ -1,4 +1,4 @@
-import { BUSINESS, formatPhone, openingHoursLabel, openingHoursLabelEn, priceRangeEn } from './business';
+import { BUSINESS, formatPhone, openingHoursLabel } from './business';
 
 describe('business data', () => {
   it('formats the current opening hours as Bulgarian copy', () => {
@@ -12,12 +12,9 @@ describe('business data', () => {
     ])).toBe('пон.–пет. от 9:00 до 18:00; съб. от 10:00 до 14:00');
   });
 
-  it('formats English hours, price range and phone for /en/', () => {
-    expect(openingHoursLabelEn()).toBe('Every day, 9:00–18:00');
-    expect(openingHoursLabelEn([
-      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '09:00', closes: '18:00' }
-    ])).toBe('Mon–Fri 9:00–18:00');
-    expect(priceRangeEn()).toBe('€0.80–€1.50');
+  // English (and every other language's) hours are formatted by
+  // src/app/i18n/business-copy.ts — see business-copy.spec.ts.
+  it('formats the phone the way the site prints it', () => {
     expect(formatPhone()).toBe('+359 883 310 616');
   });
 
@@ -27,7 +24,7 @@ describe('business data', () => {
     expect(BUSINESS.displayAddress).toContain('1700 София');
   });
 
-  // The structured numbers (read by the calculator and the English page) and
+  // The structured numbers (read by the calculator and every language's pages) and
   // the Bulgarian prose facts (read by the FAQ, llms.txt and the blog prompt)
   // must say the same thing.
   it('states every structured number in the prose facts too', () => {

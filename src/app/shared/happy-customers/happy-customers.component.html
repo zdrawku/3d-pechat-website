@@ -17,11 +17,11 @@
     <section class="hc_section" aria-labelledby="hc-heading">
       <div class="hc_inner">
         <div class="hc_head">
-          <h2 class="hc_title" id="hc-heading">Доволни клиенти</h2>
+          <h2 class="hc_title" id="hc-heading">{{ 'reviews.heading' | t }}</h2>
           <p class="hc_agg">
             <span class="hc_stars" aria-hidden="true">{{ stars(averageRating) }}</span>
             <span class="visually-hidden">{{ ratingLabel(averageRating) }}.</span>
-            <strong>{{ averageRatingLabel }}</strong> от {{ reviewCountLabel }} в
+            <strong>{{ averageRatingLabel }}</strong> {{ 'reviews.of' | t }} {{ reviewCountLabel }} {{ 'reviews.on' | t }}
             <span class="hc_gmark" aria-hidden="true">G</span> Google
           </p>
         </div>
@@ -41,7 +41,7 @@
                 <igx-card-content class="hc_card_body">
                   <span class="hc_stars" aria-hidden="true">{{ stars(review.rating) }}</span>
                   <span class="visually-hidden">{{ ratingLabel(review.rating) }}</span>
-                  <p class="hc_text">„{{ review.text }}“</p>
+                  <p class="hc_text" [attr.lang]="quoteLang()">„{{ review.text }}“</p>
                 </igx-card-content>
 
                 <!-- IgxCardFooterDirective defaults to role="footer", which is not
@@ -53,23 +53,27 @@
                      and the attribution text below stays readable regardless. -->
                 <igx-card-footer class="hc_card_foot" role="presentation">
                   <span class="hc_gmark hc_gmark--sm" aria-hidden="true">G</span>
-                  <span class="hc_src">публикувано в Google</span>
+                  <span class="hc_src">{{ 'reviews.postedOnGoogle' | t }}</span>
                 </igx-card-footer>
               </igx-card>
             </li>
           }
         </ul>
 
+        @if (quoteLang()) {
+          <p class="hc_lang_note" data-testid="happy-customers-language-note">{{ 'reviews.originalLanguage' | t }}</p>
+        }
+
         <div class="hc_links">
           <a igxButton="flat" class="hc_link" [href]="googleMapsUrl"
              target="_blank" rel="noopener noreferrer" data-testid="happy-customers-all">
-            Виж всички ревюта в Google
+            {{ 'reviews.seeAll' | t }}
             <igx-icon class="hc_link_icon" aria-hidden="true">arrow_forward</igx-icon>
           </a>
           <a igxButton="flat" class="hc_link hc_link--cta" [href]="googleReviewUrl"
              target="_blank" rel="noopener noreferrer" data-testid="happy-customers-review">
             <igx-icon class="hc_link_icon" aria-hidden="true">star</igx-icon>
-            Остави и ти ревю
+            {{ 'reviews.leaveReview' | t }}
           </a>
         </div>
       </div>
@@ -77,7 +81,7 @@
   } @else {
     <!-- Compact trust bar: rating, count, one quote, CTA — one row, no vertical
          cost, sitting right where the purchase decision happens. -->
-    <igx-card class="hc_bar" role="region" aria-label="Оценки от клиенти"
+    <igx-card class="hc_bar" role="region" [attr.aria-label]="'reviews.barLabel' | t"
               data-testid="happy-customers-bar">
       <igx-card-content class="hc_bar_body">
         <div class="hc_bar_score">
@@ -87,20 +91,20 @@
             <span class="visually-hidden">{{ ratingLabel(averageRating) }}</span>
           </p>
           <p class="hc_bar_count">
-            {{ reviewCountLabel }} в <span class="hc_gmark hc_gmark--sm" aria-hidden="true">G</span> Google
+            {{ reviewCountLabel }} {{ 'reviews.on' | t }} <span class="hc_gmark hc_gmark--sm" aria-hidden="true">G</span> Google
           </p>
         </div>
 
         @if (leadReview; as review) {
           <div class="hc_bar_quote_wrap">
-            <p class="hc_bar_quote">„{{ review.text }}“</p>
+            <p class="hc_bar_quote" [attr.lang]="quoteLang()">„{{ review.text }}“</p>
             <p class="hc_bar_author">— {{ review.author }}</p>
           </div>
         }
 
         <a igxButton="contained" class="hc_bar_btn" [href]="googleMapsUrl"
            target="_blank" rel="noopener noreferrer" data-testid="happy-customers-bar-link">
-          Виж ревютата
+          {{ 'reviews.barButton' | t }}
         </a>
       </igx-card-content>
     </igx-card>

@@ -1,11 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 import { ProductsPageComponent } from './products-page.component';
 import { Product, ProductVariant } from '../models/product.model';
 import productsData from '../../data/products.json';
 import { VIDEOS } from '../shared/youtube-embed/video.util';
+import { I18nService } from '../i18n/i18n.service';
+import { localizeProduct } from '../i18n/localized-content';
 
 describe('ProductsPageComponent', () => {
   let component: ProductsPageComponent;
@@ -104,8 +106,8 @@ describe('ProductsPageComponent', () => {
     });
 
     it('supports the optional featured / pageUrl MAIN-product fields', () => {
-      // No MAIN product exists yet, but the component's mapping must not strip
-      // these fields when they are present on a product.
+      // No MAIN product exists yet, but the mapping — with or without another
+      // language's copy laid over it — must not strip these fields.
       const mockProduct: Product = {
         id: 99,
         linkId: 'test-main',
@@ -116,12 +118,58 @@ describe('ProductsPageComponent', () => {
         featured: true,
         pageUrl: '/gift-box'
       };
-      component.productVariants = [...component.productVariants, { ...mockProduct, showFront: true }];
+      for (const mapped of [localizeProduct(mockProduct, undefined), localizeProduct(mockProduct, { name: 'T', description: 'D' })]) {
+        expect(mapped.featured).toBe(true);
+        expect(mapped.pageUrl).toBe('/gift-box');
+      }
+    });
+  });
 
-      const mapped = component.productVariants.find((p) => p.linkId === 'test-main') as ProductVariant;
-      expect(mapped.featured).toBe(true);
-      expect(mapped.pageUrl).toBe('/gift-box');
-      expect(mapped.showFront).toBe(true);
+  describe('in English (/en/products/)', () => {
+    const source = (linkId: string) => (productsData as Product[]).find((p) => p.linkId === linkId)!;
+
+    beforeEach(async () => {
+      await TestBed.inject(I18nService).use('en');
+      fixture = TestBed.createComponent(ProductsPageComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+    });
+
+    it('shows every product with its English copy over the catalogue’s images and links', () => {
+      expect(component.productVariants.length).toBe(productsData.length);
+      for (const product of component.productVariants) {
+        const original = source(product.linkId);
+        expect(product.name).withContext(product.linkId).not.toBe(original.name);
+        expect(product.frontImage).withContext(product.linkId).toBe(original.frontImage);
+        expect((product.links ?? []).map((l) => l.url)).withContext(product.linkId)
+          .toEqual((original.links ?? []).map((l) => l.url));
+        expect(product.readMore?.url).withContext(product.linkId).toBe(original.readMore?.url);
+      }
+    });
+
+    it('labels the video link in English', () => {
+      const link = (fixture.nativeElement as HTMLElement)
+        .querySelector<HTMLAnchorElement>('#razdeliteli-za-knigi a[data-testid="product-external-link"][href*="youtu.be"]');
+      expect(link?.getAttribute('aria-label')).toBe('Watch it in the video');
+    });
+
+    it('marks the „read more“ article link as Bulgarian', () => {
+      const readMore = (fixture.nativeElement as HTMLElement).querySelector('#variant-1 [data-testid="product-read-more"]');
+      expect(readMore?.getAttribute('hreflang')).toBe('bg');
+      expect(readMore?.textContent).toContain('Read more');
+    });
+
+    it('opens the English contact form with an English order message', () => {
+      const router = TestBed.inject(Router);
+      const navigate = spyOn(router, 'navigate').and.resolveTo(true);
+      const product = component.productVariants.find((p) => p.linkId === 'variant-1') as ProductVariant;
+
+      component.orderProduct(product);
+
+      const [commands, extras] = navigate.calls.mostRecent().args;
+      expect(commands).toEqual(['/en/contact']);
+      expect(extras?.state?.['prefilledMessage']).toBe(`Hello, I would like to order "${product.name}". ${product.description}`);
+      expect(extras?.state?.['productName']).toBe(product.name);
     });
   });
 });

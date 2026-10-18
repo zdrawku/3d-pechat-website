@@ -65,6 +65,36 @@ function reviewMarkup(node, trail = '$') {
   ]);
 }
 
+/**
+ * The <html lang> and the hreflang set a URL must carry, from
+ * src/i18n/locales.json: '/en/…' is English, everything else Bulgarian; a page
+ * in `localizedPages` lists every language plus x-default (Bulgarian), any
+ * other page (the blog) lists none.
+ */
+function expectedLanguage(loc, locales) {
+  const pathname = new URL(loc).pathname;
+  const codes = locales.locales.map((l) => l.code);
+  const prefix = (/^\/([a-z]{2,3})(?=\/|$)/.exec(pathname) || [])[1];
+  const lang = prefix && prefix !== locales.defaultLocale && codes.includes(prefix) ? prefix : locales.defaultLocale;
+  const page = lang === locales.defaultLocale ? pathname : pathname.slice(lang.length + 1) || '/';
+  const inLanguage = (code) => `${SITE}${code === locales.defaultLocale ? '' : `/${code}`}${page}`;
+  const alternates = locales.localizedPages.includes(page)
+    ? [...codes.map((code) => `${code} ${inLanguage(code)}`), `x-default ${SITE}${page}`]
+    : [];
+  return { lang, alternates };
+}
+
+/** What is wrong with a live page's <html lang> and hreflang links ([] = nothing). */
+function languageProblems(html, loc, locales) {
+  const $ = cheerio.load(html);
+  const { lang, alternates } = expectedLanguage(loc, locales);
+  const actual = $('link[rel="alternate"][hreflang]').toArray().map((el) => `${$(el).attr('hreflang')} ${$(el).attr('href')}`);
+  const problems = [];
+  if ($('html').attr('lang') !== lang) problems.push(`lang="${$('html').attr('lang')}", expected "${lang}"`);
+  if (JSON.stringify(actual) !== JSON.stringify(alternates)) problems.push(`hreflang [${actual.join(', ')}], expected [${alternates.join(', ')}]`);
+  return problems;
+}
+
 /** Differences between the live LocalBusiness block and business.json. */
 function businessMismatches(schema, business) {
   const out = [];
@@ -184,14 +214,22 @@ async function main() {
       `prices page has the ${faq.length}-question FAQ + FAQPage schema`, 'prices page FAQ or FAQPage schema missing / out of sync with faq.json');
   }
 
-  // English page (Phase 5): only once it's in the live sitemap
-  if (locs.includes(`${SITE}/en/`)) {
-    for (const [page, lang] of [[`${SITE}/`, 'bg'], [`${SITE}/en/`, 'en']]) {
-      const $ = cheerio.load(pages[page]);
-      const alt = (h) => $(`link[rel="alternate"][hreflang="${h}"]`).attr('href');
-      check($('html').attr('lang') === lang && alt('bg') === `${SITE}/` && alt('en') === `${SITE}/en/` && alt('x-default') === `${SITE}/`,
-        `${page}: lang="${lang}" + hreflang bg/en/x-default`, `${page}: lang="${$('html').attr('lang')}", hreflang bg=${alt('bg')} en=${alt('en')} x-default=${alt('x-default')}`);
-    }
+  // Languages (src/i18n/locales.json): every sitemap page carries its language
+  // and exactly its hreflang set — each main page pairs with its translations,
+  // the Bulgarian-only blog has none.
+  const locales = JSON.parse(read('src/i18n/locales.json'));
+  const languageIssues = locs.flatMap((loc) => languageProblems(pages[loc] || '', loc, locales).map((p) => `${loc}: ${p}`));
+  check(languageIssues.length === 0, `every sitemap page has the right lang + hreflang (${locs.length} pages)`,
+    `lang/hreflang problems:\n   ${languageIssues.join('\n   ')}`);
+
+  // English pages show business.json numbers and the transliterated address
+  const enPrices = pages[`${SITE}/en/prices/`];
+  if (enPrices) {
+    check(enPrices.includes(`Minimum order value: €${business.pricing.minimumOrder.toFixed(2)}`), '/en/prices/ states the minimum order', '/en/prices/ lacks the English minimum-order line');
+  }
+  const enContact = pages[`${SITE}/en/contact/`];
+  if (enContact) {
+    check(enContact.includes(business.displayAddressEn), '/en/contact/ shows the business.json English address', '/en/contact/ lacks business.json displayAddressEn');
   }
 
   console.log(`\n${failures === 0 ? '✅ all live checks passed' : `❌ ${failures} live check(s) failed`}`);
@@ -205,4 +243,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { parseLegacyRedirects, robotsBlocksEverything, jsonLdBlocks, reviewMarkup, businessMismatches };
+module.exports = { parseLegacyRedirects, robotsBlocksEverything, jsonLdBlocks, reviewMarkup, businessMismatches, expectedLanguage, languageProblems };

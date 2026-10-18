@@ -1,0 +1,7 @@
+{
+  "hours": {
+    "everyDay": "every day, {opens}–{closes}",
+    "days": "{days} {opens}–{closes}"
+  },
+  "listSeparator": "; "
+}

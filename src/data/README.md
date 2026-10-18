@@ -14,6 +14,13 @@ objects; the shape is defined in
 by [`products-page.component.ts`](../app/products-page/products-page.component.ts),
 which maps each entry to a runtime `ProductVariant` by adding `showFront: true`.
 
+**Other languages:** each product's visible copy (name, description, tags,
+personalisation list, read-more and link labels) is translated in
+`src/i18n/<lang>/content/products.json`, keyed by `linkId`. Images, links and
+dates always come from this file. A product without an English entry shows
+its Bulgarian copy (marked `lang="bg"`) on `/en/products/` and is listed as
+pending by `src/i18n/i18n.spec.ts` — see [`src/i18n/README.md`](../i18n/README.md).
+
 ### Fields
 
 | Field            | Required | Notes                                                                 |
@@ -170,8 +177,8 @@ It's the reason AI assistants and search engines see one consistent business
   `leadTimeWorkingDays`, `rushSurchargePercent`, `maxPieceCm`,
   `freeDeliveryOverEur` (all of Bulgaria), `fileFormats`, `replyWithinHours`,
   `displayAddressEn`.
-  - The prices calculator and the English page `/en/` read these instead of
-    hard-coding numbers.
+  - The prices calculator and every language's copy (`src/i18n/`, as
+    `{placeholders}`) read these instead of hard-coding numbers.
   - `business.spec.ts` checks that each one also appears in the Bulgarian
     `facts`, so the two forms can't disagree.
 - **`facts`:** Bulgarian sentences that copy may state: materials, prices,
@@ -197,6 +204,9 @@ and the contact page cards repeat some facts by hand.
   scanning, same-day or invoice offers.
 - **Fields:** `icon` is a Material icon name. `id` is the anchor
   (`/prices/#faq-<id>`), so keep it stable.
+- **English:** `src/i18n/en/content/faq.json`, the same ids, icons and order
+  (shown on `/en/prices/`). Change both files together; `i18n.spec.ts` applies
+  the same number and never-claim checks to it.
 
 ## ⚠️ Encoding note (all files here)
 

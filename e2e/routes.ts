@@ -9,7 +9,7 @@ export interface RouteSpec {
   heading?: string;
   /** Substring expected in document <title>. */
   title?: string;
-  /** False for pages reachable from the footer only (not a drawer chip), e.g. /en. */
+  /** False for pages not reached through a Bulgarian drawer chip, e.g. the English pages. */
   inDrawer?: boolean;
 }
 
@@ -20,7 +20,20 @@ export const CORE_ROUTES: RouteSpec[] = [
   { path: '/prices', title: 'Цени' },
   { path: '/contact', heading: 'Свържете се', title: 'Контакти' },
   { path: '/blog', title: 'Блог' },
-  { path: '/en', heading: 'Custom 3D printing', title: 'Custom 3D Printing', inDrawer: false },
+  // The English home page (src/i18n/locales.json); kept here for its visual baseline.
+  { path: '/en', heading: 'Professional custom 3D printing', title: 'Custom 3D Printing', inDrawer: false },
+];
+
+/**
+ * The English versions of the other main pages (src/i18n/locales.json
+ * `localizedPages`). Smoke, SEO and a11y run on them; visual baselines don't
+ * (yet) — add them here to CORE_ROUTES when regenerating baselines.
+ */
+export const ENGLISH_ROUTES: RouteSpec[] = [
+  { path: '/en/portfolio', heading: 'Products and projects modelled for 3D printing', title: 'Portfolio', inDrawer: false },
+  { path: '/en/products', heading: '3D printed products', title: 'Products', inDrawer: false },
+  { path: '/en/prices', heading: '3D printing prices', title: 'Prices', inDrawer: false },
+  { path: '/en/contact', heading: 'Get in touch', title: 'Contact', inDrawer: false },
 ];
 
 export const BLOG_ROUTES: RouteSpec[] = [
@@ -39,4 +52,4 @@ export const BLOG_ROUTES: RouteSpec[] = [
   '/blog/3d-pechat-po-porachka-sofia-video',
 ].map((path) => ({ path }));
 
-export const ALL_ROUTES: RouteSpec[] = [...CORE_ROUTES, ...BLOG_ROUTES];
+export const ALL_ROUTES: RouteSpec[] = [...CORE_ROUTES, ...ENGLISH_ROUTES, ...BLOG_ROUTES];

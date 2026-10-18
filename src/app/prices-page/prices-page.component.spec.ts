@@ -6,6 +6,7 @@ import { IGX_CARD_DIRECTIVES, IgxAvatarComponent, IgxIconComponent, IGX_INPUT_GR
 import { PricesPageComponent } from './prices-page.component';
 import { FAQ } from '../shared/faq/faq.component';
 import business from '../../data/business.json';
+import { I18nService } from '../i18n/i18n.service';
 
 describe('PricesPageComponent', () => {
   let component: PricesPageComponent;
@@ -82,6 +83,33 @@ describe('PricesPageComponent', () => {
       expect(data['@type']).toBe('FAQPage');
       expect(data.mainEntity.map((q: { name: string }) => q.name)).toEqual(FAQ.map(f => f.question));
       expect(data.mainEntity.map((q: { acceptedAnswer: { text: string } }) => q.acceptedAnswer.text)).toEqual(FAQ.map(f => f.answer));
+    });
+  });
+
+  describe('in English (/en/prices/)', () => {
+    let i18n: I18nService;
+
+    beforeEach(async () => {
+      i18n = TestBed.inject(I18nService);
+      await i18n.use('en');
+      fixture = TestBed.createComponent(PricesPageComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+    });
+
+    afterEach(() => document.documentElement.setAttribute('lang', 'bg'));
+
+    it('shows the calculator in English with the same arithmetic', () => {
+      const el: HTMLElement = fixture.nativeElement;
+      expect(el.querySelector('[data-testid="calc-total"]')?.textContent?.trim()).toBe(`€${component.totalPrice}`);
+      expect(el.querySelector('[data-testid="calc-minimum-rule"]')?.textContent?.trim())
+        .toBe(`Minimum order value: €${business.pricing.minimumOrder.toFixed(2)}.`);
+    });
+
+    it('mirrors the English FAQ as FAQPage structured data', () => {
+      const data = JSON.parse(document.getElementById('structured-data-jsonld')?.textContent ?? '{}');
+      expect(data['@type']).toBe('FAQPage');
+      expect(data.mainEntity.map((q: { name: string }) => q.name)).toEqual(i18n.content().faq.map(f => f.question));
     });
   });
 });

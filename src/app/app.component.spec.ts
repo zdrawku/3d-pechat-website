@@ -6,6 +6,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { IGX_NAVBAR_DIRECTIVES, IgxIconComponent, IgxButtonDirective, IgxIconButtonDirective, IGX_NAVIGATION_DRAWER_DIRECTIVES } from 'igniteui-angular';
 import { AppComponent } from './app.component';
 import { BUSINESS } from '../data/business';
+import { I18nService } from './i18n/i18n.service';
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -55,6 +56,37 @@ describe('AppComponent', () => {
     const navLink = host.querySelector('[data-testid="youtube-nav-link"]');
     expect(navLink?.hasAttribute('igxIconButton')).withContext('navbar link styled via igxIconButton').toBeTrue();
     expect(host.querySelector('footer [data-testid="youtube-footer-link"]')).withContext('footer link').not.toBeNull();
+  });
+
+  describe('languages', () => {
+    afterEach(() => document.documentElement.setAttribute('lang', 'bg'));
+
+    it('puts the language switcher in the navbar, next to the theme switch', () => {
+      const navbar = (fixture.nativeElement as HTMLElement).querySelector('igx-navbar')!;
+      const switcher = navbar.querySelector('app-language-switcher');
+      expect(switcher).withContext('switcher in the navbar').not.toBeNull();
+      expect(switcher?.nextElementSibling?.getAttribute('data-testid')).toBe('theme-toggle');
+    });
+
+    it('links this page in every other language from the footer, crawlably', () => {
+      const link = (fixture.nativeElement as HTMLElement).querySelector<HTMLAnchorElement>('footer [data-testid="footer-language-en"]');
+      expect(link?.textContent?.trim()).toBe('English');
+      expect(link?.getAttribute('hreflang')).toBe('en');
+      expect(link?.getAttribute('lang')).toBe('en');
+      expect(link?.getAttribute('href')).toMatch(/^\/en\/?$/);
+    });
+
+    it('renders the shell in English on English pages', async () => {
+      await TestBed.inject(I18nService).use('en');
+      fixture.detectChanges();
+      const host: HTMLElement = fixture.nativeElement;
+
+      expect(host.querySelector('.menu-trigger-label')?.textContent?.trim()).toBe('Menu');
+      expect(host.querySelector('.nav_cta_button')?.textContent?.trim()).toBe('Get a quote');
+      expect(host.querySelector('footer [data-testid="footer-address"]')?.textContent?.trim()).toBe(BUSINESS.displayAddressEn);
+      expect(host.querySelector('footer [data-testid="footer-language-bg"]')?.textContent?.trim()).toBe('Български');
+      expect(host.querySelector('footer [data-testid="footer-language-en"]')).withContext('no link to the current language').toBeNull();
+    });
   });
 
   describe('outside-click drawer close', () => {

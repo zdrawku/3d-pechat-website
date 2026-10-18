@@ -1,0 +1,141 @@
+@use "igniteui-angular/theming" as *;
+
+// Approved design „A“: a pill that pairs with the theme switch next to it
+// (same bg-alt track and gray-300 border), turning orange-bordered while open.
+// Styled through the flat button's own tokens (--igx-flat-button-*), not by
+// overriding its internals.
+:host {
+  display: inline-flex;
+  flex-shrink: 0;
+  margin-left: rem(4px);
+}
+
+.lang-trigger {
+  --igx-flat-button-foreground: var(--ig-gray-900);
+  --igx-flat-button-icon-color: var(--ig-gray-900);
+  --igx-flat-button-background: var(--bg-alt);
+  --igx-flat-button-hover-background: var(--bg-alt);
+  --igx-flat-button-hover-foreground: var(--ig-gray-900);
+  --igx-flat-button-icon-color-hover: var(--ig-gray-900);
+  --igx-flat-button-focus-background: var(--bg-alt);
+  --igx-flat-button-focus-foreground: var(--ig-gray-900);
+  --igx-flat-button-focus-hover-background: var(--bg-alt);
+  --igx-flat-button-focus-hover-foreground: var(--ig-gray-900);
+  --igx-flat-button-focus-visible-background: var(--bg-alt);
+  --igx-flat-button-focus-visible-foreground: var(--ig-gray-900);
+  --igx-flat-button-active-background: var(--bg-alt);
+  --igx-flat-button-active-foreground: var(--ig-gray-900);
+  --igx-flat-button-border-color: var(--ig-gray-300);
+  --igx-flat-button-hover-border-color: var(--ig-primary-500);
+  --igx-flat-button-focus-border-color: var(--ig-gray-300);
+  --igx-flat-button-focus-visible-border-color: var(--ig-primary-500);
+  --igx-flat-button-active-border-color: var(--ig-primary-500);
+  --igx-flat-button-border-radius: var(--radius-pill);
+
+  gap: rem(6px);
+  min-width: 0;
+  padding-inline: rem(10px) rem(8px);
+  font-weight: 700;
+  font-size: rem(13px);
+  letter-spacing: 0.04em;
+
+  &:focus-visible {
+    outline: rem(2px) solid var(--ig-primary-500);
+    outline-offset: rem(2px);
+  }
+}
+
+// While the menu is open the pill keeps the orange border (artboard A).
+.lang-trigger--open {
+  --igx-flat-button-border-color: var(--ig-primary-500);
+  --igx-flat-button-focus-border-color: var(--ig-primary-500);
+}
+
+.lang-trigger__globe {
+  --ig-icon-size: #{rem(18px)};
+}
+
+.lang-trigger__code {
+  text-transform: uppercase;
+}
+
+.lang-trigger__caret {
+  --ig-icon-size: #{rem(16px)};
+}
+
+// Phones: the navbar already sheds the social icons below 420px; the caret goes
+// too, leaving globe + code (artboard A, 360 px frames).
+@media (max-width: 420px) {
+  // The navbar spaces the controls itself there (app.component.scss).
+  :host {
+    margin-left: 0;
+  }
+
+  .lang-trigger {
+    gap: rem(3px);
+    padding-inline: rem(7px);
+    font-size: rem(12px);
+  }
+
+  .lang-trigger__globe {
+    --ig-icon-size: #{rem(16px)};
+  }
+
+  .lang-trigger__caret {
+    display: none;
+  }
+}
+
+// ---- Menu items -------------------------------------------------------------
+// The items are this component's own markup, so their tokens are set here.
+// The list container moves into the overlay under <body> when it opens; its
+// background, radius, border and shadow live in styles.scss
+// (`.igx-drop-down__list:has(.lang-menu__item)`).
+.lang-menu__heading {
+  --header-text-color: var(--ig-gray-700);
+}
+
+.lang-menu__item {
+  --item-text-color: var(--ig-gray-900);
+  --hover-item-background: color-mix(in srgb, var(--ig-gray-900) 6%, transparent);
+  --hover-item-text-color: var(--ig-gray-900);
+  --focused-item-background: color-mix(in srgb, var(--ig-gray-900) 6%, transparent);
+  --focused-item-text-color: var(--ig-gray-900);
+  --selected-item-background: color-mix(in srgb, var(--ig-primary-500) 12%, var(--bg-card));
+  --selected-item-text-color: var(--accent-on-tint);
+  --selected-item-icon-color: var(--accent-on-tint);
+  --selected-hover-item-background: color-mix(in srgb, var(--ig-primary-500) 16%, var(--bg-card));
+  --selected-hover-item-text-color: var(--accent-on-tint);
+  --selected-focus-item-background: color-mix(in srgb, var(--ig-primary-500) 16%, var(--bg-card));
+  --selected-focus-item-text-color: var(--accent-on-tint);
+  --item-border-radius: var(--radius-sm);
+
+  margin-inline: rem(6px);
+
+  &:last-child {
+    margin-block-end: rem(6px);
+  }
+}
+
+// Prefix slot: the check mark, kept in the layout (hidden) on the other rows
+// so the names line up.
+.lang-menu__check {
+  --ig-icon-size: #{rem(18px)};
+}
+
+.lang-menu__check--hidden {
+  visibility: hidden;
+}
+
+// Suffix slot: the language code as a small outlined tag.
+.lang-menu__code {
+  margin-inline-start: rem(12px);
+  padding: rem(1px) rem(6px);
+  border: rem(1px) solid currentColor;
+  border-radius: rem(6px);
+  font-size: rem(11px);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}

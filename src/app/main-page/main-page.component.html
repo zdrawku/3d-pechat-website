@@ -3,30 +3,30 @@
   <div class="hero_inner">
     <div class="hero_copy">
       <div class="hero_chips">
-        <span class="hero_chip"><span class="chip_dot"></span>София, България</span>
-        <span class="hero_chip"><span class="chip_dot"></span>Бързи срокове</span>
-        <span class="hero_chip"><span class="chip_dot"></span>Качествени материали</span>
+        <span class="hero_chip"><span class="chip_dot"></span>{{ 'home.hero.chipLocation' | t }}</span>
+        <span class="hero_chip"><span class="chip_dot"></span>{{ 'home.hero.chipSpeed' | t }}</span>
+        <span class="hero_chip"><span class="chip_dot"></span>{{ 'home.hero.chipMaterials' | t }}</span>
       </div>
       <h1 class="hero_title">
-        Професионален 3D печат и 3D принтиране по поръчка
+        {{ 'home.hero.title' | t }}
       </h1>
       <p class="hero_desc">
-        Изработваме прототипи, функционални детайли и малки серии с прецизност и внимание към детайла — за индивидуални клиенти и за бизнес. Имате готов модел или само идея? Съдействаме на всеки етап от процеса.
+        {{ 'home.hero.description' | t }}
       </p>
       <div class="hero_cta_row">
-        <a igxButton="contained" routerLink="/contact" class="btn_primary">
-          Заяви оферта →
+        <a igxButton="contained" [routerLink]="'/contact' | localizePath" class="btn_primary">
+          {{ 'home.ctaQuote' | t }}
         </a>
-        <a igxButton="outlined" routerLink="/portfolio" class="btn_ghost">
-          Разгледай портфолиото
+        <a igxButton="outlined" [routerLink]="'/portfolio' | localizePath" class="btn_ghost">
+          {{ 'home.hero.ctaPortfolio' | t }}
         </a>
       </div>
-      <p class="hero_note">✓ Безплатна консултация&nbsp;&nbsp;·&nbsp;&nbsp;✓ Отговор до 24ч&nbsp;&nbsp;·&nbsp;&nbsp;✓ Viber &amp; Instagram</p>
+      <p class="hero_note">{{ 'home.hero.noteConsultation' | t }}&nbsp;&nbsp;·&nbsp;&nbsp;{{ 'home.hero.noteReply' | t: { hours: replyHours } }}&nbsp;&nbsp;·&nbsp;&nbsp;{{ 'home.hero.noteChannels' | t }}</p>
     </div>
     <div class="hero_media">
       <div class="hero_print_frame">
         <img src="/assets/real-images/main-images/initial-3d-image-small.webp"
-             alt="3D печат услуги - професионално 3D принтиране"
+             [alt]="'home.hero.imageAlt' | t"
              class="hero_image_main" loading="eager" fetchpriority="high" />
         <div class="hero_image_color" aria-hidden="true">
           <img src="/assets/real-images/main-images/initial-3d-image-small.webp" alt="" loading="eager" />
@@ -36,7 +36,7 @@
       </div>
       <div class="hero_stat">
         <span class="hero_stat_n">500+</span>
-        <span class="hero_stat_l">принтирани проекта</span>
+        <span class="hero_stat_l">{{ 'home.hero.statLabel' | t }}</span>
       </div>
     </div>
   </div>
@@ -45,37 +45,18 @@
 <!-- VALUE PROPS -->
 <section class="home_section props_section">
   <div class="section_inner">
-    <p class="section_eyebrow">Защо да изберете нас</p>
-    <h2 class="section_heading">Всичко за вашия проект, на едно място</h2>
+    <p class="section_eyebrow">{{ 'home.props.eyebrow' | t }}</p>
+    <h2 class="section_heading">{{ 'home.props.heading' | t }}</h2>
     <div class="props_grid stagger-in">
-      <igx-card class="prop_card" [style.--i]="0">
-        <igx-card-content class="prop_card_body">
-          <div class="prop_icon">🎯</div>
-          <h3 class="prop_title">Прецизност</h3>
-          <p class="prop_text">Точни размери и чист финиш при всеки детайл, независимо от сложността.</p>
-        </igx-card-content>
-      </igx-card>
-      <igx-card class="prop_card" [style.--i]="1">
-        <igx-card-content class="prop_card_body">
-          <div class="prop_icon">⚡</div>
-          <h3 class="prop_title">Бързи срокове</h3>
-          <p class="prop_text">Кратко време за изработка — от прототип до готова малка серия.</p>
-        </igx-card-content>
-      </igx-card>
-      <igx-card class="prop_card" [style.--i]="2">
-        <igx-card-content class="prop_card_body">
-          <div class="prop_icon">🧩</div>
-          <h3 class="prop_title">Всякаква форма</h3>
-          <p class="prop_text">Свобода при геометрията — сложни модели, които други методи не позволяват.</p>
-        </igx-card-content>
-      </igx-card>
-      <igx-card class="prop_card" [style.--i]="3">
-        <igx-card-content class="prop_card_body">
-          <div class="prop_icon">💬</div>
-          <h3 class="prop_title">Съдействие</h3>
-          <p class="prop_text">Помагаме от идеята до готовия модел, на всеки етап от процеса.</p>
-        </igx-card-content>
-      </igx-card>
+      @for (prop of props; track prop.title; let i = $index) {
+        <igx-card class="prop_card" [style.--i]="i">
+          <igx-card-content class="prop_card_body">
+            <div class="prop_icon">{{ prop.icon }}</div>
+            <h3 class="prop_title">{{ prop.title | t }}</h3>
+            <p class="prop_text">{{ prop.text | t }}</p>
+          </igx-card-content>
+        </igx-card>
+      }
     </div>
   </div>
 </section>
@@ -83,45 +64,20 @@
 <!-- PROCESS -->
 <section class="home_section process_section">
   <div class="section_inner">
-    <p class="section_eyebrow">Как работим</p>
-    <h2 class="section_heading">От идея до готов детайл за 4 стъпки</h2>
+    <p class="section_eyebrow">{{ 'home.process.eyebrow' | t }}</p>
+    <h2 class="section_heading">{{ 'home.process.heading' | t }}</h2>
     <ol class="process_steps stagger-in stagger-in--auto">
-      <li class="process_step_item">
-        <igx-card class="process_step">
-          <igx-card-content class="process_step_body">
-            <span class="step_num">1</span>
-            <h3 class="step_title">Изпратете идея</h3>
-            <p class="step_text">Модел, скица или описание — през формата, Viber или Instagram.</p>
-          </igx-card-content>
-        </igx-card>
-      </li>
-      <li class="process_step_item">
-        <igx-card class="process_step">
-          <igx-card-content class="process_step_body">
-            <span class="step_num">2</span>
-            <h3 class="step_title">Оферта</h3>
-            <p class="step_text">Уточняваме материал, цвят и срок и получавате ясна цена.</p>
-          </igx-card-content>
-        </igx-card>
-      </li>
-      <li class="process_step_item">
-        <igx-card class="process_step">
-          <igx-card-content class="process_step_body">
-            <span class="step_num">3</span>
-            <h3 class="step_title">Печат</h3>
-            <p class="step_text">Изработваме детайла с качествени материали и контрол на качеството.</p>
-          </igx-card-content>
-        </igx-card>
-      </li>
-      <li class="process_step_item">
-        <igx-card class="process_step">
-          <igx-card-content class="process_step_body">
-            <span class="step_num">4</span>
-            <h3 class="step_title">Доставка</h3>
-            <p class="step_text">Получавате готовия продукт — с грижа за всеки детайл.</p>
-          </igx-card-content>
-        </igx-card>
-      </li>
+      @for (step of steps; track step.title; let i = $index) {
+        <li class="process_step_item">
+          <igx-card class="process_step">
+            <igx-card-content class="process_step_body">
+              <span class="step_num">{{ i + 1 }}</span>
+              <h3 class="step_title">{{ step.title | t }}</h3>
+              <p class="step_text">{{ step.text | t }}</p>
+            </igx-card-content>
+          </igx-card>
+        </li>
+      }
     </ol>
   </div>
 </section>
@@ -134,21 +90,21 @@
 <section class="home_section video_section" aria-labelledby="home-video-heading" data-testid="home-video-section">
   <div class="section_inner video_inner">
     <div class="video_head">
-      <p class="section_eyebrow">Видео</p>
-      <h2 class="section_heading" id="home-video-heading">Вижте ни в действие</h2>
+      <p class="section_eyebrow">{{ 'home.video.eyebrow' | t }}</p>
+      <h2 class="section_heading" id="home-video-heading">{{ 'home.video.heading' | t }}</h2>
     </div>
-    <app-youtube-embed class="video_player" [video]="featuredVideo"></app-youtube-embed>
+    <app-youtube-embed class="video_player" [video]="featuredVideo()"></app-youtube-embed>
     <p class="video_desc">
-      За 60 секунди: как превръщаме идея в готов детайл — прототипи, функционални части, макети и подаръци, отпечатани в София.
+      {{ 'home.video.description' | t }}
     </p>
     <div class="hero_cta_row video_cta">
-      <a igxButton="contained" routerLink="/contact" class="btn_primary">
-        Заяви оферта →
+      <a igxButton="contained" [routerLink]="'/contact' | localizePath" class="btn_primary">
+        {{ 'home.ctaQuote' | t }}
       </a>
       <a igxButton="outlined" class="btn_ghost video_subscribe" [href]="youtubeSubscribeUrl"
          target="_blank" rel="noopener noreferrer" data-testid="home-video-subscribe">
         <igx-icon family="imx-icons" name="youtube"></igx-icon>
-        Абонирай се
+        {{ 'home.video.subscribe' | t }}
       </a>
     </div>
   </div>
@@ -158,22 +114,22 @@
 <section class="row-layout image_gallery_section_template_1">
   <div class="about_inner">
     <div class="about_text">
-      <p class="section_eyebrow">За технологията</p>
+      <p class="section_eyebrow">{{ 'home.about.eyebrow' | t }}</p>
       <h2 class="title_1">
-        Каквo представлява 3D печатът?
+        {{ 'home.about.heading' | t }}
       </h2>
       <p class="title_2">
-        3D принтирането представлява технология за създаване на физически обекти директно от дигитален 3D модел. Чрез постепенно наслагване на материал се постига готов детайл за сравнително кратко време, според неговите размери и сложност.
+        {{ 'home.about.p1' | t }}
       </p>
       <p class="title_2">
-        Методът се прилага широко както при разработката на прототипи, така и в реално производство в сфери като архитектура, индустриален дизайн, автомобилостроене, авиация, медицина и креативни индустрии. Нашите услуги за 3D печат включват изработка на детайли с различна сложност и размери.
+        {{ 'home.about.p2' | t }}
       </p>
       <p class="title_2">
-        Едно от основните предимства на 3D принтирането е свободата при формите – възможно е изработването на детайли с почти неограничена геометрия и разнообразни размери. Предлагаме 3D печат на малки серии, прототипи и функционални части с високо качество.
+        {{ 'home.about.p3' | t }}
       </p>
       <div class="hero_cta_row about_cta">
-        <a igxButton="contained" routerLink="/contact" class="btn_primary">
-          Заяви оферта →
+        <a igxButton="contained" [routerLink]="'/contact' | localizePath" class="btn_primary">
+          {{ 'home.ctaQuote' | t }}
         </a>
       </div>
     </div>
@@ -181,7 +137,7 @@
       <igx-carousel [vertical]="false" animationType="slide" [interval]="2000" indicatorsOrientation="end" class="carousel_1">
         @for (image of carouselImages; track image.src; let i = $index) {
           <igx-slide class="row-layout carousel_slide_1">
-            <img [src]="image.src" [alt]="image.alt || ('3D печат проект ' + (i + 1))" class="image_1" loading="lazy" />
+            <img [src]="image.src" [alt]="image.alt || ('home.about.galleryAlt' | t: { n: i + 1 })" class="image_1" loading="lazy" />
           </igx-slide>
         }
       </igx-carousel>
@@ -197,16 +153,16 @@
 <!-- FINAL CTA — shared .cta-band (see styles.scss) -->
 <section class="cta-band-section">
   <div class="cta-band">
-    <h2 class="cta-band__title">Готови да реализирате вашата идея?</h2>
+    <h2 class="cta-band__title">{{ 'home.cta.title' | t }}</h2>
     <p class="cta-band__desc">
-      Свържете се с нас днес — ще ви помогнем да изберете най-доброто решение за вашия проект.
+      {{ 'home.cta.description' | t }}
     </p>
     <div class="cta-band__actions">
-      <a igxButton="contained" routerLink="/contact" class="cta-band__btn">
-        Заяви оферта
+      <a igxButton="contained" [routerLink]="'/contact' | localizePath" class="cta-band__btn">
+        {{ 'home.cta.quote' | t }}
       </a>
       <a href="tel:+359883310616" class="cta-band__btn cta-band__btn--line">
-        Обади се сега
+        {{ 'home.cta.call' | t }}
       </a>
     </div>
   </div>

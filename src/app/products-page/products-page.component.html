@@ -1,19 +1,19 @@
 <header class="page-banner" id="monetni-karti">
   <div class="page-banner__titles">
     <h1 class="page-banner__title">
-      3D принтирани продукти
+      {{ 'products.title' | t }}
     </h1>
     <p class="page-banner__subtitle">
-      Открийте нашата колекция от 3D принтирани продукти, изработени с прецизност и внимание към детайлите.
+      {{ 'products.subtitle' | t }}
     </p>
   </div>
   <div class="page-banner__actions">
     <igx-input-group type="search" class="search-input">
       <igx-icon igxPrefix>search</igx-icon>
-      <input igxInput name="search" type="text" [(ngModel)]="searchText" placeholder="Търсене на продукти..." data-testid="product-search" />
+      <input igxInput name="search" type="text" [(ngModel)]="searchText" [placeholder]="'products.searchPlaceholder' | t" data-testid="product-search" />
       @if (searchText.length > 0) {
         <button igxSuffix type="button" class="search-clear-btn" (click)="searchText = ''"
-          aria-label="Изчисти търсенето">
+          [attr.aria-label]="'products.clearSearch' | t">
           <igx-icon>clear</igx-icon>
         </button>
       }
@@ -26,9 +26,9 @@
     <!-- Products Grid Section -->
     <div class="column-layout products-section">
       @if (searchText) {
-        <h2 class="ig-typography__h4 section-title">Резултати за "{{searchText}}"</h2>
+        <h2 class="ig-typography__h4 section-title">{{ 'products.resultsFor' | t: { query: searchText } }}</h2>
       } @else {
-        <h2 class="visually-hidden">Каталог с 3D принтирани продукти</h2>
+        <h2 class="visually-hidden">{{ 'products.catalogHeading' | t }}</h2>
       }
 
       <!-- Compact trust bar (Idea 5, Option C) — curated Google reviews right
@@ -38,23 +38,23 @@
       <!-- Sort + result count sit directly above the grid (moved out of the
            page-banner header, which now carries only the search field). -->
       <div class="products-toolbar">
-        <div class="sort-segmented" role="group" aria-label="Сортиране на продуктите">
+        <div class="sort-segmented" role="group" [attr.aria-label]="'products.sortLabel' | t">
           <button type="button" class="sort-option" [class.active]="sortOrder === 'newest'"
             (click)="setSortOrder('newest')" data-testid="sort-newest">
-            Най-нови
+            {{ 'products.sortNewest' | t }}
           </button>
           <button type="button" class="sort-option" [class.active]="sortOrder === 'oldest'"
             (click)="setSortOrder('oldest')" data-testid="sort-oldest">
-            Най-стари
+            {{ 'products.sortOldest' | t }}
           </button>
           <button type="button" class="sort-option" [class.active]="sortOrder === 'asc'"
             (click)="setSortOrder('asc')" data-testid="sort-asc">
-            А-Я
+            {{ 'products.sortAlpha' | t }}
           </button>
         </div>
 
         <p class="result-count" data-testid="product-result-count">
-          Показани <strong>{{ resultCount }}</strong> от <strong>{{ totalCount }}</strong> продукта
+          {{ 'products.shown' | t }} <strong>{{ resultCount }}</strong> {{ 'products.of' | t }} <strong>{{ totalCount }}</strong> {{ productCountNoun }}
         </p>
       </div>
 
@@ -67,10 +67,10 @@
           <div class="empty-state-icon">
             <igx-icon>search_off</igx-icon>
           </div>
-          <p class="empty-state-title">Няма намерени продукти за "{{ searchText }}"</p>
-          <p class="empty-state-text">Опитайте с друга дума или разгледайте пълния каталог.</p>
+          <p class="empty-state-title">{{ 'products.emptyTitle' | t: { query: searchText } }}</p>
+          <p class="empty-state-text">{{ 'products.emptyText' | t }}</p>
           <button igxButton="outlined" type="button" class="empty-state-reset" (click)="searchText = ''">
-            Изчисти търсенето
+            {{ 'products.clearSearch' | t }}
           </button>
         </div>
       }
@@ -79,62 +79,35 @@
     <!-- Features Section -->
     <div class="column-layout features-section">
       <h2 class="ig-typography__h3 section-title">
-        Характеристики на продуктите
+        {{ 'products.features.heading' | t }}
       </h2>
 
       <div class="features-grid stagger-in stagger-in--auto">
-        <igx-card class="feature-item">
-          <igx-card-content class="feature-item_body">
-            <div class="feature-icon">🎯</div>
-            <h3 class="ig-typography__h6 feature-title">Прецизност</h3>
-            <p class="ig-typography__body-2">
-              Всяка карта е проектирана с точни размери за перфектно прилягане на монетите
-            </p>
-          </igx-card-content>
-        </igx-card>
-
-        <igx-card class="feature-item">
-          <igx-card-content class="feature-item_body">
-            <div class="feature-icon">🎨</div>
-            <h3 class="ig-typography__h6 feature-title">Дизайн</h3>
-            <p class="ig-typography__body-2">
-              Красиви патриотични дизайни с българско знаме и карта на България
-            </p>
-          </igx-card-content>
-        </igx-card>
-
-        <igx-card class="feature-item">
-          <igx-card-content class="feature-item_body">
-            <div class="feature-icon">💪</div>
-            <h3 class="ig-typography__h6 feature-title">Издръжливост</h3>
-            <p class="ig-typography__body-2">
-              Изработени от висококачествен PLA материал за дълготрайна употреба
-            </p>
-          </igx-card-content>
-        </igx-card>
-
-        <igx-card class="feature-item">
-          <igx-card-content class="feature-item_body">
-            <div class="feature-icon">🔒</div>
-            <h3 class="ig-typography__h6 feature-title">Сигурност</h3>
-            <p class="ig-typography__body-2">
-              Монетите се задържат здрав в слотовете, осигурявайки безопасно съхранение
-            </p>
-          </igx-card-content>
-        </igx-card>
+        @for (feature of features; track feature.title) {
+          <igx-card class="feature-item">
+            <igx-card-content class="feature-item_body">
+              <div class="feature-icon">{{ feature.icon }}</div>
+              <h3 class="ig-typography__h6 feature-title">{{ feature.title | t }}</h3>
+              <p class="ig-typography__body-2">
+                {{ feature.text | t }}
+              </p>
+            </igx-card-content>
+          </igx-card>
+        }
       </div>
     </div>
 
     <!-- CTA — shared .cta-band (see styles.scss) -->
     <div class="cta-band">
-      <h2 class="cta-band__title">Готови да поръчате вашата монетна карта?</h2>
+      <h2 class="cta-band__title">{{ 'products.cta.title' | t }}</h2>
       <p class="cta-band__desc">
-        Свържете се с нас днес и ще ви помогнем да изберете перфектния дизайн за вашата колекция!
+        {{ 'products.cta.description' | t }}
       </p>
       <div class="cta-band__actions">
         <button igxButton="contained" type="button" (click)="navigateToContact()" class="cta-band__btn">
-          Свържете се с нас
+          {{ 'products.cta.button' | t }}
         </button>
       </div>
     </div>
   </div>
+</div>

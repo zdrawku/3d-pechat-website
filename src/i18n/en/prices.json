@@ -1,0 +1,38 @@
+{
+  "eyebrow": "Transparent pricing",
+  "title": "3D printing prices",
+  "subtitle": "Calculated by weight — you pay exactly for the material and work that go into your part.",
+  "featured": "Most popular",
+  "unit": "€ / 10 g",
+  "tiers": {
+    "singleBasic": { "name": "Single colour (Basic)", "description": "Standard printing, no complex post-processing." },
+    "multiBasic": { "name": "Multicolour (Basic)", "description": "Several colours, no complex post-processing." },
+    "singleComplex": { "name": "Single colour (+ Labour)", "description": "Complex models that need their supports cleaned off." },
+    "multiComplex": { "name": "Multicolour (+ Labour)", "description": "Complex multicolour models that need more attention." }
+  },
+  "calculator": {
+    "title": "Quick calculator",
+    "subtitle": "Enter the weight and choose a tier for an instant estimate",
+    "grams": "Total grams",
+    "tier": "Tier",
+    "tierOption": "€{price} ({name})",
+    "amount": "€{amount}",
+    "total": "total price",
+    "example": "{grams} g / 10 × €{price} = €{result} — an estimate; the final price is confirmed when you order.",
+    "minimumApplies": "Below the minimum order value – we charge €{minimum}.",
+    "minimumRule": "Minimum order value: €{minimum}.",
+    "order": "Order at this price",
+    "orderMessage": "Hello, I'd like to order 3D printing: {grams} g, {tier} (~€{total})."
+  },
+  "colors": {
+    "heading": "Available colours",
+    "note": "Standard PLA colours in stock — for a specific colour, ask when you order.",
+    "orange": "Orange",
+    "purple": "Purple",
+    "slateBlue": "Slate blue",
+    "sandPearl": "Sand pearl",
+    "white": "White",
+    "yellow": "Yellow",
+    "pink": "Pink"
+  }
+}

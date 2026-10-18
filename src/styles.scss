@@ -692,3 +692,14 @@ body {
     --ig-icon-color: #000;
   }
 }
+// Language switcher menu (shared/language-switcher, approved design „A“). When
+// it opens, Ignite moves the drop-down list into the overlay under <body> —
+// outside the component's own styles — so the container's tokens are set here.
+// Matched by the switcher's items, so the calculator's igx-select keeps its look.
+.igx-drop-down__list:has(.lang-menu__item) {
+  --igx-drop-down-background-color: var(--bg-card);
+  --igx-drop-down-border-width: #{rem(1px)};
+  --igx-drop-down-border-color: var(--ig-gray-300);
+  --igx-drop-down-border-radius: var(--radius-md);
+  --igx-drop-down-elevation: var(--shadow-float);
+}

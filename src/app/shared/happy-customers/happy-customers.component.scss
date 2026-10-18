@@ -189,6 +189,15 @@ $star-gold: #F9A825;
   margin-top: rem(18px);
 }
 
+// Shown only on pages in another language than the reviews (see quoteLang):
+// the quotes stay in the customers' own words.
+.hc_lang_note {
+  margin: rem(14px) 0 0;
+  text-align: center;
+  font-size: rem(13px);
+  color: var(--ig-gray-700);
+}
+
 // Flat igxButton anchors: keep the button's hit area/ripple/focus ring, restyle
 // the label to the design's link colours.
 .hc_link {

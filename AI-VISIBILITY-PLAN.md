@@ -685,6 +685,13 @@ backlog post is published.
 
 ## Phase 5 — English landing page `/en/` (only if D5 is yes; design first) ⛔
 
+> **Superseded 2026-10-18 by full localization** ([`LOCALIZATION-PLAN.md`](LOCALIZATION-PLAN.md)),
+> at the owner's request: every main page now exists in English under `/en/…`
+> with a navbar language switcher. `/en/` (same URL) is now the translated home
+> page; the standalone landing component `src/app/en-page/` was removed
+> (restorable from git). hreflang now pairs every main page, not just the home
+> page. The notes below describe the 2026-10-17 state.
+
 **Implemented 2026-10-17 (uncommitted).** Variant A was picked by the agent.
 - `src/app/en-page/` has Ignite cards, avatars and button links. Every number
   comes from new structured `business.json` fields.

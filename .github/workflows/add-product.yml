@@ -105,6 +105,7 @@ jobs:
             - [ ] Снимките са в правилния ред (лице / гръб) и с правилна ориентация
             - [ ] Ключовите думи са смислени
             - [ ] `npm run build` мина (виж стъпката по-горе)
+            - [ ] Английски текст за `/en/products/`: добави го в `src/i18n/en/content/products.json` под `${{ steps.add.outputs.link_id }}` (или по-късно — дотогава английската страница показва българския)
 
             Closes #${{ github.event.issue.number }}
           branch: add-product/${{ steps.add.outputs.link_id }}

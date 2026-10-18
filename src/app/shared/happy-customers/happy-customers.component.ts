@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, computed, inject } from '@angular/core';
 import {
   IGX_CARD_DIRECTIVES,
   IgxAvatarComponent,
@@ -9,6 +9,8 @@ import {
 import { Review, ReviewsData } from '../../models/review.model';
 import { GOOGLE_MAPS_PROFILE_URL, GOOGLE_REVIEW_URL } from '../../../data/site-links';
 import reviewsData from '../../../data/reviews.json';
+import { I18nService } from '../../i18n/i18n.service';
+import { TranslatePipe } from '../../i18n/translate.pipe';
 
 /**
  * Which face of the component to render:
@@ -19,22 +21,12 @@ import reviewsData from '../../../data/reviews.json';
  */
 export type HappyCustomersVariant = 'section' | 'bar';
 
-/** Bulgarian month names, indexed 1–12 (index 0 unused). */
-const MONTHS_BG = [
-  '',
-  'януари',
-  'февруари',
-  'март',
-  'април',
-  'май',
-  'юни',
-  'юли',
-  'август',
-  'септември',
-  'октомври',
-  'ноември',
-  'декември'
-];
+/**
+ * The language the reviews are written in. They are real customers' words, so
+ * they are shown as written on every language's pages — marked with `lang` and
+ * a one-line note instead of being translated.
+ */
+const REVIEWS_LANGUAGE = 'bg';
 
 /** Colors for the generated initial circles — cycled by index, no avatar images. */
 const AVATAR_COLORS = ['#7E57C2', '#26A69A', '#EF6C00', '#5C6BC0', '#00897B'];
@@ -53,12 +45,14 @@ const AVATAR_COLORS = ['#7E57C2', '#26A69A', '#EF6C00', '#5C6BC0', '#00897B'];
  */
 @Component({
   selector: 'app-happy-customers',
-  imports: [IGX_CARD_DIRECTIVES, IgxAvatarComponent, IgxButtonDirective, IgxIconComponent],
+  imports: [IGX_CARD_DIRECTIVES, IgxAvatarComponent, IgxButtonDirective, IgxIconComponent, TranslatePipe],
   templateUrl: './happy-customers.component.html',
   styleUrls: ['./happy-customers.component.scss']
 })
 export class HappyCustomersComponent {
   @Input() variant: HappyCustomersVariant = 'section';
+
+  private readonly i18n = inject(I18nService);
 
   public readonly googleReviewUrl = GOOGLE_REVIEW_URL;
   public readonly googleMapsUrl = GOOGLE_MAPS_PROFILE_URL;
@@ -71,6 +65,9 @@ export class HappyCustomersComponent {
   public readonly totalCount = this.data.totalCount;
   public readonly averageRating = this.data.averageRating;
 
+  /** `lang` for the quotes when the page is in another language than the reviews; null on Bulgarian pages. */
+  protected readonly quoteLang = computed(() => (this.i18n.locale() === REVIEWS_LANGUAGE ? null : REVIEWS_LANGUAGE));
+
   /** The single quote shown in the compact trust bar — the first featured review. */
   public get leadReview(): Review | undefined {
     return this.reviews[0];
@@ -81,9 +78,9 @@ export class HappyCustomersComponent {
     return this.averageRating.toFixed(1);
   }
 
-  /** „27 ревюта" / „1 ревю" — Bulgarian has no plural form beyond the singular here. */
+  /** „27 ревюта" / „1 ревю" — the language's plural form for the count. */
   public get reviewCountLabel(): string {
-    return this.totalCount === 1 ? '1 ревю' : `${this.totalCount} ревюта`;
+    return this.i18n.plural('reviews.count', this.totalCount);
   }
 
   /** Filled-star string for a rating, e.g. `★★★★★`. Decorative — see `ratingLabel()`. */
@@ -94,7 +91,7 @@ export class HappyCustomersComponent {
 
   /** Accessible text for a star row, since the ★ glyphs are aria-hidden. */
   public ratingLabel(rating: number): string {
-    return `Оценка ${rating} от 5 звезди`;
+    return this.i18n.t('reviews.rating', { rating });
   }
 
   /** First letter of the author's name for the generated avatar circle. */
@@ -108,8 +105,9 @@ export class HappyCustomersComponent {
   }
 
   /**
-   * `2026-05` → `май 2026`. Falls back to the raw value for anything that isn't
-   * a well-formed `YYYY-MM`, so a typo in the JSON degrades instead of breaking.
+   * `2026-05` → `май 2026` / `May 2026` (month name from Intl in the page's
+   * language). Falls back to the raw value for anything that isn't a
+   * well-formed `YYYY-MM`, so a typo in the JSON degrades instead of breaking.
    */
   public formatDate(date: string): string {
     const match = /^(\d{4})-(\d{2})$/.exec(date);
@@ -120,6 +118,6 @@ export class HappyCustomersComponent {
     if (month < 1 || month > 12) {
       return date;
     }
-    return `${MONTHS_BG[month]} ${match[1]}`;
+    return `${this.i18n.monthName(month)} ${match[1]}`;
   }
 }

@@ -13,7 +13,9 @@ describe('LegacyRedirectComponent', () => {
    * into the Karma page makes Chrome navigate away and aborts the whole run.
    */
   function create(data: Record<string, unknown> = { to: TO }) {
-    const meta = jasmine.createSpyObj<Meta>('Meta', ['updateTag', 'removeTag']);
+    // getTags/addTag/removeTagElement: SeoService resets og:locale:alternate on every page.
+    const meta = jasmine.createSpyObj<Meta>('Meta', ['updateTag', 'removeTag', 'getTags', 'addTag', 'removeTagElement']);
+    meta.getTags.and.returnValue([]);
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),

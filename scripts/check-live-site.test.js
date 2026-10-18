@@ -49,3 +49,30 @@ test('compares the live schema with business.json', () => {
   assert.deepEqual(businessMismatches(live, business), []);
   assert.equal(businessMismatches({ ...live, name: 'Old name' }, business).length, 1);
 });
+
+const { expectedLanguage, languageProblems } = require('./check-live-site');
+const locales = require('../src/i18n/locales.json');
+
+test('expects each language version of a main page to list all of them, x-default = Bulgarian', () => {
+  const pricesSet = ['bg https://3dpechat.bg/prices/', 'en https://3dpechat.bg/en/prices/', 'x-default https://3dpechat.bg/prices/'];
+  assert.deepEqual(expectedLanguage('https://3dpechat.bg/prices/', locales), { lang: 'bg', alternates: pricesSet });
+  assert.deepEqual(expectedLanguage('https://3dpechat.bg/en/prices/', locales), { lang: 'en', alternates: pricesSet });
+  assert.deepEqual(expectedLanguage('https://3dpechat.bg/en/', locales).alternates,
+    ['bg https://3dpechat.bg/', 'en https://3dpechat.bg/en/', 'x-default https://3dpechat.bg/']);
+});
+
+test('expects the Bulgarian-only blog to carry no hreflang', () => {
+  assert.deepEqual(expectedLanguage('https://3dpechat.bg/blog/what-is-3d-printing/', locales), { lang: 'bg', alternates: [] });
+});
+
+test('reports a wrong <html lang> or a missing / extra hreflang link', () => {
+  const page = (lang, links) => `<html lang="${lang}"><head>${links.map(([h, href]) => `<link rel="alternate" hreflang="${h}" href="${href}">`).join('')}</head></html>`;
+  const good = page('en', [['bg', 'https://3dpechat.bg/'], ['en', 'https://3dpechat.bg/en/'], ['x-default', 'https://3dpechat.bg/']]);
+  assert.deepEqual(languageProblems(good, 'https://3dpechat.bg/en/', locales), []);
+
+  const wrongLang = good.replace('lang="en"', 'lang="bg"');
+  assert.equal(languageProblems(wrongLang, 'https://3dpechat.bg/en/', locales).length, 1);
+
+  const blogWithHreflang = page('bg', [['en', 'https://3dpechat.bg/en/']]);
+  assert.match(languageProblems(blogWithHreflang, 'https://3dpechat.bg/blog/x/', locales)[0], /hreflang/);
+});

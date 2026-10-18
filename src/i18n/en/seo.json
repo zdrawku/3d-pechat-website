@@ -1,0 +1,27 @@
+{
+  "home": {
+    "title": "Custom 3D Printing in Sofia, Bulgaria | 3dpechat.bg",
+    "description": "Professional custom 3D printing in Sofia. Prototypes, functional parts and small batches made in high quality with fast turnaround.",
+    "keywords": "3D printing Sofia, 3D printing service Bulgaria, custom 3D printing, FDM 3D printing, PLA printing, prototypes, spare parts, small batch printing"
+  },
+  "portfolio": {
+    "title": "3D Printing Portfolio – Projects from Sofia | 3dpechat.bg",
+    "description": "Browse our portfolio of 3D printed projects. Prototypes, parts, models and personalised products in high quality.",
+    "keywords": "3D printing portfolio, 3D printed projects, prototypes, models, 3D printing examples"
+  },
+  "products": {
+    "title": "3D Printed Products and Gifts | 3dpechat.bg",
+    "description": "Browse our 3D printed products – coin cards with the Bulgarian flag, headphone stands and personalised products made to order.",
+    "keywords": "3D printed products, coin cards, headphone stands, personalised gifts, custom 3D printing"
+  },
+  "prices": {
+    "title": "3D Printing Prices and Calculator | 3dpechat.bg",
+    "description": "3D printing priced by weight – from €{min} to €{max} per 10 g, minimum order €{minOrder}. Price calculator and answers to frequently asked questions.",
+    "keywords": "3D printing prices, 3D printing cost, 3D printing calculator, PLA price, price per gram, minimum order"
+  },
+  "contact": {
+    "title": "Contact – Custom 3D Printing in Sofia | 3dpechat.bg",
+    "description": "Contact us for 3D printing services. Phone, email, Viber, Instagram, TikTok and YouTube. Order your 3D printed product quickly and easily.",
+    "keywords": "3D printing contact, order 3D printing, 3D printing quote, contact us, 3D printing Sofia"
+  }
+}

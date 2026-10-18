@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FAQ, FaqComponent } from './faq.component';
+import { I18nService } from '../../i18n/i18n.service';
 
 describe('FaqComponent', () => {
   let fixture: ComponentFixture<FaqComponent>;
@@ -34,5 +35,20 @@ describe('FaqComponent', () => {
     expect(section).not.toBeNull();
     expect(section?.getAttribute('aria-labelledby')).toBe('faq-title');
     expect(el.querySelector('h2#faq-title')?.textContent).toContain('Често задавани въпроси');
+  });
+
+  it('shows the English FAQ on English pages, same cards and anchors', async () => {
+    const i18n = TestBed.inject(I18nService);
+    await i18n.use('en');
+    fixture.detectChanges();
+
+    const english = i18n.content().faq;
+    const cards = el.querySelectorAll('.faq__grid > li');
+    expect(el.querySelector('h2#faq-title')?.textContent).toContain('Frequently asked questions');
+    expect(cards.length).toBe(FAQ.length);
+    english.forEach((item, i) => {
+      expect(cards[i].id).toBe(`faq-${FAQ[i].id}`);
+      expect(cards[i].querySelector('h3')?.textContent?.trim()).toBe(item.question);
+    });
   });
 });

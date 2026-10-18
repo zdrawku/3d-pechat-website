@@ -1,6 +1,6 @@
 ---
 name: add-product
-description: Add a new product to the 3dpechat.bg catalog from photos plus a one-line brief. Converts images to webp, drafts the Bulgarian name/description/tags for approval, appends the entry to src/data/products.json, builds, and opens a PR. Use when the user says "/add-product", "add a product", "качи нов продукт", or supplies product photos to publish.
+description: Add a new product to the 3dpechat.bg catalog from photos plus a one-line brief. Converts images to webp, drafts the Bulgarian name/description/tags (plus their English translation for /en/products/) for approval, appends the entry to src/data/products.json and its English copy to src/i18n/en/content/products.json, builds, and opens a PR. Use when the user says "/add-product", "add a product", "качи нов продукт", or supplies product photos to publish.
 ---
 
 # Add a product to the catalog
@@ -39,7 +39,7 @@ front + back; one ⇒ front only; more than two ⇒ ask which two to use.
 Read `src/data/README.md` for the current field reference before writing
 anything — it is the authority on the data shape.
 
-### 2. Draft the Bulgarian copy — then STOP for approval
+### 2. Draft the copy (Bulgarian + English) — then STOP for approval
 
 From the photos and the brief, draft:
 
@@ -48,15 +48,22 @@ From the photos and the brief, draft:
   or notable detail if visible.
 - `tags` — 5–10 Bulgarian keywords buyers would actually search
   (object, use case, room, occasion, "подарък" when it fits).
+- **The English copy for `/en/products/`:** the same `name`, `description` and
+  `tags` in English (British spelling, like the rest of `src/i18n/en/`), plus
+  English `customContent` and link labels if the product has them. Translate
+  the meaning and use the words an English buyer would search; state the same
+  facts, nothing more.
 
-Match the tone of existing entries in `products.json` — warm, plain, no
+Match the tone of existing entries in `products.json` (and their English
+counterparts in `src/i18n/en/content/products.json`) — warm, plain, no
 marketing hyperbole. Any claim about material, lead time, delivery or price
 must match `facts` in [`src/data/business.json`](../../../src/data/business.json)
 and avoid everything in its `neverClaim`. Default material is **PLA**; name
 another only if the brief says so. **Show the drafted copy to the user and get
 explicit approval before saving.** They may edit any field.
 
-Bulgarian text is non-negotiable here: the whole site is in Bulgarian.
+Bulgarian is the source language: the catalog entry is Bulgarian, and the
+English copy is its translation (CLAUDE.md Rule 6).
 
 ### 3. Convert the images
 
@@ -88,6 +95,13 @@ lib.appendProduct(entry);
 stamps `dateAdded`. `appendProduct` appends **without reformatting** the rest of
 the file, so the diff shows only the new product.
 
+Then add the approved English copy to `src/i18n/en/content/products.json` as a
+new key — the entry's `linkId` — with `name`, `description`, `tags` and, when the
+product has them, `customContent` (`title`, `items` in the same order),
+`readMore` (the label) and `links` (labels in the same order as the product's
+`links`). Use the editor tools (UTF-8 safe), never PowerShell 5.1.
+`src/i18n/i18n.spec.ts` checks the structure matches the product.
+
 ⚠️ **Never edit `products.json` through PowerShell 5.1** — it re-encodes and
 corrupts the Cyrillic. Use these Node helpers or a UTF-8-aware editor.
 
@@ -99,7 +113,9 @@ npm run build
 
 Strict typing rejects a malformed entry. Fix anything it reports before
 continuing. If the build is clean, also sanity-check that the new images exist
-at the paths written into the JSON.
+at the paths written into the JSON, and run the unit tests
+(`npm test -- --watch=false --browsers=ChromeHeadless`) — `i18n.spec.ts`
+checks the English copy against the new product.
 
 ### 6. Show the diff, then open a PR
 
@@ -107,14 +123,15 @@ Show `git diff` and the new image files to the user. On their go-ahead:
 
 ```
 git checkout -b add-product/<linkId>
-git add src/data/products.json src/assets/real-images
+git add src/data/products.json src/i18n/en/content/products.json src/assets/real-images
 git commit
 gh pr create
 ```
 
 Commit message: `feat(products): add <name>`. PR body should list the product
 name, its `linkId`, and the images added, plus a short review checklist
-(Bulgarian copy reads well, images correct side, tags sensible).
+(Bulgarian copy reads well, English copy matches it, images correct side, tags
+sensible).
 
 Merging deploys automatically via `.github/workflows/github-pages.yml`.
 

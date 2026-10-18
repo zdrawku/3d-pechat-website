@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit, PLATFORM_ID, ViewChild, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, PLATFORM_ID, ViewChild, computed, inject } from '@angular/core';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,10 +10,16 @@ import { HappyCustomersComponent } from '../shared/happy-customers/happy-custome
 import { SeoService } from '../services/seo.service';
 import { Product, ProductVariant } from '../models/product.model';
 import productsData from '../../data/products.json';
+import { I18nService } from '../i18n/i18n.service';
+import { TranslatePipe } from '../i18n/translate.pipe';
+import { localizeProduct } from '../i18n/localized-content';
+import { DEFAULT_LOCALE } from '../i18n/locales';
+import type { TranslationKey } from '../i18n/i18n.types';
+import productsMessages from '../../i18n/bg/products.json';
 
 @Component({
   selector: 'app-products-page',
-  imports: [FormsModule, IgxButtonDirective, ProductGridComponent, HappyCustomersComponent, IgxIconModule, IgxInputGroupModule, IGX_CARD_DIRECTIVES],
+  imports: [FormsModule, IgxButtonDirective, ProductGridComponent, HappyCustomersComponent, IgxIconModule, IgxInputGroupModule, IGX_CARD_DIRECTIVES, TranslatePipe],
   templateUrl: './products-page.component.html',
   styleUrls: ['./products-page.component.scss']
 })
@@ -24,15 +30,40 @@ export class ProductsPageComponent implements OnInit {
   private readonly document = inject(DOCUMENT);
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly i18n = inject(I18nService);
 
   // Products are data, not code: the catalog lives in `src/data/products.json`
   // and is imported at build time (keeps the prerendered SSR output complete for
-  // SEO). `showFront` is runtime UI state the card grid toggles, so it is added
-  // here rather than stored in the data. To add a product, edit the JSON (or use
-  // the /add-product workflow) — no changes to this component are needed.
-  public productVariants: ProductVariant[] = (productsData as Product[]).map(
-    (product) => ({ ...product, showFront: true })
-  );
+  // SEO). Other languages lay their copy over it from
+  // src/i18n/<lang>/content/products.json (keyed by linkId); images, links and
+  // dates always come from the catalog. `showFront` is runtime UI state the card
+  // grid toggles, so it is added here rather than stored in the data. To add a
+  // product, edit the JSON (or use the /add-product workflow) — no changes to
+  // this component are needed.
+  private readonly catalog = computed<ProductVariant[]>(() => {
+    const copy = this.i18n.content().products;
+    const untranslatedLang = this.i18n.locale() === DEFAULT_LOCALE ? undefined : DEFAULT_LOCALE;
+    return (productsData as Product[]).map((product) => {
+      const translation = copy[product.linkId];
+      return {
+        ...localizeProduct(product, translation),
+        showFront: true,
+        // No translation yet (e.g. added from the phone): the Bulgarian copy shows, marked as such.
+        ...(translation ? {} : { copyLang: untranslatedLang })
+      };
+    });
+  });
+
+  public get productVariants(): ProductVariant[] {
+    return this.catalog();
+  }
+
+  readonly features: readonly { icon: string; title: TranslationKey; text: TranslationKey }[] = [
+    { icon: '🎯', title: 'products.features.precision.title', text: 'products.features.precision.text' },
+    { icon: '🎨', title: 'products.features.design.title', text: 'products.features.design.text' },
+    { icon: '💪', title: 'products.features.durability.title', text: 'products.features.durability.text' },
+    { icon: '🔒', title: 'products.features.security.title', text: 'products.features.security.text' }
+  ];
 
   public searchText = '';
   // The initial selection is set here
@@ -49,6 +80,11 @@ export class ProductsPageComponent implements OnInit {
 
   public get totalCount(): number {
     return this.productVariants.length;
+  }
+
+  /** „продукта“ / "products" — agrees with the total in „Показани 5 от 14 продукта“. */
+  public get productCountNoun(): string {
+    return this.i18n.plural('products.count', this.totalCount);
   }
 
   public setSortOrder(order: string): void {
@@ -68,13 +104,14 @@ export class ProductsPageComponent implements OnInit {
       return inName || inDescription || inCustomContentTitle || inCustomContentItems || inTags;
     });
 
-    // Pin the 'bg' collation: without a locale the order follows the visitor's
-    // browser language, and Latin names (e.g. "StandStrap") jump ahead of
-    // Cyrillic ones in non-Bulgarian browsers.
+    // Pin the page language's collation: without a locale the order follows the
+    // visitor's browser language, and Latin names (e.g. "StandStrap") jump ahead
+    // of Cyrillic ones in non-Bulgarian browsers.
+    const collation = this.i18n.definition().intl;
     if (this.sortOrder === 'asc') {
-      filtered = filtered.sort((a, b) => a.name.localeCompare(b.name, 'bg'));
+      filtered = filtered.sort((a, b) => a.name.localeCompare(b.name, collation));
     } else if (this.sortOrder === 'desc') {
-      filtered = filtered.sort((a, b) => b.name.localeCompare(a.name, 'bg'));
+      filtered = filtered.sort((a, b) => b.name.localeCompare(a.name, collation));
     } else if (this.sortOrder === 'newest') {
       filtered = filtered.sort((a, b) => {
         const dateA = a.dateAdded ? new Date(a.dateAdded).getTime() : 0;
@@ -93,13 +130,9 @@ export class ProductsPageComponent implements OnInit {
   }
 
   constructor(private router: Router, private seoService: SeoService) {
-    this.seoService.updateSeo({
-      title: 'Продукти - 3D Печат България',
-      description: 'Разгледайте нашите 3D принтирани продукти - монетни карти с българско знаме, стойки за слушалки и персонализирани продукти по поръчка.',
-      keywords: '3D принтирани продукти, монетни карти, стойки за слушалки, персонализирани продукти, 3D печат по поръчка',
-      url: 'https://3dpechat.bg/products/',
-      type: 'website'
-    });
+    // This page's Bulgarian strings live in its own chunk (src/i18n/bg/index.ts).
+    this.i18n.registerPage('products', productsMessages);
+    this.seoService.applyPageSeo('products');
     this.seoService.removeStructuredData();
   }
 
@@ -172,13 +205,13 @@ export class ProductsPageComponent implements OnInit {
   }
 
   public navigateToContact(): void {
-    this.router.navigate(['/contact']);
+    this.router.navigate([this.i18n.path('/contact')]);
   }
 
   public orderProduct(product: ProductVariant): void {
-    const message = `Привет, искам да поръчам "${product.name}". ${product.description}`;
+    const message = this.i18n.t('products.orderMessage', { name: product.name, description: product.description });
 
-    this.router.navigate(['/contact'], {
+    this.router.navigate([this.i18n.path('/contact')], {
       state: {
         prefilledMessage: message,
         productName: product.name

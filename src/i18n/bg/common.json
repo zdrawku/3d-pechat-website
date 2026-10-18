@@ -1,0 +1,7 @@
+{
+  "hours": {
+    "everyDay": "всеки ден от {opens} до {closes}",
+    "days": "{days} от {opens} до {closes}"
+  },
+  "listSeparator": "; "
+}

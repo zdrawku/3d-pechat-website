@@ -90,9 +90,10 @@ source; never duplicate or hand-write it elsewhere. The full plan is
      the `organization-jsonld` block.**
    - llms.txt
    - the footer address, and the contact page's address and hours (via
-     `src/data/business.ts`)
-   - every number on the English page `/en/` and the calculator's minimum order
-     (structured fields such as `pricing` and `leadTimeWorkingDays`)
+     `src/data/business.ts` and `src/app/i18n/business-copy.ts`)
+   - every number in every language's copy and the calculator's minimum order
+     (structured fields such as `pricing` and `leadTimeWorkingDays`, passed into
+     translations as `{placeholders}`)
    - the auto-blog prompt
 
    The FAQ lives in [`src/data/faq.json`](src/data/faq.json). It's shown on
@@ -128,6 +129,28 @@ How to add a blog post step by step: [`AI_INSTRUCTIONS.md`](AI_INSTRUCTIONS.md)
 § Content Management. `ARTICLE_CREATION_GUIDE.md` and `SEO_GUIDE.md` are older
 and lose to this rule wherever they disagree.
 
+## 🚨 Rule 6 — Every UI string is translated
+
+The main pages exist in Bulgarian (`/…`) and English (`/en/…`); the blog is
+Bulgarian-only. Guide: [`src/i18n/README.md`](src/i18n/README.md); plan and next
+steps: [`LOCALIZATION-PLAN.md`](LOCALIZATION-PLAN.md).
+
+- **No hard-coded user-facing text** in the shell or a localized page (home,
+  portfolio, products, prices, contact, shared components they use). Strings
+  live in `src/i18n/<lang>/*.json` and render through the typed `t` pipe;
+  internal links use `| localizePath`. Business numbers enter translations as
+  `{placeholders}` from `business.json`, never typed in.
+- **Changing Bulgarian copy means changing every language's copy** of that key
+  (a missing key fails the build; a stale one doesn't). A new product gets its
+  English copy in `src/i18n/en/content/products.json` (until then `/en/products/`
+  shows the Bulgarian copy, marked `lang="bg"`, and the spec reports it as
+  pending); the FAQ changes in `src/data/faq.json` and
+  `src/i18n/en/content/faq.json` together.
+- **Languages and localized pages have one source:** `src/i18n/locales.json`.
+  Routes, hreflang, the switcher, sitemap alternates, llms.txt and the live check
+  read it. A new localized page or language also needs `MAIN_PAGE_LASTMOD`
+  entries for each of its URLs.
+
 ## Verify before claiming done
 
 `npm run build` **and** `npm test -- --watch=false --browsers=ChromeHeadless`
@@ -135,7 +158,8 @@ must both pass, plus `npm run test:scripts` when you touch `scripts/`. For user-
 plus a Playwright screenshot (Playwright is already a dependency) in light and
 dark at desktop and mobile widths. Report failures with their output. After a
 deploy, `npm run check:live` verifies production read-only (crawler access,
-schema vs `business.json`, every sitemap URL, redirects, llms.txt, FAQ, `/en/`).
+schema vs `business.json`, every sitemap URL, redirects, llms.txt, FAQ, and
+`lang` + `hreflang` on every page in every language).
 
 ## Other standing rules
 

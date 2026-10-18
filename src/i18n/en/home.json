@@ -1,0 +1,52 @@
+{
+  "ctaQuote": "Get a quote →",
+  "hero": {
+    "chipLocation": "Sofia, Bulgaria",
+    "chipSpeed": "Fast turnaround",
+    "chipMaterials": "Quality materials",
+    "title": "Professional custom 3D printing",
+    "description": "We make prototypes, functional parts and small batches with precision and attention to detail — for individuals and for businesses. Have a ready model or just an idea? We help at every stage of the process.",
+    "ctaPortfolio": "Browse the portfolio",
+    "noteConsultation": "✓ Free consultation",
+    "noteReply": "✓ Reply within {hours} h",
+    "noteChannels": "✓ Viber & Instagram",
+    "imageAlt": "3D printing services – professional custom 3D printing",
+    "statLabel": "printed projects"
+  },
+  "props": {
+    "eyebrow": "Why choose us",
+    "heading": "Everything for your project, in one place",
+    "precision": { "title": "Precision", "text": "Accurate dimensions and a clean finish on every part, whatever its complexity." },
+    "speed": { "title": "Fast turnaround", "text": "Short production times — from a prototype to a finished small batch." },
+    "shape": { "title": "Any shape", "text": "Freedom of geometry — complex models that other methods can't produce." },
+    "support": { "title": "Support", "text": "We help from the idea to the finished model, at every stage of the process." }
+  },
+  "process": {
+    "eyebrow": "How we work",
+    "heading": "From idea to finished part in 4 steps",
+    "idea": { "title": "Send your idea", "text": "A model, a sketch or a description — via the form, Viber or Instagram." },
+    "quote": { "title": "Quote", "text": "We agree on the material, colour and deadline, and you get a clear price." },
+    "print": { "title": "Printing", "text": "We make the part with quality materials and quality control." },
+    "delivery": { "title": "Delivery", "text": "You receive the finished product — with care for every detail." }
+  },
+  "video": {
+    "eyebrow": "Video",
+    "heading": "See us in action",
+    "description": "In 60 seconds: how we turn an idea into a finished part — prototypes, functional parts, models and gifts, printed in Sofia.",
+    "subscribe": "Subscribe"
+  },
+  "about": {
+    "eyebrow": "About the technology",
+    "heading": "What is 3D printing?",
+    "p1": "3D printing is a technology for creating physical objects directly from a digital 3D model. By adding material layer by layer, a finished part is produced in a relatively short time, depending on its size and complexity.",
+    "p2": "The method is widely used both for developing prototypes and in real production, in fields such as architecture, industrial design, the automotive industry, aviation, medicine and the creative industries. Our 3D printing services cover parts of varying complexity and size.",
+    "p3": "One of the main advantages of 3D printing is freedom of form – parts with almost unlimited geometry and a wide range of sizes can be made. We offer 3D printing of small batches, prototypes and functional parts in high quality.",
+    "galleryAlt": "3D printing project {n}"
+  },
+  "cta": {
+    "title": "Ready to bring your idea to life?",
+    "description": "Get in touch today — we'll help you choose the best solution for your project.",
+    "quote": "Get a quote",
+    "call": "Call now"
+  }
+}

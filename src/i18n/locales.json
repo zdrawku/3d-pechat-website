@@ -1,0 +1,8 @@
+{
+  "defaultLocale": "bg",
+  "locales": [
+    { "code": "bg", "label": "Български", "englishName": "Bulgarian", "ogLocale": "bg_BG", "intl": "bg-BG" },
+    { "code": "en", "label": "English", "englishName": "English", "ogLocale": "en_US", "intl": "en-US" }
+  ],
+  "localizedPages": ["/", "/portfolio/", "/products/", "/prices/", "/contact/"]
+}

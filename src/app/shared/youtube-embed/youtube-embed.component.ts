@@ -5,6 +5,7 @@ import { IGX_CARD_DIRECTIVES, IgxIconButtonDirective, IgxIconComponent } from 'i
 
 import { Video } from '../../models/video.model';
 import { formatDuration, youtubeEmbedUrl } from './video.util';
+import { TranslatePipe } from '../../i18n/translate.pipe';
 
 /** GA4 global from index.html; absent during prerender and in unit tests. */
 declare const gtag: ((...args: unknown[]) => void) | undefined;
@@ -22,7 +23,7 @@ declare const gtag: ((...args: unknown[]) => void) | undefined;
  */
 @Component({
   selector: 'app-youtube-embed',
-  imports: [IGX_CARD_DIRECTIVES, IgxIconButtonDirective, IgxIconComponent],
+  imports: [IGX_CARD_DIRECTIVES, IgxIconButtonDirective, IgxIconComponent, TranslatePipe],
   templateUrl: './youtube-embed.component.html',
   styleUrls: ['./youtube-embed.component.scss']
 })

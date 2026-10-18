@@ -12,6 +12,7 @@ import { environment } from '../environments/environment';
 import { provideMarkdown } from 'ngx-markdown';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { TrailingSlashUrlSerializer } from './trailing-slash-url-serializer';
+import { provideI18n } from './i18n/provide-i18n';
 
 const providers: Provider = [
   provideRouter(routes, withInMemoryScrolling({
@@ -19,6 +20,8 @@ const providers: Provider = [
     scrollPositionRestoration: 'enabled'
   })),
   { provide: UrlSerializer, useClass: TrailingSlashUrlSerializer },
+  // The URL's language (/en/… → English) is active before the first render.
+  provideI18n(),
   provideClientHydration(withEventReplay()),
   provideHttpClient(withFetch()),
   provideMarkdown(),

@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { HappyCustomersComponent } from './happy-customers.component';
 import { GOOGLE_MAPS_PROFILE_URL, GOOGLE_REVIEW_URL } from '../../../data/site-links';
+import { I18nService } from '../../i18n/i18n.service';
 
 describe('HappyCustomersComponent', () => {
   let component: HappyCustomersComponent;
@@ -123,5 +124,29 @@ describe('HappyCustomersComponent', () => {
 
   it('uses the singular review count label for a single review', () => {
     expect(component.reviewCountLabel).toContain('ревю');
+  });
+
+  describe('in English', () => {
+    beforeEach(async () => {
+      await TestBed.inject(I18nService).use('en');
+      fixture = TestBed.createComponent(HappyCustomersComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+    });
+
+    afterEach(() => document.documentElement.setAttribute('lang', 'bg'));
+
+    it('translates the labels, months and count but keeps the customers’ own words', () => {
+      expect(component.formatDate('2026-07')).toBe('July 2026');
+      expect(component.reviewCountLabel).toBe(`${component.totalCount} reviews`);
+      const quote = fixture.nativeElement.querySelector('.hc_text') as HTMLElement;
+      expect(quote.getAttribute('lang')).withContext('quotes marked as Bulgarian').toBe('bg');
+      expect(fixture.nativeElement.querySelector('[data-testid="happy-customers-language-note"]')).not.toBeNull();
+    });
+  });
+
+  it('shows no language note on Bulgarian pages', () => {
+    expect(fixture.nativeElement.querySelector('[data-testid="happy-customers-language-note"]')).toBeNull();
+    expect((fixture.nativeElement.querySelector('.hc_text') as HTMLElement).hasAttribute('lang')).toBeFalse();
   });
 });

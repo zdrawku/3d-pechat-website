@@ -1,0 +1,112 @@
+{
+  "where-we-met": {
+    "name": "Where did we meet? A romantic gift for your partner!",
+    "description": "A romantic gift that marks the place where you met your partner, with its coordinates.",
+    "tags": ["gift", "Valentine's Day", "Valentine", "anniversary", "map", "location", "romance", "love"]
+  },
+  "variant-1": {
+    "name": "Variant 1: Rectangular card with the Bulgarian flag",
+    "description": "A rectangular coin card with the Bulgarian flag in horizontal stripes on the front.",
+    "tags": ["coin card", "Bulgaria", "flag", "collection", "gift", "coins"],
+    "readMore": "Coin card for the Bulgarian euro coins – a full set from 1 cent to 2 euros",
+    "links": ["View the model on MakerWorld"]
+  },
+  "variant-2": {
+    "name": "Variant 2: Bulgaria-shaped card with horizontal stripes",
+    "description": "A card in the shape of the map of Bulgaria, with horizontal coloured stripes.",
+    "tags": ["coin card", "Bulgaria", "flag", "collection", "gift", "coins"],
+    "readMore": "Coin card for the Bulgarian euro coins – a full set from 1 cent to 2 euros",
+    "links": ["View the model on MakerWorld", "Watch it in the video"]
+  },
+  "variant-3": {
+    "name": "Variant 3: European Union Bulgaria-shaped card in plain blue",
+    "description": "A Bulgaria-shaped card with a European Union design – a blue background with yellow stars.",
+    "tags": ["coin card", "Bulgaria", "flag", "collection", "gift", "coins"],
+    "readMore": "Coin card for the Bulgarian euro coins – a full set from 1 cent to 2 euros",
+    "links": ["View the model on MakerWorld"]
+  },
+  "variant-4": {
+    "name": "Variant 4: Personalised Bulgaria-shaped or rectangular cards",
+    "description": "Personalised cards – you decide the design and the shape of the card, and whether it has a contour photo or the national flag on the front or back. The sky's the limit!",
+    "tags": ["coin card", "Bulgaria", "flag", "collection", "gift", "coins"],
+    "customContent": {
+      "title": "You can personalise every aspect:",
+      "items": ["Shape of the card", "Photo or design on the front/back", "Bulgarian flag or another design", "Size and number of coin slots", "Special engravings or text"]
+    },
+    "readMore": "Coin card for the Bulgarian euro coins – a full set from 1 cent to 2 euros"
+  },
+  "variant-5": {
+    "name": "Variant 5: Rectangular cards with a premium case",
+    "description": "Personalised rectangular cards with a premium storage case.",
+    "tags": ["coin card", "Bulgaria", "flag", "collection", "gift", "coins", "premium"],
+    "customContent": {
+      "title": "Different colours for the card and the case:",
+      "items": ["Green, burgundy or black case", "Rectangular card with a tilted flag", "Rectangular coin card with a tilted Bulgarian flag (45 degrees)"]
+    },
+    "readMore": "Coin card for the Bulgarian euro coins – a full set from 1 cent to 2 euros"
+  },
+  "headphone-stand": {
+    "name": "Headphone stand 20 cm",
+    "description": "A 3D printed headphone stand with an optional money-box slot.",
+    "tags": ["headphones", "stand", "gaming", "office", "accessory", "music", "premium"],
+    "customContent": {
+      "title": "You can personalise every aspect:",
+      "items": ["Stand size up to 25 cm tall", "The stand can have a money-box slot on top", "Colour of your choice", "Great on a desk"]
+    }
+  },
+  "headphone-stand-big": {
+    "name": "Headphone stand 25 cm",
+    "description": "A 3D printed headphone stand with an optional money-box slot, 25 cm tall.",
+    "tags": ["headphones", "stand", "gaming", "office", "accessory", "music", "premium"],
+    "customContent": {
+      "title": "You can personalise every aspect:",
+      "items": ["Stand size up to 25 cm tall", "The stand can have a money-box slot on top", "Colour of your choice", "Great on a desk"]
+    }
+  },
+  "photo-frame-desktop": {
+    "name": "Photo stand / frame!",
+    "description": "An elegant 3D printed photo stand — a perfect gift for keeping precious memories of your loved ones.",
+    "tags": ["gift", "Valentine's Day", "Valentine", "anniversary", "map", "location", "romance", "love"]
+  },
+  "photo-frame-wall": {
+    "name": "Wall photo frame!",
+    "description": "A romantic gift – a wall photo frame that brings cosiness to any home.",
+    "tags": ["gift", "Valentine's Day", "Valentine", "anniversary", "map", "location", "romance", "love"]
+  },
+  "jewelry-stand-watches": {
+    "name": "Watch and jewellery organiser",
+    "description": "A compact, multi-purpose organiser that holds up to four watches as well as bracelets and rings. The model has a multi-level design — a central column supports two curved arms, which gives the displayed watches a clean, “floating” look. The base has a built-in tray with a raised rim — a safe place for rings and small pieces of jewellery.",
+    "tags": ["organiser", "watches", "jewellery", "bracelets", "rings", "stand", "holder", "accessory", "gift", "home"],
+    "customContent": {
+      "title": "Design advantages:",
+      "items": ["Holds up to 4 watches on two curved levels", "Built-in tray with a raised rim for rings and small pieces of jewellery", "Clean, “floating” look for the displayed watches", "Colour of your choice — perfect for a chest of drawers, a desk or a wardrobe"]
+    },
+    "links": ["View the model on MakerWorld"]
+  },
+  "razdeliteli-za-knigi": {
+    "name": "Bookmarks",
+    "description": "Bookmarks in a range of designs, or made to the customer's own design.",
+    "tags": ["bookmark", "divider", "book"],
+    "links": ["Watch it in the video"]
+  },
+  "standstrap-stoper-za-snoubord": {
+    "name": "StandStrap — snowboard stopper",
+    "description": "A clip that attaches to the edge of the snowboard in a second. The spiked plate under the base bites into the snow and the board stays exactly where you left it while you strap in standing up, without sitting down in the snow. The top end carries your phone number.",
+    "tags": ["snowboard", "stopper", "bindings", "winter sports", "mountain", "ski", "accessory", "personalised", "gift"],
+    "customContent": {
+      "title": "Design advantages:",
+      "items": ["Strap into your bindings standing up, without floundering in the snow", "Goes on and comes off in one move, then into your pocket", "Your phone number on the top end, so a lost board can find its way back to you", "Colour of your choice — the number can be a different colour from the body", "Fits a standard snowboard edge"]
+    },
+    "links": ["View the model on MakerWorld"]
+  },
+  "darzhach-za-evro-moneti-fidzhet-spinar": {
+    "name": "Euro coin holder — fidget spinner",
+    "description": "A 3D printed holder for 2-euro, 1-euro and 50-cent coins, with around 7 coins in each slot. The spinner version spins between your fingers — with click-on caps or with a roller bearing printed right into the body, with no metal parts.",
+    "tags": ["coins", "euro", "euro coins", "coin holder", "spinner", "fidget spinner", "stress relief", "toy", "desk", "gift"],
+    "customContent": {
+      "title": "Design advantages:",
+      "items": ["Separate slots for €2, €1 and 50 cents — up to about €24.50 in coins in total", "Spins like a fidget spinner — fun and calming on the desk", "Version with a roller bearing printed ready inside the body — no metal parts", "Compact — about 7.5 cm in diameter", "Colour of your choice"]
+    },
+    "links": ["View the model on MakerWorld"]
+  }
+}

@@ -104,3 +104,81 @@ test.describe('external links', () => {
     await expect(page.getByTestId('youtube-contact-button')).toBeVisible();
   });
 });
+
+/**
+ * Language switcher (approved design „A“, src/app/shared/language-switcher):
+ * the navbar pill opens an Ignite drop-down; choosing a language opens the
+ * same page in it. The footer carries plain, crawlable links to the same.
+ */
+test.describe('language switcher', () => {
+  test('opens the same page in English and back in Bulgarian', async ({ page }) => {
+    await page.goto('/prices/', { waitUntil: 'networkidle' });
+
+    await page.getByTestId('language-switcher').click();
+    await page.getByTestId('language-option-en').click();
+    await expect(page).toHaveURL(/\/en\/prices\/?$/);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(/3D printing prices/);
+    await expect(page.locator('.menu-trigger-label')).toHaveText('Menu');
+    await expect(page.getByTestId('language-switcher')).toHaveAttribute('aria-label', /^Language: English/);
+
+    await page.getByTestId('language-switcher').click();
+    await page.getByTestId('language-option-bg').click();
+    await expect(page).toHaveURL(/\/prices\/?$/);
+    await expect(page).not.toHaveURL(/\/en\//);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'bg');
+    await expect(page.locator('.menu-trigger-label')).toHaveText('Меню');
+  });
+
+  test('works from the keyboard', async ({ page }) => {
+    await page.goto('/contact/', { waitUntil: 'networkidle' });
+    const trigger = page.getByTestId('language-switcher');
+    await trigger.focus();
+    await page.keyboard.press('Enter');
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    // Bulgarian (current) → English is the next option.
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    await expect(page).toHaveURL(/\/en\/contact\/?$/);
+    // The English page itself, not the 404 (a URL check alone can't tell).
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(/Contact – custom 3D printing in Sofia/);
+  });
+
+  test('leads from a Bulgarian-only blog post to the English home page', async ({ page }) => {
+    await page.goto('/blog/what-is-3d-printing/', { waitUntil: 'networkidle' });
+    await page.getByTestId('language-switcher').click();
+    await page.getByTestId('language-option-en').click();
+    await expect(page).toHaveURL(/\/en\/?$/);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(/Professional custom 3D printing/);
+  });
+
+  test('the footer links the same page in the other language', async ({ page }) => {
+    await page.goto('/products/');
+    await expect(page.getByTestId('footer-language-en')).toHaveAttribute('href', '/en/products/');
+    await page.goto('/en/products/');
+    await expect(page.getByTestId('footer-language-bg')).toHaveAttribute('href', '/products/');
+  });
+
+  // Common phone widths down to the 320px floor: every navbar control stays
+  // fully on screen (igx-navbar clips overflow, so an overhang would hide it).
+  for (const width of [320, 360, 375, 390]) {
+    test(`fits the phone navbar at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 740 });
+      await page.goto('/', { waitUntil: 'networkidle' });
+      const controls = {
+        menu: page.getByTestId('menu-trigger'),
+        cta: page.locator('a.nav_cta_button'),
+        language: page.getByTestId('language-switcher'),
+        theme: page.getByTestId('theme-toggle'),
+      };
+      for (const [name, control] of Object.entries(controls)) {
+        const box = await control.boundingBox();
+        expect(box, `${name} rendered`).not.toBeNull();
+        expect(box!.x, `${name} left edge`).toBeGreaterThanOrEqual(0);
+        expect(box!.x + box!.width, `${name} right edge`).toBeLessThanOrEqual(width);
+      }
+    });
+  }
+});

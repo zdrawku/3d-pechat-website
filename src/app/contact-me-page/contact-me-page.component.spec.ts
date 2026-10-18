@@ -6,6 +6,7 @@ import { provideRouter } from '@angular/router';
 import { IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective } from 'igniteui-angular';
 import { ContactMePageComponent } from './contact-me-page.component';
 import { BUSINESS, openingHoursLabel } from '../../data/business';
+import { I18nService } from '../i18n/i18n.service';
 
 describe('ContactMePageComponent', () => {
   let component: ContactMePageComponent;
@@ -115,6 +116,42 @@ describe('ContactMePageComponent', () => {
       const open = spyOn(window, 'open');
       pill!.click();
       expect(open).toHaveBeenCalledWith('https://www.youtube.com/@3dpechatbg', '_blank');
+    });
+  });
+
+  describe('in English (/en/contact/)', () => {
+    const host = (): HTMLElement => fixture.nativeElement;
+
+    beforeEach(async () => {
+      await TestBed.inject(I18nService).use('en');
+      fixture = TestBed.createComponent(ContactMePageComponent);
+      fixture.detectChanges();
+    });
+
+    afterEach(() => document.documentElement.setAttribute('lang', 'bg'));
+
+    it('shows the transliterated address, English hours and the reply time from business.json', () => {
+      expect(host().querySelector('[data-testid="contact-address"]')?.textContent).toContain(BUSINESS.displayAddressEn);
+      expect(host().querySelector('[data-testid="contact-hours"]')?.textContent).toContain('Every day, 9:00–18:00');
+      expect(host().querySelector('.response-note')?.textContent).toContain(`within ${BUSINESS.replyWithinHours} hours`);
+    });
+
+    it('lists the accepted file formats from business.json in English', () => {
+      const note = host().querySelector('[data-testid="contact-file-note"]')?.textContent ?? '';
+      for (const format of BUSINESS.fileFormats) {
+        expect(note).withContext(format).toContain(format);
+      }
+      expect(note).toContain('The form doesn');
+    });
+
+    it('states the free-delivery threshold from business.json', () => {
+      expect(host().querySelector('[data-testid="contact-how"]')?.textContent)
+        .toContain(`free anywhere in Bulgaria for orders over €${BUSINESS.freeDeliveryOverEur}`);
+    });
+
+    it('links the „good to know“ cards to the English prices and portfolio', () => {
+      const hrefs = Array.from(host().querySelectorAll<HTMLAnchorElement>('[data-testid="contact-how"] a')).map(a => a.getAttribute('href'));
+      expect(hrefs).toEqual(['/en/prices', '/en/portfolio']);
     });
   });
 });
