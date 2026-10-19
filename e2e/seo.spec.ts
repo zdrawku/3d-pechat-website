@@ -64,15 +64,15 @@ test.describe('SEO metadata', () => {
     });
   }
 
-  test('sitemap.xml lists every core and blog route', async ({ request, baseURL }) => {
+  test('sitemap.xml lists every core and blog route', async ({ request }) => {
     const res = await request.get('/sitemap.xml');
     expect(res.status()).toBe(200);
     const xml = await res.text();
 
     for (const route of ALL_ROUTES) {
-      // Home is "/" — match the bare domain; others match their path.
-      const needle = route.path === '/' ? '3dpechat.bg/' : route.path.replace(/^\//, '');
-      expect(xml, `${route.path} present in sitemap`).toContain(needle);
+      // The exact <loc>: a bare path would also match another page's hreflang links.
+      const loc = `https://3dpechat.bg${route.path.replace(/\/?$/, '/')}`;
+      expect(xml, `${route.path} present in sitemap`).toContain(`<loc>${loc}</loc>`);
     }
   });
 
@@ -139,24 +139,52 @@ test.describe('SEO metadata', () => {
     expect(text).not.toMatch(/SLA и SLS/);
   });
 
-  // Phase 5: the home page and /en/ declare each other; every other page has
-  // no hreflang and stays Bulgarian (SeoService resets both on navigation).
-  for (const [route, lang, locale] of [['/', 'bg', 'bg_BG'], ['/en/', 'en', 'en_US']] as const) {
-    test(`${route} has lang="${lang}", og:locale ${locale} and the bg/en/x-default hreflang pair`, async ({ page }) => {
-      await page.goto(route);
-      await expect(page.locator('html')).toHaveAttribute('lang', lang);
-      await expect(page.locator('meta[property="og:locale"]')).toHaveAttribute('content', locale);
-      const alt = (h: string) => page.locator(`link[rel="alternate"][hreflang="${h}"]`);
-      await expect(alt('bg')).toHaveAttribute('href', 'https://3dpechat.bg/');
-      await expect(alt('en')).toHaveAttribute('href', 'https://3dpechat.bg/en/');
-      await expect(alt('x-default')).toHaveAttribute('href', 'https://3dpechat.bg/');
-    });
+  // Languages (src/i18n/locales.json): every main page exists in Bulgarian and
+  // English, and each version declares all of them with Bulgarian as x-default.
+  // The blog is Bulgarian-only and carries no hreflang.
+  const locales = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'src/i18n/locales.json'), 'utf8')) as {
+    defaultLocale: string;
+    locales: { code: string; ogLocale: string }[];
+    localizedPages: string[];
+  };
+  const inLanguage = (page: string, code: string) => (code === locales.defaultLocale ? page : `/${code}${page}`);
+
+  for (const page of locales.localizedPages) {
+    for (const { code, ogLocale } of locales.locales) {
+      const route = inLanguage(page, code);
+      test(`${route} has lang="${code}", og:locale ${ogLocale} and every language version in hreflang`, async ({ page: tab }) => {
+        await tab.goto(route);
+        await expect(tab.locator('html')).toHaveAttribute('lang', code);
+        await expect(tab.locator('meta[property="og:locale"]')).toHaveAttribute('content', ogLocale);
+        await expect(tab.locator('link[rel="canonical"]')).toHaveAttribute('href', `https://3dpechat.bg${route}`);
+        for (const other of locales.locales) {
+          await expect(tab.locator(`link[rel="alternate"][hreflang="${other.code}"]`))
+            .toHaveAttribute('href', `https://3dpechat.bg${inLanguage(page, other.code)}`);
+        }
+        await expect(tab.locator('link[rel="alternate"][hreflang="x-default"]')).toHaveAttribute('href', `https://3dpechat.bg${page}`);
+      });
+    }
   }
 
-  test('pages other than the home pair carry no hreflang and stay Bulgarian', async ({ page }) => {
-    await page.goto('/prices/');
+  test('blog pages carry no hreflang and stay Bulgarian', async ({ page }) => {
+    await page.goto('/blog/what-is-3d-printing/');
     await expect(page.locator('html')).toHaveAttribute('lang', 'bg');
     await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(0);
+  });
+
+  test('/en/prices/ shows the English FAQ and mirrors it as FAQPage JSON-LD', async ({ page }) => {
+    // The English copy is keyed by FAQ id; the order comes from src/data/faq.json.
+    const english = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'src/i18n/en/content/faq.json'), 'utf8')) as Record<string, { question: string }>;
+    const faq = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'src/data/faq.json'), 'utf8')) as { id: string }[];
+    const questions = faq.map(({ id }) => english[id].question);
+    await page.goto('/en/prices/');
+    const section = page.locator('section#faq');
+    for (const question of questions) {
+      await expect(section.getByRole('heading', { name: question })).toBeVisible();
+    }
+    const blocks = await page.locator('script[type="application/ld+json"]').allTextContents();
+    const faqPage = blocks.map((b) => JSON.parse(b)).find((b) => b['@type'] === 'FAQPage');
+    expect(faqPage?.mainEntity.map((q: { name: string }) => q.name)).toEqual(questions);
   });
 
   test('/prices/ shows every faq.json question and mirrors them as FAQPage JSON-LD', async ({ page }) => {

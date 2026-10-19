@@ -1,23 +1,13 @@
-import { BUSINESS, formatPhone, openingHoursLabel, openingHoursLabelEn, priceRangeEn } from './business';
+import { TestBed } from '@angular/core/testing';
+
+import { BUSINESS, formatPhone } from './business';
+import { I18nService } from '../app/i18n/i18n.service';
+import { openingHoursText } from '../app/i18n/business-copy';
 
 describe('business data', () => {
-  it('formats the current opening hours as Bulgarian copy', () => {
-    expect(openingHoursLabel()).toBe('всеки ден от 9:00 до 18:00');
-  });
-
-  it('lists partial weeks by day', () => {
-    expect(openingHoursLabel([
-      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '09:00', closes: '18:00' },
-      { days: ['Saturday'], opens: '10:00', closes: '14:00' }
-    ])).toBe('пон.–пет. от 9:00 до 18:00; съб. от 10:00 до 14:00');
-  });
-
-  it('formats English hours, price range and phone for /en/', () => {
-    expect(openingHoursLabelEn()).toBe('Every day, 9:00–18:00');
-    expect(openingHoursLabelEn([
-      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '09:00', closes: '18:00' }
-    ])).toBe('Mon–Fri 9:00–18:00');
-    expect(priceRangeEn()).toBe('€0.80–€1.50');
+  // Opening hours as text (every language, partial weeks) are formatted by
+  // src/app/i18n/business-copy.ts — see business-copy.spec.ts.
+  it('formats the phone the way the site prints it', () => {
     expect(formatPhone()).toBe('+359 883 310 616');
   });
 
@@ -27,7 +17,7 @@ describe('business data', () => {
     expect(BUSINESS.displayAddress).toContain('1700 София');
   });
 
-  // The structured numbers (read by the calculator and the English page) and
+  // The structured numbers (read by the calculator and every language's pages) and
   // the Bulgarian prose facts (read by the FAQ, llms.txt and the blog prompt)
   // must say the same thing.
   it('states every structured number in the prose facts too', () => {
@@ -42,7 +32,8 @@ describe('business data', () => {
     expect(facts).toContain(`${BUSINESS.rushSurchargePercent}% надценка`);
     expect(facts).toContain(`до ${BUSINESS.maxPieceCm} × ${BUSINESS.maxPieceCm} × ${BUSINESS.maxPieceCm} см`);
     expect(facts).toContain(`безплатна в цялата страна за поръчки над ${BUSINESS.freeDeliveryOverEur} €`);
-    expect(facts).toContain(openingHoursLabel());
+    // The hours exactly as the contact page renders them in Bulgarian.
+    expect(facts).toContain(openingHoursText(TestBed.inject(I18nService)));
     expect(facts).toContain(`до ${BUSINESS.replyWithinHours} часа`);
     for (const format of BUSINESS.fileFormats) {
       expect(facts).withContext(format).toContain(format);

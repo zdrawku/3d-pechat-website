@@ -1,52 +1,56 @@
 <igx-navbar class="navigation_bar_1">
   <igx-navbar-title class="navbar-content">
-    <button type="button" [igxToggleAction]="navigationdrawer1" class="menu-trigger" aria-label="Отвори менюто"
-      data-testid="menu-trigger">
+    <button type="button" [igxToggleAction]="navigationdrawer1" class="menu-trigger"
+      [attr.aria-label]="'shell.navbar.openMenu' | t" data-testid="menu-trigger">
       <span class="menu-trigger-bars">
         <span></span>
         <span></span>
         <span></span>
       </span>
-      <span class="menu-trigger-label">Меню</span>
+      <span class="menu-trigger-label">{{ 'shell.navbar.menu' | t }}</span>
     </button>
     <p class="content">
-      <span class="full-text">3D Печат услуги</span>
-      <span class="short-text">3D Печат</span>
+      <span class="full-text">{{ 'shell.navbar.brandFull' | t }}</span>
+      <span class="short-text">{{ 'shell.navbar.brandShort' | t }}</span>
     </p>
   </igx-navbar-title>
 
-  <a igxButton="contained" [routerLink]="[`/contact`]" class="nav_cta_button">
-    Заяви оферта
+  <a igxButton="contained" [routerLink]="'/contact' | localizePath" class="nav_cta_button">
+    {{ 'shell.navbar.cta' | t }}
   </a>
-  <a href="https://www.instagram.com/3dpechat.bg" target="_blank" rel="noopener noreferrer" 
-     igxIconButton="flat" class="icon_button_5" aria-label="Instagram профил"
+  <a href="https://www.instagram.com/3dpechat.bg" target="_blank" rel="noopener noreferrer"
+     igxIconButton="flat" class="icon_button_5" [attr.aria-label]="'shell.social.instagram' | t"
      [igxTooltipTarget]="instagramNavTooltip">
     <igx-icon class="icon" family="imx-icons" name="instagram"></igx-icon>
   </a>
   <div igxTooltip #instagramNavTooltip="tooltip">
-    Последвайте ни в Instagram
+    {{ 'shell.navbar.instagramTooltip' | t }}
   </div>
-  
+
   <a href="https://www.tiktok.com/@3dpechat.bg" target="_blank" rel="noopener noreferrer"
-     igxIconButton="flat" class="icon_button_5" aria-label="TikTok профил"
+     igxIconButton="flat" class="icon_button_5" [attr.aria-label]="'shell.social.tiktok' | t"
      [igxTooltipTarget]="tiktokNavTooltip">
     <igx-icon class="icon" family="imx-icons" name="tiktok"></igx-icon>
   </a>
   <div igxTooltip #tiktokNavTooltip="tooltip">
-    Гледайте ни в TikTok
+    {{ 'shell.navbar.tiktokTooltip' | t }}
   </div>
 
   <a [href]="youtubeChannelUrl" target="_blank" rel="noopener noreferrer"
-     igxIconButton="flat" class="icon_button_5" aria-label="YouTube канал"
+     igxIconButton="flat" class="icon_button_5" [attr.aria-label]="'shell.social.youtube' | t"
      [igxTooltipTarget]="youtubeNavTooltip" data-testid="youtube-nav-link">
     <igx-icon class="icon" family="imx-icons" name="youtube"></igx-icon>
   </a>
   <div igxTooltip #youtubeNavTooltip="tooltip">
-    Гледайте ни в YouTube
+    {{ 'shell.navbar.youtubeTooltip' | t }}
   </div>
-  
+
+  <!-- Language switcher (approved design „A“): next to the theme switch, the
+       other "preference" control. -->
+  <app-language-switcher></app-language-switcher>
+
   <button class="theme-switch" [class.is-dark]="isDarkTheme" (click)="toggleTheme()"
-          aria-label="Смени тема" [igxTooltipTarget]="themeTooltip" data-testid="theme-toggle">
+          [attr.aria-label]="'shell.navbar.theme' | t" [igxTooltipTarget]="themeTooltip" data-testid="theme-toggle">
     <span class="theme-switch-track">
       <igx-icon class="theme-switch-end theme-switch-end--sun">light_mode</igx-icon>
       <igx-icon class="theme-switch-end theme-switch-end--moon">dark_mode</igx-icon>
@@ -56,7 +60,7 @@
     </span>
   </button>
   <div igxTooltip #themeTooltip="tooltip">
-    Смени тема
+    {{ 'shell.navbar.theme' | t }}
   </div>
 </igx-navbar>
 <div class="row-layout horizontal_group_1">
@@ -68,78 +72,80 @@
     (opened)="drawerOpen = true" (closed)="drawerOpen = false"
     [enableGestures]="true" data-testid="nav-drawer">
     <ng-template igxDrawer>
-      <div class="drawer_group_label">Разгледай</div>
+      <div class="drawer_group_label">{{ 'shell.drawer.explore' | t }}</div>
       <div class="drawer_chip_list drawer_chip_list_first">
-        <a class="drawer_chip" [routerLink]="['/']" routerLinkActive="active"
+        <a class="drawer_chip" [routerLink]="'/' | localizePath" routerLinkActive="active"
            [routerLinkActiveOptions]="{ exact: true }" (click)="closeDrawerOnMobile()">
           <span class="drawer_chip_tile">
             <igx-icon>home_work</igx-icon>
           </span>
           <span class="drawer_chip_txt">
-            <b>Начало</b>
-            <span>Общ преглед</span>
+            <b>{{ 'shell.drawer.home.title' | t }}</b>
+            <span>{{ 'shell.drawer.home.subtitle' | t }}</span>
           </span>
         </a>
-        <a class="drawer_chip" [routerLink]="['/portfolio']" routerLinkActive="active"
+        <a class="drawer_chip" [routerLink]="'/portfolio' | localizePath" routerLinkActive="active"
            (click)="closeDrawerOnMobile()">
           <span class="drawer_chip_tile">
             <igx-icon>co_present</igx-icon>
           </span>
           <span class="drawer_chip_txt">
-            <b>Портфолио</b>
-            <span>Проекти</span>
+            <b>{{ 'shell.drawer.portfolio.title' | t }}</b>
+            <span>{{ 'shell.drawer.portfolio.subtitle' | t }}</span>
           </span>
         </a>
-        <a class="drawer_chip" [routerLink]="['/products']" routerLinkActive="active"
+        <a class="drawer_chip" [routerLink]="'/products' | localizePath" routerLinkActive="active"
            (click)="closeDrawerOnMobile()">
           <span class="drawer_chip_tile">
             <igx-icon>inventory_2</igx-icon>
           </span>
           <span class="drawer_chip_txt">
-            <b>Продукти</b>
-            <span>За поръчка</span>
+            <b>{{ 'shell.drawer.products.title' | t }}</b>
+            <span>{{ 'shell.drawer.products.subtitle' | t }}</span>
           </span>
         </a>
-        <a class="drawer_chip" [routerLink]="['/prices']" routerLinkActive="active"
+        <a class="drawer_chip" [routerLink]="'/prices' | localizePath" routerLinkActive="active"
            (click)="closeDrawerOnMobile()">
           <span class="drawer_chip_tile">
             <igx-icon>euro</igx-icon>
           </span>
           <span class="drawer_chip_txt">
-            <b>Цени</b>
-            <span>Тарифи</span>
+            <b>{{ 'shell.drawer.prices.title' | t }}</b>
+            <span>{{ 'shell.drawer.prices.subtitle' | t }}</span>
           </span>
         </a>
       </div>
 
-      <div class="drawer_group_label">Свържи се</div>
+      <div class="drawer_group_label">{{ 'shell.drawer.connect' | t }}</div>
       <div class="drawer_chip_list">
-        <a class="drawer_chip" [routerLink]="['/contact']" routerLinkActive="active"
+        <a class="drawer_chip" [routerLink]="'/contact' | localizePath" routerLinkActive="active"
            (click)="closeDrawerOnMobile()">
           <span class="drawer_chip_tile">
             <igx-icon>call</igx-icon>
           </span>
           <span class="drawer_chip_txt">
-            <b>Свържете се</b>
-            <span>Форма</span>
+            <b>{{ 'shell.drawer.contact.title' | t }}</b>
+            <span>{{ 'shell.drawer.contact.subtitle' | t }}</span>
           </span>
         </a>
+        <!-- The blog is Bulgarian-only: from another language it leads to the
+             Bulgarian articles, marked with hreflang. -->
         <a class="drawer_chip" [routerLink]="['/blog']" routerLinkActive="active"
-           (click)="closeDrawerOnMobile()">
+           [attr.hreflang]="i18n.langIfForeign()" (click)="closeDrawerOnMobile()">
           <span class="drawer_chip_tile">
             <igx-icon>article</igx-icon>
           </span>
           <span class="drawer_chip_txt">
-            <b>Блог</b>
-            <span>Статии</span>
+            <b>{{ 'shell.drawer.blog.title' | t }}</b>
+            <span>{{ 'shell.drawer.blog.subtitle' | t }}</span>
           </span>
         </a>
       </div>
 
       <div class="drawer_brand_card">
-        <img src="assets/logo-drawer.webp" alt="3DPechat.bg лого"
+        <img src="assets/logo-drawer.webp" [alt]="'shell.drawer.logoAlt' | t"
              width="96" height="96" loading="lazy" decoding="async" />
-        <span class="drawer_brand_tag">Направено в София · от 2025</span>
+        <span class="drawer_brand_tag">{{ 'shell.drawer.brandTag' | t }}</span>
       </div>
     </ng-template>
   </igx-nav-drawer>
@@ -156,80 +162,86 @@
                 print
               </igx-icon>
               <p class="ig-typography__subtitle-2 title_site_footer">
-                3D Печат Услуги
+                {{ 'shell.footer.brand' | t }}
               </p>
             </div>
             <p class="ig-typography__body-2 content_2">
-              София, България
+              {{ 'shell.footer.location' | t }}
             </p>
             <div class="row-layout row_layout_-1">
-              <a href="https://www.instagram.com/3dpechat.bg" target="_blank" rel="noopener noreferrer" 
-                 aria-label="Instagram профил" [igxTooltipTarget]="instagramFooterTooltip">
+              <a href="https://www.instagram.com/3dpechat.bg" target="_blank" rel="noopener noreferrer"
+                 [attr.aria-label]="'shell.social.instagram' | t" [igxTooltipTarget]="instagramFooterTooltip">
                 <igx-icon class="icon_site_footer" family="imx-icons" name="instagram"></igx-icon>
               </a>
               <div igxTooltip #instagramFooterTooltip="tooltip">
-                Instagram: Снимки на наши проекти
+                {{ 'shell.footer.instagramTooltip' | t }}
               </div>
-              
-              <a href="https://www.tiktok.com/@3dpechat.bg" target="_blank" rel="noopener noreferrer" 
-                 aria-label="TikTok профил" [igxTooltipTarget]="tiktokFooterTooltip">
+
+              <a href="https://www.tiktok.com/@3dpechat.bg" target="_blank" rel="noopener noreferrer"
+                 [attr.aria-label]="'shell.social.tiktok' | t" [igxTooltipTarget]="tiktokFooterTooltip">
                 <igx-icon class="icon_site_footer" family="imx-icons" name="tiktok"></igx-icon>
               </a>
               <div igxTooltip #tiktokFooterTooltip="tooltip">
-                TikTok: Видеа от 3D печат процеса
+                {{ 'shell.footer.tiktokTooltip' | t }}
               </div>
 
               <a [href]="youtubeChannelUrl" target="_blank" rel="noopener noreferrer"
-                 aria-label="YouTube канал" [igxTooltipTarget]="youtubeFooterTooltip"
+                 [attr.aria-label]="'shell.social.youtube' | t" [igxTooltipTarget]="youtubeFooterTooltip"
                  data-testid="youtube-footer-link">
                 <igx-icon class="icon_site_footer" family="imx-icons" name="youtube"></igx-icon>
               </a>
               <div igxTooltip #youtubeFooterTooltip="tooltip">
-                YouTube: Видеа от нашата работилница
+                {{ 'shell.footer.youtubeTooltip' | t }}
               </div>
             </div>
           </div>
           <div class="column-layout column_layout">
             <p class="ig-typography__subtitle-2 content">
-              Бързи връзки
+              {{ 'shell.footer.quickLinks' | t }}
             </p>
-            <a [routerLink]="['/']" class="ig-typography__body-2 footer_link">
-              Начало
+            <a [routerLink]="'/' | localizePath" class="ig-typography__body-2 footer_link">
+              {{ 'shell.footer.home' | t }}
             </a>
-            <a [routerLink]="['/portfolio']" class="ig-typography__body-2 footer_link">
-              Портфолио
+            <a [routerLink]="'/portfolio' | localizePath" class="ig-typography__body-2 footer_link">
+              {{ 'shell.footer.portfolio' | t }}
             </a>
-            <a [routerLink]="['/prices']" class="ig-typography__body-2 footer_link">
-              Цени
+            <a [routerLink]="'/prices' | localizePath" class="ig-typography__body-2 footer_link">
+              {{ 'shell.footer.prices' | t }}
             </a>
-            <a [routerLink]="['/blog']" class="ig-typography__body-2 footer_link">
-              Блог
+            <a [routerLink]="['/blog']" class="ig-typography__body-2 footer_link"
+               [attr.hreflang]="i18n.langIfForeign()">
+              {{ 'shell.footer.blog' | t }}
             </a>
-            <a [routerLink]="['/en']" class="ig-typography__body-2 footer_link" hreflang="en" lang="en"
-               data-testid="footer-english-link">
-              English
-            </a>
+            <!-- Plain, crawlable links to this page in every other language (the
+                 navbar switcher's menu only exists while it is open). -->
+            @for (locale of i18n.otherLocales(); track locale.code) {
+              <a [routerLink]="languageLink(locale.code)" class="ig-typography__body-2 footer_link"
+                 [attr.hreflang]="locale.code" [attr.lang]="locale.code"
+                 [attr.data-testid]="'footer-language-' + locale.code">
+                {{ locale.label }}
+              </a>
+            }
           </div>
           <div class="column-layout column_layout">
             <p class="ig-typography__subtitle-2 content">
-              Услуги
+              {{ 'shell.footer.services' | t }}
             </p>
-            <a [routerLink]="['/products']" class="ig-typography__body-2 footer_link">
-              Продукти
+            <a [routerLink]="'/products' | localizePath" class="ig-typography__body-2 footer_link">
+              {{ 'shell.footer.products' | t }}
             </a>
-            <a [routerLink]="['/prices']" class="ig-typography__body-2 footer_link">
-              Ценоразпис
+            <a [routerLink]="'/prices' | localizePath" class="ig-typography__body-2 footer_link">
+              {{ 'shell.footer.priceList' | t }}
             </a>
-            <a [routerLink]="['/contact']" class="ig-typography__body-2 footer_link">
-              Заяви оферта
+            <a [routerLink]="'/contact' | localizePath" class="ig-typography__body-2 footer_link">
+              {{ 'shell.footer.quote' | t }}
             </a>
             <a href="viber://chat?number=%2B359883310616" class="ig-typography__body-2 footer_link">
-              Пиши във Viber
+              {{ 'shell.footer.viber' | t }}
             </a>
           </div>
           <div class="column-layout column_layout_-3">
             <p class="ig-typography__subtitle-2 content">
-              Контакти
+              {{ 'shell.footer.contacts' | t }}
             </p>
             <div class="row-layout row_layout_-2">
               <igx-icon class="icon_mail_footer">
@@ -252,7 +264,7 @@
                 business
               </igx-icon>
               <p class="ig-typography__body-2 content_2" data-testid="footer-address">
-                {{ displayAddress }}
+                {{ displayAddress() }}
               </p>
             </div>
           </div>
@@ -260,16 +272,16 @@
       </div>
       <div class="row-layout row_layout_-7">
         <p class="ig-typography__body-2 content_2">
-          © 2026 3dpechat.bg - All Rights Reserved
+          {{ 'shell.footer.copyright' | t }}
         </p>
         <a [href]="googleReviewUrl" target="_blank" rel="noopener noreferrer"
            class="review_cta_footer" data-testid="footer-review-cta">
           <span class="review_cta_google_mark" aria-hidden="true">G</span>
           <span class="review_cta_txt">
-            <b>Хареса ли ви работата ни?</b>
-            <span>Споделете мнението си в Google</span>
+            <b>{{ 'shell.footer.reviewTitle' | t }}</b>
+            <span>{{ 'shell.footer.reviewText' | t }}</span>
           </span>
-          <span class="review_cta_btn">⭐ Остави ревю</span>
+          <span class="review_cta_btn">{{ 'shell.footer.reviewButton' | t }}</span>
         </a>
       </div>
     </footer>

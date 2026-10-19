@@ -1,28 +1,28 @@
 <header class="page-banner">
   <div class="page-banner__titles">
-    <h1 class="page-banner__title">Продукти и проекти моделирани за 3D печат</h1>
-    <p class="page-banner__subtitle">3D принтирани решения</p>
+    <h1 class="page-banner__title">{{ 'portfolio.title' | t }}</h1>
+    <p class="page-banner__subtitle">{{ 'portfolio.subtitle' | t }}</p>
   </div>
 </header>
 
 <section class="portfolio-intro">
   <p>
-    Тук са събрани част от проектите, които сме отпечатали по поръчка: практични аксесоари за дома, спорта и хобито, организатори, играчки и подаръци. Всеки детайл започва от готов модел или от идея и се изработва от подбран филамент – можете да го получите в избран цвят и размер, а цената зависи от теглото на модела.
+    {{ 'portfolio.intro' | t }}
   </p>
 </section>
 
 <div class="row-layout image_gallery_section_template_toys_hand_painting portfolio-first-section">
   <div class="column-layout column_layout_4">
     <div class="column-layout column_layout_5">
-      <h2 class="title_3">Практични изделия и аксесоари</h2>
+      <h2 class="title_3">{{ 'portfolio.practical.heading' | t }}</h2>
       <p class="portfolio-caption">
-        Разделители за книги, поставки за слушалки, монетници, държачи за спортно оборудване и защити за дронове – функционални детайли, проектирани и отпечатани с мисъл за ежедневната им употреба.
+        {{ 'portfolio.practical.caption' | t }}
       </p>
     </div>
     <div class="masonry-gallery img-focus stagger-in">
-      @for (image of carouselImages; track image.src; let i = $index) {
+      @for (image of carouselImages(); track image.src; let i = $index) {
         <div class="masonry-item" [style.--i]="i">
-          <img [src]="image.src" [alt]="image.alt || ('3D печат проект ' + (i + 1))" class="masonry-image" loading="lazy" />
+          <img [src]="image.src" [alt]="image.alt || ('portfolio.galleryAlt' | t: { n: i + 1 })" [attr.lang]="image.lang" class="masonry-image" loading="lazy" />
         </div>
         <!-- Quote CTA (shared .cta-band) spanning the wall after ~4 rows of
              photos: after 4 at 1 column, 9 at 2, 13 at 3. One copy per column
@@ -31,18 +31,18 @@
              with the current photo set; retune if the photos change a lot. -->
         @if (i === 3 || i === 8 || i === 12) {
           <div class="cta-band portfolio-cta" [attr.data-after]="i + 1" data-testid="portfolio-cta">
-            <p class="cta-band__title">Харесва ли ви някой от проектите?</p>
+            <p class="cta-band__title">{{ 'portfolio.cta.title' | t }}</p>
             <p class="cta-band__desc">
-              Ще го отпечатаме в избран цвят и размер – или ще изработим нещо по ваша идея.
+              {{ 'portfolio.cta.description' | t }}
             </p>
             <div class="cta-band__actions">
-              <a igxButton="contained" routerLink="/contact" class="cta-band__btn">
+              <a igxButton="contained" [routerLink]="'/contact' | localizePath" class="cta-band__btn">
                 <igx-icon aria-hidden="true">request_quote</igx-icon>
-                Заявете оферта
+                {{ 'portfolio.cta.quote' | t }}
               </a>
-              <a igxButton="outlined" routerLink="/prices" class="portfolio-cta__prices">
+              <a igxButton="outlined" [routerLink]="'/prices' | localizePath" class="portfolio-cta__prices">
                 <igx-icon aria-hidden="true">scale</igx-icon>
-                Цени за 3D печат
+                {{ 'portfolio.cta.prices' | t }}
               </a>
             </div>
           </div>
@@ -55,23 +55,19 @@
   <div class="column-layout column_layout_4">
     <div class="column-layout column_layout_5">
       <h2 class="title_3">
-        Играчки за ръчно рисуване
+        {{ 'portfolio.toys.heading' | t }}
       </h2>
       <h3 class="title_4">
-        Разгледайте нашите уникални играчки, готови за творческо докосване
+        {{ 'portfolio.toys.subheading' | t }}
       </h3>
       <p class="portfolio-caption">
-        Фигури, отпечатани и готови за боядисване – подходящи за подарък, за деца и за творчески занимания у дома.
+        {{ 'portfolio.toys.caption' | t }}
       </p>
     </div>
     <div class="row-layout row_layout_3 img-focus stagger-in stagger-in--auto">
-      <img src="/assets/real-images/20251227_201101.webp" alt="Играчка за ръчно рисуване" class="image_7" loading="lazy" />
-      <img src="/assets/real-images/20250109_183236.webp" alt="Играчка за ръчно рисуване" class="image_7" loading="lazy" />
-      <img src="/assets/real-images/20251218_180815.webp" alt="Играчка за ръчно рисуване" class="image_7" loading="lazy" />
-      <img src="/assets/real-images/20250113_203642.webp" alt="Играчка за ръчно рисуване" class="image_7" loading="lazy" />
-      <img src="/assets/real-images/20251213_122205.webp" alt="Играчка за ръчно рисуване" class="image_7" loading="lazy" />
-      <img src="/assets/real-images/20251213_195315.webp" alt="Играчка за ръчно рисуване" class="image_7" loading="lazy" />
-      <img src="/assets/real-images/20251218_091205.webp" alt="Играчка за ръчно рисуване" class="image_7" loading="lazy" />
+      @for (src of toyImages; track src) {
+        <img [src]="src" [alt]="'portfolio.toys.imageAlt' | t" class="image_7" loading="lazy" />
+      }
     </div>
   </div>
 </div>

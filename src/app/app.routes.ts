@@ -1,42 +1,74 @@
-import { Routes } from '@angular/router';
+import { Route, Routes } from '@angular/router';
 
-export const routes: Routes = [
+import { localeGuard } from './i18n/provide-i18n';
+import { DEFAULT_LOCALE, Locale, TRANSLATED_LOCALES } from './i18n/locales';
+
+/**
+ * Route props that put a route and everything under it in a language: the
+ * guard loads and activates it before any page renders (src/i18n/README.md).
+ * Spread BEFORE `path`, so the blog block keeps the `path: 'blog', children: [`
+ * shape the auto-blog scaffolder's regex expects (scripts/auto-blog/preflight.js).
+ */
+const inLocale = (locale: Locale): Pick<Route, 'canActivate' | 'data'> => ({
+  canActivate: [localeGuard],
+  data: { locale }
+});
+
+const notFound: Route = {
+  path: '**',
+  loadComponent: () => import('./error-routing/not-found/not-found.component').then(m => m.PageNotFoundComponent)
+};
+
+/**
+ * The pages that exist in every language — keep in sync with `localizedPages`
+ * in src/i18n/locales.json (app.routes.spec.ts checks it). Bulgarian serves them
+ * at the root, every other language under /<code>/.
+ */
+const localizedPages = (): Routes => [
   {
     path: '',
-    loadComponent: () => import('./main-page/main-page.component').then(m => m.MainPageComponent),
-    data: { text: 'Home' }
-  },
-  {
-    path: 'error',
-    loadComponent: () => import('./error-routing/error/uncaught-error.component').then(m => m.UncaughtErrorComponent)
+    loadComponent: () => import('./main-page/main-page.component').then(m => m.MainPageComponent)
   },
   {
     path: 'portfolio',
-    loadComponent: () => import('./portfolio-page/portfolio-page.component').then(m => m.PortfolioPageComponent),
-    data: { text: 'Portfolio' }
+    loadComponent: () => import('./portfolio-page/portfolio-page.component').then(m => m.PortfolioPageComponent)
   },
   {
     path: 'products',
-    loadComponent: () => import('./products-page/products-page.component').then(m => m.ProductsPageComponent),
-    data: { text: 'Products' }
+    loadComponent: () => import('./products-page/products-page.component').then(m => m.ProductsPageComponent)
   },
   {
     path: 'prices',
-    loadComponent: () => import('./prices-page/prices-page.component').then(m => m.PricesPageComponent),
-    data: { text: 'Prices' }
+    loadComponent: () => import('./prices-page/prices-page.component').then(m => m.PricesPageComponent)
   },
   {
     path: 'contact',
-    loadComponent: () => import('./contact-me-page/contact-me-page.component').then(m => m.ContactMePageComponent),
-    data: { text: 'Contact' }
+    loadComponent: () => import('./contact-me-page/contact-me-page.component').then(m => m.ContactMePageComponent)
+  }
+];
+
+export const routes: Routes = [
+  // /en/… (and every language added to src/i18n/locales.json). '/en/' was the
+  // standalone English landing until 2026-10-18; it is now the English home page.
+  ...TRANSLATED_LOCALES.map((l): Route => ({
+    ...inLocale(l.code),
+    path: l.code,
+    children: [...localizedPages(), notFound]
+  })),
+  {
+    ...inLocale(DEFAULT_LOCALE),
+    path: '',
+    children: [
+      ...localizedPages(),
+      {
+        path: 'error',
+        loadComponent: () => import('./error-routing/error/uncaught-error.component').then(m => m.UncaughtErrorComponent)
+      }
+    ]
   },
   {
-    // The one English page (AI-VISIBILITY-PLAN.md Phase 5); hreflang-paired with '/'.
-    path: 'en',
-    loadComponent: () => import('./en-page/en-page.component').then(m => m.EnPageComponent),
-    data: { text: 'English' }
-  },
-  {
+    // Bulgarian only: articles are not translated, so the blog has no /en/ version.
+    ...inLocale(DEFAULT_LOCALE),
     path: 'blog',
     children: [
       {
@@ -132,8 +164,5 @@ export const routes: Routes = [
       }
     ]
   },
-  {
-    path: '**',
-    loadComponent: () => import('./error-routing/not-found/not-found.component').then(m => m.PageNotFoundComponent)
-  } // must always be last
+  { ...inLocale(DEFAULT_LOCALE), ...notFound } // must always be last
 ];

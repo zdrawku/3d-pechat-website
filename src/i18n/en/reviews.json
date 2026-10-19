@@ -1,0 +1,18 @@
+{
+  "heading": "Happy customers",
+  "of": "from",
+  "on": "on",
+  "count": { "one": "{count} review", "other": "{count} reviews" },
+  "rating": "Rated {rating} out of 5 stars",
+  "postedOnGoogle": "posted on Google",
+  "seeAll": "See all reviews on Google",
+  "leaveReview": "Leave a review too",
+  "barLabel": "Customer ratings",
+  "barButton": "See the reviews",
+  "originalLanguage": "Reviews are shown in the language they were written in (Bulgarian).",
+  "snackbar": {
+    "text": "Have you been our customer? Share your experience",
+    "action": "LEAVE A REVIEW",
+    "close": "Close"
+  }
+}

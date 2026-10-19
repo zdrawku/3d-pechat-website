@@ -1,0 +1,16 @@
+{
+  "hours": {
+    "everyDay": "every day, {opens}–{closes}",
+    "days": "{days} {opens}–{closes}"
+  },
+  "days": {
+    "Monday": "Mon",
+    "Tuesday": "Tue",
+    "Wednesday": "Wed",
+    "Thursday": "Thu",
+    "Friday": "Fri",
+    "Saturday": "Sat",
+    "Sunday": "Sun"
+  },
+  "listSeparator": "; "
+}

@@ -9,18 +9,20 @@ describe('LegacyRedirectComponent', () => {
   const REFRESH_SELECTOR = "http-equiv='refresh'";
 
   /**
-   * Meta is stubbed on purpose: a real <meta http-equiv="refresh"> inserted
-   * into the Karma page makes Chrome navigate away and aborts the whole run.
+   * The real Meta, except for the refresh tag: a real <meta http-equiv="refresh">
+   * inserted into the Karma page makes Chrome navigate away and aborts the whole run.
    */
   function create(data: Record<string, unknown> = { to: TO }) {
-    const meta = jasmine.createSpyObj<Meta>('Meta', ['updateTag', 'removeTag']);
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
-        { provide: Meta, useValue: meta },
         { provide: ActivatedRoute, useValue: { snapshot: { data } } }
       ]
     });
+    const meta = TestBed.inject(Meta);
+    spyOn(meta, 'updateTag').and.callThrough()
+      .withArgs(jasmine.objectContaining({ 'http-equiv': 'refresh' }), REFRESH_SELECTOR).and.returnValue(null);
+    spyOn(meta, 'removeTag').and.callThrough();
     const router = TestBed.inject(Router);
     spyOn(router, 'navigateByUrl').and.resolveTo(true);
     const fixture = TestBed.createComponent(LegacyRedirectComponent);

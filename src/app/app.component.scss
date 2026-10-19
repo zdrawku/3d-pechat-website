@@ -294,6 +294,20 @@
 .menu-trigger-label {
   white-space: nowrap;
 }
+
+// The smallest phones (≤350px, e.g. 320px): the pill sheds its „Меню“ label —
+// the bars and the aria-label stay — the same progressive shedding the
+// wordmark (≤600px) and the social icons (≤420px) follow, so the language
+// switcher fits beside the CTA and the theme switch.
+@media (max-width: 350px) {
+  .menu-trigger {
+    padding-inline: rem(11px);
+  }
+
+  .menu-trigger-label {
+    display: none;
+  }
+}
 .horizontal_group_1 {
   justify-content: flex-start;
   align-items: stretch;
@@ -521,12 +535,6 @@
   font-size: rem(11.5px);
   font-weight: 700;
   white-space: nowrap;
-}
-.icon_12 {
-  --size: #{rem(24px)};
-  font-size: rem(24px);
-  width: rem(24px);
-  height: rem(24px);
 }
 
 // Theme switch — a sliding sun/moon toggle. The knob shows the CURRENT theme's
@@ -807,22 +815,38 @@ igx-navbar {
     }
   }
 
-  // At the 320px floor the remaining three controls still overhang by a few px.
-  // Reclaim it from the bar's own side padding and the inter-control margins
-  // rather than shrinking the touch targets.
+  // At the 320px floor, reclaim a few more px from the CTA's padding rather than
+  // shrinking any touch target. (The bar's side padding and the control gaps
+  // are set by the ≤420px block above; the old `.igx-navbar__right` padding
+  // rule that stood here never matched — that element is Ignite's own, outside
+  // this component's encapsulated styles.)
   @media (max-width: 360px) {
-    .igx-navbar__part--start,
-    .igx-navbar__right {
-      padding-inline: rem(8px);
-    }
-
     .nav_cta_button {
-      margin-left: 0;
       padding: rem(8px) rem(10px);
     }
+  }
+}
 
-    .theme-switch {
-      margin-left: rem(4px);
-    }
+// Phones (≤420px): the bar carries four controls — menu pill, CTA, language
+// switcher (compact there: globe + code) and theme switch. Halve the bar's side
+// padding through Ignite's spacing token and space the right-hand group 6px
+// apart instead of Ignite's 1rem: everything stays on screen down to 360px
+// without shrinking a touch target. (`.igx-navbar__right` is Ignite's own
+// element, hence ::ng-deep.) Kept un-nested to stay inside the style budget.
+@media (max-width: 420px) {
+  .navigation_bar_1 {
+    --ig-spacing-inline: 0.5;
+  }
+
+  .navigation_bar_1 ::ng-deep .igx-navbar__right {
+    gap: rem(6px);
+  }
+
+  .nav_cta_button {
+    margin-left: 0;
+  }
+
+  .theme-switch {
+    margin-left: rem(4px);
   }
 }

@@ -1,0 +1,56 @@
+{
+  "navbar": {
+    "menu": "Menu",
+    "openMenu": "Open the menu",
+    "brandFull": "3D printing services",
+    "brandShort": "3D printing",
+    "cta": "Get a quote",
+    "instagramTooltip": "Follow us on Instagram",
+    "tiktokTooltip": "Watch us on TikTok",
+    "youtubeTooltip": "Watch us on YouTube",
+    "theme": "Switch theme"
+  },
+  "social": {
+    "instagram": "Instagram profile",
+    "tiktok": "TikTok profile",
+    "youtube": "YouTube channel"
+  },
+  "language": {
+    "heading": "Language",
+    "trigger": "Language: {language}. Change language"
+  },
+  "drawer": {
+    "explore": "Explore",
+    "connect": "Get in touch",
+    "home": { "title": "Home", "subtitle": "Overview" },
+    "portfolio": { "title": "Portfolio", "subtitle": "Projects" },
+    "products": { "title": "Products", "subtitle": "To order" },
+    "prices": { "title": "Prices", "subtitle": "Rates" },
+    "contact": { "title": "Contact us", "subtitle": "Form" },
+    "blog": { "title": "Blog", "subtitle": "In Bulgarian" },
+    "logoAlt": "3DPechat.bg logo",
+    "brandTag": "Made in Sofia · since 2025"
+  },
+  "footer": {
+    "brand": "3D Printing Services",
+    "location": "Sofia, Bulgaria",
+    "instagramTooltip": "Instagram: photos of our projects",
+    "tiktokTooltip": "TikTok: videos of the 3D printing process",
+    "youtubeTooltip": "YouTube: videos from our workshop",
+    "quickLinks": "Quick links",
+    "home": "Home",
+    "portfolio": "Portfolio",
+    "prices": "Prices",
+    "blog": "Blog (in Bulgarian)",
+    "services": "Services",
+    "products": "Products",
+    "priceList": "Price list",
+    "quote": "Get a quote",
+    "viber": "Message us on Viber",
+    "contacts": "Contact",
+    "copyright": "© 2026 3dpechat.bg - All Rights Reserved",
+    "reviewTitle": "Did you like our work?",
+    "reviewText": "Share your opinion on Google",
+    "reviewButton": "⭐ Leave a review"
+  }
+}

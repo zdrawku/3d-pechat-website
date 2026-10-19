@@ -1,5 +1,6 @@
 @use "igniteui-angular/theming" as *;
 @use '../sla-hover' as sla;
+@use '../info-card';
 
 :host {
   display: block;
@@ -55,10 +56,11 @@
   margin-top: rem(28px);
 }
 
-// Now an <igx-card>. overflow:visible is required because igx-card clips by
-// default and the featured badge sticks out above the card. Padding lives on
-// the inner igx-card-content (.tier-card_body); the beam lives in the inner
-// .sla-sweep layer (sla-hover-inner) so the badge is never clipped.
+// An info card (src/app/_info-card.scss; AI_INSTRUCTIONS.md § Info cards):
+// icon and tier name on one row, price and description below. overflow:visible
+// is required because igx-card clips by default and the featured badge sticks
+// out above the card. Padding lives on its header and content; the beam lives
+// in the inner .sla-sweep layer (sla-hover-inner) so the badge is never clipped.
 .tier-card {
   position: relative;
   overflow: visible;
@@ -75,8 +77,12 @@
   }
 }
 
+.tier-card_head {
+  @include info-card.head;
+}
+
 .tier-card_body {
-  padding: rem(26px) rem(20px);
+  @include info-card.body($gap: rem(6px));
 }
 
 .tier-badge {
@@ -95,60 +101,26 @@
   box-shadow: 0 rem(4px) rem(10px) color-mix(in srgb, var(--ig-primary-500) 40%, transparent);
 }
 
-.tier-icon {
-  width: rem(46px);
-  height: rem(46px);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: rem(14px);
-
-  igx-icon {
-    --ig-icon-size: #{rem(20px)};
-  }
-}
-
-// Alternating orange/green tile tints, mirroring the original card-color pairing.
-// Icon color uses the darker on-tint accents so the glyph clears WCAG AA (4.5:1)
-// against its same-hue tinted tile — plain --ig-*-500 fails on its own tint.
-.tier-c1 .tier-icon {
-  background: color-mix(in srgb, var(--ig-primary-500) 16%, transparent);
-  color: var(--accent-on-tint);
-}
-
+// Orange tiles for the basic tiers, teal for the "+ труд" ones (16% tints — the
+// on-tint icon colours clear 4.5:1 up to ~16%; a darker tint fails).
+.tier-c1 .tier-icon,
 .tier-c2 .tier-icon {
-  // 16% (not 24%) tint so --accent-on-tint clears 4.5:1 — the darker orange is
-  // calibrated for a ~12–16% ground; a 24% tint is too dark for it to pass.
-  background: color-mix(in srgb, var(--ig-primary-500) 16%, transparent);
-  color: var(--accent-on-tint);
+  @include info-card.icon(primary, $tint: 16%);
 }
 
-.tier-c3 .tier-icon {
-  background: color-mix(in srgb, var(--ig-secondary-500) 16%, transparent);
-  color: var(--accent-teal-on-tint);
-}
-
+.tier-c3 .tier-icon,
 .tier-c4 .tier-icon {
-  // 16% tint (see .tier-c2) so --accent-teal-on-tint clears 4.5:1.
-  background: color-mix(in srgb, var(--ig-secondary-500) 16%, transparent);
-  color: var(--accent-teal-on-tint);
+  @include info-card.icon(secondary, $tint: 16%);
 }
 
 .tier-name {
-  font-size: rem(12.8px);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-weight: 750;
-  color: var(--ig-gray-900);
-  margin: 0 0 rem(8px);
+  @include info-card.title;
 }
 
 .tier-price {
   display: flex;
   align-items: baseline;
   gap: rem(5px);
-  margin-bottom: rem(10px);
 }
 
 .tier-price-num {
@@ -162,13 +134,6 @@
   font-size: rem(12px);
   color: var(--ig-gray-700);
   font-weight: 600;
-}
-
-.tier-desc {
-  font-size: rem(12.8px);
-  color: var(--ig-gray-700);
-  margin: 0;
-  line-height: 1.55;
 }
 
 // ===================== CALCULATOR =====================

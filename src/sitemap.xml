@@ -1,44 +1,100 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <!-- Main Pages -->
   <url>
     <loc>https://3dpechat.bg/</loc>
-    <lastmod>2026-10-17T10:00:00+01:00</lastmod>
+    <xhtml:link rel="alternate" hreflang="bg" href="https://3dpechat.bg/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://3dpechat.bg/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://3dpechat.bg/"/>
+    <lastmod>2026-10-18T10:00:00+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://3dpechat.bg/portfolio/</loc>
-    <lastmod>2026-10-17T10:00:00+01:00</lastmod>
+    <xhtml:link rel="alternate" hreflang="bg" href="https://3dpechat.bg/portfolio/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://3dpechat.bg/en/portfolio/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://3dpechat.bg/portfolio/"/>
+    <lastmod>2026-10-18T10:00:00+01:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>1</priority>
   </url>
   <url>
     <loc>https://3dpechat.bg/products/</loc>
-    <lastmod>2026-10-14T10:00:00+01:00</lastmod>
+    <xhtml:link rel="alternate" hreflang="bg" href="https://3dpechat.bg/products/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://3dpechat.bg/en/products/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://3dpechat.bg/products/"/>
+    <lastmod>2026-10-18T10:00:00+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://3dpechat.bg/prices/</loc>
-    <lastmod>2026-10-17T10:00:00+01:00</lastmod>
+    <xhtml:link rel="alternate" hreflang="bg" href="https://3dpechat.bg/prices/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://3dpechat.bg/en/prices/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://3dpechat.bg/prices/"/>
+    <lastmod>2026-10-18T10:00:00+01:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://3dpechat.bg/contact/</loc>
-    <lastmod>2026-10-17T10:00:00+01:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://3dpechat.bg/en/</loc>
-    <lastmod>2026-10-17T10:00:00+01:00</lastmod>
+    <xhtml:link rel="alternate" hreflang="bg" href="https://3dpechat.bg/contact/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://3dpechat.bg/en/contact/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://3dpechat.bg/contact/"/>
+    <lastmod>2026-10-18T10:00:00+01:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
-  <!-- Blog Pages -->
+  <!-- Main Pages: English -->
+  <url>
+    <loc>https://3dpechat.bg/en/</loc>
+    <xhtml:link rel="alternate" hreflang="bg" href="https://3dpechat.bg/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://3dpechat.bg/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://3dpechat.bg/"/>
+    <lastmod>2026-10-19T10:00:00+01:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://3dpechat.bg/en/portfolio/</loc>
+    <xhtml:link rel="alternate" hreflang="bg" href="https://3dpechat.bg/portfolio/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://3dpechat.bg/en/portfolio/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://3dpechat.bg/portfolio/"/>
+    <lastmod>2026-10-19T10:00:00+01:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1</priority>
+  </url>
+  <url>
+    <loc>https://3dpechat.bg/en/products/</loc>
+    <xhtml:link rel="alternate" hreflang="bg" href="https://3dpechat.bg/products/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://3dpechat.bg/en/products/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://3dpechat.bg/products/"/>
+    <lastmod>2026-10-18T10:00:00+01:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://3dpechat.bg/en/prices/</loc>
+    <xhtml:link rel="alternate" hreflang="bg" href="https://3dpechat.bg/prices/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://3dpechat.bg/en/prices/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://3dpechat.bg/prices/"/>
+    <lastmod>2026-10-18T10:00:00+01:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://3dpechat.bg/en/contact/</loc>
+    <xhtml:link rel="alternate" hreflang="bg" href="https://3dpechat.bg/contact/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://3dpechat.bg/en/contact/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://3dpechat.bg/contact/"/>
+    <lastmod>2026-10-18T10:00:00+01:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Blog Pages (Bulgarian only) -->
   <url>
     <loc>https://3dpechat.bg/blog/</loc>
     <lastmod>2026-10-17T10:00:00+01:00</lastmod>

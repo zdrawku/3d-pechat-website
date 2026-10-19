@@ -17,7 +17,7 @@
            play button and the length chip inside it keep their own size. -->
       <div class="video-card__overlay">
         <button type="button" igxIconButton="contained" class="video-card__play"
-                [attr.aria-label]="'Пусни видеото: ' + video.title" (click)="play()"
+                [attr.aria-label]="'misc.video.play' | t: { title: video.title }" (click)="play()"
                 data-testid="youtube-play">
           <igx-icon>play_arrow</igx-icon>
         </button>

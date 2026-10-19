@@ -1,0 +1,54 @@
+@use "igniteui-angular/theming" as *;
+// Info cards — design variant C of the "Home Cards Layout" artifact (approved
+// 2026-10-19, FEATURE-IDEAS-PLAN.md): an icon (or a step number) and the title
+// on one row in igx-card-header, everything else below in igx-card-content.
+// How to build one: AI_INSTRUCTIONS.md § Info cards. The card's surface
+// (background, border, radius, shadow, hover) stays with each page.
+
+/// igx-card-header: the avatar and the title on one row (Ignite lays them out).
+@mixin head {
+  // Ignite's header is `row wrap`: a title too long for one line drops below
+  // the avatar as a block. Keep it beside the avatar; the title wraps instead.
+  flex-wrap: nowrap;
+  padding: rem(22px) rem(20px) rem(12px);
+}
+
+/// igx-card-content: everything under the title. Ignite resets the margins and
+/// type of its direct children (body-2, margin 0), so they are spaced by this
+/// gap — margins or font sizes on them have no effect.
+@mixin body($gap: rem(8px)) {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+  padding: 0 rem(20px) rem(24px);
+}
+
+/// The [igxCardHeaderTitle].
+@mixin title {
+  margin: 0;
+  font-size: rem(16px);
+  line-height: 1.3;
+  font-weight: 700;
+  color: var(--ig-gray-900);
+}
+
+/// An igx-avatar with a Material icon, through the avatar's own theme
+/// variables: a tinted rounded square with the icon in the matching on-tint
+/// accent, which clears 4.5:1 on tints up to ~16%.
+/// $tone: primary (orange) | secondary (teal).
+@mixin icon($tone: primary, $tint: 14%) {
+  --igx-avatar-background: color-mix(in srgb, var(--ig-#{$tone}-500) #{$tint}, transparent);
+  --igx-avatar-border-radius: var(--radius-md);
+
+  @if $tone == secondary {
+    --igx-avatar-icon-color: var(--accent-teal-on-tint);
+  } @else {
+    --igx-avatar-icon-color: var(--accent-on-tint);
+  }
+}
+
+/// An igx-avatar showing a step number (its `initials`) on the brand colour.
+@mixin number {
+  --igx-avatar-background: var(--ig-primary-500);
+  --igx-avatar-color: var(--ig-primary-500-contrast);
+}

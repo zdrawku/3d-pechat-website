@@ -1,0 +1,64 @@
+{
+  "title": "Contact – custom 3D printing in Sofia",
+  "subtitle": "Phone, Viber, email or the enquiry form",
+  "intro": "Looking for custom 3D printing? We make prototypes, functional parts, gifts and small batches – from a ready 3D model or just an idea. The quickest way to reach us is by phone or Viber, but you can also email us or use the form below. We answer enquiries in English and Bulgarian.",
+  "info": {
+    "heading": "Get in touch",
+    "lead": "We reply quickly — choose whichever way suits you best.",
+    "phone": "Phone",
+    "viber": "Open in Viber",
+    "viberTooltip": "Click for a direct chat on Viber",
+    "email": "Email",
+    "address": "Address",
+    "hours": "Opening hours",
+    "instagramTooltip": "Follow us on Instagram for photos of our projects",
+    "tiktokTooltip": "Watch videos of our 3D printing projects on TikTok",
+    "youtubeTooltip": "See how we work on our YouTube channel",
+    "response": "We usually reply within {hours} hours"
+  },
+  "form": {
+    "heading": "Send a message",
+    "name": "Name",
+    "namePlaceholder": "Your name",
+    "email": "Email address",
+    "emailPlaceholder": "Your email",
+    "subject": "Subject",
+    "subjectPlaceholder": "Message subject",
+    "message": "Message",
+    "messagePlaceholder": "Your message...",
+    "required": "This field is required",
+    "fileNoteBefore": "Have a 3D model ({formats}), a sketch or a photo? The form doesn't accept attachments – send them to",
+    "fileNoteAfter": "or via Viber.",
+    "submit": "Send message",
+    "submitting": "Sending...",
+    "success": "Thank you! Your message has been sent. We'll get back to you as soon as possible.",
+    "error": "Something went wrong while sending. Please try again or write to us directly at {email}.",
+    "missingFields": "Please fill in all the fields.",
+    "missingCaptcha": "Please confirm that you're not a robot.",
+    "invalidFile": "The file is too large (max. 1 MB). Please choose another file.",
+    "fromName": "3dpechat.bg contact form (English)",
+    "orderSubject": "Order: {name}",
+    "reviewTitle": "Have we worked together before?",
+    "reviewText": "Tell us how it went — your opinion helps others",
+    "reviewButton": "Share on Google"
+  },
+  "how": {
+    "heading": "Good to know",
+    "delivery": {
+      "title": "Delivery",
+      "text": "In Sofia we hand over finished orders in person or by city courier – arranged by phone or message. Anywhere else in Bulgaria we ship with Econt or Speedy. Delivery is free anywhere in Bulgaria for orders over €{freeOver}."
+    },
+    "quote": {
+      "title": "A quote with our first reply",
+      "text": "If you already have a model, tell us the colour, size and deadline you want – and you'll get a quote with our very first reply."
+    },
+    "price": {
+      "title": "Priced by weight",
+      "before": "The price is calculated by weight – see our",
+      "pricesLink": "prices",
+      "middle": ", and in our",
+      "portfolioLink": "portfolio",
+      "after": "you'll find what we have made so far."
+    }
+  }
+}

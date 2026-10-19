@@ -1,7 +1,8 @@
 <div class="products-grid stagger-in">
   <!-- Product Card for each variant -->
   @for (product of products; track product; let i = $index) {
-    <igx-card class="product-card" [id]="product.linkId" [style.--i]="i" data-testid="product-card">
+    <igx-card class="product-card" [id]="product.linkId" [style.--i]="i" [attr.lang]="product.copyLang"
+      data-testid="product-card">
       <!-- Image Carousel Section -->
       <div class="card-image-section">
         <div class="image-container">
@@ -11,28 +12,28 @@
               <!-- First row (4 cards) loads eagerly so the LCP image is discoverable
                    in the initial HTML; card 0 also gets fetchpriority. Back images
                    stay lazy — they're hidden behind the flip. -->
-              <img [src]="product.frontImage" [alt]="product.name + ' - Лице'" class="card-image"
+              <img [src]="product.frontImage" [alt]="'products.grid.front' | t: { name: product.name }" class="card-image"
                 [class.padded-image]="product.hasImagePadding"
                 [attr.loading]="i < 4 ? 'eager' : 'lazy'"
                 [attr.fetchpriority]="i === 0 ? 'high' : null" />
             </div>
             <div class="product-image back-image">
-              <img [src]="product.backImage" [alt]="product.name + ' - Гръб'" class="card-image"
+              <img [src]="product.backImage" [alt]="'products.grid.back' | t: { name: product.name }" class="card-image"
                 [class.padded-image]="product.hasImagePadding" loading="lazy" />
             </div>
           </div>
           @if (product.backImage) {
             <!-- Carousel Navigation Buttons (revealed on hover/focus) -->
             <button igxIconButton="flat" class="carousel-nav prev-btn" (click)="toggleToPrevious(product, $event)"
-              aria-label="Обърни картата">
+              [attr.aria-label]="'products.grid.flip' | t">
               <igx-icon>chevron_left</igx-icon>
             </button>
             <button igxIconButton="flat" class="carousel-nav next-btn" (click)="toggleToNext(product, $event)"
-              aria-label="Обърни картата">
+              [attr.aria-label]="'products.grid.flip' | t">
               <igx-icon>chevron_right</igx-icon>
             </button>
             <!-- Flip hint badge -->
-            <span class="flip-hint">⟲ обърни</span>
+            <span class="flip-hint">{{ 'products.grid.flipHint' | t }}</span>
             <!-- Side Indicator -->
             <div class="side-indicator">
               <span class="indicator-dot" [class.active]="isShowingFront(product)"></span>
@@ -47,8 +48,8 @@
           <div #nameTooltipRef="tooltip" igxTooltip class="product-tooltip">{{ product.name }}</div>
           @if (product.customContent; as customContent) {
             @if (customContent.show) {
-              <button type="button" class="info-btn" title="Още информация"
-                [igxTooltipTarget]="infoTooltipRef" aria-label="Още информация за персонализация">
+              <button type="button" class="info-btn" [title]="'products.grid.moreInfo' | t"
+                [igxTooltipTarget]="infoTooltipRef" [attr.aria-label]="'products.grid.moreInfoLabel' | t">
                 <igx-icon family="material">info</igx-icon>
               </button>
               <div #infoTooltipRef="tooltip" igxTooltip class="custom-tooltip">
@@ -73,7 +74,7 @@
           }
           <button type="button" class="copy-link-btn"
             [class.copied]="copiedLinkId === product.linkId"
-            [title]="copiedLinkId === product.linkId ? 'Копирано!' : 'Копирай линк към секцията'"
+            [title]="(copiedLinkId === product.linkId ? 'products.grid.copied' : 'products.grid.copyLink') | t"
             (click)="onCopyClick(product.linkId)" data-testid="product-copy-link">
             <igx-icon family="material">{{ copiedLinkId === product.linkId ? 'check' : 'link' }}</igx-icon>
           </button>
@@ -86,8 +87,9 @@
         </div>
         @if (product.readMore; as readMore) {
           <a igxButton="flat" class="read-more-link" [routerLink]="readMore.url"
-            [attr.aria-label]="'Прочети повече: ' + readMore.label" data-testid="product-read-more">
-            Прочети повече
+            [attr.aria-label]="'products.grid.readMoreLabel' | t: { label: readMore.label }"
+            [attr.hreflang]="i18n.langIfForeign()" data-testid="product-read-more">
+            {{ 'products.grid.readMore' | t }}
             <igx-icon family="material" aria-hidden="true">arrow_forward</igx-icon>
           </a>
         }
@@ -99,7 +101,7 @@
               }
               @if (tags.length > 3) {
                 <button type="button" class="product-tag product-tag-more"
-                  [igxTooltipTarget]="tagsTooltipRef" aria-label="Покажи всички етикети">
+                  [igxTooltipTarget]="tagsTooltipRef" [attr.aria-label]="'products.grid.allTags' | t">
                   +{{ tags.length - 3 }}
                 </button>
                 <div #tagsTooltipRef="tooltip" igxTooltip class="tags-tooltip">
@@ -117,9 +119,9 @@
              stays available to screen readers via aria-label and the icon keeps
              the same tap target. -->
         <button igxButton="contained" type="button" (click)="handleAction(product)" class="contact-button"
-          aria-label="Поръчайте сега" data-testid="product-order-btn">
+          [attr.aria-label]="'products.grid.order' | t" data-testid="product-order-btn">
           <igx-icon family="material" class="contact-button_cart" aria-hidden="true">shopping_cart</igx-icon>
-          <span class="contact-button_label">Поръчайте сега</span>
+          <span class="contact-button_label">{{ 'products.grid.order' | t }}</span>
           <igx-icon family="material" class="contact-button_arrow" aria-hidden="true">arrow_forward</igx-icon>
         </button>
       </igx-card-actions>

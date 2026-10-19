@@ -1,17 +1,29 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { IgxButtonDirective, IGX_CARD_DIRECTIVES, IgxIconComponent, IgxIconButtonDirective, IgxTooltipModule } from 'igniteui-angular';
 
 import { ProductVariant } from '../../models/product.model';
+import { I18nService } from '../../i18n/i18n.service';
+import { TranslatePipe } from '../../i18n/translate.pipe';
+import productsMessages from '../../../i18n/bg/products.json';
 
 @Component({
   selector: 'app-product-grid',
-  imports: [RouterLink, IgxButtonDirective, IGX_CARD_DIRECTIVES, IgxIconComponent, IgxIconButtonDirective, IgxTooltipModule],
+  imports: [RouterLink, IgxButtonDirective, IGX_CARD_DIRECTIVES, IgxIconComponent, IgxIconButtonDirective, IgxTooltipModule, TranslatePipe],
   templateUrl: './product-grid.component.html',
   styleUrls: ['./product-grid.component.scss']
 })
 export class ProductGridComponent {
+  /** Also read by the template: „Прочети повече“ links get hreflang="bg" on other languages' pages. */
+  protected readonly i18n = inject(I18nService);
+
+  constructor() {
+    // Its labels are in the products page's namespace (products.grid.*); the
+    // grid registers it too, so it also works on its own (specs, other pages).
+    this.i18n.registerPage('products', productsMessages);
+  }
+
   @Input() products: ProductVariant[] = [];
   @Output() productAction = new EventEmitter<ProductVariant>();
   // Emits a product's linkId when its "copy link" button is clicked. The parent

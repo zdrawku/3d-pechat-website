@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import { CORE_ROUTES } from './routes';
+import { CORE_ROUTES, ENGLISH_ROUTES } from './routes';
 
 /**
  * Accessibility smoke tests using axe-core. Scans each core page for WCAG 2.1
@@ -19,6 +19,7 @@ const SEVERITY_GATE = new Set(['serious', 'critical']);
 // separately and would otherwise mask regressions in the new parts.
 const A11Y_TARGETS: { path: string; include?: string[] }[] = [
   ...CORE_ROUTES.map(({ path }) => ({ path })),
+  ...ENGLISH_ROUTES.map(({ path }) => ({ path })),
   { path: '/blog/3d-pechat-po-porachka-sofia-video', include: ['app-youtube-embed', '[data-testid="article-cta"]'] },
 ];
 

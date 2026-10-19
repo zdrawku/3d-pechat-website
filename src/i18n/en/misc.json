@@ -1,0 +1,9 @@
+{
+  "video": {
+    "play": "Play the video: {title}"
+  },
+  "errors": {
+    "notFound": "Error 404: Page not found",
+    "serverError": "Error 500: Internal Server Error"
+  }
+}

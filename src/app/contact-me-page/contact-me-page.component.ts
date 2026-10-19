@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, PLATFORM_ID, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, PLATFORM_ID, computed, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
@@ -6,7 +6,11 @@ import { IGX_CARD_DIRECTIVES, IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, Ig
 import { SeoService } from '../services/seo.service';
 import { environment } from '../../environments/environment';
 import { GOOGLE_REVIEW_URL, YOUTUBE_CHANNEL_URL } from '../../data/site-links';
-import { BUSINESS, openingHoursLabel } from '../../data/business';
+import { BUSINESS } from '../../data/business';
+import { I18nService } from '../i18n/i18n.service';
+import { LocalizePathPipe, TranslatePipe } from '../i18n/translate.pipe';
+import { localizedAddress, openingHoursText } from '../i18n/business-copy';
+import contactMessages from '../../i18n/bg/contact.json';
 
 declare const hcaptcha: {
   render(container: string | HTMLElement, options: Record<string, unknown>): string;
@@ -19,7 +23,7 @@ const capitalize = (text: string): string => text.charAt(0).toUpperCase() + text
 
 @Component({
   selector: 'app-contact-me-page',
-  imports: [IGX_CARD_DIRECTIVES, IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective, FormsModule, RouterLink],
+  imports: [IGX_CARD_DIRECTIVES, IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective, FormsModule, RouterLink, TranslatePipe, LocalizePathPipe],
   templateUrl: './contact-me-page.component.html',
   styleUrls: ['./contact-me-page.component.scss']
 })
@@ -47,13 +51,19 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
   private hcaptchaWidgetId?: string;
   private hcaptchaToken = '';
 
+  private readonly i18n = inject(I18nService);
+
   /** Direct Google write-review link, shared by every review CTA (see site-links). */
   public readonly googleReviewUrl = GOOGLE_REVIEW_URL;
   /** Info-panel address + hours — from business.json so they match the schema and the map listing. */
-  public readonly displayAddress = BUSINESS.displayAddress;
+  public readonly displayAddress = computed(() => localizedAddress(this.i18n.locale()));
   public readonly mapUrl = BUSINESS.hasMap;
-  /** „Всеки ден от 9:00 до 18:00“ — capitalised, since it stands alone under its label. */
-  public readonly openingHours = capitalize(openingHoursLabel());
+  /** „Всеки ден от 9:00 до 18:00“ / "Every day, 9:00–18:00" — capitalised, since it stands alone under its label. */
+  public readonly openingHours = computed(() => capitalize(openingHoursText(this.i18n)));
+  /** „STL, 3MF, OBJ или STEP“ / "STL, 3MF, OBJ, or STEP" — business.json `fileFormats`. */
+  public readonly fileFormats = computed(() => this.i18n.formatList(BUSINESS.fileFormats, 'disjunction'));
+  public readonly replyHours = BUSINESS.replyWithinHours;
+  public readonly freeDeliveryOver = BUSINESS.freeDeliveryOverEur;
 
   email = '3dpechat.bg@gmail.com';
   instagramUrl = 'https://www.instagram.com/3dpechat.bg';
@@ -61,13 +71,9 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
   youtubeUrl = YOUTUBE_CHANNEL_URL;
 
   constructor(private router: Router, private seoService: SeoService) {
-    this.seoService.updateSeo({
-      title: 'Контакти - 3D Печат България',
-      description: 'Свържете се с нас за 3D печат услуги. Телефон, имейл, Viber, Instagram, TikTok и YouTube. Бързо и лесно поръчайте вашия 3D принтиран продукт.',
-      keywords: '3D печат контакти, поръчка 3D печат, 3D принтиране поръчка, свържете се с нас',
-      url: 'https://3dpechat.bg/contact/',
-      type: 'website'
-    });
+    // This page's Bulgarian strings live in its own chunk (src/i18n/bg/index.ts).
+    this.i18n.registerPage('contact', contactMessages);
+    this.seoService.applyPageSeo('contact');
     this.seoService.removeStructuredData();
     // Check if navigation state contains prefilled message
     const navigation = this.router.getCurrentNavigation();
@@ -77,9 +83,14 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
         this.message = state['prefilledMessage'];
       }
       if (state['productName']) {
-        this.value2 = `Поръчка за ${state['productName']}`;
+        this.value2 = this.orderSubject(state['productName']);
       }
     }
+  }
+
+  /** „Поръчка за <продукт>“ / "Order: <product>" — the subject a product's „Поръчайте сега“ prefills. */
+  private orderSubject(productName: string): string {
+    return this.i18n.t('contact.form.orderSubject', { name: productName });
   }
 
   private readonly platformId = inject(PLATFORM_ID);
@@ -95,7 +106,7 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
       this.message = state['prefilledMessage'];
     }
     if (state && state['productName'] && !this.value2) {
-      this.value2 = `Поръчка за ${state['productName']}`;
+      this.value2 = this.orderSubject(state['productName']);
     }
     // hCaptcha (~1.3 MB incl. worker) is loaded lazily on first form
     // interaction — see onFormInteraction() — to keep it off the LCP path.
@@ -129,6 +140,8 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
   private renderHcaptcha(): void {
     this.hcaptchaWidgetId = hcaptcha.render('hcaptcha-container', {
       sitekey: environment.hcaptchaSiteKey,
+      // The challenge in the page's language.
+      hl: this.i18n.locale(),
       callback: (token: string) => this.hcaptchaToken = token,
       'expired-callback': () => this.hcaptchaToken = '',
       'error-callback': () => this.hcaptchaToken = ''
@@ -219,7 +232,9 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
       formData.append('email', this.value1);
       formData.append('subject', this.value2);
       formData.append('message', this.message);
-      formData.append('from_name', '3dpechat.bg контактна форма');
+      // „3dpechat.bg контактна форма“; the English form says "(English)", so an
+      // enquiry to answer in English stands out in the inbox.
+      formData.append('from_name', this.i18n.t('contact.form.fromName'));
       formData.append('h-captcha-response', this.hcaptchaToken);
       // File attachment disabled: Web3Forms file upload is a Pro-plan
       // feature, not available on the current plan.

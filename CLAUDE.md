@@ -25,7 +25,7 @@ Never hand-roll a plain-HTML equivalent when an `igx-*` component exists.
 Plain HTML is correct **only** for semantics/layout with no component
 counterpart: `<section>`, `<ul>/<li>` wrappers, `<p>`, `<h1>`–`<h6>`.
 
-**Two traps, both of which have already bitten this project:**
+**Three traps, all of which have already bitten this project:**
 
 1. **`$exclude-components` in [`src/styles.scss`](src/styles.scss).** A component
    in that list gets **no CSS emitted** and renders unstyled. Currently excluded
@@ -38,11 +38,18 @@ counterpart: `<section>`, `<ul>/<li>` wrappers, `<p>`, `<h1>`–`<h6>`.
    to the `imports:` array (`IGX_CARD_DIRECTIVES`, `IgxButtonDirective`,
    `IgxAvatarComponent`, `IgxIconComponent`, …) or the template silently renders
    the tag as an unknown element.
+3. **`igx-card-content` restyles its direct children.** Ignite gives each one its
+   body type and `margin: 0`, beating component classes — a title, font size or
+   margin set on them silently does nothing. Titles go in `igx-card-header`
+   (`igxCardHeaderTitle`); space the content with a `gap` on the content itself.
+   Cards with an icon + title + text use the **info-card pattern**:
+   [`src/app/_info-card.scss`](src/app/_info-card.scss) and
+   [`AI_INSTRUCTIONS.md`](AI_INSTRUCTIONS.md) § Info cards.
 
 Style via the theme's CSS custom properties and the site's tokens
 (`--ig-*`, `--bg-*`, `--shadow-*`, `--radius-*`, `--space-*` in `styles.scss`)
-plus the `fluid()` and `sla-hover` mixins — not by overriding component
-internals. There are `mcp__igniteui-theming__*` MCP tools for theming work.
+plus the `fluid()`, `sla-hover` and `info-card` mixins — not by overriding
+component internals. There are `mcp__igniteui-theming__*` MCP tools for theming work.
 
 **Every new component gets a spec asserting the Ignite tags are present**, so a
 later edit can't quietly regress to plain HTML — see
@@ -90,9 +97,10 @@ source; never duplicate or hand-write it elsewhere. The full plan is
      the `organization-jsonld` block.**
    - llms.txt
    - the footer address, and the contact page's address and hours (via
-     `src/data/business.ts`)
-   - every number on the English page `/en/` and the calculator's minimum order
-     (structured fields such as `pricing` and `leadTimeWorkingDays`)
+     `src/data/business.ts` and `src/app/i18n/business-copy.ts`)
+   - every number in every language's copy and the calculator's minimum order
+     (structured fields such as `pricing` and `leadTimeWorkingDays`, passed into
+     translations as `{placeholders}`)
    - the auto-blog prompt
 
    The FAQ lives in [`src/data/faq.json`](src/data/faq.json). It's shown on
@@ -128,6 +136,29 @@ How to add a blog post step by step: [`AI_INSTRUCTIONS.md`](AI_INSTRUCTIONS.md)
 § Content Management. `ARTICLE_CREATION_GUIDE.md` and `SEO_GUIDE.md` are older
 and lose to this rule wherever they disagree.
 
+## 🚨 Rule 6 — Every UI string is translated
+
+The main pages exist in Bulgarian (`/…`) and English (`/en/…`); the blog is
+Bulgarian-only. Guide: [`src/i18n/README.md`](src/i18n/README.md); plan and next
+steps: [`LOCALIZATION-PLAN.md`](LOCALIZATION-PLAN.md).
+
+- **No hard-coded user-facing text** in the shell or a localized page (home,
+  portfolio, products, prices, contact, shared components they use). Strings
+  live in `src/i18n/<lang>/*.json` and render through the typed `t` pipe;
+  internal links use `| localizePath`. Business numbers enter translations as
+  `{placeholders}` from `business.json`, never typed in.
+- **Changing Bulgarian copy means changing every language's copy** of that key
+  (a missing key fails the build; a stale one doesn't). A new product gets its
+  English copy in `src/i18n/en/content/products.json` (until then `/en/products/`
+  shows the Bulgarian copy, marked `lang="bg"`, and the spec reports it as
+  pending); the FAQ changes in `src/data/faq.json` and
+  `src/i18n/en/content/faq.json` together; a new gallery image's alt text goes
+  in `src/i18n/en/content/gallery.json` under its `src` (same fallback).
+- **Languages and localized pages have one source:** `src/i18n/locales.json`.
+  Routes, hreflang, the switcher, sitemap alternates, llms.txt and the live check
+  read it. A new localized page or language also needs `MAIN_PAGE_LASTMOD`
+  entries for each of its URLs.
+
 ## Verify before claiming done
 
 `npm run build` **and** `npm test -- --watch=false --browsers=ChromeHeadless`
@@ -135,7 +166,8 @@ must both pass, plus `npm run test:scripts` when you touch `scripts/`. For user-
 plus a Playwright screenshot (Playwright is already a dependency) in light and
 dark at desktop and mobile widths. Report failures with their output. After a
 deploy, `npm run check:live` verifies production read-only (crawler access,
-schema vs `business.json`, every sitemap URL, redirects, llms.txt, FAQ, `/en/`).
+schema vs `business.json`, every sitemap URL, redirects, llms.txt, FAQ, and
+`lang` + `hreflang` on every page in every language).
 
 ## Other standing rules
 

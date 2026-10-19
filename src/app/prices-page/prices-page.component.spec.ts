@@ -4,8 +4,9 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { IGX_CARD_DIRECTIVES, IgxAvatarComponent, IgxIconComponent, IGX_INPUT_GROUP_DIRECTIVES, IGX_SELECT_DIRECTIVES } from 'igniteui-angular';
 import { PricesPageComponent } from './prices-page.component';
-import { FAQ } from '../shared/faq/faq.component';
+import { FAQ, faqFor } from '../shared/faq/faq.component';
 import business from '../../data/business.json';
+import { I18nService } from '../i18n/i18n.service';
 
 describe('PricesPageComponent', () => {
   let component: PricesPageComponent;
@@ -24,6 +25,22 @@ describe('PricesPageComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  // Info cards (src/app/_info-card.scss, AI_INSTRUCTIONS.md § Info cards): icon
+  // and tier name in the igx-card-header, price and description in the content.
+  it('builds the tier cards as Ignite UI info cards', () => {
+    const cards = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('.tiers-grid igx-card'));
+    expect(cards.length).toBe(component.tiers.length);
+    cards.forEach((card, i) => {
+      const tier = component.tiers[i];
+      expect(card.querySelector('igx-card-header > .igx-card-header__thumbnail igx-avatar igx-icon')?.textContent?.trim())
+        .withContext(tier.id).toBe(tier.icon);
+      expect(card.querySelector('igx-card-header [igxCardHeaderTitle]')?.textContent?.trim().length).withContext(tier.id).toBeGreaterThan(0);
+      expect(card.querySelector('igx-card-content .tier-price-num')?.textContent?.trim()).toBe(tier.pricePerTenGrams.toFixed(2));
+      expect(card.querySelector('igx-card-content > p')?.textContent?.trim().length).withContext(tier.id).toBeGreaterThan(10);
+    });
+    expect(cards.filter(card => card.querySelector('.tier-badge')).length).withContext('one featured tier').toBe(1);
   });
 
   describe('minimum order', () => {
@@ -82,6 +99,33 @@ describe('PricesPageComponent', () => {
       expect(data['@type']).toBe('FAQPage');
       expect(data.mainEntity.map((q: { name: string }) => q.name)).toEqual(FAQ.map(f => f.question));
       expect(data.mainEntity.map((q: { acceptedAnswer: { text: string } }) => q.acceptedAnswer.text)).toEqual(FAQ.map(f => f.answer));
+    });
+  });
+
+  describe('in English (/en/prices/)', () => {
+    let i18n: I18nService;
+
+    beforeEach(async () => {
+      i18n = TestBed.inject(I18nService);
+      await i18n.use('en');
+      fixture = TestBed.createComponent(PricesPageComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+    });
+
+    afterEach(() => document.documentElement.setAttribute('lang', 'bg'));
+
+    it('shows the calculator in English with the same arithmetic', () => {
+      const el: HTMLElement = fixture.nativeElement;
+      expect(el.querySelector('[data-testid="calc-total"]')?.textContent?.trim()).toBe(`€${component.totalPrice}`);
+      expect(el.querySelector('[data-testid="calc-minimum-rule"]')?.textContent?.trim())
+        .toBe(`Minimum order value: €${business.pricing.minimumOrder.toFixed(2)}.`);
+    });
+
+    it('mirrors the English FAQ as FAQPage structured data', () => {
+      const data = JSON.parse(document.getElementById('structured-data-jsonld')?.textContent ?? '{}');
+      expect(data['@type']).toBe('FAQPage');
+      expect(data.mainEntity.map((q: { name: string }) => q.name)).toEqual(faqFor(i18n).map(f => f.question));
     });
   });
 });

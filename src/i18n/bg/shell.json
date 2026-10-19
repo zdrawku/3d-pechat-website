@@ -1,0 +1,56 @@
+{
+  "navbar": {
+    "menu": "Меню",
+    "openMenu": "Отвори менюто",
+    "brandFull": "3D Печат услуги",
+    "brandShort": "3D Печат",
+    "cta": "Заяви оферта",
+    "instagramTooltip": "Последвайте ни в Instagram",
+    "tiktokTooltip": "Гледайте ни в TikTok",
+    "youtubeTooltip": "Гледайте ни в YouTube",
+    "theme": "Смени тема"
+  },
+  "social": {
+    "instagram": "Instagram профил",
+    "tiktok": "TikTok профил",
+    "youtube": "YouTube канал"
+  },
+  "language": {
+    "heading": "Език · Language",
+    "trigger": "Език: {language}. Смени езика"
+  },
+  "drawer": {
+    "explore": "Разгледай",
+    "connect": "Свържи се",
+    "home": { "title": "Начало", "subtitle": "Общ преглед" },
+    "portfolio": { "title": "Портфолио", "subtitle": "Проекти" },
+    "products": { "title": "Продукти", "subtitle": "За поръчка" },
+    "prices": { "title": "Цени", "subtitle": "Тарифи" },
+    "contact": { "title": "Свържете се", "subtitle": "Форма" },
+    "blog": { "title": "Блог", "subtitle": "Статии" },
+    "logoAlt": "3DPechat.bg лого",
+    "brandTag": "Направено в София · от 2025"
+  },
+  "footer": {
+    "brand": "3D Печат Услуги",
+    "location": "София, България",
+    "instagramTooltip": "Instagram: Снимки на наши проекти",
+    "tiktokTooltip": "TikTok: Видеа от 3D печат процеса",
+    "youtubeTooltip": "YouTube: Видеа от нашата работилница",
+    "quickLinks": "Бързи връзки",
+    "home": "Начало",
+    "portfolio": "Портфолио",
+    "prices": "Цени",
+    "blog": "Блог",
+    "services": "Услуги",
+    "products": "Продукти",
+    "priceList": "Ценоразпис",
+    "quote": "Заяви оферта",
+    "viber": "Пиши във Viber",
+    "contacts": "Контакти",
+    "copyright": "© 2026 3dpechat.bg - All Rights Reserved",
+    "reviewTitle": "Хареса ли ви работата ни?",
+    "reviewText": "Споделете мнението си в Google",
+    "reviewButton": "⭐ Остави ревю"
+  }
+}

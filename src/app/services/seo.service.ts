@@ -1,8 +1,11 @@
-import { Injectable, Inject } from '@angular/core';
+import { Injectable, Inject, inject } from '@angular/core';
 import { Title, Meta } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 import { BLOG_POSTS } from './blog-posts.registry';
 import business from '../../data/business.json';
+import { I18nService } from '../i18n/i18n.service';
+import { LanguageAlternate, languageAlternates, pagePath } from '../i18n/locales';
+import type { PageNamespace, TranslationParams } from '../i18n/i18n.types';
 
 export const SITE_ORIGIN = 'https://3dpechat.bg';
 
@@ -26,22 +29,6 @@ export function faqPageSchema(items: { question: string; answer: string }[]): Re
     };
 }
 
-/** A language version of the current page, emitted as <link rel="alternate" hreflang>. */
-export interface LanguageAlternate {
-    hreflang: 'bg' | 'en' | 'x-default';
-    href: string;
-}
-
-/**
- * The home page and its English counterpart (/en/) declare each other, with
- * Bulgarian as the default for everyone else (AI-VISIBILITY-PLAN.md Phase 5).
- */
-export const HOME_LANGUAGE_ALTERNATES: LanguageAlternate[] = [
-    { hreflang: 'bg', href: `${SITE_ORIGIN}/` },
-    { hreflang: 'en', href: `${SITE_ORIGIN}/en/` },
-    { hreflang: 'x-default', href: `${SITE_ORIGIN}/` }
-];
-
 export interface SeoConfig {
     title: string;
     description: string;
@@ -52,18 +39,18 @@ export interface SeoConfig {
     author?: string;
     publishedDate?: string;
     modifiedDate?: string;
-    /** Page language: sets <html lang> and og:locale. Defaults to Bulgarian. */
-    locale?: 'bg' | 'en';
-    /** Language versions of this page; omitted = none (every navigation clears them). */
+    /**
+     * Language versions of this page (`applyPageSeo` passes every language's);
+     * omitted = none, as for the Bulgarian-only blog. Every navigation replaces them.
+     */
     alternates?: LanguageAlternate[];
 }
-
-const OG_LOCALE = { bg: 'bg_BG', en: 'en_US' } as const;
 
 @Injectable({
     providedIn: 'root'
 })
 export class SeoService {
+    private readonly i18n = inject(I18nService);
     private readonly defaultImage = `${SITE_ORIGIN}/assets/og-image.png`;
     /** Entity name (og:site_name, schema publisher/author) — must match the map listing. */
     private readonly siteName = business.name;
@@ -115,13 +102,13 @@ export class SeoService {
         // 8. Site Name
         this.updateTag('property', 'og:site_name', this.siteName);
 
-        // 8b. Language: <html lang>, og:locale and hreflang alternates. Set on
-        // every navigation, so leaving /en/ restores Bulgarian and drops the links.
-        const locale = config.locale ?? 'bg';
-        this.document.documentElement.setAttribute('lang', locale);
-        this.updateTag('property', 'og:locale', OG_LOCALE[locale]);
-        this.updateTag('property', 'og:locale:alternate', OG_LOCALE[locale === 'bg' ? 'en' : 'bg']);
-        this.setLanguageAlternates(config.alternates ?? []);
+        // 8b. Language: og:locale and hreflang alternates, set on every navigation
+        // so a Bulgarian-only page drops the previous page's links. <html lang>
+        // belongs to I18nService (it follows the route's language).
+        const alternates = config.alternates ?? [];
+        this.updateTag('property', 'og:locale', this.i18n.definition().ogLocale);
+        this.setOgLocaleAlternates(alternates.length ? this.i18n.otherLocales().map(l => l.ogLocale) : []);
+        this.setLanguageAlternates(alternates);
 
         // 9. Article specific tags
         if (config.publishedDate) {
@@ -133,6 +120,25 @@ export class SeoService {
         if (config.author) {
             this.updateTag('property', 'article:author', config.author);
         }
+    }
+
+    /**
+     * Meta, canonical and hreflang for one of the pages that exist in every
+     * language, in the active language: copy from `seo.<page>` in
+     * src/i18n/<lang>/seo.json, canonical '/en/prices/' on English pages, and
+     * the page's version in every language. `params` fill the description's
+     * {placeholders} (prices: numbers from business.json, formatted for the language).
+     */
+    public applyPageSeo(page: PageNamespace, params?: TranslationParams): void {
+        const path = pagePath(page);
+        this.updateSeo({
+            title: this.i18n.t(`seo.${page}.title`),
+            description: this.i18n.t(`seo.${page}.description`, params),
+            keywords: this.i18n.t(`seo.${page}.keywords`),
+            url: `${SITE_ORIGIN}${this.i18n.path(path)}`,
+            type: 'website',
+            alternates: languageAlternates(path, SITE_ORIGIN)
+        });
     }
 
     /**
@@ -230,6 +236,14 @@ export class SeoService {
     private updateTag(attr: 'name' | 'property', attrValue: string, content: string): void {
         if (content) {
             this.meta.updateTag({ [attr]: attrValue, content: content });
+        }
+    }
+
+    /** One og:locale:alternate per other language — only on pages that have language versions. */
+    private setOgLocaleAlternates(ogLocales: string[]): void {
+        this.meta.getTags("property='og:locale:alternate'").forEach(tag => this.meta.removeTagElement(tag));
+        for (const content of ogLocales) {
+            this.meta.addTag({ property: 'og:locale:alternate', content });
         }
     }
 

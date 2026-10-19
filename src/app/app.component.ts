@@ -1,15 +1,19 @@
-import { Component, ElementRef, HostListener, OnInit, PLATFORM_ID, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, PLATFORM_ID, ViewChild, computed, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { IGX_NAVBAR_DIRECTIVES, IGX_NAVIGATION_DRAWER_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxIconComponent, IgxIconService, IgxNavigationDrawerComponent, IgxToggleActionDirective, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
 import { instagram, tiktok, youtube } from '@igniteui/material-icons-extended';
 import { GOOGLE_REVIEW_URL, YOUTUBE_CHANNEL_URL } from '../data/site-links';
-import { BUSINESS } from '../data/business';
 import { ReviewCtaComponent } from './shared/review-cta/review-cta.component';
+import { LanguageSwitcherComponent } from './shared/language-switcher/language-switcher.component';
+import { I18nService } from './i18n/i18n.service';
+import { LocalizePathPipe, TranslatePipe } from './i18n/translate.pipe';
+import { Locale, switchLocaleUrl } from './i18n/locales';
+import { localizedAddress } from './i18n/business-copy';
 
 @Component({
   selector: 'app-root',
-  imports: [IGX_NAVIGATION_DRAWER_DIRECTIVES, IGX_NAVBAR_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxToggleActionDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective, RouterOutlet, RouterLink, RouterLinkActive, ReviewCtaComponent],
+  imports: [IGX_NAVIGATION_DRAWER_DIRECTIVES, IGX_NAVBAR_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxToggleActionDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective, RouterOutlet, RouterLink, RouterLinkActive, ReviewCtaComponent, LanguageSwitcherComponent, TranslatePipe, LocalizePathPipe],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
@@ -25,10 +29,12 @@ export class AppComponent implements OnInit {
   public isDarkTheme = false;
   /** Direct Google write-review link, shared by every review CTA (see site-links). */
   public readonly googleReviewUrl = GOOGLE_REVIEW_URL;
-  /** Footer address — from business.json so it matches the schema and the map listing. */
-  public readonly displayAddress = BUSINESS.displayAddress;
   /** YouTube channel — navbar + footer icon links (see site-links). */
   public readonly youtubeChannelUrl = YOUTUBE_CHANNEL_URL;
+
+  protected readonly i18n = inject(I18nService);
+  /** Footer address in the page's language — from business.json, so it matches the schema and the map listing. */
+  public readonly displayAddress = computed(() => localizedAddress(this.i18n.locale()));
 
   constructor(
     public router: Router,
@@ -41,6 +47,15 @@ export class AppComponent implements OnInit {
 
   private readonly platformId = inject(PLATFORM_ID);
   private readonly host = inject(ElementRef<HTMLElement>);
+
+  /**
+   * This page in `locale` (or that language's home page from a Bulgarian-only
+   * page) as a routerLink value — path only: a #fragment in a routerLink string
+   * would be encoded into the path.
+   */
+  protected languageLink(locale: Locale): string {
+    return switchLocaleUrl(this.router.url.split('#')[0], locale);
+  }
 
   ngOnInit(): void {
     // Theme detection needs localStorage/matchMedia — skip during prerendering

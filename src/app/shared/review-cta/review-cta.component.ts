@@ -5,6 +5,7 @@ import { Subscription, filter } from 'rxjs';
 import { IgxButtonDirective, IgxSnackbarComponent } from 'igniteui-angular';
 
 import { GOOGLE_REVIEW_URL } from '../../../data/site-links';
+import { TranslatePipe } from '../../i18n/translate.pipe';
 
 /** localStorage key holding the epoch-ms timestamp of the last time we asked. */
 const STORAGE_KEY = 'reviewCtaDismissedAt';
@@ -39,7 +40,7 @@ const SHOW_DELAY_MS = 2500;
  */
 @Component({
   selector: 'app-review-cta',
-  imports: [IgxSnackbarComponent, IgxButtonDirective],
+  imports: [IgxSnackbarComponent, IgxButtonDirective, TranslatePipe],
   templateUrl: './review-cta.component.html',
   styleUrls: ['./review-cta.component.scss']
 })

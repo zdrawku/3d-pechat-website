@@ -1,0 +1,22 @@
+{
+  "title": "Products and projects modelled for 3D printing",
+  "subtitle": "3D printed solutions",
+  "intro": "Here are some of the projects we have printed to order: practical accessories for the home, sport and hobbies, organisers, toys and gifts. Every part starts from a ready model or an idea and is made from carefully chosen filament – you can have it in the colour and size you want, and the price depends on the model's weight.",
+  "practical": {
+    "heading": "Practical items and accessories",
+    "caption": "Bookmarks, headphone stands, coin holders, sports equipment holders and drone guards – functional parts designed and printed with everyday use in mind."
+  },
+  "galleryAlt": "3D printing project {n}",
+  "cta": {
+    "title": "Like one of the projects?",
+    "description": "We'll print it in the colour and size you choose – or make something from your own idea.",
+    "quote": "Request a quote",
+    "prices": "3D printing prices"
+  },
+  "toys": {
+    "heading": "Toys for hand painting",
+    "subheading": "Explore our unique toys, ready for a creative touch",
+    "caption": "Figures printed and ready to paint – great as a gift, for children and for creative time at home.",
+    "imageAlt": "Toy for hand painting"
+  }
+}

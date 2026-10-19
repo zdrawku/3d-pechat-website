@@ -1,0 +1,44 @@
+{
+  "title": "3D printed products",
+  "subtitle": "Discover our collection of 3D printed products, made with precision and attention to detail.",
+  "searchPlaceholder": "Search products...",
+  "clearSearch": "Clear search",
+  "resultsFor": "Results for \"{query}\"",
+  "catalogHeading": "Catalogue of 3D printed products",
+  "sortLabel": "Sort products",
+  "sortNewest": "Newest",
+  "sortOldest": "Oldest",
+  "sortAlpha": "A–Z",
+  "shown": "Showing",
+  "of": "of",
+  "count": { "one": "product", "other": "products" },
+  "emptyTitle": "No products found for \"{query}\"",
+  "emptyText": "Try another word or browse the full catalogue.",
+  "features": {
+    "heading": "Product features",
+    "precision": { "title": "Precision", "text": "Every card is designed with exact dimensions so the coins fit perfectly" },
+    "design": { "title": "Design", "text": "Beautiful patriotic designs with the Bulgarian flag and the map of Bulgaria" },
+    "durability": { "title": "Durability", "text": "Made from high-quality PLA for long-lasting use" },
+    "security": { "title": "Security", "text": "The coins stay firmly in their slots, so they are stored safely" }
+  },
+  "cta": {
+    "title": "Ready to order your coin card?",
+    "description": "Get in touch today and we'll help you choose the perfect design for your collection!",
+    "button": "Contact us"
+  },
+  "orderMessage": "Hello, I would like to order \"{name}\". {description}",
+  "grid": {
+    "front": "{name} – front",
+    "back": "{name} – back",
+    "flip": "Flip the card",
+    "flipHint": "⟲ flip",
+    "moreInfo": "More information",
+    "moreInfoLabel": "More information about personalisation",
+    "copied": "Copied!",
+    "copyLink": "Copy a link to this product",
+    "readMore": "Read more (in Bulgarian)",
+    "readMoreLabel": "Read more (in Bulgarian): {label}",
+    "allTags": "Show all tags",
+    "order": "Order now"
+  }
+}
