@@ -7,7 +7,7 @@ import type { LocaleBundle, PageNamespace, SourceBundle } from './i18n.types';
  * its own — see src/i18n/bg/index.ts). Its content is src/data/ itself, so the
  * overlays are empty.
  */
-export const BULGARIAN: SourceBundle = { messages: coreMessages, faq: {}, gallery: {}, products: {}, videos: {} };
+export const BULGARIAN: SourceBundle = { messages: coreMessages, blog: {}, faq: {}, gallery: {}, products: {}, videos: {} };
 
 /**
  * How each language is loaded. Bulgarian's core strings ship in the main bundle
@@ -49,9 +49,18 @@ export const TRANSLATED_LOCALES = LOCALES.filter((l) => l.code !== DEFAULT_LOCAL
 
 /**
  * Pages that exist in every language, as Bulgarian paths with a trailing slash.
- * Everything else (the blog) is Bulgarian-only and has no language versions.
+ * Blog posts are not among them: each language has the posts in
+ * {@link TRANSLATED_POSTS}, the rest exist only in Bulgarian.
  */
 export const LOCALIZED_PAGES: readonly string[] = registry.localizedPages;
+
+/**
+ * The blog posts translated into each language: Bulgarian slug → that
+ * language's slug (`translatedPosts` in src/i18n/locales.json). Each
+ * translation is its own page at /<code>/blog/<slug>/, with its copy in
+ * src/i18n/<code>/content/blog.json and its text in src/assets/blogs/<code>/<slug>.md.
+ */
+export const TRANSLATED_POSTS = registry.translatedPosts as Partial<Record<Locale, Readonly<Record<string, string>>>>;
 
 /**
  * A page namespace's Bulgarian path: 'home' → '/', 'prices' → '/prices/'.
@@ -101,7 +110,8 @@ export function isLocalizedPage(path: string): boolean {
 /**
  * The URL of a Bulgarian path in `locale`: '/prices' → '/en/prices',
  * '/prices/' → '/en/prices/', '/' → '/en/'. The default language has no prefix,
- * and Bulgarian-only pages (the blog) come back unchanged. The input's trailing
+ * and blog posts come back unchanged (a translation has its own slug, see
+ * blogPostPath()). The input's trailing
  * slash style is kept, so slash-free routerLink values stay slash-free
  * (TrailingSlashUrlSerializer adds the slash).
  */
@@ -112,6 +122,42 @@ export function localizePath(path: string, locale: Locale): string {
   return `/${locale}${path.startsWith('/') ? path : `/${path}`}`;
 }
 
+/**
+ * A blog post's URL path in `locale`, by its Bulgarian slug, with a trailing
+ * slash: ('pla-…', 'bg') → '/blog/pla-…/', ('pla-…', 'en') → '/en/blog/pla-vs-…/';
+ * null when the post isn't translated into `locale`.
+ */
+export function blogPostPath(source: string, locale: Locale): string | null {
+  if (locale === DEFAULT_LOCALE) {
+    return `/blog/${source}/`;
+  }
+  const slug = TRANSLATED_POSTS[locale]?.[source];
+  return slug ? `/${locale}/blog/${slug}/` : null;
+}
+
+/** The languages a blog post exists in, Bulgarian first. */
+export function blogPostLocales(source: string): Locale[] {
+  return LOCALES.map((l) => l.code).filter((code) => blogPostPath(source, code) !== null);
+}
+
+/**
+ * The blog post a URL shows, as its language and Bulgarian slug:
+ * '/en/blog/pla-vs-…/' → { locale: 'en', source: 'pla-…' }; null for any other
+ * page, including the blog index and an English slug that isn't registered.
+ */
+export function blogPostAt(url: string): { locale: Locale; source: string } | null {
+  const { locale, path } = splitLocalePath(url);
+  const slug = /^\/blog\/([^/]+)\/?$/.exec(path)?.[1];
+  if (!slug) {
+    return null;
+  }
+  if (locale === DEFAULT_LOCALE) {
+    return { locale, source: slug };
+  }
+  const source = Object.entries(TRANSLATED_POSTS[locale] ?? {}).find(([, translated]) => translated === slug)?.[0];
+  return source ? { locale, source } : null;
+}
+
 /** A language version of a page, emitted as <link rel="alternate" hreflang>. */
 export interface LanguageAlternate {
   hreflang: string;
@@ -119,29 +165,47 @@ export interface LanguageAlternate {
 }
 
 /**
- * hreflang alternates for a page: one per language plus x-default (Bulgarian),
- * or none for a Bulgarian-only page. `path` may be any language's URL path.
+ * hreflang alternates for a page: one per language plus x-default (Bulgarian).
+ * A blog post lists only the languages it is translated into, and none when it
+ * exists only in Bulgarian. `path` may be any language's URL path.
  */
 export function languageAlternates(path: string, origin: string): LanguageAlternate[] {
   const page = splitLocalePath(path).path;
-  if (!isLocalizedPage(page)) {
+  if (isLocalizedPage(page)) {
+    const canonical = page === '/' ? '/' : `${withoutTrailingSlash(page)}/`;
+    return [
+      ...LOCALES.map((l) => ({ hreflang: l.code, href: `${origin}${localizePath(canonical, l.code)}` })),
+      { hreflang: 'x-default', href: `${origin}${canonical}` }
+    ];
+  }
+  const post = blogPostAt(path);
+  const versions = post ? blogPostLocales(post.source) : [];
+  if (!post || versions.length < 2) {
     return [];
   }
-  const canonical = page === '/' ? '/' : `${withoutTrailingSlash(page)}/`;
   return [
-    ...LOCALES.map((l) => ({ hreflang: l.code, href: `${origin}${localizePath(canonical, l.code)}` })),
-    { hreflang: 'x-default', href: `${origin}${canonical}` }
+    ...versions.map((code) => ({ hreflang: code, href: `${origin}${blogPostPath(post.source, code)}` })),
+    { hreflang: 'x-default', href: `${origin}${blogPostPath(post.source, DEFAULT_LOCALE)}` }
   ];
 }
 
 /**
  * Where the language switcher sends a visitor: the same page in `target`
- * (keeping a #fragment such as a product anchor), or that language's home page
- * when the current page exists only in Bulgarian.
+ * (keeping a #fragment such as a product anchor); for a blog post its
+ * translation, or that language's blog when there is none; otherwise that
+ * language's home page.
  */
 export function switchLocaleUrl(currentUrl: string, target: Locale): string {
   const [withoutFragment, fragment] = currentUrl.split('#');
   const { path } = splitLocalePath(withoutFragment);
-  const url = localizePath(isLocalizedPage(path) ? path : '/', target);
-  return fragment ? `${url}#${fragment}` : url;
+  if (isLocalizedPage(path)) {
+    const url = localizePath(path, target);
+    return fragment ? `${url}#${fragment}` : url;
+  }
+  // A translated post's headings differ, so its #fragment can't carry over.
+  const post = blogPostAt(withoutFragment);
+  if (post) {
+    return blogPostPath(post.source, target) ?? localizePath('/blog/', target);
+  }
+  return localizePath('/', target);
 }

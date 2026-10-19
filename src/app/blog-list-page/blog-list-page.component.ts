@@ -1,13 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 
 import { RouterModule } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IgxButtonModule, IgxRippleModule, IgxIconModule, IgxInputGroupModule, IGX_CARD_DIRECTIVES, IgxTooltipModule } from 'igniteui-angular';
+import { IgxButtonModule, IgxRippleModule, IgxIconModule, IgxInputGroupModule, IGX_CARD_DIRECTIVES, IgxTooltipModule, IgxAvatarComponent } from 'igniteui-angular';
+import blogMessages from '../../i18n/bg/blog.json';
+import { I18nService } from '../i18n/i18n.service';
+import { blogPostsIn } from '../i18n/localized-content';
+import { TranslatePipe } from '../i18n/translate.pipe';
 import { BlogService } from '../services/blog.service';
 import { BlogPost } from '../models/blog-post.model';
 import { SeoService } from '../services/seo.service';
 
+/**
+ * The blog index in every language: /blog/ lists every post, /en/blog/ the
+ * posts translated into English (src/i18n/locales.json `translatedPosts`),
+ * closed by one card pointing to the posts that are still only in Bulgarian
+ * (approved design „B“, artifact "English Blog Variants").
+ */
 @Component({
   selector: 'app-blog-list-page',
   standalone: true,
@@ -20,27 +30,28 @@ import { SeoService } from '../services/seo.service';
     IgxIconModule,
     IgxInputGroupModule,
     IGX_CARD_DIRECTIVES,
-    IgxTooltipModule
+    IgxTooltipModule,
+    IgxAvatarComponent,
+    TranslatePipe
 ],
   templateUrl: './blog-list-page.component.html',
   styleUrls: ['./blog-list-page.component.scss']
 })
 export class BlogListPageComponent implements OnInit {
+  protected readonly i18n = inject(I18nService);
+
   allBlogs: BlogPost[] = [];
   filteredBlogs: BlogPost[] = [];
   searchText = '';
+  /** Posts that exist only in Bulgarian, shown as one pointer card on another language's blog (0 on the Bulgarian one). */
+  untranslatedCount = 0;
 
   constructor(
     private blogService: BlogService,
     private seoService: SeoService
   ) {
-    this.seoService.updateSeo({
-      title: 'Блог - 3D Печат България',
-      description: 'Научете всичко за 3D принтирането - ръководства, съвети и трикове от експерти. Блог за 3D принтиране в България.',
-      keywords: '3D принтиране, блог, ръководства, съвети, 3D принтер, България',
-      url: 'https://3dpechat.bg/blog/',
-      type: 'website'
-    });
+    this.i18n.registerPage('blog', blogMessages);
+    this.seoService.applyPageSeo('blog');
     this.seoService.removeStructuredData();
   }
 
@@ -50,7 +61,10 @@ export class BlogListPageComponent implements OnInit {
 
   loadBlogs(): void {
     this.blogService.getAllPosts().subscribe(blogs => {
-      this.allBlogs = blogs.sort((a, b) => b.date.getTime() - a.date.getTime());
+      const posts = blogPostsIn(blogs, this.i18n.locale(), this.i18n.content().blog);
+      this.untranslatedCount = blogs.length - posts.length;
+      // Newest first; the sort is stable, so posts of the same day keep registry order.
+      this.allBlogs = [...posts].sort((a, b) => b.date.getTime() - a.date.getTime());
       this.filteredBlogs = [...this.allBlogs];
     });
   }
@@ -71,7 +85,7 @@ export class BlogListPageComponent implements OnInit {
   }
 
   formatDate(date: Date): string {
-    return new Intl.DateTimeFormat('bg-BG', {
+    return new Intl.DateTimeFormat(this.i18n.definition().intl, {
       year: 'numeric',
       month: 'long',
       day: 'numeric'

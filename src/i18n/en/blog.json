@@ -1,0 +1,47 @@
+{
+  "list": {
+    "title": "3D Printing Blog",
+    "subtitle": "Guides and practical tips about 3D printing from our studio in Sofia",
+    "search": "Search the blog...",
+    "clearSearch": "Clear the search",
+    "shown": "Showing",
+    "of": "of",
+    "articles": "articles",
+    "readMore": "Read more",
+    "noResults": {
+      "title": "No articles found",
+      "text": "Try different keywords"
+    },
+    "empty": {
+      "title": "New articles are coming soon",
+      "text": "Check back for guides about 3D printing"
+    },
+    "moreInBulgarian": {
+      "title": "More articles in Bulgarian",
+      "text": {
+        "one": "{count} more article is only in Bulgarian for now.",
+        "other": "{count} more articles are only in Bulgarian for now."
+      },
+      "action": "Open the Bulgarian blog"
+    }
+  },
+  "article": {
+    "back": "Back to articles",
+    "readIn": "Read in {language}",
+    "nextSteps": "Next steps",
+    "products": "See the products",
+    "contact": "Contact us",
+    "subscribe": "Subscribe on YouTube"
+  },
+  "related": {
+    "label": "More from 3dpechat.bg",
+    "posts": "Keep reading",
+    "allPosts": "All articles",
+    "read": "Read",
+    "readLabel": "Read: {title}",
+    "products": "You might like",
+    "allProducts": "All products",
+    "viewProduct": "View product",
+    "viewProductLabel": "View product: {name}"
+  }
+}

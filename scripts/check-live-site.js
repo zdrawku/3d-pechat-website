@@ -15,7 +15,7 @@ const path = require('path');
 const cheerio = require('cheerio');
 const { findProblems } = require('./check-internal-links');
 const { findKey } = require('./indexnow');
-const { SITE, hreflangAlternates, localizedPath, readLocales } = require('./locale-urls');
+const { SITE, blogPostAlternates, blogPostSource, hreflangAlternates, localizedPath, readLocales } = require('./locale-urls');
 
 const ROOT = path.resolve(__dirname, '..');
 const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
@@ -68,8 +68,9 @@ function reviewMarkup(node, trail = '$') {
 /**
  * The <html lang> and the hreflang set a URL must carry, from
  * src/i18n/locales.json: '/en/…' is English, everything else Bulgarian; a page
- * in `localizedPages` lists every language plus x-default (Bulgarian), any
- * other page (the blog) lists none.
+ * in `localizedPages` lists every language plus x-default (Bulgarian), a blog
+ * post the languages it is translated into (`translatedPosts`) plus x-default,
+ * and a post that exists only in Bulgarian none.
  */
 function expectedLanguage(loc, locales) {
   const pathname = new URL(loc).pathname;
@@ -77,10 +78,11 @@ function expectedLanguage(loc, locales) {
   const isOther = prefix && prefix !== locales.defaultLocale && locales.locales.some((l) => l.code === prefix);
   const lang = isOther ? prefix : locales.defaultLocale;
   const page = isOther ? pathname.slice(prefix.length + 1) || '/' : pathname;
-  const alternates = locales.localizedPages.includes(page)
-    ? hreflangAlternates(page, locales).map(({ hreflang, href }) => `${hreflang} ${href}`)
-    : [];
-  return { lang, alternates };
+  const post = blogPostSource(pathname, locales);
+  const pairs = locales.localizedPages.includes(page)
+    ? hreflangAlternates(page, locales)
+    : post ? blogPostAlternates(post, locales) : [];
+  return { lang, alternates: pairs.map(({ hreflang, href }) => `${hreflang} ${href}`) };
 }
 
 /** What is wrong with a live page's <html lang> and hreflang links ([] = nothing); `$` is the parsed page. */
@@ -95,15 +97,18 @@ function languageProblems($, loc, locales) {
 }
 
 /**
- * Every language version of every page in `localizedPages` that the sitemap's
- * `locs` don't list ([] = none). The lang/hreflang check only sees sitemap
- * URLs, so a sitemap that drops the '/en/…' pages has to fail on its own.
+ * Every language version of every page in `localizedPages`, and every
+ * translated post (`translatedPosts`), that the sitemap's `locs` don't list
+ * ([] = none). The lang/hreflang check only sees sitemap URLs, so a sitemap
+ * that drops the '/en/…' pages has to fail on its own.
  */
 function missingLanguageVersions(locs, locales) {
   const listed = new Set(locs);
-  return locales.localizedPages
-    .flatMap((page) => locales.locales.map((l) => `${SITE}${localizedPath(page, l.code, locales)}`))
-    .filter((url) => !listed.has(url));
+  const pages = locales.localizedPages
+    .flatMap((page) => locales.locales.map((l) => `${SITE}${localizedPath(page, l.code, locales)}`));
+  const posts = Object.entries(locales.translatedPosts ?? {})
+    .flatMap(([code, slugs]) => Object.values(slugs).map((slug) => `${SITE}/${code}/blog/${slug}/`));
+  return [...pages, ...posts].filter((url) => !listed.has(url));
 }
 
 /** Differences between the live LocalBusiness block and business.json. */
@@ -236,8 +241,8 @@ async function main() {
   }
 
   // Languages: every sitemap page carries its language and exactly its hreflang
-  // set — each main page pairs with its translations, the Bulgarian-only blog
-  // has none (collected in the sitemap loop above).
+  // set — each main page and translated post pairs with its translations, a
+  // Bulgarian-only post has none (collected in the sitemap loop above).
   check(languageIssues.length === 0, `every sitemap page has the right lang + hreflang (${locs.length} pages)`,
     `lang/hreflang problems:\n   ${languageIssues.join('\n   ')}`);
 

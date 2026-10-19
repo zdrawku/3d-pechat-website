@@ -4,8 +4,10 @@
  * Covers are rendered small (card thumbnails ~400px wide, hero ~800px on retina),
  * so we cap width at 800px and encode WebP q80. The originals were huge PNG/JPG
  * (e.g. 3d-printirani-obuvki-cover-3.png was ~600 KB at 1613px wide). After
- * conversion the originals are deleted and references in blog-posts.registry.ts are
- * rewritten to the .webp path.
+ * conversion the originals are deleted and every reference is rewritten to the
+ * .webp path: blog-posts.registry.ts (the cover, which also feeds og:image and
+ * the BlogPosting schema) and the markdown of every post in every language
+ * (src/assets/blogs/*.md and src/assets/blogs/<lang>/*.md).
  *
  * Idempotent: files already converted are skipped. Safe to run in prebuild.
  *
@@ -21,7 +23,6 @@ sharp.cache(false);
 const IMAGES_DIR = path.join(__dirname, '../src/assets/blogs/images');
 const BLOG_SERVICE = path.join(__dirname, '../src/app/services/blog-posts.registry.ts');
 const BLOGS_DIR = path.join(__dirname, '../src/assets/blogs');
-const BLOG_COMPONENTS_DIR = path.join(__dirname, '../src/app/blog');
 
 const MAX_WIDTH = 800;
 const QUALITY = 80;
@@ -41,6 +42,19 @@ async function unlinkWithRetry(file, attempts = 5) {
   fs.unlinkSync(file);
 }
 
+/** Every post's markdown: the Bulgarian ones and each language folder's (images/ and videos/ hold no markdown). */
+function markdownFiles() {
+  if (!fs.existsSync(BLOGS_DIR)) return [];
+  return fs.readdirSync(BLOGS_DIR, { withFileTypes: true }).flatMap((entry) => {
+    const full = path.join(BLOGS_DIR, entry.name);
+    if (entry.isFile() && entry.name.endsWith('.md')) return [full];
+    if (entry.isDirectory()) {
+      return fs.readdirSync(full).filter((f) => f.endsWith('.md')).map((f) => path.join(full, f));
+    }
+    return [];
+  });
+}
+
 (async () => {
   if (!fs.existsSync(IMAGES_DIR)) {
     console.warn(`⚠ Directory not found: ${IMAGES_DIR}`);
@@ -52,32 +66,7 @@ async function unlinkWithRetry(file, attempts = 5) {
     .filter((f) => SOURCE_EXTS.has(path.extname(f).toLowerCase()));
 
   let serviceContent = fs.readFileSync(BLOG_SERVICE, 'utf8');
-  const mdFiles = fs.existsSync(BLOGS_DIR)
-    ? fs
-        .readdirSync(BLOGS_DIR)
-        .filter((f) => f.endsWith('.md'))
-        .map((f) => path.join(BLOGS_DIR, f))
-    : [];
-  const mdContents = mdFiles.map((filePath) => ({
-    path: filePath,
-    content: fs.readFileSync(filePath, 'utf8'),
-  }));
-
-  // Blog component .ts files embed the cover as the og:image and the JSON-LD
-  // "image" — they must follow the rename too, or the post ships pointing at a
-  // file this script just deleted.
-  const componentFiles = fs.existsSync(BLOG_COMPONENTS_DIR)
-    ? fs
-        .readdirSync(BLOG_COMPONENTS_DIR, { withFileTypes: true })
-        .filter((e) => e.isDirectory())
-        .flatMap((e) =>
-          fs
-            .readdirSync(path.join(BLOG_COMPONENTS_DIR, e.name))
-            .filter((f) => f.endsWith('.ts'))
-            .map((f) => path.join(BLOG_COMPONENTS_DIR, e.name, f))
-        )
-    : [];
-  const componentContents = componentFiles.map((filePath) => ({
+  const mdContents = markdownFiles().map((filePath) => ({
     path: filePath,
     content: fs.readFileSync(filePath, 'utf8'),
   }));
@@ -103,14 +92,9 @@ async function unlinkWithRetry(file, attempts = 5) {
     // Rewrite any reference to the original file in blog-posts.registry.ts
     serviceContent = serviceContent.split(name).join(webpName);
 
-    // Rewrite references in blog markdown files
+    // Rewrite references in every language's blog markdown
     for (const md of mdContents) {
       md.content = md.content.split(name).join(webpName);
-    }
-
-    // Rewrite references in blog component .ts files (og:image + JSON-LD)
-    for (const comp of componentContents) {
-      comp.content = comp.content.split(name).join(webpName);
     }
 
     converted++;
@@ -126,11 +110,6 @@ async function unlinkWithRetry(file, attempts = 5) {
       fs.writeFileSync(md.path, md.content);
     }
     console.log(`✓ Updated references in ${mdContents.length} markdown files`);
-
-    for (const comp of componentContents) {
-      fs.writeFileSync(comp.path, comp.content);
-    }
-    console.log(`✓ Updated references in ${componentContents.length} blog component files`);
   }
 
   console.log(`\nConverted ${converted} blog images, saved ${(savedBytes / 1024 / 1024).toFixed(1)} MB`);

@@ -49,9 +49,9 @@ export class AppComponent implements OnInit {
   private readonly host = inject(ElementRef<HTMLElement>);
 
   /**
-   * This page in `locale` (or that language's home page from a Bulgarian-only
-   * page) as a routerLink value — path only: a #fragment in a routerLink string
-   * would be encoded into the path.
+   * This page in `locale` (a post's translation, or that language's blog or
+   * home page when there is none — switchLocaleUrl) as a routerLink value —
+   * path only: a #fragment in a routerLink string would be encoded into the path.
    */
   protected languageLink(locale: Locale): string {
     return switchLocaleUrl(this.router.url.split('#')[0], locale);

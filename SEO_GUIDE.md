@@ -4,9 +4,11 @@
 > Per-post SEO (title, description, keywords, canonical with trailing slash,
 > Open Graph, `BlogPosting` + `BreadcrumbList` JSON-LD) is emitted at prerender
 > time by `SeoService.applyBlogPostSeo('<slug>')` from `blog-posts.registry.ts`.
-> Never hand-write meta tags or JSON-LD in a post component. Business claims
+> Never hand-write meta tags or JSON-LD for a post. Business claims
 > come from `src/data/business.json`. SSR/prerender is already in place
-> (`outputMode: "static"`).
+> (`outputMode: "static"`). Since 2026-10-19 one component
+> (`src/app/blog/article/`) serves every post in every language and makes that
+> call; per-post components mentioned below no longer exist.
 
 > **📘 Looking to add a new article?** See the comprehensive [ARTICLE_CREATION_GUIDE.md](./ARTICLE_CREATION_GUIDE.md) for complete step-by-step instructions on creating blog posts, including content structure, image optimization, and component setup.
 

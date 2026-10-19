@@ -21,8 +21,9 @@ export class TranslatePipe implements PipeTransform {
 
 /**
  * `[routerLink]="'/contact' | localizePath"` → '/contact' on Bulgarian pages,
- * '/en/contact' on English ones. Bulgarian-only pages (the blog) are returned
- * unchanged. Keep the value slash-free, like every routerLink (Rule 5.4).
+ * '/en/contact' on English ones. Blog posts are returned unchanged (a
+ * translation has its own slug: blogPostPath()). Keep the value slash-free,
+ * like every routerLink (Rule 5.4).
  */
 @Pipe({ name: 'localizePath', pure: false })
 export class LocalizePathPipe implements PipeTransform {

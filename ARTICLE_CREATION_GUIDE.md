@@ -3,10 +3,15 @@
 **Last Updated:** October 17, 2026
 
 > ⚠️ **[`CLAUDE.md`](CLAUDE.md) Rule 5 and [`AI_INSTRUCTIONS.md`](AI_INSTRUCTIONS.md) win wherever this guide disagrees.**
+> **Since 2026-10-19 posts have no component or route of their own** — the
+> per-post component and route steps below are obsolete. A post is its
+> markdown (`src/assets/blogs/<slug>.md`) plus its `blog-posts.registry.ts`
+> entry; one component (`src/app/blog/article/`) serves every post in every
+> language. Steps: AI_INSTRUCTIONS.md § Adding Articles Manually.
 > In short:
 > - Post metadata lives in `blog-posts.registry.ts`, not `blog.service.ts`.
-> - A post component calls `applyBlogPostSeo('<slug>')` and never hand-writes meta tags or JSON-LD.
-> - Routes are lazy `loadComponent`.
+> - The article component calls `applyBlogPostSeo('<slug>')`; nothing hand-writes meta tags or JSON-LD.
+> - One `:slug` route per language serves every post (`src/app/blog/article/article.routes.ts`).
 > - Internal links and canonicals end in `/`.
 > - Service claims come from `src/data/business.json`.
 > - The preferred way to add a post is `npm run generate-blog`.

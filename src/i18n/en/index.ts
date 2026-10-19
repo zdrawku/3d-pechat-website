@@ -14,15 +14,18 @@ import productsUi from './products.json';
 import prices from './prices.json';
 import faqUi from './faq.json';
 import contact from './contact.json';
+import blogUi from './blog.json';
 import reviews from './reviews.json';
 import misc from './misc.json';
+import blog from './content/blog.json';
 import faq from './content/faq.json';
 import gallery from './content/gallery.json';
 import products from './content/products.json';
 import videos from './content/videos.json';
 
 const english = {
-  messages: { common, shell, seo, home, portfolio, products: productsUi, prices, faq: faqUi, contact, reviews, misc },
+  messages: { common, shell, seo, home, portfolio, products: productsUi, prices, faq: faqUi, contact, blog: blogUi, reviews, misc },
+  blog,
   faq,
   gallery,
   products,

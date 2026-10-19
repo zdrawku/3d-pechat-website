@@ -1,5 +1,6 @@
 import { BLOG_POSTS } from './blog-posts.registry';
 import { BLOG_CONTENT } from './blog-content.generated';
+import { TRANSLATED_BLOG_CONTENT } from './blog-content.translations.generated';
 
 /**
  * Integrity of the post registry. Every script (sitemap, llms.txt, scaffolder)
@@ -43,6 +44,19 @@ describe('BLOG_POSTS registry', () => {
   it('slugs are at most 80 characters (see slugify)', () => {
     for (const post of BLOG_POSTS) {
       expect(post.slug.length).withContext(post.slug).toBeLessThanOrEqual(80);
+    }
+  });
+
+  // Bulgaria uses the euro since 1 January 2026: an amount in leva is stale.
+  // (Words such as „лев“ for the old coins are fine; amounts are not.)
+  it('states every amount in euro, never in leva — in every language', () => {
+    const texts = [
+      ...Object.entries(BLOG_CONTENT),
+      ...Object.entries(TRANSLATED_BLOG_CONTENT).flatMap(([code, posts]) => Object.entries(posts).map(([slug, text]) => [`${code}/${slug}`, text] as const))
+    ];
+    for (const [slug, text] of texts) {
+      expect(text).withContext(slug).not.toMatch(/\d\s*(?:лв\.?|лева)(?![а-я])/i);
+      expect(text).withContext(slug).not.toMatch(/\d\s*(?:BGN|leva)\b/i);
     }
   });
 });

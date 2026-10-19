@@ -44,3 +44,10 @@ export const YOUTUBE_CHANNEL_URL = 'https://www.youtube.com/@3dpechatbg';
  * plain "visit the channel" icon links.
  */
 export const YOUTUBE_SUBSCRIBE_URL = 'https://www.youtube.com/@3dpechatbg?sub_confirmation=1';
+
+/**
+ * The euro coin card model on MakerWorld, linked from the coin card article in
+ * every language: its markdown says `{{MAKERWORLD_URL}}` inside a
+ * `<!-- makerworld -->` section (src/app/blog/shared/article-markdown.ts).
+ */
+export const MAKERWORLD_COIN_CARD_URL = 'https://makerworld.com/en/models/3435823-coin-card-holder-bulgaria-euro#profileId-3917631';

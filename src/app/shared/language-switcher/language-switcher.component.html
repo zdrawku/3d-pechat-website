@@ -1,22 +1,15 @@
-<button igxButton="flat" type="button" class="lang-trigger" [class.lang-trigger--open]="!menu.collapsed"
-        [id]="triggerId" [igxToggleAction]="menu" [igxDropDownItemNavigation]="menu"
-        [overlaySettings]="overlaySettings" aria-haspopup="listbox" [attr.aria-expanded]="!menu.collapsed"
+<button igxButton="flat" type="button" class="lang-trigger" [class.lang-trigger--open]="expanded()" #trigger
+        [id]="triggerId" aria-haspopup="listbox" [attr.aria-expanded]="expanded()"
         [attr.aria-label]="'shell.language.trigger' | t: { language: current().label }"
+        (click)="toggle()" (keydown)="onKeydown($event)"
         data-testid="language-switcher">
   <igx-icon class="lang-trigger__globe" aria-hidden="true">language</igx-icon>
   <span class="lang-trigger__code">{{ current().code }}</span>
-  <igx-icon class="lang-trigger__caret" aria-hidden="true">{{ menu.collapsed ? 'expand_more' : 'expand_less' }}</igx-icon>
+  <igx-icon class="lang-trigger__caret" aria-hidden="true">{{ expanded() ? 'expand_less' : 'expand_more' }}</igx-icon>
 </button>
 
-<igx-drop-down #menu width="236px" [labelledBy]="triggerId" (selectionChanging)="onSelectionChanging($event)">
-  <igx-drop-down-item [isHeader]="true" class="lang-menu__heading">{{ 'shell.language.heading' | t }}</igx-drop-down-item>
-  @for (locale of locales; track locale.code) {
-    <igx-drop-down-item class="lang-menu__item" [value]="locale.code" [selected]="locale.code === current().code"
-                        [attr.lang]="locale.code" [attr.data-testid]="'language-option-' + locale.code">
-      <igx-icon igxPrefix class="lang-menu__check" [class.lang-menu__check--hidden]="locale.code !== current().code"
-                aria-hidden="true">check</igx-icon>
-      {{ locale.label }}
-      <span igxSuffix class="lang-menu__code" aria-hidden="true">{{ locale.code }}</span>
-    </igx-drop-down-item>
-  }
-</igx-drop-down>
+<!-- The menu and Ignite's drop-down load on first use (prefetched when idle). -->
+@defer (when requested(); prefetch on idle) {
+  <app-language-menu [target]="trigger" [labelledBy]="triggerId"
+                     (ready)="onMenuReady($event)" (expanded)="expanded.set($event)" />
+}

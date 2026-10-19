@@ -36,8 +36,10 @@
     "moreInfoLabel": "More information about personalisation",
     "copied": "Copied!",
     "copyLink": "Copy a link to this product",
-    "readMore": "Read more (in Bulgarian)",
-    "readMoreLabel": "Read more (in Bulgarian): {label}",
+    "readMore": "Read more",
+    "readMoreLabel": "Read more: {label}",
+    "readMoreInBulgarian": "Read more (in Bulgarian)",
+    "readMoreInBulgarianLabel": "Read more (in Bulgarian): {label}",
     "allTags": "Show all tags",
     "order": "Order now"
   }

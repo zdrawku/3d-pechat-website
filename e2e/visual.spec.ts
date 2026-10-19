@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { CORE_ROUTES } from './routes';
+import { CORE_ROUTES, ENGLISH_ROUTES } from './routes';
 
 /**
  * Visual regression: full-page screenshots of each core page at three
@@ -21,7 +21,8 @@ const VIEWPORTS = [
   { name: 'desktop', width: 1440, height: 900 },
 ];
 
-for (const route of CORE_ROUTES) {
+// Both languages: the core pages and the English versions of the others.
+for (const route of [...CORE_ROUTES, ...ENGLISH_ROUTES]) {
   for (const vp of VIEWPORTS) {
     test(`visual: ${route.path} @ ${vp.name}`, async ({ page }) => {
       await page.setViewportSize({ width: vp.width, height: vp.height });

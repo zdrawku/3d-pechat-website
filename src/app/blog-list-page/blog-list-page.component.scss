@@ -1,5 +1,7 @@
 @use "igniteui-angular/theming" as *;
 @use "../fluid" as *;
+@use "../info-card";
+@use "../button-tones" as *;
 :host {
   display: block;
   // Transparent — the dotted texture is painted once on <body> (see styles.scss).
@@ -285,4 +287,59 @@
   max-width: rem(320px);
   font-size: rem(14.4px);
   line-height: 1.5;
+}
+
+// „More articles in Bulgarian“ — on another language's blog only (approved
+// design B): one wide card under the grid, the info-card head (icon, title,
+// count) on the left and the link on the right; on a phone the link wraps
+// under the text. Same surface as the post cards.
+.blog-pointer {
+  display: flex;
+  // igx-card is a column by default; in a column the head's flex-basis would be its height.
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  max-width: rem(1440px);
+  margin: 0 auto rem(32px);
+  background: var(--bg-card);
+  border: rem(1px) solid var(--ig-gray-300);
+  border-radius: rem(14px);
+  box-shadow: var(--shadow-card);
+}
+
+.blog-pointer_head {
+  @include info-card.head;
+  flex: 1 1 rem(320px);
+  min-width: 0;
+  padding-bottom: rem(18px);
+}
+
+.blog-pointer_icon {
+  @include info-card.icon;
+}
+
+.blog-pointer_title {
+  @include info-card.title;
+}
+
+.blog-pointer_text {
+  margin: rem(2px) 0 0;
+  color: var(--ig-gray-700);
+}
+
+.blog-pointer_actions {
+  padding: 0 rem(20px) rem(18px);
+
+  @media (min-width: 640px) {
+    padding-top: rem(18px);
+  }
+}
+
+.blog-pointer_link {
+  @include teal-outlined-button;
+  --ig-outlined-button-border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  gap: rem(6px);
 }

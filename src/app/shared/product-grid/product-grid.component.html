@@ -86,10 +86,11 @@
           {{ product.description }}
         </div>
         @if (product.readMore; as readMore) {
-          <a igxButton="flat" class="read-more-link" [routerLink]="readMore.url"
-            [attr.aria-label]="'products.grid.readMoreLabel' | t: { label: readMore.label }"
-            [attr.hreflang]="i18n.langIfForeign()" data-testid="product-read-more">
-            {{ 'products.grid.readMore' | t }}
+          @let link = readMoreLink(readMore.url);
+          <a igxButton="flat" class="read-more-link" [routerLink]="link.url"
+            [attr.aria-label]="(link.lang ? 'products.grid.readMoreInBulgarianLabel' : 'products.grid.readMoreLabel') | t: { label: readMore.label }"
+            [attr.hreflang]="link.lang" data-testid="product-read-more">
+            {{ (link.lang ? 'products.grid.readMoreInBulgarian' : 'products.grid.readMore') | t }}
             <igx-icon family="material" aria-hidden="true">arrow_forward</igx-icon>
           </a>
         }

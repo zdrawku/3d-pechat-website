@@ -65,8 +65,18 @@ test('expects each language version of a main page to list all of them, x-defaul
     ['bg https://3dpechat.bg/', 'en https://3dpechat.bg/en/', 'x-default https://3dpechat.bg/']);
 });
 
-test('expects the Bulgarian-only blog to carry no hreflang', () => {
+test('expects a Bulgarian-only post to carry no hreflang', () => {
   assert.deepEqual(expectedLanguage('https://3dpechat.bg/blog/what-is-3d-printing/', locales), { lang: 'bg', alternates: [] });
+});
+
+test('expects a translated post and its original to list each other, x-default = Bulgarian', () => {
+  const bg = 'https://3dpechat.bg/blog/pla-pla-pla-pro-i-pln-razliki-i-izbor/';
+  const en = 'https://3dpechat.bg/en/blog/pla-vs-pla-plus-vs-pla-pro-vs-pln/';
+  const pair = [`bg ${bg}`, `en ${en}`, `x-default ${bg}`];
+  assert.deepEqual(expectedLanguage(bg, locales), { lang: 'bg', alternates: pair });
+  assert.deepEqual(expectedLanguage(en, locales), { lang: 'en', alternates: pair });
+  // An English slug that isn't registered pairs with nothing.
+  assert.deepEqual(expectedLanguage('https://3dpechat.bg/en/blog/unknown/', locales), { lang: 'en', alternates: [] });
 });
 
 test('reports a wrong <html lang> or a missing / extra hreflang link', () => {
@@ -102,10 +112,13 @@ test('reports a missing, an extra or a duplicate hreflang link in any order', ()
 });
 
 // What a correct sitemap lists: every language version of every localized page
-// (the default language unprefixed), plus the Bulgarian-only blog.
+// (the default language unprefixed), the Bulgarian posts and their translations.
+const translatedPostLocs = Object.entries(locales.translatedPosts)
+  .flatMap(([code, slugs]) => Object.values(slugs).map((slug) => `https://3dpechat.bg/${code}/blog/${slug}/`));
 const sitemapLocs = [
   ...locales.localizedPages.flatMap((p) => locales.locales.map(({ code }) => `https://3dpechat.bg${code === locales.defaultLocale ? '' : `/${code}`}${p}`)),
-  'https://3dpechat.bg/blog/what-is-3d-printing/'
+  'https://3dpechat.bg/blog/what-is-3d-printing/',
+  ...translatedPostLocs
 ];
 
 test('finds no missing language version in a sitemap that lists them all', () => {
@@ -118,5 +131,8 @@ test('reports exactly the language versions a sitemap drops', () => {
   assert.deepEqual(missingLanguageVersions(withoutEnPrices, locales), ['https://3dpechat.bg/en/prices/']);
 
   const withoutEnglish = sitemapLocs.filter((loc) => !loc.startsWith('https://3dpechat.bg/en/'));
-  assert.deepEqual(missingLanguageVersions(withoutEnglish, locales), locales.localizedPages.map((p) => `https://3dpechat.bg/en${p}`));
+  assert.deepEqual(missingLanguageVersions(withoutEnglish, locales), [
+    ...locales.localizedPages.map((p) => `https://3dpechat.bg/en${p}`),
+    ...translatedPostLocs
+  ]);
 });

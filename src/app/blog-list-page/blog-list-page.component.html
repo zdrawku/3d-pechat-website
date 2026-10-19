@@ -1,7 +1,7 @@
 <header class="page-banner">
   <div class="page-banner__titles">
-    <h1 class="page-banner__title">Блог за 3D Принтиране</h1>
-    <p class="page-banner__subtitle">Научете всичко за 3D принтирането от нашите експертни статии</p>
+    <h1 class="page-banner__title">{{ 'blog.list.title' | t }}</h1>
+    <p class="page-banner__subtitle">{{ 'blog.list.subtitle' | t }}</p>
   </div>
   <div class="page-banner__actions">
     <igx-input-group type="search" class="search-input">
@@ -10,7 +10,7 @@
         type="text"
         [(ngModel)]="searchText"
         (input)="onSearch()"
-        placeholder="Търсене в блога..."
+        [placeholder]="'blog.list.search' | t"
         data-testid="blog-search"
         />
         <igx-prefix>
@@ -24,7 +24,7 @@
       </igx-input-group>
     @if (allBlogs.length > 0) {
       <p class="results-info" data-testid="blog-result-count">
-        Показани <strong>{{ resultCount }}</strong> от <strong>{{ totalCount }}</strong> статии
+        {{ 'blog.list.shown' | t }} <strong>{{ resultCount }}</strong> {{ 'blog.list.of' | t }} <strong>{{ totalCount }}</strong> {{ 'blog.list.articles' | t }}
       </p>
     }
   </div>
@@ -83,7 +83,7 @@
                 </div>
               }
               <span class="read-more">
-                Прочети повече
+                {{ 'blog.list.readMore' | t }}
                 <igx-icon>arrow_forward</igx-icon>
               </span>
             </igx-card-content>
@@ -93,14 +93,32 @@
       </div>
     }
 
+    <!-- Another language's blog: one card for the posts that are only in Bulgarian
+         (approved design B). A plain crawlable link, marked with hreflang. -->
+    @if (untranslatedCount > 0 && !searchText) {
+      <igx-card class="blog-pointer" data-testid="blog-more-in-bulgarian">
+        <igx-card-header class="blog-pointer_head">
+          <igx-avatar class="blog-pointer_icon" icon="translate" shape="rounded" size="small" [attr.aria-hidden]="true"></igx-avatar>
+          <h2 igxCardHeaderTitle class="blog-pointer_title">{{ 'blog.list.moreInBulgarian.title' | t }}</h2>
+          <p igxCardHeaderSubtitle class="blog-pointer_text">{{ i18n.plural('blog.list.moreInBulgarian.text', untranslatedCount) }}</p>
+        </igx-card-header>
+        <igx-card-actions class="blog-pointer_actions">
+          <a igxButton="outlined" class="blog-pointer_link" routerLink="/blog" hreflang="bg" data-testid="blog-more-in-bulgarian-link">
+            {{ 'blog.list.moreInBulgarian.action' | t }}
+            <igx-icon aria-hidden="true">arrow_forward</igx-icon>
+          </a>
+        </igx-card-actions>
+      </igx-card>
+    }
+
     <!-- No Results Message -->
     @if (filteredBlogs.length === 0 && searchText) {
       <div class="no-results">
         <igx-icon class="no-results-icon">search_off</igx-icon>
-        <h3>Няма намерени резултати</h3>
-        <p>Опитайте с други ключови думи</p>
+        <h3>{{ 'blog.list.noResults.title' | t }}</h3>
+        <p>{{ 'blog.list.noResults.text' | t }}</p>
         <button igxButton="outlined" igxRipple (click)="clearSearch()">
-          Изчисти търсенето
+          {{ 'blog.list.clearSearch' | t }}
         </button>
       </div>
     }
@@ -109,8 +127,8 @@
     @if (allBlogs.length === 0) {
       <div class="empty-state">
         <igx-icon class="empty-icon">article</igx-icon>
-        <h3>Скоро идват нови статии</h3>
-        <p>Очаквайте интересно съдържание за 3D принтирането</p>
+        <h3>{{ 'blog.list.empty.title' | t }}</h3>
+        <p>{{ 'blog.list.empty.text' | t }}</p>
       </div>
     }
   </div>

@@ -9,7 +9,7 @@
  *
  * Loading (bundle size): the core namespaces below are used on every page and
  * ship in the main bundle. Each page namespace (home, portfolio, products,
- * prices, contact) is imported by its own page component, which registers it
+ * prices, contact, blog) is imported by its own page component, which registers it
  * with I18nService — so a page's Bulgarian text stays in that page's lazy chunk,
  * as it was before localization. Other languages are one lazy chunk each
  * (src/app/i18n/locales.ts).
@@ -25,6 +25,7 @@ import type portfolio from './portfolio.json';
 import type products from './products.json';
 import type prices from './prices.json';
 import type contact from './contact.json';
+import type blog from './blog.json';
 
 /** Strings used on every page: the shell, page meta, FAQ heading, reviews, video and errors. */
 export const coreMessages = { common, shell, seo, faq, reviews, misc };
@@ -38,6 +39,7 @@ export interface PageMessages {
   products: typeof products;
   prices: typeof prices;
   contact: typeof contact;
+  blog: typeof blog;
 }
 
 export type PageNamespace = keyof PageMessages;

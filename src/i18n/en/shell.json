@@ -27,7 +27,7 @@
     "products": { "title": "Products", "subtitle": "To order" },
     "prices": { "title": "Prices", "subtitle": "Rates" },
     "contact": { "title": "Contact us", "subtitle": "Form" },
-    "blog": { "title": "Blog", "subtitle": "In Bulgarian" },
+    "blog": { "title": "Blog", "subtitle": "Articles" },
     "logoAlt": "3DPechat.bg logo",
     "brandTag": "Made in Sofia · since 2025"
   },
@@ -41,7 +41,7 @@
     "home": "Home",
     "portfolio": "Portfolio",
     "prices": "Prices",
-    "blog": "Blog (in Bulgarian)",
+    "blog": "Blog",
     "services": "Services",
     "products": "Products",
     "priceList": "Price list",

@@ -81,7 +81,7 @@ describe('SeoService', () => {
       expect(ogAlternates()).toEqual(['en_US']);
     });
 
-    it('drops hreflang and og:locale:alternate on a Bulgarian-only page (the blog)', () => {
+    it('drops hreflang and og:locale:alternate on a page that exists only in Bulgarian', () => {
       service.applyPageSeo('prices');
       service.updateSeo({ title: 'T2', description: 'D2', url: 'https://3dpechat.bg/blog/what-is-3d-printing/' });
       expect(alternates()).toEqual([]);
@@ -183,6 +183,63 @@ describe('SeoService', () => {
 
     it('throws for an unknown slug so a typo fails the prerender', () => {
       expect(() => service.applyBlogPostSeo('no-such-post')).toThrowError(/no post with slug/);
+    });
+
+    describe('translations (src/i18n/locales.json translatedPosts)', () => {
+      const PLA = 'pla-pla-pla-pro-i-pln-razliki-i-izbor';
+      const BG_URL = `https://3dpechat.bg/blog/${PLA}/`;
+      const EN_URL = 'https://3dpechat.bg/en/blog/pla-vs-pla-plus-vs-pla-pro-vs-pln/';
+      const alternates = () =>
+        Array.from(document.head.querySelectorAll('link[rel="alternate"][hreflang]'))
+          .map(l => `${l.getAttribute('hreflang')} ${l.getAttribute('href')}`);
+
+      afterEach(() => {
+        document.documentElement.setAttribute('lang', 'bg');
+        document.head.querySelectorAll('link[rel="alternate"][hreflang]').forEach(l => l.remove());
+      });
+
+      it('pairs a translated post with its translation, Bulgarian as x-default', () => {
+        service.applyBlogPostSeo(PLA);
+        expect(alternates()).toEqual([`bg ${BG_URL}`, `en ${EN_URL}`, `x-default ${BG_URL}`]);
+        expect(meta.getTags('property="og:locale:alternate"').map(t => t.content)).toEqual(['en_US']);
+      });
+
+      it('gives a post that exists only in Bulgarian no hreflang', () => {
+        service.applyBlogPostSeo(PLA);
+        service.applyBlogPostSeo(SLUG);
+        expect(alternates()).toEqual([]);
+        expect(meta.getTags('property="og:locale:alternate"')).toEqual([]);
+      });
+
+      it('applies the translation on its own page: copy, URL, English breadcrumbs and inLanguage', async () => {
+        const i18n = TestBed.inject(I18nService);
+        await i18n.use('en');
+        const copy = i18n.content().blog[PLA];
+        service.applyBlogPostSeo(PLA);
+
+        expect(title.getTitle()).toBe(copy.seoTitle ?? `${copy.title} | 3dpechat.bg`);
+        expect(meta.getTag('name="description"')?.content).toBe(copy.description);
+        expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(EN_URL);
+        expect(meta.getTag('property="og:locale"')?.content).toBe('en_US');
+        expect(meta.getTag('property="article:published_time"')?.content).toBe(new Date(copy.date).toISOString());
+        expect(alternates()).toEqual([`bg ${BG_URL}`, `en ${EN_URL}`, `x-default ${BG_URL}`]);
+
+        const [posting, breadcrumbs] = graph();
+        expect(posting.headline).toBe(copy.title);
+        expect(posting.inLanguage).toBe('en');
+        // The cover image is the Bulgarian post's.
+        expect(posting.image).toBe(`https://3dpechat.bg/${BLOG_POSTS.find(p => p.slug === PLA)!.imageUrl}`);
+        expect(breadcrumbs.itemListElement.map((c: any) => `${c.name} ${c.item}`)).toEqual([
+          'Home https://3dpechat.bg/en/',
+          'Blog https://3dpechat.bg/en/blog/',
+          `${copy.title} ${EN_URL}`
+        ]);
+      });
+
+      it('throws on another language’s page when the post has no version in it', async () => {
+        await TestBed.inject(I18nService).use('en');
+        expect(() => service.applyBlogPostSeo(SLUG)).toThrowError(/has no "en" version/);
+      });
     });
   });
 });

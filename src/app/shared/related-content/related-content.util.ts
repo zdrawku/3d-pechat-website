@@ -21,7 +21,10 @@ const MIN_WORD_LENGTH = 4;
 const GENERIC_STEMS = new Set([
   'принт', 'печат', 'филам', 'модел', 'техно', 'като', 'може', 'как', 'какво',
   'ръково', 'съвет', 'прак', 'начин', 'пълно', 'полу', 'нашит', 'вашит',
-  'услуг', 'проек', 'идеи', 'изб'
+  'услуг', 'проек', 'идеи', 'изб',
+  // The same words in English, for the translated posts (src/i18n/en/content/blog.json).
+  'print', 'filam', 'model', 'techn', 'with', 'what', 'that', 'this', 'your', 'from',
+  'guide', 'tips', 'pract', 'metho', 'compl', 'servi', 'proje', 'ideas', 'choos'
 ]);
 
 /** Lower-cased stems of every meaningful word in the given texts. */

@@ -1,45 +1,46 @@
 // Preflight checks for the auto-blog pipeline.
 //
-// The scaffolder edits app.routes.ts and blog-posts.registry.ts by regex, so it is
-// coupled to their current formatting. When those files get refactored (as
-// happened when blog routes moved to lazy `loadComponent`), the regexes stop
-// matching and the run dies *after* burning a Claude API call and an image
-// generation. These checks run first and fail fast with a message that says
-// exactly which file drifted and what to fix.
+// The scaffolder (scaffold-post.js) inserts the new entry into
+// blog-posts.registry.ts by regex and adds the English translation to
+// src/i18n/locales.json and src/i18n/en/content/blog.json. If one of those
+// files drifts, the run would die *after* burning a Claude API call and an
+// image generation. These checks run first and fail fast with a message that
+// says exactly which file drifted and what to fix. (No route or component is
+// generated any more: every post is served by src/app/blog/article/.)
 
 const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '../..');
-const ROUTES_FILE = path.join(ROOT, 'src/app/app.routes.ts');
-const SERVICE_FILE = path.join(ROOT, 'src/app/services/blog-posts.registry.ts');
+const REGISTRY_FILE = path.join(ROOT, 'src/app/services/blog-posts.registry.ts');
+const LOCALES_FILE = path.join(ROOT, 'src/i18n/locales.json');
+const EN_COPY_FILE = path.join(ROOT, 'src/i18n/en/content/blog.json');
 
-/** Anchors the scaffolder relies on, each with a repair hint. */
+const isObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+
+/** Each check returns a problem description, or null when the file is as the scaffolder expects. */
 const CHECKS = [
   {
-    file: ROUTES_FILE,
-    label: 'app.routes.ts',
-    pattern: /path:\s*'blog'\s*,\s*children:\s*\[[\s\S]*?\n\s*\]\s*\}/,
-    hint:
-      "the `{ path: 'blog', children: [ … ] }` block — updateRoutes() in " +
-      'scaffold-component.js appends the new lazy route inside it'
-  },
-  {
-    file: ROUTES_FILE,
-    label: 'app.routes.ts',
-    pattern: /loadComponent:\s*\(\)\s*=>\s*import\('\.\/blog\//,
-    hint:
-      'at least one lazy blog route of the form ' +
-      "`loadComponent: () => import('./blog/<slug>/<slug>.component').then(m => m.<Class>)`. " +
-      'If blog routes moved back to static imports, updateRoutes() must be rewritten to match'
-  },
-  {
-    file: SERVICE_FILE,
     label: 'blog-posts.registry.ts',
-    pattern: /(\/\/ Add more blog posts here)|(\n\s*\];)/,
-    hint:
-      'the `// Add more blog posts here` marker (or a closing `];` of the ' +
-      'BLOG_POSTS array) — updateBlogService() inserts the new entry there'
+    file: REGISTRY_FILE,
+    problem: (src) => (/export const BLOG_POSTS: BlogPost\[\] = \[/.test(src) && /(\/\/ Add more blog posts here)|(\n\s*\];)/.test(src)
+      ? null
+      : 'could not find the `BLOG_POSTS` array and its `// Add more blog posts here` marker (or closing `];`) — insertRegistryEntry() inserts the new entry there')
+  },
+  {
+    label: 'src/i18n/locales.json',
+    file: LOCALES_FILE,
+    problem: (src) => {
+      const locales = JSON.parse(src);
+      return isObject(locales.translatedPosts) && isObject(locales.translatedPosts.en)
+        ? null
+        : 'no `translatedPosts.en` object — addTranslation() adds the English slug there';
+    }
+  },
+  {
+    label: 'src/i18n/en/content/blog.json',
+    file: EN_COPY_FILE,
+    problem: (src) => (isObject(JSON.parse(src)) ? null : 'not a JSON object keyed by Bulgarian slug — addTranslation() adds the English copy there')
   }
 ];
 
@@ -51,9 +52,11 @@ function preflight() {
       failures.push(`${check.label}: file not found at ${check.file}`);
       continue;
     }
-    const src = fs.readFileSync(check.file, 'utf8');
-    if (!check.pattern.test(src)) {
-      failures.push(`${check.label}: could not find ${check.hint}`);
+    try {
+      const problem = check.problem(fs.readFileSync(check.file, 'utf8'));
+      if (problem) failures.push(`${check.label}: ${problem}`);
+    } catch (err) {
+      failures.push(`${check.label}: ${err.message}`);
     }
   }
 
@@ -62,7 +65,7 @@ function preflight() {
       'Auto-blog preflight failed — the scaffolder no longer matches the files ' +
         'it edits:\n' +
         failures.map(f => `  • ${f}`).join('\n') +
-        '\n\nFix scripts/auto-blog/scaffold-component.js to match the current ' +
+        '\n\nFix scripts/auto-blog/scaffold-post.js to match the current ' +
         'file format (and update scripts/auto-blog/preflight.js alongside it).'
     );
   }

@@ -24,16 +24,39 @@ describe('LanguageSwitcherComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    const dd = dropDownOrNull();
+    if (dd && !dd.collapsed) {
+      dd.close();
+    }
+  });
+
   const trigger = () => host.querySelector<HTMLButtonElement>('[data-testid="language-switcher"]')!;
-  const dropDown = () => fixture.debugElement.query((el) => el.componentInstance instanceof IgxDropDownComponent)
-    .componentInstance as IgxDropDownComponent;
+  const dropDownOrNull = () =>
+    fixture.debugElement.query((el) => el.componentInstance instanceof IgxDropDownComponent)?.componentInstance as IgxDropDownComponent | undefined;
+  const dropDown = () => dropDownOrNull()!;
+
+  /** The first click loads the deferred menu, which opens straight away. */
+  async function openMenu(): Promise<void> {
+    trigger().click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+  }
+  const key = (name: string) => trigger().dispatchEvent(new KeyboardEvent('keydown', { key: name, bubbles: true, cancelable: true }));
 
   // Approved design „A“ (FEATURE-IDEAS-PLAN.md): an igxButton pill opening an
   // igx-drop-down. Locks it to Ignite UI so it can't regress to plain HTML.
-  it('builds the switcher from Ignite UI components', () => {
+  it('builds the switcher from Ignite UI components', async () => {
     expect(trigger().hasAttribute('igxButton')).withContext('trigger is an igxButton').toBeTrue();
     expect(trigger().querySelectorAll('igx-icon').length).withContext('globe + caret igx-icons').toBe(2);
+    await openMenu();
     expect(host.querySelector('igx-drop-down')).withContext('menu is an igx-drop-down').not.toBeNull();
+  });
+
+  it('loads the menu only when it is first used (it is deferred)', () => {
+    expect(host.querySelector('app-language-menu')).toBeNull();
+    expect(host.querySelector('igx-drop-down')).toBeNull();
   });
 
   it('shows the current language and names it for screen readers', () => {
@@ -43,44 +66,74 @@ describe('LanguageSwitcherComponent', () => {
     expect(trigger().getAttribute('aria-expanded')).toBe('false');
   });
 
-  it('lists every language by its own name, the current one selected', () => {
-    dropDown().open();
-    fixture.detectChanges();
+  it('opens on the first click and lists every language by its own name, the current one selected', async () => {
+    await openMenu();
 
+    expect(dropDown().collapsed).toBeFalse();
     const options = Array.from(document.querySelectorAll<HTMLElement>('igx-drop-down-item[data-testid^="language-option-"]'));
     expect(options.map((o) => o.getAttribute('lang'))).toEqual(LOCALES.map((l) => l.code));
     expect(options.map((o) => o.textContent)).toEqual(LOCALES.map((l) => jasmine.stringContaining(l.label)));
     expect(dropDown().selectedItem?.value).toBe('bg');
     expect(trigger().getAttribute('aria-expanded')).toBe('true');
-
-    dropDown().close();
-    fixture.detectChanges();
+    expect(trigger().classList).toContain('lang-trigger--open');
   });
 
-  it('opens the same page in the chosen language', () => {
+  it('closes and reopens from the pill', async () => {
+    await openMenu();
+    trigger().click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(dropDown().collapsed).toBeTrue();
+    expect(trigger().getAttribute('aria-expanded')).toBe('false');
+
+    trigger().click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(dropDown().collapsed).toBeFalse();
+  });
+
+  it('opens the same page in the chosen language', async () => {
     spyOnProperty(router, 'url').and.returnValue('/prices/');
     const navigate = spyOn(router, 'navigateByUrl').and.resolveTo(true);
 
-    dropDown().open();
-    fixture.detectChanges();
+    await openMenu();
     const english = dropDown().items.find((item) => item.value === 'en')!;
     dropDown().selectItem(english);
 
     // TrailingSlashUrlSerializer parses the trailing slash away, so this lands on the page.
     expect(navigate).toHaveBeenCalledOnceWith('/en/prices/');
-    dropDown().close();
   });
 
-  it('does nothing when the current language is chosen again', () => {
+  it('does nothing when the current language is chosen again', async () => {
     const navigate = spyOn(router, 'navigateByUrl').and.resolveTo(true);
 
-    dropDown().open();
-    fixture.detectChanges();
+    await openMenu();
     const bulgarian = dropDown().items.find((item) => item.value === 'bg')!;
     dropDown().selectItem(bulgarian);
 
     expect(navigate).not.toHaveBeenCalled();
-    dropDown().close();
+  });
+
+  it('works from the keyboard on the pill: arrows move, Enter chooses, Escape closes', async () => {
+    spyOnProperty(router, 'url').and.returnValue('/contact/');
+    const navigate = spyOn(router, 'navigateByUrl').and.resolveTo(true);
+
+    await openMenu();
+    key('Escape');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(dropDown().collapsed).withContext('Escape closes').toBeTrue();
+
+    trigger().click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    // Bulgarian (current) → English is the next option.
+    key('ArrowDown');
+    key('ArrowDown');
+    fixture.detectChanges();
+    key('Enter');
+    expect(navigate).toHaveBeenCalledOnceWith('/en/contact/');
   });
 
   it('switches its labels with the language', async () => {

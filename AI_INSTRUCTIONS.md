@@ -18,47 +18,54 @@ This file contains the definitive instructions and guidelines for the AI assista
 Run `npm run generate-blog` to fully automate article creation:
 1. **Picks a topic** — first the **buyer-intent backlog** in `scripts/auto-blog/service-topics.js` (pre-order questions such as price, spare parts, modeling from a photo, file formats), in order, until each is published. Each has a fixed `slug` that the generator keeps, so the dedupe stays exact. Then it scrapes Bulgarian 3D printing sites (current ideas). If nothing fresh comes back it uses catalog-related topics from `scripts/auto-blog/product-topics.js` (gifts, stands, organizers, coin cards… — the prompt then steers the article to `/products/`), and finally the generic `scripts/auto-blog/fallback-topics.js`.
 2. **Generates article** — calls Anthropic Claude API (Bulgarian, SEO-optimised). Requires `ANTHROPIC_API_KEY` in `.env`. The prompt (`scripts/auto-blog/generate-article.js`) embeds `facts` and `neverClaim` from `src/data/business.json`, and `generate-article.test.js` fails if they go missing. Review generated posts for service claims anyway.
-3. **Generates cover image** — 1200×630 via Pollinations.ai (free, no key); saved to `src/assets/blogs/images/{slug}-cover.png`.
-4. **Scaffolds all Angular files** — component TS/HTML/SCSS in `src/app/blog/{slug}/`. The template ends with `<app-related-content slug="{slug}">` (3 related articles + 3 catalog products, chosen automatically from tags/title — see `src/app/shared/related-content/`).
-5. **Registers** the post in `blog-posts.registry.ts` and `app.routes.ts`. The scaffolded component calls `applyBlogPostSeo('<slug>')`.
-6. **Regenerates sitemap** automatically.
+3. **Generates cover image** — 1200×630 via Pollinations.ai (free, no key); saved to `src/assets/blogs/images/{slug}-cover.png` and converted to WebP.
+4. **Files the post** (`scripts/auto-blog/scaffold-post.js`) — the markdown in `src/assets/blogs/{slug}.md` (its „Често задавани въпроси“ section wrapped in `<!-- faq -->` markers) and the entry in `blog-posts.registry.ts`. **No component or route is generated**: every post, in every language, is served by one route and one component, `src/app/blog/article/` (see below).
+5. **Drafts the English version** (`scripts/auto-blog/translate-article.js`) — a second Claude call with the same `facts` / `neverClaim`, then normalised in code (links mapped to the English pages, links to Bulgarian-only posts unwrapped, H1 = title, kebab slug, ≤ 160-character description). Filed as `src/assets/blogs/en/<english-slug>.md`, the copy in `src/i18n/en/content/blog.json` and the slug in `translatedPosts` in `src/i18n/locales.json`. If it fails, the PR carries the Bulgarian post alone.
+6. **Regenerates** the content maps, sitemap and llms.txt.
 
 Override topic: set `MANUAL_TOPIC=your topic here` in `.env` before running.
 
-**GitHub Actions** (`.github/workflows/auto-blog.yml`): runs automatically on the 1st, 11th and 21st of each month at 09:00 UTC, opens a PR for review, and supports `workflow_dispatch` with an optional `topic` input. Requires `ANTHROPIC_API_KEY` repo secret.
+**GitHub Actions** (`.github/workflows/auto-blog.yml`): runs automatically on the 1st, 11th and 21st of each month at 09:00 UTC and opens **one PR with both languages** for review (nothing is published before it is merged); supports `workflow_dispatch` with an optional `topic` input. Requires `ANTHROPIC_API_KEY` repo secret.
 
-> ⚠️ **The scaffolder edits `app.routes.ts` and `blog-posts.registry.ts` by regex, so it is coupled to their formatting.** Blog routes are **lazy** — `{ path: '<slug>', loadComponent: () => import('./blog/<slug>/<slug>.component').then(m => m.<Class>) }` — with **no static `import … from './blog/…'` lines** (adding one would pull the chunk into the main bundle and defeat lazy loading). If you reformat either file, update `updateRoutes()`/`updateBlogService()` in `scripts/auto-blog/scaffold-component.js` **and** the anchors in `scripts/auto-blog/preflight.js`. Preflight runs first and fails fast naming the drifted file, so a format change can no longer waste a Claude API call and an image generation before dying. *(This is exactly what broke the pipeline in Aug 2026: the routes had migrated to `loadComponent` while the scaffolder still looked for static imports.)*
+**Translating an existing post:** `npm run translate-post -- <bulgarian-slug>` runs step 5 for it (needs `ANTHROPIC_API_KEY` in `.env`). Review the draft — facts, links, slug (permanent once published) — before committing. Details: `src/i18n/README.md` § Translating a blog post.
+
+> ⚠️ **The scaffolder edits `blog-posts.registry.ts` by regex** (it inserts the entry before the `// Add more blog posts here` marker) and rewrites `src/i18n/locales.json` / `src/i18n/en/content/blog.json` in their own layout (`scripts/auto-blog/json-format.js`). If you reformat the registry, update `insertRegistryEntry()` in `scripts/auto-blog/scaffold-post.js` **and** `scripts/auto-blog/preflight.js`. Preflight runs first and fails fast naming the drifted file, so a format change can't waste a Claude API call and an image generation. *(Aug 2026 the pipeline broke on the routes file; Oct 2026 a comment in it was matched instead of the blog block — both impossible now: the scaffolder no longer touches `app.routes.ts`.)*
+
+**How posts are served** (`src/app/blog/article/`):
+- `article.routes.ts` — one `:slug` route per language. Its `canMatch` accepts only a post that exists in that language (registry in Bulgarian, `translatedPosts` elsewhere — an unknown slug falls through to the 404), and a resolver loads the text from that language's lazy chunk (`blog-content.generated.ts` / `blog-content.translations.generated.ts`, both generated by `npm run generate-blog-content`). `app.routes.server.ts` prerenders every post from the same lists.
+- `article.component.ts` — the page: `<app-article-toolbar>` (back link + language link), the markdown, the extras, `<app-related-content>`, and one `applyBlogPostSeo(<bulgarian-slug>)` call. The router reuses it from post to post, so it follows the route's data.
+- `article-extras.ts` — `ARTICLE_EXTRAS`: the few posts with a player at `<!-- video -->`, CTA buttons or a MakerWorld link. A text-only post needs nothing.
 
 **Important conventions enforced by the generator** (maintain these manually too):
 - Article markdown must **not** contain inline images (`![...](...)`). Images are added manually after review.
 - Cover image asset path: `assets/blogs/images/{slug}-cover.png` (relative, no leading slash).
 - The `blog-posts.registry.ts` entry must include `tags` (card labels), `keywords` (SEO) and `dateModified`.
 - Every blog article must include at least 2 relevant internal links to other blog posts using root-relative paths **with the trailing slash**, such as `/blog/what-is-3d-printing/`.
+- Amounts only in euro (€) — never leva (Bulgaria uses the euro since 2026). `blog-posts.registry.spec.ts` fails on an amount in leva in any language.
+- An FAQ section is `## Често задавани въпроси` with `### question` + answer; wrapped in `<!-- faq -->` … `<!-- /faq -->` it becomes the page's FAQPage schema word for word.
 
 ### Adding Articles Manually
 Only do this if the automated flow is unavailable:
-1. Create `src/assets/blogs/your-slug.md` — no inline images in body.
+1. Create `src/assets/blogs/your-slug.md` — no inline images in body. Wrap an FAQ section in `<!-- faq -->` … `<!-- /faq -->`.
 1.5 Add at least 2 relevant internal links to other blog posts in the markdown body using root-relative blog URLs ending in `/` (e.g. `/blog/what-is-3d-printing/`). Service claims follow `src/data/business.json`.
 2. Place cover image at `src/assets/blogs/images/your-slug-cover.png`.
-3. Generate component in `src/app/blog/your-slug/` (TS, HTML, SCSS) — import `RelatedContentComponent` and put `<app-related-content slug="your-slug">` after the `</article>` (copy any existing post's template).
-4. Register in `src/app/services/blog-posts.registry.ts` — **include `tags`, `keywords` and `dateModified`**. Bump `dateModified` by hand whenever the post's content changes (it feeds the sitemap `lastmod`; never derive it from git — the deploy checkout is shallow).
-5. Add route in `src/app/app.routes.ts`.
-6. Run `npm run generate-sitemap`.
+3. Register in `src/app/services/blog-posts.registry.ts` — **include `tags`, `keywords` and `dateModified`**. Bump `dateModified` by hand whenever the post's content changes (it feeds the sitemap `lastmod`; never derive it from git — the deploy checkout is shallow).
+4. That's it for the page: no component, no route. A video player, CTA buttons or a MakerWorld link → an `ARTICLE_EXTRAS` entry (`src/app/blog/article/article-extras.ts`).
+5. `npm run build` (regenerates the content maps and the sitemap). Optionally `npm run translate-post -- your-slug` for the English version.
 
 - **Naming Conventions**:
-    - Slug: `kebab-case` (e.g., `best-3d-printers`). Slugs starting with `3d-` generate a `ThreeD` component prefix.
-    - Component class: `PascalCase` matching slug (e.g., `ThreeDPrintiraniObuvkiComponent`).
+    - Slug: `kebab-case` (e.g., `best-3d-printers`), at most 80 characters.
     - Images: `descriptive-kebab-case.extension`.
 
 - **SEO Requirements**:
     - **Title**: 50-60 chars, include main keyword.
     - **Description**: 150-160 chars.
     - **Canonical URL / Open Graph**: set by `applyBlogPostSeo`. The canonical is `https://3dpechat.bg/blog/<slug>/` (trailing slash), `og:type` is `article`, and image URLs are absolute.
-    - **Structured Data**: the component constructor makes one call, `this.seoService.applyBlogPostSeo('<slug>')`. It reads the post's registry entry and emits the meta tags plus a `BlogPosting` + `BreadcrumbList` `@graph`. Don't hand-write `updateSeo`/`setStructuredData` in post components.
-    - **Extra schema** for one post (a visible FAQ, a video) goes in the second argument: `applyBlogPostSeo(slug, { graph: [faqPageSchema(FAQ), videoObjectSchema(video)], article: { video: { '@id': … } } })`. `faqPageSchema` lives in `seo.service.ts`. Keep the visible FAQ text and the `FAQ` array identical; the spec checks it. See `monetna-karta-bulgarski-evro-moneti` and `3d-pechat-po-porachka-sofia-video`.
-    - **Trade-off to remember**: a post's SEO is not visible in its component. To change its title, description, keywords or "updated" date, edit its registry entry. A slug missing from the registry fails the prerender on purpose.
+    - **Structured Data**: the article component makes one call per post, `applyBlogPostSeo('<bulgarian-slug>', extras)`. It reads the registry entry (or the translation's copy on another language's page) and emits the meta tags, hreflang between the post's real versions, and a `BlogPosting` + `BreadcrumbList` `@graph`. Never hand-write `updateSeo`/`setStructuredData` for a post.
+    - **Extra schema**: the component adds a `VideoObject` for a post with the featured video and a `FAQPage` read from the post's `<!-- faq -->` section — the visible text is the only source, so they can't drift.
+    - **Trade-off to remember**: a post's SEO lives in its registry entry (and its translation's `blog.json` copy). To change its title, description, keywords or "updated" date, edit those. A slug missing from the registry is a 404, and a registered post without text fails the prerender on purpose.
 
-*(Reference: `ARTICLE_CREATION_GUIDE.md` and `SEO_GUIDE.md`)*
+*(Older references: `ARTICLE_CREATION_GUIDE.md` and `SEO_GUIDE.md` — where they mention per-post components or routes, this section wins.)*
 
 ---
 
@@ -152,9 +159,9 @@ Click-to-play player for our YouTube videos (home „Вижте ни в дейс
 - **FAQ** — `src/data/faq.json` (6–10 Q&A) is rendered by `app-faq` (`src/app/shared/faq/`) on `/prices/` as always-visible `igx-card`s, mirrored as FAQPage JSON-LD via `faqPageSchema(faqFor(i18n))`, and copied into llms.txt. The English FAQ is `src/i18n/en/content/faq.json` (question and answer keyed by id; order and icons come from `src/data/faq.json`).
   - Answers may only state `business.json` facts. `src/data/faq.spec.ts` (Bulgarian) and `src/i18n/i18n.spec.ts` (other languages) fail if an answer uses a number the facts don't contain, or mentions SLA/SLS, scanning, same-day work or invoices (except "не издаваме фактури" / "we don't issue invoices").
   - Don't switch the FAQ to an accordion: collapsed answers drop out of the prerendered HTML.
-- **Languages** — the main pages exist in Bulgarian (`/…`) and English (`/en/…`); the blog stays Bulgarian. Guide: [`src/i18n/README.md`](src/i18n/README.md); plan and next steps: [`LOCALIZATION-PLAN.md`](LOCALIZATION-PLAN.md). CLAUDE.md Rule 6 has the must-follow rules.
-  - `src/i18n/locales.json` lists the languages and the localized pages; routes, hreflang, the navbar switcher, the footer language links, sitemap alternates, llms.txt and the live check read it.
-  - Strings: `src/i18n/<lang>/*.json`, rendered with the typed `t` pipe (`{{ 'home.hero.title' | t }}`); links with `[routerLink]="'/contact' | localizePath"`. Page meta comes from `seo.json` through `SeoService.applyPageSeo(page)`, which also sets `og:locale` and the `hreflang` set (none on the blog). `<html lang>` is set by `I18nService`.
+- **Languages** — the main pages and the blog index exist in Bulgarian (`/…`) and English (`/en/…`); blog posts are Bulgarian, 8 of them also translated to English at `/en/blog/<english-slug>/` (how to translate one: `src/i18n/README.md` § Translating a blog post). Auto-blog posts stay Bulgarian-only. Guide: [`src/i18n/README.md`](src/i18n/README.md); plan and next steps: [`LOCALIZATION-PLAN.md`](LOCALIZATION-PLAN.md). CLAUDE.md Rule 6 has the must-follow rules.
+  - `src/i18n/locales.json` lists the languages, the localized pages and the translated posts (`translatedPosts`: Bulgarian slug → English slug); routes, hreflang, the navbar switcher, the footer language links, sitemap alternates, llms.txt and the live check read it.
+  - Strings: `src/i18n/<lang>/*.json`, rendered with the typed `t` pipe (`{{ 'home.hero.title' | t }}`); links with `[routerLink]="'/contact' | localizePath"`. Page meta comes from `seo.json` through `SeoService.applyPageSeo(page)`, which also sets `og:locale` and the `hreflang` set. Posts: `applyBlogPostSeo(<bulgarian-slug>)` in every language, with hreflang only between a post and its translations. One component, `src/app/blog/article/`, renders every post in every language, with `<app-article-toolbar>` (back link + language link). `<html lang>` is set by `I18nService`.
   - Numbers come from `business.json` (`pricing`, `leadTimeWorkingDays`, `rushSurchargePercent`, `maxPieceCm`, `freeDeliveryOverEur`, `fileFormats`, `replyWithinHours`, `displayAddressEn`) as `{placeholders}`. `business.spec.ts` checks that those structured values also appear in the Bulgarian `facts`.
 - **Generate Blog Post**: `npm run generate-blog` (requires `ANTHROPIC_API_KEY` in `.env`)
 - **Lint**: `npm run lint`

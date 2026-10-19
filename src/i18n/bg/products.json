@@ -38,6 +38,8 @@
     "copyLink": "Копирай линк към секцията",
     "readMore": "Прочети повече",
     "readMoreLabel": "Прочети повече: {label}",
+    "readMoreInBulgarian": "Прочети повече",
+    "readMoreInBulgarianLabel": "Прочети повече: {label}",
     "allTags": "Покажи всички етикети",
     "order": "Поръчайте сега"
   }

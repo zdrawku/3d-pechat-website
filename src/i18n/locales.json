@@ -4,5 +4,17 @@
     { "code": "bg", "label": "Български", "englishName": "Bulgarian", "ogLocale": "bg_BG", "intl": "bg-BG" },
     { "code": "en", "label": "English", "englishName": "English", "ogLocale": "en_US", "intl": "en-US" }
   ],
-  "localizedPages": ["/", "/portfolio/", "/products/", "/prices/", "/contact/"]
+  "localizedPages": ["/", "/portfolio/", "/products/", "/prices/", "/contact/", "/blog/"],
+  "translatedPosts": {
+    "en": {
+      "pla-pla-pla-pro-i-pln-razliki-i-izbor": "pla-vs-pla-plus-vs-pla-pro-vs-pln",
+      "infill-pri-3d-pechat-platnost-zdravina-i-filament": "3d-printing-infill-density-strength",
+      "izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish": "how-to-smooth-pla-prints",
+      "litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model": "3d-printed-lithophane-from-photo",
+      "3d-printing-in-sofia-for-your-project": "3d-printing-in-sofia-local-service",
+      "3d-pechat-po-porachka-sofia-video": "custom-3d-printing-sofia-video",
+      "standstrap-3d-printiran-stoper-za-snoubord": "standstrap-3d-printed-snowboard-stopper",
+      "monetna-karta-bulgarski-evro-moneti": "bulgarian-euro-coin-holder-card"
+    }
+  }
 }
