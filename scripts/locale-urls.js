@@ -27,4 +27,37 @@ function hreflangAlternates(page, locales) {
   ];
 }
 
-module.exports = { SITE, readLocales, localizedPath, hreflangAlternates };
+/**
+ * A blog post's URL path in a language, by its Bulgarian slug ('/blog/<slug>/',
+ * '/en/blog/<english-slug>/'), or null when it isn't translated into it
+ * (`translatedPosts` in locales.json).
+ */
+function blogPostPath(source, code, locales) {
+  if (code === locales.defaultLocale) return `/blog/${source}/`;
+  const slug = locales.translatedPosts?.[code]?.[source];
+  return slug ? `/${code}/blog/${slug}/` : null;
+}
+
+/** `[{ hreflang, href }]` for a blog post: each language it exists in plus x-default, or [] when it is only in Bulgarian. */
+function blogPostAlternates(source, locales) {
+  const versions = locales.locales
+    .map(({ code }) => ({ code, path: blogPostPath(source, code, locales) }))
+    .filter(({ path: p }) => p);
+  if (versions.length < 2) return [];
+  return [
+    ...versions.map(({ code, path: p }) => ({ hreflang: code, href: `${SITE}${p}` })),
+    { hreflang: 'x-default', href: `${SITE}${blogPostPath(source, locales.defaultLocale, locales)}` }
+  ];
+}
+
+/** The Bulgarian slug of the blog post at a URL path ('/blog/x/', '/en/blog/y/'), or null for any other page. */
+function blogPostSource(pathname, locales) {
+  const match = /^(?:\/([a-z]{2,3}))?\/blog\/([^/]+)\/?$/.exec(pathname);
+  if (!match) return null;
+  const [, code, slug] = match;
+  if (!code || code === locales.defaultLocale) return code ? null : slug;
+  const entry = Object.entries(locales.translatedPosts?.[code] ?? {}).find(([, translated]) => translated === slug);
+  return entry ? entry[0] : null;
+}
+
+module.exports = { SITE, readLocales, localizedPath, hreflangAlternates, blogPostPath, blogPostAlternates, blogPostSource };

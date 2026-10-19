@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
+import { I18nService } from '../../i18n/i18n.service';
 import { RelatedContentComponent } from './related-content.component';
 
 describe('RelatedContentComponent', () => {
@@ -58,5 +59,40 @@ describe('RelatedContentComponent', () => {
     expect(host.querySelectorAll('igx-card-header').length).toBe(3);
     expect(host.querySelectorAll('[igxButton]').length).toBeGreaterThanOrEqual(8);
     expect(host.querySelectorAll('igx-icon').length).toBeGreaterThan(0);
+  });
+
+  describe('on an English post', () => {
+    let english: ComponentFixture<RelatedContentComponent>;
+
+    beforeEach(async () => {
+      await TestBed.inject(I18nService).use('en');
+      english = TestBed.createComponent(RelatedContentComponent);
+      english.componentInstance.slug = 'pla-pla-pla-pro-i-pln-razliki-i-izbor';
+      english.detectChanges();
+    });
+
+    afterEach(() => document.documentElement.setAttribute('lang', 'bg'));
+
+    it('relates English posts only, in English, never the current one', () => {
+      const posts = english.componentInstance.posts;
+      expect(posts.length).toBe(3);
+      for (const post of posts) {
+        expect(post.route).toMatch(/^\/en\/blog\//);
+        expect(post.source).withContext(post.route).not.toBe('pla-pla-pla-pro-i-pln-razliki-i-izbor');
+      }
+      const host: HTMLElement = english.nativeElement;
+      expect(host.querySelector('#rc-posts-heading')?.textContent).toContain('Keep reading');
+      expect(host.querySelector('.rc_all')?.getAttribute('href')).toBe('/en/blog');
+    });
+
+    it('shows the products under their English names, linking to the English catalogue', () => {
+      const links: HTMLAnchorElement[] = Array.from(english.nativeElement.querySelectorAll('[data-testid="related-products"] a[igxButton]'));
+      expect(links.length).toBe(3);
+      expect(links.every((a) => (a.getAttribute('href') ?? '').startsWith('/en/products#'))).toBeTrue();
+      expect(links.every((a) => /^View product: /.test(a.getAttribute('aria-label') ?? ''))).toBeTrue();
+      for (const product of english.componentInstance.products) {
+        expect(product.copyLang).withContext(product.linkId).toBeNull();
+      }
+    });
   });
 });

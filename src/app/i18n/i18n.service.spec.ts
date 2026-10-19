@@ -113,7 +113,15 @@ describe('I18nService', () => {
     expect(i18n.path('/contact')).toBe('/contact');
     await i18n.use('en');
     expect(i18n.path('/contact')).toBe('/en/contact');
-    expect(i18n.path('/blog')).toBe('/blog');
+    expect(i18n.path('/blog')).toBe('/en/blog');
+    // A post's translation has its own slug, so its path is not localized here.
+    expect(i18n.path('/blog/what-is-3d-printing')).toBe('/blog/what-is-3d-printing');
+  });
+
+  it('names a language in the active language, as used in a sentence', async () => {
+    expect(i18n.languageName('en')).toBe('английски');
+    await i18n.use('en');
+    expect(i18n.languageName('bg')).toBe('Bulgarian');
   });
 
   it('re-renders templates through the t and localizePath pipes when the language changes', async () => {

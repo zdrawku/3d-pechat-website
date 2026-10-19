@@ -108,13 +108,17 @@ source; never duplicate or hand-write it elsewhere. The full plan is
    the facts. When a fact changes, change it in `business.json`, rebuild, then
    fix `faq.json` and any hand-written copy that still says otherwise.
 2. **Blog post metadata/SEO → [`blog-posts.registry.ts`](src/app/services/blog-posts.registry.ts).**
-   A post component makes one call: `seoService.applyBlogPostSeo('<slug>')`.
-   It emits the meta tags, canonical and a `BlogPosting` + `BreadcrumbList`
-   `@graph` at prerender time. **Never hand-write `updateSeo`/`setStructuredData`
-   in a post.** Extra schema goes through the second argument:
-   `applyBlogPostSeo(slug, { graph: [faqPageSchema(FAQ), videoObjectSchema(v)], article: { … } })`.
-   A slug missing from the registry fails the build on purpose. Never import
-   `BlogService` (bundles all articles) into code that runs on every page.
+   A post is its markdown plus its registry entry — **no component, no route**:
+   one component ([`src/app/blog/article/`](src/app/blog/article/)) serves every
+   post in every language and makes the one SEO call,
+   `seoService.applyBlogPostSeo('<slug>')`. It emits the meta tags, canonical,
+   hreflang and a `BlogPosting` + `BreadcrumbList` `@graph` at prerender time.
+   **Never hand-write `updateSeo`/`setStructuredData` for a post.** Extra schema
+   comes from the post itself: a `<!-- faq -->` section becomes FAQPage, and
+   `ARTICLE_EXTRAS` adds a VideoObject for the video post. A registered post
+   without text fails the prerender on purpose; an unknown slug is a 404.
+   Article texts load per language through the post route's resolver, so never
+   import `blog-content.generated.ts` into code that runs on every page.
 3. **"Last updated" dates are hand-maintained, never the build date.** When a
    post's content changes substantively, bump its `dateModified` in the
    registry. When a main page changes, bump its entry in `MAIN_PAGE_LASTMOD` in
@@ -138,9 +142,11 @@ and lose to this rule wherever they disagree.
 
 ## 🚨 Rule 6 — Every UI string is translated
 
-The main pages exist in Bulgarian (`/…`) and English (`/en/…`); the blog is
-Bulgarian-only. Guide: [`src/i18n/README.md`](src/i18n/README.md); plan and next
-steps: [`LOCALIZATION-PLAN.md`](LOCALIZATION-PLAN.md).
+The main pages and the blog index exist in Bulgarian (`/…`) and English
+(`/en/…`); a blog post exists in English only once it is translated
+(`translatedPosts` in `src/i18n/locales.json`). Guide:
+[`src/i18n/README.md`](src/i18n/README.md) (§ Translating a blog post); plan and
+next steps: [`LOCALIZATION-PLAN.md`](LOCALIZATION-PLAN.md).
 
 - **No hard-coded user-facing text** in the shell or a localized page (home,
   portfolio, products, prices, contact, shared components they use). Strings
@@ -154,10 +160,16 @@ steps: [`LOCALIZATION-PLAN.md`](LOCALIZATION-PLAN.md).
   pending); the FAQ changes in `src/data/faq.json` and
   `src/i18n/en/content/faq.json` together; a new gallery image's alt text goes
   in `src/i18n/en/content/gallery.json` under its `src` (same fallback).
-- **Languages and localized pages have one source:** `src/i18n/locales.json`.
-  Routes, hreflang, the switcher, sitemap alternates, llms.txt and the live check
-  read it. A new localized page or language also needs `MAIN_PAGE_LASTMOD`
-  entries for each of its URLs.
+- **Languages, localized pages and translated posts have one source:**
+  `src/i18n/locales.json`. Routes, hreflang, the switcher, sitemap alternates,
+  llms.txt and the live check read it. A new localized page or language also
+  needs `MAIN_PAGE_LASTMOD` entries for each of its URLs.
+- **Editing a translated post's Bulgarian text means updating its translation**
+  (`src/assets/blogs/<lang>/<slug>.md`, and `dateModified` in
+  `src/i18n/<lang>/content/blog.json`); nothing catches a stale translation.
+  New auto-blog posts arrive with an English draft in the same PR; an existing
+  post gets one with `npm run translate-post -- <slug>`. Amounts are in euro
+  only — never leva (a spec fails on them).
 
 ## Verify before claiming done
 
@@ -173,7 +185,7 @@ schema vs `business.json`, every sitemap URL, redirects, llms.txt, FAQ, and
 
 - Keep `404.html` in sync with `index.html` (meta tags, CSP, scripts). The
   LocalBusiness JSON-LD and `og:site_name` in both are generated; don't edit them.
-- Run `npm run generate-sitemap` after adding routes or blog posts (a new main
+- Run `npm run generate-sitemap` after adding routes or blog posts (`npm run build` does it too; a new main
   route also needs a `MAIN_PAGE_LASTMOD` entry, or the generator exits).
 - Image paths in markdown/HTML use `assets/…` (no leading slash), kebab-case,
   WebP preferred.

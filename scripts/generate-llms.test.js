@@ -15,10 +15,20 @@ test('adds one section per non-default language, none for Bulgarian', () => {
   assert.deepEqual(headings, ['## English']);
 });
 
+const hrefsIn = (lines) => lines.map((line) => (line.match(/^- \[[^\]]+\]\(([^)]+)\)/) || [])[1]).filter(Boolean);
+const postsHeading = sections.indexOf('### Blog articles in English');
+
 test('links every localized page in that language, at its canonical URL', () => {
-  const hrefs = sections.map((line) => (line.match(/^- \[[^\]]+\]\(([^)]+)\)/) || [])[1]).filter(Boolean);
-  assert.deepEqual(hrefs, locales.localizedPages.map((page) => `https://3dpechat.bg/en${page}`));
+  assert.deepEqual(hrefsIn(sections.slice(0, postsHeading)), locales.localizedPages.map((page) => `https://3dpechat.bg/en${page}`));
   assert.ok(sections.includes('- [Prices](https://3dpechat.bg/en/prices/): Prices by weight, a price calculator and the FAQ in English.'));
+});
+
+test('then lists every post translated into that language, at its own URL', () => {
+  assert.ok(postsHeading > 0);
+  assert.deepEqual(hrefsIn(sections.slice(postsHeading)),
+    Object.values(locales.translatedPosts.en).map((slug) => `https://3dpechat.bg/en/blog/${slug}/`));
+  const missingCopy = () => languageSections(locales, () => ({}));
+  assert.throws(missingCopy, /has no copy for/);
 });
 
 test('fails loudly when a language or a localized page has no copy', () => {

@@ -1,0 +1,13 @@
+<div class="article-toolbar">
+  <a igxButton="outlined" class="back-button" [routerLink]="'/blog' | localizePath" data-testid="article-back">
+    <igx-icon aria-hidden="true">arrow_back</igx-icon>
+    {{ 'blog.article.back' | t }}
+  </a>
+  @for (version of versions(); track version.code) {
+    <a igxButton="flat" class="language-link" [routerLink]="version.url" [attr.hreflang]="version.code"
+       data-testid="article-language-link">
+      <igx-icon class="language-icon" aria-hidden="true">translate</igx-icon>
+      {{ 'blog.article.readIn' | t: { language: version.language } }}
+    </a>
+  }
+</div>

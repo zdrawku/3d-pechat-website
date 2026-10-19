@@ -2,25 +2,17 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { BlogPost } from '../models/blog-post.model';
-import { BLOG_CONTENT } from './blog-content.generated';
 import { BLOG_POSTS } from './blog-posts.registry';
 
+/**
+ * The blog's post list (blog-posts.registry.ts) for the blog index and the
+ * related-content block. Article texts are not here: each post's route loads
+ * its text lazily, per language (blog/article/article.routes.ts), so neither
+ * of those pages downloads every article.
+ */
 @Injectable({ providedIn: 'root' })
 export class BlogService {
-  // Central registry of all blog posts lives in blog-posts.registry.ts
   private blogPosts: BlogPost[] = BLOG_POSTS;
-
-
-  getPost(slug: string): Observable<string> {
-    // Content is bundled at build time so it's available during prerendering.
-    // A missing slug throws so the error fails the prerender build instead of
-    // shipping a silently empty article page.
-    const content = BLOG_CONTENT[slug];
-    if (content === undefined) {
-      throw new Error(`No blog content for slug "${slug}". Check the filename in src/assets/blogs and rerun "npm run generate-blog-content".`);
-    }
-    return of(content);
-  }
 
   getAllPosts(): Observable<BlogPost[]> {
     return of(this.blogPosts);

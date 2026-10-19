@@ -1,3 +1,8 @@
+import fs from 'fs';
+import path from 'path';
+
+import { BLOG_POSTS } from '../src/app/services/blog-posts.registry';
+
 /**
  * Single source of truth for the routes the smoke suite exercises.
  * Keep in sync with src/app/app.routes.ts. `heading` is a substring expected
@@ -26,30 +31,32 @@ export const CORE_ROUTES: RouteSpec[] = [
 
 /**
  * The English versions of the other main pages (src/i18n/locales.json
- * `localizedPages`). Smoke, SEO and a11y run on them; visual baselines don't
- * (yet) — add them here to CORE_ROUTES when regenerating baselines.
+ * `localizedPages`). Smoke, SEO, a11y and visual regression run on them (their
+ * Linux baselines come from the Visual regression workflow's "update baselines" run).
  */
 export const ENGLISH_ROUTES: RouteSpec[] = [
   { path: '/en/portfolio', heading: 'Products and projects modelled for 3D printing', title: 'Portfolio' },
   { path: '/en/products', heading: '3D printed products', title: 'Products' },
   { path: '/en/prices', heading: '3D printing prices', title: 'Prices' },
   { path: '/en/contact', heading: 'Get in touch', title: 'Contact' },
+  { path: '/en/blog', heading: '3D Printing Blog', title: 'Blog' },
 ];
 
-export const BLOG_ROUTES: RouteSpec[] = [
-  '/blog/what-is-3d-printing',
-  '/blog/3d-printing-in-sofia-for-your-project',
-  '/blog/3d-printing-technologies',
-  '/blog/3d-printirani-obuvki',
-  '/blog/izglazhdane-na-pla-pri-3d-printirane-raboteshti-metodi-za-gladak-finish',
-  '/blog/3d-printirane-na-warhammer-nay-gotinite-figurki-teren-i-aksesoari',
-  '/blog/kak-da-pechelim-ot-3d-printiraneto',
-  '/blog/pla-pla-pla-pro-i-pln-razliki-i-izbor',
-  '/blog/litofan-s-3d-printirane-kak-da-prevarnesh-snimka-v-svetesht-model',
-  '/blog/3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor',
-  '/blog/infill-pri-3d-pechat-platnost-zdravina-i-filament',
-  '/blog/prozrachen-i-poluprozrachen-pla-filament-svetlopropuskliv-3d-pechat',
-  '/blog/3d-pechat-po-porachka-sofia-video',
-].map((path) => ({ path }));
+/**
+ * Every Bulgarian post, read from the registry itself (src/app/services/
+ * blog-posts.registry.ts), so a new post — the auto-blog's included — is
+ * covered without editing this file.
+ */
+export const BLOG_ROUTES: RouteSpec[] = BLOG_POSTS.map((post) => ({ path: post.route }));
 
-export const ALL_ROUTES: RouteSpec[] = [...CORE_ROUTES, ...ENGLISH_ROUTES, ...BLOG_ROUTES];
+/**
+ * The translated posts (src/i18n/locales.json `translatedPosts`), read from the
+ * registry itself so a new translation is covered without editing this file.
+ */
+const locales = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'src/i18n/locales.json'), 'utf8')) as {
+  translatedPosts: Record<string, Record<string, string>>;
+};
+export const TRANSLATED_BLOG_ROUTES: RouteSpec[] = Object.entries(locales.translatedPosts)
+  .flatMap(([code, slugs]) => Object.values(slugs).map((slug) => ({ path: `/${code}/blog/${slug}` })));
+
+export const ALL_ROUTES: RouteSpec[] = [...CORE_ROUTES, ...ENGLISH_ROUTES, ...BLOG_ROUTES, ...TRANSLATED_BLOG_ROUTES];

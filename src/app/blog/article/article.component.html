@@ -1,0 +1,45 @@
+@if (view(); as post) {
+  <article class="blog-container">
+    <app-article-toolbar [slug]="post.source"></app-article-toolbar>
+    <markdown [data]="post.postContent"></markdown>
+    @if (post.extras.video === 'featured') {
+      <app-youtube-embed class="blog-video" [video]="video" data-testid="article-video"></app-youtube-embed>
+    }
+    @if (post.clip; as clip) {
+      <figure class="blog-clip">
+        <video controls playsinline preload="none" [poster]="clip.poster" data-testid="article-clip">
+          <source [src]="clip.src" type="video/mp4">
+        </video>
+        @if (post.clipCaption) {
+          <figcaption>{{ post.clipCaption }}</figcaption>
+        }
+      </figure>
+    }
+    @if (post.postContentAfterVideo) {
+      <markdown [data]="post.postContentAfterVideo"></markdown>
+    }
+  </article>
+  <!-- Outside .blog-container on purpose: blog-styles colours every <a> inside
+       it with the primary colour, which would paint the contained button's label
+       orange-on-orange (axe color-contrast). -->
+  @if (post.extras.cta; as cta) {
+    <nav class="article-cta" [attr.aria-label]="'blog.article.nextSteps' | t" data-testid="article-cta">
+      <a igxButton="contained" [routerLink]="'/products' | localizePath" data-testid="article-cta-products">
+        <igx-icon>inventory_2</igx-icon>
+        {{ 'blog.article.products' | t }}
+      </a>
+      <a igxButton="outlined" [routerLink]="'/contact' | localizePath" data-testid="article-cta-contact">
+        <igx-icon>call</igx-icon>
+        {{ 'blog.article.contact' | t }}
+      </a>
+      @if (cta === 'video') {
+        <a igxButton="outlined" [href]="youtubeSubscribeUrl" target="_blank" rel="noopener noreferrer"
+           data-testid="article-cta-subscribe">
+          <igx-icon family="imx-icons" name="youtube"></igx-icon>
+          {{ 'blog.article.subscribe' | t }}
+        </a>
+      }
+    </nav>
+  }
+  <app-related-content [slug]="post.source"></app-related-content>
+}

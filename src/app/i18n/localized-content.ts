@@ -1,6 +1,8 @@
+import type { BlogPost } from '../models/blog-post.model';
 import type { Product } from '../models/product.model';
 import type { Video } from '../models/video.model';
-import type { ProductCopy, VideoCopy } from './i18n.types';
+import type { BlogPostCopy, ProductCopy, VideoCopy } from './i18n.types';
+import { DEFAULT_LOCALE, Locale, blogPostPath } from './locales';
 
 /** A gallery image with its alt text in the page's language. */
 export interface LocalizedImage {
@@ -48,6 +50,41 @@ export function localizeProduct<T extends Product>(product: T, copy: ProductCopy
     readMore: product.readMore && copy.readMore ? { ...product.readMore, label: copy.readMore } : product.readMore,
     links: product.links?.map((link, i) => ({ ...link, label: copy.links?.[i] ?? link.label }))
   };
+}
+
+/**
+ * A blog post (from blog-posts.registry.ts) in `locale`: copy and dates from
+ * that language's blog.json, slug and URL from locales.json, and the cover
+ * image, author and id from the Bulgarian post; `source` keeps its Bulgarian
+ * slug. The post itself in Bulgarian; undefined when it has no `locale` version.
+ */
+export function translateBlogPost(post: BlogPost, locale: Locale, copy: BlogPostCopy | undefined): BlogPost | undefined {
+  if (locale === DEFAULT_LOCALE) {
+    return post;
+  }
+  const path = blogPostPath(post.slug, locale);
+  if (!path || !copy) {
+    return undefined;
+  }
+  return {
+    ...post,
+    title: copy.title,
+    seoTitle: copy.seoTitle,
+    description: copy.description,
+    slug: path.split('/').at(-2) as string,
+    route: path.slice(0, -1),
+    date: new Date(copy.date),
+    dateModified: new Date(copy.dateModified),
+    tags: copy.tags,
+    keywords: copy.keywords,
+    videoCaption: copy.videoCaption,
+    source: post.slug
+  };
+}
+
+/** The blog posts that exist in `locale`, in registry order: all of them in Bulgarian, the translated ones elsewhere. */
+export function blogPostsIn(posts: readonly BlogPost[], locale: Locale, copy: Record<string, BlogPostCopy>): BlogPost[] {
+  return posts.flatMap((post) => translateBlogPost(post, locale, copy[post.slug]) ?? []);
 }
 
 /** A video's UI copy (title for labels, poster alt) in another language; the video itself stays as is. */

@@ -145,13 +145,42 @@ test.describe('language switcher', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(/Contact – custom 3D printing in Sofia/);
   });
 
-  test('leads from a Bulgarian-only blog post to the English home page', async ({ page }) => {
+  test('leads from a Bulgarian-only blog post to the English blog', async ({ page }) => {
     await page.goto('/blog/what-is-3d-printing/', { waitUntil: 'networkidle' });
     await page.getByTestId('language-switcher').click();
     await page.getByTestId('language-option-en').click();
-    await expect(page).toHaveURL(/\/en\/?$/);
+    await expect(page).toHaveURL(/\/en\/blog\/?$/);
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText(/Professional custom 3D printing/);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(/3D Printing Blog/);
+  });
+
+  test('switches a translated post to its translation and back', async ({ page }) => {
+    await page.goto('/blog/pla-pla-pla-pro-i-pln-razliki-i-izbor/', { waitUntil: 'networkidle' });
+    await page.getByTestId('language-switcher').click();
+    await page.getByTestId('language-option-en').click();
+    await expect(page).toHaveURL(/\/en\/blog\/pla-vs-pla-plus-vs-pla-pro-vs-pln\/?$/);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(/PLA, PLA\+, PLA Pro and PLN/);
+
+    // The article's own language link leads back (approved design B).
+    await page.getByTestId('article-language-link').click();
+    await expect(page).toHaveURL(/\/blog\/pla-pla-pla-pro-i-pln-razliki-i-izbor\/?$/);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'bg');
+    await expect(page.getByTestId('article-language-link')).toHaveText(/Прочетете на английски/);
+  });
+
+  test('the English blog lists the English posts and points to the Bulgarian ones', async ({ page }) => {
+    await page.goto('/en/blog/', { waitUntil: 'networkidle' });
+    const cards = page.getByTestId('blog-card');
+    await expect(cards.first()).toBeVisible();
+    for (const href of await cards.evaluateAll((links) => links.map((a) => a.getAttribute('href')))) {
+      expect(href).toMatch(/^\/en\/blog\/[a-z0-9-]+\/$/);
+    }
+    const pointer = page.getByTestId('blog-more-in-bulgarian-link');
+    await expect(pointer).toHaveAttribute('hreflang', 'bg');
+    await pointer.click();
+    await expect(page).toHaveURL(/\/blog\/?$/);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'bg');
   });
 
   test('the footer links the same page in the other language', async ({ page }) => {

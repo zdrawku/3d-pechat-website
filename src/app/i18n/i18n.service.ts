@@ -138,6 +138,15 @@ export class I18nService {
     return format.format(new Date(Date.UTC(2000, month - 1, 1)));
   }
 
+  /**
+   * A language's name in the active language, as used inside a sentence:
+   * 'bg' → "Bulgarian" on English pages, 'en' → „английски“ on Bulgarian ones.
+   */
+  languageName(code: Locale): string {
+    const names = this.formatter('language', () => new Intl.DisplayNames(this.definition().intl, { type: 'language' }));
+    return names.of(code) ?? localeDefinition(code).englishName;
+  }
+
   /** A Bulgarian path in the active language: '/prices' → '/en/prices' on English pages. */
   path(path: string): string {
     return localizePath(path, this.current());

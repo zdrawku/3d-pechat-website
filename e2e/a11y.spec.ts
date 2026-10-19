@@ -21,6 +21,9 @@ const A11Y_TARGETS: { path: string; include?: string[] }[] = [
   ...CORE_ROUTES.map(({ path }) => ({ path })),
   ...ENGLISH_ROUTES.map(({ path }) => ({ path })),
   { path: '/blog/3d-pechat-po-porachka-sofia-video', include: ['app-youtube-embed', '[data-testid="article-cta"]'] },
+  // The row above every article (back link + language link), on both sides of a translated pair.
+  { path: '/blog/pla-pla-pla-pro-i-pln-razliki-i-izbor', include: ['app-article-toolbar'] },
+  { path: '/en/blog/custom-3d-printing-sofia-video', include: ['app-article-toolbar', 'app-youtube-embed', '[data-testid="article-cta"]'] },
 ];
 
 for (const route of A11Y_TARGETS) {

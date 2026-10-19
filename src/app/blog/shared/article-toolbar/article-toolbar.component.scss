@@ -1,0 +1,68 @@
+@use "igniteui-angular/theming" as *;
+@use "../../../button-tones" as *;
+
+// Back link left, language link(s) right; on a phone the language link wraps
+// under „Назад към статиите“.
+//
+// The links are nested under .article-toolbar on purpose: the article's
+// stylesheet (blog/shared/blog-styles) paints every <a> inside .blog-container
+// in the primary colour and underlines it on hover, and styles.scss gives
+// `.blog-container .back-button` a bottom margin. These links are buttons, so
+// they set their own colour and spacing back with higher specificity.
+.article-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: rem(12px);
+  margin-bottom: rem(32px);
+
+  .back-button {
+    @include teal-outlined-button;
+    --ig-outlined-button-border-radius: var(--radius-pill);
+    display: flex;
+    align-items: center;
+    gap: rem(8px);
+    margin: 0;
+    color: var(--accent-teal-on-tint);
+
+    &:hover {
+      color: var(--accent-teal-on-tint);
+      text-decoration: none;
+    }
+  }
+
+  // Same tone as the related-content links: the AA-safe orange on the paper
+  // background, the lighter primary in the dark theme.
+  .language-link {
+    --ig-flat-button-border-radius: var(--radius-pill);
+    --foreground: var(--accent-on-light);
+    display: inline-flex;
+    align-items: center;
+    gap: rem(6px);
+    color: var(--accent-on-light);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--accent-on-light);
+      text-decoration: none;
+    }
+  }
+
+  // igx-icon's theme sets its own --ig-icon-color, so set it on the icon itself.
+  .language-icon {
+    --ig-icon-color: var(--accent-on-light);
+  }
+}
+
+:host-context(.dark-theme) .article-toolbar {
+  .language-link,
+  .language-link:hover {
+    --foreground: var(--ig-primary-400);
+    color: var(--ig-primary-400);
+  }
+
+  .language-icon {
+    --ig-icon-color: var(--ig-primary-400);
+  }
+}

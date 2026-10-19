@@ -4,6 +4,7 @@ import portfolio from './bg/portfolio.json';
 import products from './bg/products.json';
 import prices from './bg/prices.json';
 import contact from './bg/contact.json';
+import blog from './bg/blog.json';
 import english from './en';
 import business from '../data/business.json';
 import faqData from '../data/faq.json';
@@ -14,6 +15,8 @@ import type { LocaleBundle } from '../app/i18n/i18n.types';
 import { flatten } from '../app/i18n/i18n.service';
 import { carouselImages as homeGallery } from '../app/main-page/carousel-images';
 import { carouselImages as portfolioGallery } from '../app/portfolio-page/carousel-images';
+import { BLOG_POSTS } from '../app/services/blog-posts.registry';
+import { TRANSLATED_BLOG_CONTENT } from '../app/services/blog-content.translations.generated';
 
 /**
  * The translation contract (src/i18n/README.md). Bulgarian is the source; every
@@ -23,7 +26,7 @@ import { carouselImages as portfolioGallery } from '../app/portfolio-page/carous
 const BUNDLES: Record<string, LocaleBundle> = { en: english };
 
 /** All Bulgarian messages: the core namespaces plus every page's own file. */
-const bulgarian = { ...coreMessages, home, portfolio, products, prices, contact };
+const bulgarian = { ...coreMessages, home, portfolio, products, prices, contact, blog };
 
 const placeholders = (text: string): string[] => [...text.matchAll(/\{(\w+)\}/g)].map(m => m[1]).sort();
 
@@ -188,6 +191,59 @@ describe('translations (src/i18n)', () => {
         for (const slug of Object.keys(bundle.videos)) {
           expect(slugs.has(slug)).withContext(slug).toBeTrue();
         }
+      });
+
+      describe('blog (locales.json translatedPosts + content/blog.json + src/assets/blogs/<lang>/)', () => {
+        const posts = (registry.translatedPosts as Record<string, Record<string, string>>)[code] ?? {};
+        const texts = TRANSLATED_BLOG_CONTENT[code] ?? {};
+        const isoDate = /^\d{4}-\d{2}-\d{2}$/;
+
+        it('translates only posts that exist in Bulgarian, each to its own slug', () => {
+          const bulgarianSlugs = new Set(BLOG_POSTS.map(p => p.slug));
+          for (const source of Object.keys(posts)) {
+            expect(bulgarianSlugs.has(source)).withContext(source).toBeTrue();
+          }
+          const slugs = Object.values(posts);
+          expect(new Set(slugs).size).withContext('duplicate slugs').toBe(slugs.length);
+          for (const slug of slugs) {
+            expect(slug).withContext(slug).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+          }
+        });
+
+        it('has copy for exactly those posts, and a text for each', () => {
+          expect(Object.keys(bundle.blog).sort()).toEqual(Object.keys(posts).sort());
+          expect(Object.keys(texts).sort()).toEqual(Object.values(posts).sort());
+        });
+
+        it('opens each text with the title of its copy', () => {
+          for (const [source, slug] of Object.entries(posts)) {
+            expect(texts[slug]?.split(/\r?\n/)[0]).withContext(slug).toBe(`# ${bundle.blog[source]?.title}`);
+          }
+        });
+
+        it('gives each post a meta description, short titles and real dates', () => {
+          for (const [source, copy] of Object.entries(bundle.blog)) {
+            expect(copy.description.length).withContext(`${source} description`).toBeLessThanOrEqual(160);
+            expect(copy.description.length).withContext(`${source} description`).toBeGreaterThanOrEqual(70);
+            expect((copy.seoTitle ?? copy.title).length).withContext(`${source} <title>`).toBeLessThanOrEqual(70);
+            expect(copy.tags.length).withContext(`${source} tags`).toBeGreaterThan(0);
+            expect(copy.keywords.length).withContext(`${source} keywords`).toBeGreaterThan(0);
+            for (const date of [copy.date, copy.dateModified]) {
+              expect(date).withContext(source).toMatch(isoDate);
+              expect(Number.isNaN(new Date(date).getTime())).withContext(source).toBeFalse();
+            }
+            expect(copy.dateModified >= copy.date).withContext(`${source} dateModified ≥ date`).toBeTrue();
+          }
+        });
+
+        it('types no euro amount or hour count into the copy and offers nothing in neverClaim', () => {
+          for (const [source, copy] of Object.entries(bundle.blog)) {
+            const text = [copy.title, copy.seoTitle ?? '', copy.description, ...copy.tags, ...copy.keywords].join('\n');
+            expect(text).withContext(source).not.toMatch(/€\s?\d|\d\s?€/);
+            expect(text).withContext(source).not.toMatch(/\d+\s?(?:hours?|h)\b/i);
+            expect(text).withContext(source).not.toMatch(/\bSLA\b|\bSLS\b|\bMJF\b|resin|scanning|3D scan|same[- ]day/i);
+          }
+        });
       });
     });
   }

@@ -5,6 +5,7 @@ import { IgxButtonDirective, IGX_CARD_DIRECTIVES, IgxIconComponent, IgxIconButto
 
 import { ProductVariant } from '../../models/product.model';
 import { I18nService } from '../../i18n/i18n.service';
+import { blogPostAt, blogPostPath } from '../../i18n/locales';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import productsMessages from '../../../i18n/bg/products.json';
 
@@ -15,7 +16,7 @@ import productsMessages from '../../../i18n/bg/products.json';
   styleUrls: ['./product-grid.component.scss']
 })
 export class ProductGridComponent {
-  /** Also read by the template: „Прочети повече“ links get hreflang="bg" on other languages' pages. */
+  /** Also read by the template (the `t` pipe's language, product copy). */
   protected readonly i18n = inject(I18nService);
 
   constructor() {
@@ -73,6 +74,18 @@ export class ProductGridComponent {
 
   // Called by the parent once the clipboard write resolves, so the checkmark
   // only shows on real success. Auto-reverts after a short delay.
+  /**
+   * Where a product's „Прочети повече“ link goes on this page: the article in
+   * the page's language when it is translated (src/i18n/locales.json
+   * `translatedPosts`); otherwise the Bulgarian article, with `lang` set so the
+   * link carries hreflang and its label says the article is in Bulgarian.
+   */
+  protected readMoreLink(url: string): { url: string; lang: string | null } {
+    const post = blogPostAt(url);
+    const translated = post && blogPostPath(post.source, this.i18n.locale());
+    return translated ? { url: translated.replace(/\/$/, ''), lang: null } : { url, lang: this.i18n.langIfForeign() };
+  }
+
   public markCopied(sectionId: string): void {
     this.copiedLinkId = sectionId;
     if (this.copiedResetHandle) {

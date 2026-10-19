@@ -141,7 +141,7 @@ test.describe('SEO metadata', () => {
 
   // Languages (src/i18n/locales.json): every main page exists in Bulgarian and
   // English, and each version declares all of them with Bulgarian as x-default.
-  // The blog is Bulgarian-only and carries no hreflang.
+  // A blog post pairs only with its translations; one without carries no hreflang.
   const locales = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'src/i18n/locales.json'), 'utf8')) as {
     defaultLocale: string;
     locales: { code: string; ogLocale: string }[];
@@ -166,11 +166,32 @@ test.describe('SEO metadata', () => {
     }
   }
 
-  test('blog pages carry no hreflang and stay Bulgarian', async ({ page }) => {
+  test('a post that exists only in Bulgarian carries no hreflang', async ({ page }) => {
     await page.goto('/blog/what-is-3d-printing/');
     await expect(page.locator('html')).toHaveAttribute('lang', 'bg');
     await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(0);
   });
+
+  // A translated post and its original list each other (locales.json translatedPosts).
+  const translatedPosts = (JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'src/i18n/locales.json'), 'utf8')) as {
+    translatedPosts: Record<string, Record<string, string>>;
+  }).translatedPosts;
+  for (const [code, slugs] of Object.entries(translatedPosts)) {
+    for (const [source, slug] of Object.entries(slugs)) {
+      const original = `https://3dpechat.bg/blog/${source}/`;
+      const translation = `https://3dpechat.bg/${code}/blog/${slug}/`;
+      for (const [route, lang, canonical] of [[`/blog/${source}/`, 'bg', original], [`/${code}/blog/${slug}/`, code, translation]]) {
+        test(`${route} has lang="${lang}" and pairs with its ${lang === 'bg' ? code : 'Bulgarian'} version`, async ({ page }) => {
+          await page.goto(route);
+          await expect(page.locator('html')).toHaveAttribute('lang', lang);
+          await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', canonical);
+          await expect(page.locator('link[rel="alternate"][hreflang="bg"]')).toHaveAttribute('href', original);
+          await expect(page.locator(`link[rel="alternate"][hreflang="${code}"]`)).toHaveAttribute('href', translation);
+          await expect(page.locator('link[rel="alternate"][hreflang="x-default"]')).toHaveAttribute('href', original);
+        });
+      }
+    }
+  }
 
   test('/en/prices/ shows the English FAQ and mirrors it as FAQPage JSON-LD', async ({ page }) => {
     // The English copy is keyed by FAQ id; the order comes from src/data/faq.json.

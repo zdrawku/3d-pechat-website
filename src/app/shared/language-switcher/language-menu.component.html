@@ -1,0 +1,13 @@
+<igx-drop-down width="236px" [labelledBy]="labelledBy()" (selectionChanging)="onSelectionChanging($event)"
+               (opening)="expanded.emit(true)" (closed)="expanded.emit(false)">
+  <igx-drop-down-item [isHeader]="true" class="lang-menu__heading">{{ 'shell.language.heading' | t }}</igx-drop-down-item>
+  @for (locale of locales; track locale.code) {
+    <igx-drop-down-item class="lang-menu__item" [value]="locale.code" [selected]="locale.code === current().code"
+                        [attr.lang]="locale.code" [attr.data-testid]="'language-option-' + locale.code">
+      <igx-icon igxPrefix class="lang-menu__check" [class.lang-menu__check--hidden]="locale.code !== current().code"
+                aria-hidden="true">check</igx-icon>
+      {{ locale.label }}
+      <span igxSuffix class="lang-menu__code" aria-hidden="true">{{ locale.code }}</span>
+    </igx-drop-down-item>
+  }
+</igx-drop-down>

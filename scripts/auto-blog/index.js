@@ -1,31 +1,29 @@
 // Orchestrator for the automated blog post generation pipeline.
 //   1. Scrape (or fall back to) a topic idea.
-//   2. Generate the article + SEO metadata via Claude.
-//   3. Scaffold all required Angular files and registry/route updates.
+//   2. Generate the Bulgarian article + SEO metadata via Claude.
+//   3. File it: markdown + blog-posts.registry.ts entry (scaffold-post.js).
+//   4. Draft its English version via Claude and file it too (translate-article.js):
+//      src/assets/blogs/en/<slug>.md, src/i18n/en/content/blog.json, locales.json.
+//   5. Regenerate the derived files (images, content maps, sitemap, llms.txt).
+// The workflow opens one PR with both languages; nothing goes live unreviewed.
 
-// Load .env when running locally (no-op in CI where env vars come from secrets).
+require('./env').loadEnv();
+
 const path = require('path');
-const envPath = path.resolve(__dirname, '../../.env');
-if (require('fs').existsSync(envPath)) {
-  require('fs').readFileSync(envPath, 'utf8')
-    .split('\n')
-    .forEach(line => {
-      const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith('#')) return;
-      const eq = trimmed.indexOf('=');
-      if (eq === -1) return;
-      const key = trimmed.slice(0, eq).trim();
-      const val = trimmed.slice(eq + 1).trim();
-      if (key && !(key in process.env)) process.env[key] = val;
-    });
-}
-
 const { execSync } = require('child_process');
 const { getTopicIdea } = require('./scrape-ideas');
 const { generateArticle } = require('./generate-article');
-const { scaffoldArticle } = require('./scaffold-component');
+const { scaffoldPost, scaffoldTranslation } = require('./scaffold-post');
+const { translateArticle } = require('./translate-article');
 const { generateCoverImage } = require('./generate-image');
 const { preflight } = require('./preflight');
+
+const ROOT = path.resolve(__dirname, '../..');
+
+/** Runs one of the repo's generator scripts (scripts/<name>.js). */
+function regenerate(name) {
+  execSync(`node "${path.resolve(__dirname, `../${name}.js`)}"`, { stdio: 'inherit', cwd: ROOT });
+}
 
 async function main() {
   // Verify the scaffolder still matches the files it edits BEFORE spending a
@@ -55,47 +53,55 @@ async function main() {
   }
   console.log('::endgroup::');
 
-  console.log('::group::Scaffold files');
-  const result = scaffoldArticle(article, coverImagePath);
+  console.log('::group::File the post');
+  const result = scaffoldPost(article, coverImagePath);
   console.log(JSON.stringify(result, null, 2));
   console.log('::endgroup::');
 
-  // The cover arrives from Pollinations as JPEG/PNG. Convert it to WebP and let
-  // the converter rewrite every reference (blog-posts.registry.ts, markdown, the blog
-  // component's og:image + JSON-LD) so the PR needs no manual image fixup.
-  console.log('::group::Optimize blog images');
-  const blogImagesScript = path.resolve(__dirname, '../generate-blog-images.js');
-  execSync(`node "${blogImagesScript}"`, { stdio: 'inherit', cwd: path.resolve(__dirname, '../..') });
-  console.log('[blog-images] converted to webp');
+  // The English draft rides in the same PR. If it fails, the Bulgarian post
+  // still goes up for review on its own; `npm run translate-post -- <slug>`
+  // adds the English version later.
+  console.log('::group::Draft the English version');
+  let translation = null;
+  try {
+    const english = await translateArticle({ markdown: article.markdown, seo: article.seo }, { date: article.seo.publishDate });
+    translation = scaffoldTranslation({ source: result.slug, ...english });
+    console.log(JSON.stringify(translation, null, 2));
+  } catch (err) {
+    console.warn(`[translate] failed, the PR carries the Bulgarian post only: ${err.message}`);
+  }
   console.log('::endgroup::');
 
-  // BLOG_CONTENT is what the prerenderer reads; without regenerating it the new
-  // markdown is never bundled and the post renders empty.
-  console.log('::group::Generate blog content map');
-  const blogContentScript = path.resolve(__dirname, '../generate-blog-content.js');
-  execSync(`node "${blogContentScript}"`, { stdio: 'inherit', cwd: path.resolve(__dirname, '../..') });
-  console.log('[blog-content] regenerated successfully');
+  // The cover arrives from Pollinations as JPEG/PNG. Convert it to WebP and let
+  // the converter rewrite every reference (blog-posts.registry.ts and the
+  // markdown in every language) so the PR needs no manual image fixup.
+  console.log('::group::Optimize blog images');
+  regenerate('generate-blog-images');
+  console.log('::endgroup::');
+
+  // The content maps are what the prerenderer reads; without regenerating them
+  // the new markdown is never bundled and the post renders empty.
+  console.log('::group::Generate blog content maps');
+  regenerate('generate-blog-content');
   console.log('::endgroup::');
 
   console.log('::group::Generate sitemap');
-  const sitemapScript = path.resolve(__dirname, '../generate-sitemap.js');
-  execSync(`node "${sitemapScript}"`, { stdio: 'inherit', cwd: path.resolve(__dirname, '../..') });
-  console.log('[sitemap] regenerated successfully');
+  regenerate('generate-sitemap');
   console.log('::endgroup::');
 
   console.log('::group::Generate llms.txt');
-  const llmsScript = path.resolve(__dirname, '../generate-llms.js');
-  execSync(`node "${llmsScript}"`, { stdio: 'inherit', cwd: path.resolve(__dirname, '../..') });
-  console.log('[llms] regenerated successfully');
+  regenerate('generate-llms');
   console.log('::endgroup::');
 
   // Emit summary for GitHub Actions step outputs / job summary.
   const summary = [
     `Created blog post: ${result.slug}`,
     `Title: ${article.seo.title}`,
-    `Component: ${result.componentDir}`,
     `Markdown: ${result.markdownFile}`,
-    `BlogService id: ${result.id}`,
+    `Registry id: ${result.id}`,
+    translation
+      ? `English: /en/blog/${translation.slug}/ (${translation.markdownFile})`
+      : 'English: not drafted — run `npm run translate-post -- ' + result.slug + '`',
     `Source: ${topic.sourceUrl}`
   ].join('\n');
   console.log('\n--- SUMMARY ---\n' + summary);

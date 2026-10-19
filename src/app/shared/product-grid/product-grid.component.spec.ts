@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
+import { I18nService } from '../../i18n/i18n.service';
 import { ProductGridComponent } from './product-grid.component';
 import { ProductVariant } from '../../models/product.model';
 
@@ -87,6 +88,34 @@ describe('ProductGridComponent', () => {
       fixture.detectChanges();
 
       expect(fixture.nativeElement.querySelector('[data-testid="product-read-more"]')).toBeNull();
+    });
+
+    describe('on an English page', () => {
+      beforeEach(async () => {
+        await TestBed.inject(I18nService).use('en');
+        fixture = TestBed.createComponent(ProductGridComponent);
+        component = fixture.componentInstance;
+      });
+
+      afterEach(() => document.documentElement.setAttribute('lang', 'bg'));
+
+      it('links a translated article in English', () => {
+        component.products = [{ ...makeProduct(1), readMore: { label: 'Coin card', url: '/blog/monetna-karta-bulgarski-evro-moneti' } }];
+        fixture.detectChanges();
+        const link: HTMLAnchorElement = fixture.nativeElement.querySelector('[data-testid="product-read-more"]');
+        expect(link.getAttribute('href')).toBe('/en/blog/bulgarian-euro-coin-holder-card');
+        expect(link.hasAttribute('hreflang')).toBeFalse();
+        expect(link.getAttribute('aria-label')).toBe('Read more: Coin card');
+      });
+
+      it('links an untranslated article in Bulgarian, and says so', () => {
+        component.products = [{ ...makeProduct(1), readMore: { label: 'Article', url: '/blog/what-is-3d-printing' } }];
+        fixture.detectChanges();
+        const link: HTMLAnchorElement = fixture.nativeElement.querySelector('[data-testid="product-read-more"]');
+        expect(link.getAttribute('href')).toBe('/blog/what-is-3d-printing');
+        expect(link.getAttribute('hreflang')).toBe('bg');
+        expect(link.getAttribute('aria-label')).toBe('Read more (in Bulgarian): Article');
+      });
     });
   });
 

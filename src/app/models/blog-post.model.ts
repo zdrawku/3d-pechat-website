@@ -15,4 +15,11 @@ export interface BlogPost {
   /** SEO meta keywords (distinct from the display `tags`). */
   keywords?: string[];
   author?: string;
+  /** Caption of a video clip the post shows at its `<!-- video -->` marker (see ARTICLE_EXTRAS). */
+  videoCaption?: string;
+  /**
+   * Only on a translation (localized-content.ts translateBlogPost()): the
+   * Bulgarian post's slug, which keys its text, related content and SEO.
+   */
+  source?: string;
 }

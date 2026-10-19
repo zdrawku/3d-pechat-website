@@ -10,14 +10,14 @@
   same URL.
 -->
 @if (posts.length > 0 || products.length > 0) {
-  <section class="rc" aria-label="Още от 3dpechat.bg" data-testid="related-content">
+  <section class="rc" [attr.aria-label]="'blog.related.label' | t" data-testid="related-content">
     <div class="rc_inner">
       @if (posts.length > 0) {
         <div class="rc_block">
           <div class="rc_head">
-            <h2 class="rc_title" id="rc-posts-heading">Продължете да четете</h2>
-            <a igxButton="flat" class="rc_all" routerLink="/blog">
-              Всички статии
+            <h2 class="rc_title" id="rc-posts-heading">{{ 'blog.related.posts' | t }}</h2>
+            <a igxButton="flat" class="rc_all" [routerLink]="'/blog' | localizePath">
+              {{ 'blog.related.allPosts' | t }}
               <igx-icon class="rc_icon" aria-hidden="true">arrow_forward</igx-icon>
             </a>
           </div>
@@ -43,8 +43,8 @@
                        happy-customers. -->
                   <igx-card-footer class="rc_card_foot" role="presentation">
                     <a igxButton="flat" class="rc_cta" [routerLink]="post.route"
-                       [attr.aria-label]="'Прочети: ' + post.title">
-                      Прочети
+                       [attr.aria-label]="'blog.related.readLabel' | t: { title: post.title }">
+                      {{ 'blog.related.read' | t }}
                       <igx-icon class="rc_icon" aria-hidden="true">arrow_forward</igx-icon>
                     </a>
                   </igx-card-footer>
@@ -58,9 +58,9 @@
       @if (products.length > 0) {
         <div class="rc_block">
           <div class="rc_head">
-            <h2 class="rc_title" id="rc-products-heading">Може да ви хареса</h2>
-            <a igxButton="flat" class="rc_all" routerLink="/products">
-              Всички продукти
+            <h2 class="rc_title" id="rc-products-heading">{{ 'blog.related.products' | t }}</h2>
+            <a igxButton="flat" class="rc_all" [routerLink]="'/products' | localizePath">
+              {{ 'blog.related.allProducts' | t }}
               <igx-icon class="rc_icon" aria-hidden="true">arrow_forward</igx-icon>
             </a>
           </div>
@@ -74,11 +74,11 @@
                   </igx-card-media>
 
                   <div class="rc_product_body">
-                    <h3 class="rc_product_title">{{ product.name }}</h3>
-                    <a igxButton="outlined" class="rc_cta rc_cta--product" routerLink="/products"
+                    <h3 class="rc_product_title" [attr.lang]="product.copyLang">{{ product.name }}</h3>
+                    <a igxButton="outlined" class="rc_cta rc_cta--product" [routerLink]="'/products' | localizePath"
                        [fragment]="product.linkId"
-                       [attr.aria-label]="'Виж продукта: ' + product.name">
-                      Виж продукта
+                       [attr.aria-label]="'blog.related.viewProductLabel' | t: { name: product.name }">
+                      {{ 'blog.related.viewProduct' | t }}
                     </a>
                   </div>
                 </igx-card>

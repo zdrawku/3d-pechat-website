@@ -56,7 +56,7 @@ export const BLOG_POSTS: BlogPost[] = [
     tags: ['3d принтиране', '3d принтиране технологии', 'FDM', 'SLA', 'SLS', 'DLP', 'материали', 'адитивно производство'],
     author: '3D Печат България',
     keywords: ['3d принтиране', '3d принтиране технологии', 'FDM', 'SLA', 'SLS', 'DLP', 'MSLA', 'MJF', '3D принтер', 'адитивно производство'],
-    dateModified: new Date('2026-10-17')
+    dateModified: new Date('2026-10-19')
   },
   {
     id: '5',
@@ -69,7 +69,7 @@ export const BLOG_POSTS: BlogPost[] = [
     author: '3D Печат България',
     tags: ['3D принтирани обувки', '3D печат обувки', 'персонализирани обувки', 'TPU', 'SLS', 'обувна индустрия'],
     keywords: ['3D принтирани обувки', '3D печат обувки', '3D принтер за обувки', '3D принтиране България', 'персонализирани обувки', 'adidas 3D обувки', 'nike 3D печат'],
-    dateModified: new Date('2026-06-02')
+    dateModified: new Date('2026-10-19')
   },
   {
     id: '6',
@@ -95,7 +95,7 @@ export const BLOG_POSTS: BlogPost[] = [
     tags: ['Warhammer', '3D принтиране', 'Миниатюри', 'Настолни игри', 'Resin печат', 'Фигурки', 'Терен', 'Аксесоари'],
     author: '3D Печат България',
     keywords: ['3D принтиране', 'Warhammer', '3D принтер', 'фигурки Warhammer', '3D печат', 'resin принтер', 'терен за Warhammer', 'миниатюри', 'tabletop gaming', '3dpechat'],
-    dateModified: new Date('2026-06-03')
+    dateModified: new Date('2026-10-19')
   },
   {
     id: '8',
@@ -108,7 +108,7 @@ export const BLOG_POSTS: BlogPost[] = [
     tags: ['3D принтиране', 'бизнес', 'печалба', '3D принтер', 'услуги', 'предприемачество', 'технологии', 'пари'],
     author: '3D Печат България',
     keywords: ['3D принтиране', 'как да печелим от 3D принтер', '3D печат бизнес', '3D принтер доход', 'печалба от 3D принтиране', '3D печат услуги', '3D принтиране България'],
-    dateModified: new Date('2026-10-12')
+    dateModified: new Date('2026-10-19')
   },
   {
     id: '9',
@@ -121,7 +121,7 @@ export const BLOG_POSTS: BlogPost[] = [
     tags: ['PLA', 'филамент', '3D печат', 'материали', 'ръководство', 'PLA+', 'PLA Pro', 'PLN'],
     author: '3D Печат България',
     keywords: ['PLA филамент', 'PLA+', 'PLA Pro', 'PLN', '3D принтиране', '3D печат', '3D принтер', 'филамент за 3D принтер', 'материали за 3D печат'],
-    dateModified: new Date('2026-06-04')
+    dateModified: new Date('2026-10-19')
   },
   {
     id: '10',
@@ -199,7 +199,8 @@ export const BLOG_POSTS: BlogPost[] = [
     tags: ['Сноуборд', '3D печат', 'Собствен дизайн', 'Bambu Studio', 'PLA', 'Зимни спортове', 'Аксесоари', 'MakerWorld'],
     author: '3D Печат България',
     keywords: ['стопер за сноуборд', 'сноуборд аксесоар', '3D принтиран сноуборд аксесоар', 'StandStrap', 'закопчаване на автомати', 'Bambu Studio', 'PLA', '3D печат България'],
-    dateModified: new Date('2026-10-12')
+    dateModified: new Date('2026-10-12'),
+    videoCaption: 'StandStrap в действие — закопчаване на автоматите прав, без бедстване в снега.'
   },
   {
     id: '17',

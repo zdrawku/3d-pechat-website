@@ -4,10 +4,14 @@ import { DOCUMENT } from '@angular/common';
 import { BLOG_POSTS } from './blog-posts.registry';
 import business from '../../data/business.json';
 import { I18nService } from '../i18n/i18n.service';
-import { LanguageAlternate, languageAlternates, pagePath } from '../i18n/locales';
+import { DEFAULT_LOCALE, LanguageAlternate, Locale, isLocale, languageAlternates, localeDefinition, pagePath } from '../i18n/locales';
+import { translateBlogPost } from '../i18n/localized-content';
 import type { PageNamespace, TranslationParams } from '../i18n/i18n.types';
 
 export const SITE_ORIGIN = 'https://3dpechat.bg';
+
+/** '3dpechat.bg' — the brand suffix of other languages' <title>s, as in their seo.json. */
+const SITE_HOST = new URL(SITE_ORIGIN).host;
 
 /** Extra schema for a post that needs more than BlogPosting + BreadcrumbList. */
 export interface BlogPostSeoExtras {
@@ -41,7 +45,7 @@ export interface SeoConfig {
     modifiedDate?: string;
     /**
      * Language versions of this page (`applyPageSeo` passes every language's);
-     * omitted = none, as for the Bulgarian-only blog. Every navigation replaces them.
+     * omitted = none, as for a post that exists only in Bulgarian. Every navigation replaces them.
      */
     alternates?: LanguageAlternate[];
 }
@@ -107,7 +111,10 @@ export class SeoService {
         // belongs to I18nService (it follows the route's language).
         const alternates = config.alternates ?? [];
         this.updateTag('property', 'og:locale', this.i18n.definition().ogLocale);
-        this.setOgLocaleAlternates(alternates.length ? this.i18n.otherLocales().map(l => l.ogLocale) : []);
+        this.setOgLocaleAlternates(alternates
+            .map(a => a.hreflang)
+            .filter((code): code is Locale => isLocale(code) && code !== this.i18n.locale())
+            .map(code => localeDefinition(code).ogLocale));
         this.setLanguageAlternates(alternates);
 
         // 9. Article specific tags
@@ -145,25 +152,37 @@ export class SeoService {
      * One call per blog post: the meta/OG/canonical tags plus a single JSON-LD
      * `@graph` holding the BlogPosting and its BreadcrumbList, all derived from
      * the post's entry in blog-posts.registry.ts (the one source of truth for
-     * title, description, keywords, image and dates). Throws on an unknown slug
-     * so a typo fails the prerender instead of shipping a post with no SEO.
+     * title, description, keywords, image and dates) — or, on another
+     * language's page, from that translation's copy (src/i18n/<lang>/content/blog.json).
+     * `slug` is always the Bulgarian slug. A post with translations lists them as
+     * hreflang alternates. Throws on an unknown slug or a missing translation, so
+     * a typo fails the prerender instead of shipping a post with no SEO.
      * `extras` adds post-specific schema (a video, a visible FAQ) to the same graph.
      */
     public applyBlogPostSeo(slug: string, extras: BlogPostSeoExtras = {}): void {
-        const post = BLOG_POSTS.find(p => p.slug === slug);
-        if (!post) {
+        const source = BLOG_POSTS.find(p => p.slug === slug);
+        if (!source) {
             throw new Error(`applyBlogPostSeo: no post with slug "${slug}" in blog-posts.registry.ts`);
         }
+        const locale = this.i18n.locale();
+        const post = translateBlogPost(source, locale, this.i18n.content().blog[slug]);
+        if (!post) {
+            throw new Error(`applyBlogPostSeo: "${slug}" has no "${locale}" version — see translatedPosts in src/i18n/locales.json and src/i18n/${locale}/content/blog.json`);
+        }
 
-        const url = `${SITE_ORIGIN}${post.route.replace(/\/+$/, '')}/`;
+        const path = `${post.route.replace(/\/+$/, '')}/`;
+        const url = `${SITE_ORIGIN}${path}`;
         const image = this.absoluteUrl(post.imageUrl) ?? this.defaultImage;
         const keywords = (post.keywords ?? post.tags ?? []).join(', ');
         const datePublished = post.date.toISOString();
         const dateModified = (post.dateModified ?? post.date).toISOString();
         const brand = { '@type': 'Organization', '@id': `${SITE_ORIGIN}/#organization`, name: this.siteName };
+        // Bulgarian titles keep business.json's brand; other languages use the
+        // domain, as their main pages' titles do (src/i18n/<lang>/seo.json).
+        const titleBrand = locale === DEFAULT_LOCALE ? this.titleBrand : SITE_HOST;
 
         this.updateSeo({
-            title: post.seoTitle ?? `${post.title} | ${this.titleBrand}`,
+            title: post.seoTitle ?? `${post.title} | ${titleBrand}`,
             description: post.description,
             keywords,
             image,
@@ -171,7 +190,8 @@ export class SeoService {
             type: 'article',
             author: post.author ?? this.siteName,
             publishedDate: datePublished,
-            modifiedDate: dateModified
+            modifiedDate: dateModified,
+            alternates: languageAlternates(path, SITE_ORIGIN)
         });
 
         this.setStructuredData({
@@ -183,7 +203,7 @@ export class SeoService {
                     headline: post.title,
                     description: post.description,
                     image,
-                    inLanguage: 'bg',
+                    inLanguage: locale,
                     keywords,
                     datePublished,
                     dateModified,
@@ -196,8 +216,8 @@ export class SeoService {
                     '@type': 'BreadcrumbList',
                     '@id': `${url}#breadcrumb`,
                     itemListElement: [
-                        { '@type': 'ListItem', position: 1, name: 'Начало', item: `${SITE_ORIGIN}/` },
-                        { '@type': 'ListItem', position: 2, name: 'Блог', item: `${SITE_ORIGIN}/blog/` },
+                        { '@type': 'ListItem', position: 1, name: this.i18n.t('shell.drawer.home.title'), item: `${SITE_ORIGIN}${this.i18n.path('/')}` },
+                        { '@type': 'ListItem', position: 2, name: this.i18n.t('shell.drawer.blog.title'), item: `${SITE_ORIGIN}${this.i18n.path('/blog/')}` },
                         { '@type': 'ListItem', position: 3, name: post.title, item: url }
                     ]
                 },

@@ -38,13 +38,35 @@ test('pairs each language version with every other one, x-default = Bulgarian', 
   assert.deepEqual(hreflangs(entry(`${SITE}/en/`)), [`bg ${SITE}/`, `en ${SITE}/en/`, `x-default ${SITE}/`]);
 });
 
-test('keeps the blog Bulgarian-only: no hreflang on posts or the blog index', () => {
-  assert.deepEqual(hreflangs(entry(`${SITE}/blog/`)), []);
+test('pairs the blog index with its translations', () => {
+  assert.deepEqual(hreflangs(entry(`${SITE}/en/blog/`)), [`bg ${SITE}/blog/`, `en ${SITE}/en/blog/`, `x-default ${SITE}/blog/`]);
+});
+
+test('lists every post; a translated one pairs with its translations, a Bulgarian-only one with nothing', () => {
+  const english = locales.translatedPosts.en;
   for (const post of posts) {
-    const block = entry(`${SITE}${post.route.replace(/\/+$/, '')}/`);
+    const loc = `${SITE}${post.route.replace(/\/+$/, '')}/`;
+    const block = entry(loc);
     assert.ok(block, post.route);
-    assert.deepEqual(hreflangs(block), [], post.route);
+    const translated = english[post.slug];
+    const expected = translated ? [`bg ${loc}`, `en ${SITE}/en/blog/${translated}/`, `x-default ${loc}`] : [];
+    assert.deepEqual(hreflangs(block), expected, post.route);
+    if (translated) {
+      assert.deepEqual(hreflangs(entry(`${SITE}/en/blog/${translated}/`)), expected, translated);
+    }
   }
+});
+
+test('gives a translated post the lastmod of its translation, not of the original', () => {
+  const lastmod = Object.fromEntries(parseSitemap(xml).map((u) => [u.loc, u.lastmod.slice(0, 10)]));
+  const copy = JSON.parse(fs.readFileSync(path.join(ROOT, 'src/i18n/en/content/blog.json'), 'utf8'));
+  for (const [source, slug] of Object.entries(locales.translatedPosts.en)) {
+    assert.equal(lastmod[`${SITE}/en/blog/${slug}/`], copy[source].dateModified, slug);
+  }
+});
+
+test('refuses a translated post without a dateModified', () => {
+  assert.throws(() => buildSitemap({ locales, posts, translations: { en: {} } }), /en\/content\/blog\.json has no dateModified for "/);
 });
 
 test('uses the hand-maintained lastmod of each URL, never the build date', () => {

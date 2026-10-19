@@ -29,24 +29,34 @@ const MAIN_PAGES = [
 // page has no entry here, so a new page or language can't be left out.
 const LANGUAGE_PAGES = {
   en: {
-    intro: 'The main pages are also available in English (the blog is Bulgarian only). Enquiries are answered in English and Bulgarian.',
+    intro: 'The main pages and a selection of blog articles are also available in English. Enquiries are answered in English and Bulgarian.',
+    postsHeading: 'Blog articles in English',
     pages: {
       '/': { label: 'Home', desc: 'Custom FDM 3D printing in Sofia: prototypes, functional parts, small batches and personalised gifts.' },
       '/portfolio/': { label: 'Portfolio', desc: 'Projects we have printed to order.' },
       '/products/': { label: 'Products', desc: 'Ready 3D printed products to order.' },
       '/prices/': { label: 'Prices', desc: 'Prices by weight, a price calculator and the FAQ in English.' },
       '/contact/': { label: 'Contact', desc: 'Phone, Viber, email, address, opening hours and the enquiry form.' },
+      '/blog/': { label: 'Blog', desc: 'The articles translated into English; the rest of the blog is in Bulgarian.' },
     },
   },
 };
 
-/** "## English" sections for every non-default language in locales.json. */
-function languageSections(locales) {
+const translationsFile = (code) => path.join(ROOT, `src/i18n/${code}/content/blog.json`);
+
+/**
+ * "## English" sections for every non-default language in locales.json: its
+ * main pages, then the posts translated into it (`translatedPosts`), with
+ * their title and description from src/i18n/<code>/content/blog.json.
+ */
+function languageSections(locales, readCopy = (code) => JSON.parse(fs.readFileSync(translationsFile(code), 'utf8'))) {
   return locales.locales
     .filter((l) => l.code !== locales.defaultLocale)
     .flatMap((l) => {
       const copy = LANGUAGE_PAGES[l.code];
       if (!copy) throw new Error(`generate-llms.js: no LANGUAGE_PAGES entry for "${l.code}"`);
+      const translated = Object.entries(locales.translatedPosts?.[l.code] ?? {});
+      const postCopy = translated.length ? readCopy(l.code) : {};
       return [
         `## ${l.label}`,
         '',
@@ -58,6 +68,18 @@ function languageSections(locales) {
           return `- [${entry.label}](${SITE}${localizedPath(page, l.code, locales)}): ${entry.desc}`;
         }),
         '',
+        ...(translated.length
+          ? [
+              `### ${copy.postsHeading}`,
+              '',
+              ...translated.map(([source, slug]) => {
+                const post = postCopy[source];
+                if (!post) throw new Error(`generate-llms.js: src/i18n/${l.code}/content/blog.json has no copy for "${source}"`);
+                return `- [${post.title}](${SITE}/${l.code}/blog/${slug}/): ${post.description}`;
+              }),
+              '',
+            ]
+          : []),
       ];
     });
 }

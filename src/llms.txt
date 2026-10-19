@@ -13,13 +13,25 @@
 
 ## English
 
-The main pages are also available in English (the blog is Bulgarian only). Enquiries are answered in English and Bulgarian.
+The main pages and a selection of blog articles are also available in English. Enquiries are answered in English and Bulgarian.
 
 - [Home](https://3dpechat.bg/en/): Custom FDM 3D printing in Sofia: prototypes, functional parts, small batches and personalised gifts.
 - [Portfolio](https://3dpechat.bg/en/portfolio/): Projects we have printed to order.
 - [Products](https://3dpechat.bg/en/products/): Ready 3D printed products to order.
 - [Prices](https://3dpechat.bg/en/prices/): Prices by weight, a price calculator and the FAQ in English.
 - [Contact](https://3dpechat.bg/en/contact/): Phone, Viber, email, address, opening hours and the enquiry form.
+- [Blog](https://3dpechat.bg/en/blog/): The articles translated into English; the rest of the blog is in Bulgarian.
+
+### Blog articles in English
+
+- [PLA, PLA+, PLA Pro and PLN: Differences and How to Choose](https://3dpechat.bg/en/blog/pla-vs-pla-plus-vs-pla-pro-vs-pln/): PLA, PLA+, PLA Pro and PLN compared: print settings, strength, heat resistance and price, plus storage tips and fixes to help you choose the right filament.
+- [3D Printing Infill: Density, Strength and Filament Use](https://3dpechat.bg/en/blog/3d-printing-infill-density-strength/): What infill density and pattern should you use? A guide to 3D printing infill: how density affects strength, print time and filament use, with examples.
+- [How to Smooth PLA Prints: 7 Methods That Work](https://3dpechat.bg/en/blog/how-to-smooth-pla-prints/): How to smooth PLA prints: sanding, filler primer, XTC-3D, epoxy, heat and solvents compared, plus slicer settings for a smoother finish off the printer.
+- [3D Printed Lithophanes: Turn a Photo into a Glowing Model](https://3dpechat.bg/en/blog/3d-printed-lithophane-from-photo/): How to make a 3D printed lithophane from a photo: choosing the image, converting it to STL, the best PLA print settings and fixes for common problems.
+- [3D Printing in Sofia: Why Choose a Local Service for Your Project](https://3dpechat.bg/en/blog/3d-printing-in-sofia-local-service/): 3D printing in Sofia from a local studio: quick replies, short lead times and prices by weight. Why a local service beats an online platform for your project.
+- [See How We Work: Custom 3D Printing in Sofia (Video)](https://3dpechat.bg/en/blog/custom-3d-printing-sofia-video/): Custom 3D printing in Sofia in a 60-second video: bookmarks, coin cards, prototypes and functional parts, plus how an order goes from idea to finished part.
+- [StandStrap: How I Designed a 3D Printed Snowboard Stopper](https://3dpechat.bg/en/blog/standstrap-3d-printed-snowboard-stopper/): StandStrap is a 3D printed snowboard stopper that clips onto your board's edge so you can strap in standing up. My design, print settings and how to get one.
+- [Bulgarian Euro Coin Card: Holds the Full Set from 1 Cent to 2 Euro](https://3dpechat.bg/en/blog/bulgarian-euro-coin-holder-card/): A 3D printed coin card for Bulgarian euro coins that holds the full set from 1 cent to 2 euro, in five designs. A keepsake of Bulgaria's first euro coins.
 
 ## Факти
 

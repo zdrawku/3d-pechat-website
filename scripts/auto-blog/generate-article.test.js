@@ -25,3 +25,12 @@ test('business facts state FDM-only printing and the 3 € minimum order', () =>
   assert.ok(business.facts.some((f) => f.includes('само по FDM')));
   assert.ok(business.facts.some((f) => f.includes('3 €')));
 });
+
+test('the article prompt asks for euro only, never leva', () => {
+  assert.match(prompt, /САМО в евро \(€\)/);
+  assert.match(prompt, /никога в лева/);
+});
+
+test('the article prompt asks for the FAQ heading the page turns into FAQPage schema', () => {
+  assert.ok(prompt.includes('„## Често задавани въпроси“'));
+});

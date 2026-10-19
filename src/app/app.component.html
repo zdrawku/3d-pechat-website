@@ -128,10 +128,8 @@
             <span>{{ 'shell.drawer.contact.subtitle' | t }}</span>
           </span>
         </a>
-        <!-- The blog is Bulgarian-only: from another language it leads to the
-             Bulgarian articles, marked with hreflang. -->
-        <a class="drawer_chip" [routerLink]="['/blog']" routerLinkActive="active"
-           [attr.hreflang]="i18n.langIfForeign()" (click)="closeDrawerOnMobile()">
+        <a class="drawer_chip" [routerLink]="'/blog' | localizePath" routerLinkActive="active"
+           (click)="closeDrawerOnMobile()">
           <span class="drawer_chip_tile">
             <igx-icon>article</igx-icon>
           </span>
@@ -208,8 +206,7 @@
             <a [routerLink]="'/prices' | localizePath" class="ig-typography__body-2 footer_link">
               {{ 'shell.footer.prices' | t }}
             </a>
-            <a [routerLink]="['/blog']" class="ig-typography__body-2 footer_link"
-               [attr.hreflang]="i18n.langIfForeign()">
+            <a [routerLink]="'/blog' | localizePath" class="ig-typography__body-2 footer_link">
               {{ 'shell.footer.blog' | t }}
             </a>
             <!-- Plain, crawlable links to this page in every other language (the

@@ -114,9 +114,12 @@ during restyling, testids don't.
 ## Adding a page
 
 1. Add the route to `src/app/app.routes.ts` (as usual).
-2. Add its path to `e2e/routes.ts` (`CORE_ROUTES` or `BLOG_ROUTES`).
+2. Add its path to `e2e/routes.ts` (`CORE_ROUTES` or `ENGLISH_ROUTES`).
 
 That's it — the smoke and SEO suites iterate over the list automatically.
+Blog posts need no entry: `BLOG_ROUTES` is read from the registry and
+`TRANSLATED_BLOG_ROUTES` from
+`translatedPosts` in `src/i18n/locales.json`.
 
 ## CI
 

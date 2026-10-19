@@ -16,6 +16,9 @@ import post13 from "../../assets/blogs/prozrachen-i-poluprozrachen-pla-filament-
 import post14 from "../../assets/blogs/standstrap-3d-printiran-stoper-za-snoubord.md";
 import post15 from "../../assets/blogs/what-is-3d-printing.md";
 
+/** Lets scripts/preload-locale-chunks.js find this chunk in the build (dynamic imports keep every export). */
+export const CHUNK_MARKER = "blog-content:bg";
+
 export const BLOG_CONTENT: Record<string, string> = {
   "3d-pechat-po-porachka-sofia-video": post0,
   "3d-printer-bambu-lab-x2d-podrobno-revyu-funktsii-i-izbor": post1,

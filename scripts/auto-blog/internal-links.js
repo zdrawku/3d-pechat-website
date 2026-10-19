@@ -8,6 +8,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { readLocales, localizedPath } = require('../locale-urls');
 
 const ROOT = path.resolve(__dirname, '../..');
 const ROUTES_FILE = path.join(ROOT, 'src/app/app.routes.ts');
@@ -39,9 +40,22 @@ function getStaticPages() {
   return STATIC_PAGES.filter(p => routes.includes(`path: '${p.path.replace(/\//g, '')}'`));
 }
 
-/** Every page a generated article may link to, in canonical trailing-slash form. */
+/**
+ * The pages in the site's other languages (src/i18n/locales.json): every
+ * localized page and every translated post, e.g. '/en/prices/', '/en/blog/pla-vs-…/'.
+ */
+function getTranslatedPaths(locales = readLocales()) {
+  return locales.locales
+    .filter(({ code }) => code !== locales.defaultLocale)
+    .flatMap(({ code }) => [
+      ...locales.localizedPages.map(page => localizedPath(page, code, locales)),
+      ...Object.values(locales.translatedPosts?.[code] ?? {}).map(slug => `/${code}/blog/${slug}/`)
+    ]);
+}
+
+/** Every page an article (in any language) may link to, in canonical trailing-slash form. */
 function getValidPaths() {
-  return new Set(['/', ...getStaticPages().map(p => p.path), ...getBlogPosts().map(p => p.path)]);
+  return new Set(['/', ...getStaticPages().map(p => p.path), ...getBlogPosts().map(p => p.path), ...getTranslatedPaths()]);
 }
 
 /**
@@ -66,4 +80,4 @@ function fixInternalLinks(markdown, validPaths = getValidPaths()) {
   return { markdown: fixed, dropped };
 }
 
-module.exports = { getBlogPosts, getStaticPages, getValidPaths, fixInternalLinks };
+module.exports = { getBlogPosts, getStaticPages, getTranslatedPaths, getValidPaths, fixInternalLinks };

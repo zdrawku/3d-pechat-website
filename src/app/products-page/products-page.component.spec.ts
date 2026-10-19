@@ -153,10 +153,11 @@ describe('ProductsPageComponent', () => {
       expect(link?.getAttribute('aria-label')).toBe('Watch it in the video');
     });
 
-    it('marks the „read more“ article link as Bulgarian', () => {
+    it('links „read more“ to the article’s English translation', () => {
       const readMore = (fixture.nativeElement as HTMLElement).querySelector('#variant-1 [data-testid="product-read-more"]');
-      expect(readMore?.getAttribute('hreflang')).toBe('bg');
-      expect(readMore?.textContent).toContain('Read more');
+      expect(readMore?.getAttribute('href')).toBe('/en/blog/bulgarian-euro-coin-holder-card');
+      expect(readMore?.hasAttribute('hreflang')).toBeFalse();
+      expect(readMore?.textContent?.trim()).toBe('Read more arrow_forward');
     });
 
     it('opens the English contact form with an English order message', () => {
