@@ -15,16 +15,16 @@
           @if (tier.featured) {
             <span class="tier-badge">{{ 'prices.featured' | t }}</span>
           }
+          <igx-card-header class="tier-card_head">
+            <igx-avatar class="tier-icon" [icon]="tier.icon" shape="rounded" size="small" [attr.aria-hidden]="true"></igx-avatar>
+            <h3 igxCardHeaderTitle class="tier-name">{{ tier.name | t }}</h3>
+          </igx-card-header>
           <igx-card-content class="tier-card_body">
-            <div class="tier-icon">
-              <igx-icon>{{ tier.icon }}</igx-icon>
-            </div>
-            <h3 class="tier-name">{{ tier.name | t }}</h3>
             <div class="tier-price">
               <span class="tier-price-num">{{ tier.pricePerTenGrams.toFixed(2) }}</span>
               <span class="tier-price-unit">{{ 'prices.unit' | t }}</span>
             </div>
-            <p class="tier-desc">{{ tier.description | t }}</p>
+            <p>{{ tier.description | t }}</p>
           </igx-card-content>
           <div class="sla-sweep" aria-hidden="true"></div>
         </igx-card>

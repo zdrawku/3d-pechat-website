@@ -15,9 +15,9 @@ const path = require('path');
 const cheerio = require('cheerio');
 const { findProblems } = require('./check-internal-links');
 const { findKey } = require('./indexnow');
+const { SITE, hreflangAlternates, localizedPath, readLocales } = require('./locale-urls');
 
 const ROOT = path.resolve(__dirname, '..');
-const SITE = 'https://3dpechat.bg';
 const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
 
 // Crawlers that must be able to read the site (CLAUDE.md guardrails): if a CDN
@@ -73,26 +73,37 @@ function reviewMarkup(node, trail = '$') {
  */
 function expectedLanguage(loc, locales) {
   const pathname = new URL(loc).pathname;
-  const codes = locales.locales.map((l) => l.code);
   const prefix = (/^\/([a-z]{2,3})(?=\/|$)/.exec(pathname) || [])[1];
-  const lang = prefix && prefix !== locales.defaultLocale && codes.includes(prefix) ? prefix : locales.defaultLocale;
-  const page = lang === locales.defaultLocale ? pathname : pathname.slice(lang.length + 1) || '/';
-  const inLanguage = (code) => `${SITE}${code === locales.defaultLocale ? '' : `/${code}`}${page}`;
+  const isOther = prefix && prefix !== locales.defaultLocale && locales.locales.some((l) => l.code === prefix);
+  const lang = isOther ? prefix : locales.defaultLocale;
+  const page = isOther ? pathname.slice(prefix.length + 1) || '/' : pathname;
   const alternates = locales.localizedPages.includes(page)
-    ? [...codes.map((code) => `${code} ${inLanguage(code)}`), `x-default ${SITE}${page}`]
+    ? hreflangAlternates(page, locales).map(({ hreflang, href }) => `${hreflang} ${href}`)
     : [];
   return { lang, alternates };
 }
 
-/** What is wrong with a live page's <html lang> and hreflang links ([] = nothing). */
-function languageProblems(html, loc, locales) {
-  const $ = cheerio.load(html);
+/** What is wrong with a live page's <html lang> and hreflang links ([] = nothing); `$` is the parsed page. */
+function languageProblems($, loc, locales) {
   const { lang, alternates } = expectedLanguage(loc, locales);
   const actual = $('link[rel="alternate"][hreflang]').toArray().map((el) => `${$(el).attr('hreflang')} ${$(el).attr('href')}`);
   const problems = [];
   if ($('html').attr('lang') !== lang) problems.push(`lang="${$('html').attr('lang')}", expected "${lang}"`);
-  if (JSON.stringify(actual) !== JSON.stringify(alternates)) problems.push(`hreflang [${actual.join(', ')}], expected [${alternates.join(', ')}]`);
+  // In any order: sorted copies still differ on a missing, extra or duplicate link.
+  if (JSON.stringify([...actual].sort()) !== JSON.stringify([...alternates].sort())) problems.push(`hreflang [${actual.join(', ')}], expected [${alternates.join(', ')}]`);
   return problems;
+}
+
+/**
+ * Every language version of every page in `localizedPages` that the sitemap's
+ * `locs` don't list ([] = none). The lang/hreflang check only sees sitemap
+ * URLs, so a sitemap that drops the '/en/…' pages has to fail on its own.
+ */
+function missingLanguageVersions(locs, locales) {
+  const listed = new Set(locs);
+  return locales.localizedPages
+    .flatMap((page) => locales.locales.map((l) => `${SITE}${localizedPath(page, l.code, locales)}`))
+    .filter((url) => !listed.has(url));
 }
 
 /** Differences between the live LocalBusiness block and business.json. */
@@ -156,14 +167,24 @@ async function main() {
   const sitemap = await get(`${SITE}/sitemap.xml`);
   const locs = [...sitemap.text.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)].map((m) => m[1]);
   check(sitemap.status === 200 && locs.length > 0, `sitemap.xml lists ${locs.length} URLs`, `sitemap.xml: HTTP ${sitemap.status}, ${locs.length} URLs`);
+  // Languages (src/i18n/locales.json): the sitemap must list every language
+  // version of every localized page; lang + hreflang are collected from the
+  // same parse in the loop and reported below.
+  const locales = readLocales();
+  const unlisted = missingLanguageVersions(locs, locales);
+  check(unlisted.length === 0, `sitemap.xml lists every language version of the ${locales.localizedPages.length} localized pages`,
+    `sitemap.xml lacks ${unlisted.length} language version(s): ${unlisted.join(', ')}`);
   const pages = {};
+  const languageIssues = [];
   for (const loc of locs) {
     const r = await get(loc);
     pages[loc] = r.text;
     const problems = [];
     if (r.status !== 200) problems.push(`HTTP ${r.status}${r.location ? ` → ${r.location}` : ''}`);
-    const canonical = cheerio.load(r.text)('link[rel="canonical"]').attr('href');
+    const $ = cheerio.load(r.text);
+    const canonical = $('link[rel="canonical"]').attr('href');
     if (r.status === 200 && canonical !== loc) problems.push(`canonical is ${canonical}`);
+    languageIssues.push(...languageProblems($, loc, locales).map((p) => `${loc}: ${p}`));
     if (r.status === 200) problems.push(...findProblems(r.text));
     try {
       const marks = jsonLdBlocks(r.text).flatMap((b) => reviewMarkup(b));
@@ -214,23 +235,18 @@ async function main() {
       `prices page has the ${faq.length}-question FAQ + FAQPage schema`, 'prices page FAQ or FAQPage schema missing / out of sync with faq.json');
   }
 
-  // Languages (src/i18n/locales.json): every sitemap page carries its language
-  // and exactly its hreflang set — each main page pairs with its translations,
-  // the Bulgarian-only blog has none.
-  const locales = JSON.parse(read('src/i18n/locales.json'));
-  const languageIssues = locs.flatMap((loc) => languageProblems(pages[loc] || '', loc, locales).map((p) => `${loc}: ${p}`));
+  // Languages: every sitemap page carries its language and exactly its hreflang
+  // set — each main page pairs with its translations, the Bulgarian-only blog
+  // has none (collected in the sitemap loop above).
   check(languageIssues.length === 0, `every sitemap page has the right lang + hreflang (${locs.length} pages)`,
     `lang/hreflang problems:\n   ${languageIssues.join('\n   ')}`);
 
   // English pages show business.json numbers and the transliterated address
-  const enPrices = pages[`${SITE}/en/prices/`];
-  if (enPrices) {
-    check(enPrices.includes(`Minimum order value: €${business.pricing.minimumOrder.toFixed(2)}`), '/en/prices/ states the minimum order', '/en/prices/ lacks the English minimum-order line');
-  }
-  const enContact = pages[`${SITE}/en/contact/`];
-  if (enContact) {
-    check(enContact.includes(business.displayAddressEn), '/en/contact/ shows the business.json English address', '/en/contact/ lacks business.json displayAddressEn');
-  }
+  // (fetched like the Bulgarian ones when the sitemap doesn't list them)
+  const enPrices = pages[`${SITE}/en/prices/`] || (await get(`${SITE}/en/prices/`)).text;
+  check(enPrices.includes(`Minimum order value: €${business.pricing.minimumOrder.toFixed(2)}`), '/en/prices/ states the minimum order', '/en/prices/ lacks the English minimum-order line');
+  const enContact = pages[`${SITE}/en/contact/`] || (await get(`${SITE}/en/contact/`)).text;
+  check(enContact.includes(business.displayAddressEn), '/en/contact/ shows the business.json English address', '/en/contact/ lacks business.json displayAddressEn');
 
   console.log(`\n${failures === 0 ? '✅ all live checks passed' : `❌ ${failures} live check(s) failed`}`);
   process.exit(failures === 0 ? 0 : 1);
@@ -243,4 +259,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { parseLegacyRedirects, robotsBlocksEverything, jsonLdBlocks, reviewMarkup, businessMismatches, expectedLanguage, languageProblems };
+module.exports = { parseLegacyRedirects, robotsBlocksEverything, jsonLdBlocks, reviewMarkup, businessMismatches, expectedLanguage, languageProblems, missingLanguageVersions };

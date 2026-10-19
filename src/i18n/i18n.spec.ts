@@ -11,6 +11,9 @@ import productsData from '../data/products.json';
 import videosData from '../data/videos.json';
 import registry from './locales.json';
 import type { LocaleBundle } from '../app/i18n/i18n.types';
+import { flatten } from '../app/i18n/i18n.service';
+import { carouselImages as homeGallery } from '../app/main-page/carousel-images';
+import { carouselImages as portfolioGallery } from '../app/portfolio-page/carousel-images';
 
 /**
  * The translation contract (src/i18n/README.md). Bulgarian is the source; every
@@ -21,16 +24,6 @@ const BUNDLES: Record<string, LocaleBundle> = { en: english };
 
 /** All Bulgarian messages: the core namespaces plus every page's own file. */
 const bulgarian = { ...coreMessages, home, portfolio, products, prices, contact };
-
-/** 'a.b.c' → string for every leaf. */
-function leaves(tree: object, prefix = '', out = new Map<string, string>()): Map<string, string> {
-  for (const [key, value] of Object.entries(tree)) {
-    const path = prefix ? `${prefix}.${key}` : key;
-    if (typeof value === 'string') out.set(path, value);
-    else if (value && typeof value === 'object') leaves(value, path, out);
-  }
-  return out;
-}
 
 const placeholders = (text: string): string[] => [...text.matchAll(/\{(\w+)\}/g)].map(m => m[1]).sort();
 
@@ -46,7 +39,8 @@ describe('translations (src/i18n)', () => {
     expect(Object.keys(BUNDLES).sort()).toEqual(others.sort());
   });
 
-  const source = leaves(bulgarian);
+  // The same 'a.b.c' → string view I18nService looks keys up in.
+  const source = flatten(bulgarian);
 
   it('has no empty Bulgarian strings', () => {
     for (const [key, text] of source) {
@@ -56,7 +50,8 @@ describe('translations (src/i18n)', () => {
 
   for (const [code, bundle] of Object.entries(BUNDLES)) {
     describe(code, () => {
-      const translated = leaves(bundle.messages);
+      const translated = flatten(bundle.messages);
+      const faqAnswers = Object.values(bundle.faq).map(f => f.answer);
 
       it('has exactly the Bulgarian keys — none missing, none extra', () => {
         const missing = [...source.keys()].filter(k => !translated.has(k));
@@ -88,30 +83,42 @@ describe('translations (src/i18n)', () => {
       });
 
       it('never offers what the business does not do (business.json neverClaim)', () => {
-        const all = [...translated.values(), ...bundle.faq.map(f => f.answer)].join('\n');
+        const all = [...translated.values(), ...faqAnswers].join('\n');
         expect(all).not.toMatch(/\bSLA\b|\bSLS\b|\bMJF\b|resin|scanning|3D scan|same[- ]day/i);
         // Invoices may only be mentioned to say we don't issue them.
-        for (const text of [...translated.values(), ...bundle.faq.map(f => f.answer)]) {
+        for (const text of [...translated.values(), ...faqAnswers]) {
           if (/invoice/i.test(text)) {
             expect(text).toMatch(/don['’]t issue invoices|do not issue invoices/i);
           }
         }
       });
 
-      describe('FAQ', () => {
-        it('has every Bulgarian question, same ids, icons and order', () => {
-          expect(bundle.faq.map(f => f.id)).toEqual(faqData.map(f => f.id));
-          expect(bundle.faq.map(f => f.icon)).toEqual(faqData.map(f => f.icon));
-          for (const f of bundle.faq) {
-            expect(f.question.trim().endsWith('?')).withContext(f.id).toBeTrue();
-            expect(f.answer.trim().length).withContext(f.id).toBeGreaterThan(20);
+      describe('FAQ (content/faq.json, keyed by id)', () => {
+        // Order and icons come from src/data/faq.json; a half-translated FAQ
+        // (a mixed-language FAQPage) must not ship, so every id is required.
+        it('translates every Bulgarian question and nothing else', () => {
+          expect(Object.keys(bundle.faq).sort()).toEqual(faqData.map(f => f.id).sort());
+          for (const [id, f] of Object.entries(bundle.faq)) {
+            expect(f.question.trim().endsWith('?')).withContext(id).toBeTrue();
+            expect(f.answer.trim().length).withContext(id).toBeGreaterThan(20);
           }
         });
 
         it('uses no number that business.json does not state', () => {
-          for (const f of bundle.faq) {
+          for (const [id, f] of Object.entries(bundle.faq)) {
             const unknown = numbersIn(f.answer).filter(n => !factNumbers.has(n));
-            expect(unknown).withContext(`${f.id}: ${f.answer}`).toEqual([]);
+            expect(unknown).withContext(`${id}: ${f.answer}`).toEqual([]);
+          }
+        });
+
+        it('states the same numbers as the Bulgarian answer', () => {
+          // The check above accepts any number business.json contains (phone,
+          // postcode…); this one catches a translation left behind when a
+          // Bulgarian answer's number changes.
+          const distinct = (text: string) => [...new Set(numbersIn(text))].sort();
+          for (const { id, answer } of faqData) {
+            const translated = bundle.faq[id]?.answer ?? '';
+            expect(distinct(translated)).withContext(`${id}: ${translated}`).toEqual(distinct(answer));
           }
         });
       });
@@ -148,6 +155,31 @@ describe('translations (src/i18n)', () => {
             const links = 'links' in product ? product.links : undefined;
             expect(copy.links?.length ?? 0).withContext(`${product.linkId} links`).toBe(links?.length ?? 0);
           }
+        });
+      });
+
+      describe('gallery alt text (content/gallery.json, keyed by image src)', () => {
+        // Both galleries, generated from their manifest.json by `npm run generate-images`.
+        const images = [...homeGallery, ...portfolioGallery];
+
+        it('only has alt text for gallery images that exist', () => {
+          const srcs = new Set(images.map(i => i.src));
+          const stray = Object.keys(bundle.gallery).filter(src => !srcs.has(src));
+          expect(stray).withContext('not in any gallery manifest.json').toEqual([]);
+          for (const [src, alt] of Object.entries(bundle.gallery)) {
+            expect(alt.trim().length).withContext(src).toBeGreaterThan(0);
+          }
+        });
+
+        // Like a product: an image added to a manifest shows its Bulgarian alt
+        // marked lang="bg" until it is translated. Pending, not a failure. (An
+        // image without a Bulgarian alt gets the translated fallback.)
+        it('translates every image’s alt text', () => {
+          const missing = images.filter(i => i.alt && !bundle.gallery[i.src]).map(i => i.src);
+          if (missing.length) {
+            pending(`${code}: no alt text yet for ${missing.join(', ')} — add it to src/i18n/${code}/content/gallery.json`);
+          }
+          expect(missing).toEqual([]);
         });
       });
 

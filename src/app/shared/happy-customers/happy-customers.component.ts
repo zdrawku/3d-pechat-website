@@ -66,7 +66,7 @@ export class HappyCustomersComponent {
   public readonly averageRating = this.data.averageRating;
 
   /** `lang` for the quotes when the page is in another language than the reviews; null on Bulgarian pages. */
-  protected readonly quoteLang = computed(() => (this.i18n.locale() === REVIEWS_LANGUAGE ? null : REVIEWS_LANGUAGE));
+  protected readonly quoteLang = computed(() => this.i18n.langIfForeign(REVIEWS_LANGUAGE));
 
   /** The single quote shown in the compact trust bar — the first featured review. */
   public get leadReview(): Review | undefined {

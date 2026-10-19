@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { IgxIconComponent, IgxButtonDirective, IGX_INPUT_GROUP_DIRECTIVES, IGX_SELECT_DIRECTIVES, IGX_CARD_DIRECTIVES } from 'igniteui-angular';
+import { IgxAvatarComponent, IgxIconComponent, IgxButtonDirective, IGX_INPUT_GROUP_DIRECTIVES, IGX_SELECT_DIRECTIVES, IGX_CARD_DIRECTIVES } from 'igniteui-angular';
 import { SeoService, faqPageSchema } from '../services/seo.service';
 import { FaqComponent, faqFor } from '../shared/faq/faq.component';
 import { BUSINESS } from '../../data/business';
@@ -25,7 +25,7 @@ interface PricingTier {
 
 @Component({
   selector: 'app-prices-page',
-  imports: [FormsModule, IgxIconComponent, IgxButtonDirective, IGX_INPUT_GROUP_DIRECTIVES, IGX_SELECT_DIRECTIVES, IGX_CARD_DIRECTIVES, FaqComponent, TranslatePipe],
+  imports: [FormsModule, IgxAvatarComponent, IgxIconComponent, IgxButtonDirective, IGX_INPUT_GROUP_DIRECTIVES, IGX_SELECT_DIRECTIVES, IGX_CARD_DIRECTIVES, FaqComponent, TranslatePipe],
   templateUrl: './prices-page.component.html',
   styleUrls: ['./prices-page.component.scss']
 })

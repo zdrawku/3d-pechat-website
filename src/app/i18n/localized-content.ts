@@ -2,6 +2,31 @@ import type { Product } from '../models/product.model';
 import type { Video } from '../models/video.model';
 import type { ProductCopy, VideoCopy } from './i18n.types';
 
+/** A gallery image with its alt text in the page's language. */
+export interface LocalizedImage {
+  src: string;
+  alt: string;
+  /** `lang` of an alt text that is still Bulgarian on another language's page; null otherwise. */
+  lang: string | null;
+}
+
+/**
+ * Gallery images with their alt text from `copy` (keyed by `src`). An image
+ * without copy keeps its Bulgarian alt, marked with `untranslatedLang`
+ * (`I18nService.langIfForeign()`: 'bg' on other languages' pages, null on
+ * Bulgarian ones). An empty alt stays empty: the template supplies a
+ * translated fallback.
+ */
+export function localizeGallery(
+  images: readonly { src: string; alt: string }[],
+  copy: Record<string, string>,
+  untranslatedLang: string | null
+): LocalizedImage[] {
+  return images.map(({ src, alt }) =>
+    copy[src] ? { src, alt: copy[src], lang: null } : { src, alt, lang: alt ? untranslatedLang : null }
+  );
+}
+
 /**
  * A product with its visible copy in another language. Everything that is not
  * copy (images, ids, links' URLs, dates) stays from src/data/products.json, so a

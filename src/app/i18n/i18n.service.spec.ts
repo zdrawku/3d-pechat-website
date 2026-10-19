@@ -28,7 +28,7 @@ describe('I18nService', () => {
     expect(i18n.locale()).toBe('bg');
     expect(i18n.t('shell.navbar.menu')).toBe('Меню');
     // Bulgarian content is src/data/ itself: no overlays.
-    expect(i18n.content().faq).toEqual([]);
+    expect(i18n.content().faq).toEqual({});
   });
 
   it('adds a page’s Bulgarian strings when the page registers them', () => {
@@ -53,7 +53,7 @@ describe('I18nService', () => {
     expect(i18n.t('shell.navbar.menu')).toBe('Menu');
     // A translation ships every namespace, pages included.
     expect(i18n.t('home.hero.title')).toBe('Professional custom 3D printing');
-    expect(i18n.content().faq.length).toBeGreaterThan(0);
+    expect(Object.keys(i18n.content().faq).length).toBeGreaterThan(0);
     expect(TestBed.inject(DOCUMENT).documentElement.getAttribute('lang')).toBe('en');
 
     await i18n.use('bg');
@@ -79,7 +79,34 @@ describe('I18nService', () => {
     expect(i18n.formatNumber(0.8, twoDecimals)).toBe('0.80');
     expect(i18n.formatList(['STL', 'OBJ'], 'disjunction')).toBe('STL or OBJ');
     expect(i18n.monthName(5)).toBe('May');
-    expect(i18n.weekdayName('Monday')).toBe('Mon');
+  });
+
+  it('marks Bulgarian-only content with lang only on other languages’ pages', async () => {
+    expect(i18n.langIfForeign()).toBeNull();
+    expect(i18n.otherLocales().map(l => l.code)).toEqual(['en']);
+    await i18n.use('en');
+    expect(i18n.langIfForeign()).toBe('bg');
+    expect(i18n.langIfForeign('en')).toBeNull();
+    expect(i18n.otherLocales().map(l => l.code)).toEqual(['bg']);
+  });
+
+  it('lets the latest use() win when an earlier one finishes loading later', async () => {
+    // Hold the English strings back, as on a slow connection.
+    let finishLoading!: () => void;
+    const englishLoaded = new Promise<void>((resolve) => (finishLoading = resolve));
+    const load = i18n.load.bind(i18n);
+    spyOn(i18n, 'load').and.callFake((locale) => (locale === 'en' ? englishLoaded.then(() => load('en')) : load(locale)));
+
+    const english = i18n.use('en');
+    await i18n.use('bg');
+    finishLoading();
+    await english;
+
+    expect(i18n.locale()).toBe('bg');
+    expect(TestBed.inject(DOCUMENT).documentElement.getAttribute('lang')).toBe('bg');
+    // English is loaded now, so switching later is immediate.
+    await i18n.use('en');
+    expect(i18n.locale()).toBe('en');
   });
 
   it('localizes paths for the active language', async () => {

@@ -3,5 +3,14 @@
     "everyDay": "всеки ден от {opens} до {closes}",
     "days": "{days} от {opens} до {closes}"
   },
+  "days": {
+    "Monday": "пон.",
+    "Tuesday": "вт.",
+    "Wednesday": "ср.",
+    "Thursday": "чет.",
+    "Friday": "пет.",
+    "Saturday": "съб.",
+    "Sunday": "нед."
+  },
   "listSeparator": "; "
 }

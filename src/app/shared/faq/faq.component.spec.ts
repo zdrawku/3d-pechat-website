@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FAQ, FaqComponent } from './faq.component';
+import { FAQ, FaqComponent, faqFor } from './faq.component';
 import { I18nService } from '../../i18n/i18n.service';
 
 describe('FaqComponent', () => {
@@ -42,7 +42,7 @@ describe('FaqComponent', () => {
     await i18n.use('en');
     fixture.detectChanges();
 
-    const english = i18n.content().faq;
+    const english = faqFor(i18n);
     const cards = el.querySelectorAll('.faq__grid > li');
     expect(el.querySelector('h2#faq-title')?.textContent).toContain('Frequently asked questions');
     expect(cards.length).toBe(FAQ.length);

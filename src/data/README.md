@@ -167,9 +167,10 @@ It's the reason AI assistants and search engines see one consistent business
   - `scripts/generate-business-schema.js` (prebuild) writes them into the
     `LocalBusiness` JSON-LD and `og:site_name` of `index.html`/`404.html`.
   - `generate-llms.js` builds llms.txt from them.
-  - Components read them through [`business.ts`](business.ts) (`BUSINESS`,
-    `openingHoursLabel()`): the footer address, and the contact intro's address
-    and hours.
+  - Components read them through [`business.ts`](business.ts) (`BUSINESS`) and
+    `src/app/i18n/business-copy.ts` (`localizedAddress()`, `openingHoursText()`
+    in the page's language): the footer address, and the contact intro's
+    address and hours.
 - **`titleBrand`:** the suffix in page `<title>`s („… | 3D Печат България“).
   It's separate from `name` so a rename doesn't rewrite every title.
 - **`technologies`, `services`:** what we actually do (FDM only).
@@ -204,9 +205,10 @@ and the contact page cards repeat some facts by hand.
   scanning, same-day or invoice offers.
 - **Fields:** `icon` is a Material icon name. `id` is the anchor
   (`/prices/#faq-<id>`), so keep it stable.
-- **English:** `src/i18n/en/content/faq.json`, the same ids, icons and order
-  (shown on `/en/prices/`). Change both files together; `i18n.spec.ts` applies
-  the same number and never-claim checks to it.
+- **English:** `src/i18n/en/content/faq.json` (shown on `/en/prices/`) holds
+  each entry's question and answer keyed by its `id`; icons and order come from
+  this file. Change both files together; `i18n.spec.ts` applies the same number
+  and never-claim checks to it.
 
 ## ⚠️ Encoding note (all files here)
 

@@ -1,15 +1,18 @@
 import registry from '../../i18n/locales.json';
-import { PAGE_PATHS } from '../services/seo.service';
+import { coreMessages } from '../../i18n/bg';
+import type { PageNamespace } from './i18n.types';
 import {
   DEFAULT_LOCALE,
   LOCALES,
   LOCALIZED_PAGES,
+  TRANSLATED_LOCALES,
   isLocale,
   isLocalizedPage,
   languageAlternates,
   loadLocale,
   localeDefinition,
   localizePath,
+  pagePath,
   splitLocalePath,
   switchLocaleUrl
 } from './locales';
@@ -19,6 +22,7 @@ describe('locales', () => {
     it('lists Bulgarian first, as the default language', () => {
       expect(DEFAULT_LOCALE).toBe('bg');
       expect(LOCALES[0].code).toBe(DEFAULT_LOCALE);
+      expect(TRANSLATED_LOCALES.map(l => l.code)).toEqual(LOCALES.slice(1).map(l => l.code));
     });
 
     it('has a loader for every language and a language for every loader', async () => {
@@ -45,11 +49,11 @@ describe('locales', () => {
       expect(localeDefinition('en').label).toBe('English');
     });
 
-    it('localises exactly the pages SeoService knows (PAGE_PATHS)', () => {
-      expect([...LOCALIZED_PAGES].sort()).toEqual(Object.values(PAGE_PATHS).sort());
-      for (const page of LOCALIZED_PAGES) {
-        expect(page).withContext(page).toMatch(/^\/([a-z-]+\/)?$/);
-      }
+    it('localises exactly the pages that have meta copy (seo.json), at their pagePath()', () => {
+      const pages = Object.keys(coreMessages.seo) as PageNamespace[];
+      expect([...LOCALIZED_PAGES].sort()).toEqual(pages.map(pagePath).sort());
+      expect(pagePath('home')).toBe('/');
+      expect(pagePath('prices')).toBe('/prices/');
     });
   });
 
@@ -98,16 +102,14 @@ describe('locales', () => {
     });
 
     it('sends the switcher to the same page in the other language, or that language’s home page', () => {
-      // Router URLs, slash-free: a trailing slash would parse as an empty
-      // segment and match the 404 instead of the page.
-      expect(switchLocaleUrl('/prices/', 'en')).toBe('/en/prices');
-      expect(switchLocaleUrl('/en/prices/', 'bg')).toBe('/prices');
+      expect(switchLocaleUrl('/prices/', 'en')).toBe('/en/prices/');
+      expect(switchLocaleUrl('/en/prices/', 'bg')).toBe('/prices/');
       expect(switchLocaleUrl('/en/', 'bg')).toBe('/');
-      expect(switchLocaleUrl('/', 'en')).toBe('/en');
+      expect(switchLocaleUrl('/', 'en')).toBe('/en/');
       // A product anchor survives the switch.
-      expect(switchLocaleUrl('/products/#variant-1', 'en')).toBe('/en/products#variant-1');
+      expect(switchLocaleUrl('/products/#variant-1', 'en')).toBe('/en/products/#variant-1');
       // A Bulgarian-only page has no English version: go to the English home page.
-      expect(switchLocaleUrl('/blog/what-is-3d-printing/', 'en')).toBe('/en');
+      expect(switchLocaleUrl('/blog/what-is-3d-printing/', 'en')).toBe('/en/');
       expect(switchLocaleUrl('/en/unknown/', 'bg')).toBe('/');
     });
   });

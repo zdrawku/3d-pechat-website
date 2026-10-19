@@ -64,15 +64,15 @@ test.describe('SEO metadata', () => {
     });
   }
 
-  test('sitemap.xml lists every core and blog route', async ({ request, baseURL }) => {
+  test('sitemap.xml lists every core and blog route', async ({ request }) => {
     const res = await request.get('/sitemap.xml');
     expect(res.status()).toBe(200);
     const xml = await res.text();
 
     for (const route of ALL_ROUTES) {
-      // Home is "/" — match the bare domain; others match their path.
-      const needle = route.path === '/' ? '3dpechat.bg/' : route.path.replace(/^\//, '');
-      expect(xml, `${route.path} present in sitemap`).toContain(needle);
+      // The exact <loc>: a bare path would also match another page's hreflang links.
+      const loc = `https://3dpechat.bg${route.path.replace(/\/?$/, '/')}`;
+      expect(xml, `${route.path} present in sitemap`).toContain(`<loc>${loc}</loc>`);
     }
   });
 
@@ -173,15 +173,18 @@ test.describe('SEO metadata', () => {
   });
 
   test('/en/prices/ shows the English FAQ and mirrors it as FAQPage JSON-LD', async ({ page }) => {
-    const faq = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'src/i18n/en/content/faq.json'), 'utf8')) as { question: string }[];
+    // The English copy is keyed by FAQ id; the order comes from src/data/faq.json.
+    const english = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'src/i18n/en/content/faq.json'), 'utf8')) as Record<string, { question: string }>;
+    const faq = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'src/data/faq.json'), 'utf8')) as { id: string }[];
+    const questions = faq.map(({ id }) => english[id].question);
     await page.goto('/en/prices/');
     const section = page.locator('section#faq');
-    for (const { question } of faq) {
+    for (const question of questions) {
       await expect(section.getByRole('heading', { name: question })).toBeVisible();
     }
     const blocks = await page.locator('script[type="application/ld+json"]').allTextContents();
     const faqPage = blocks.map((b) => JSON.parse(b)).find((b) => b['@type'] === 'FAQPage');
-    expect(faqPage?.mainEntity.map((q: { name: string }) => q.name)).toEqual(faq.map((f) => f.question));
+    expect(faqPage?.mainEntity.map((q: { name: string }) => q.name)).toEqual(questions);
   });
 
   test('/prices/ shows every faq.json question and mirrors them as FAQPage JSON-LD', async ({ page }) => {

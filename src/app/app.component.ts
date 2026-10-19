@@ -1,8 +1,6 @@
 import { Component, ElementRef, HostListener, OnInit, PLATFORM_ID, ViewChild, computed, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { filter, map } from 'rxjs';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { IGX_NAVBAR_DIRECTIVES, IGX_NAVIGATION_DRAWER_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxIconComponent, IgxIconService, IgxNavigationDrawerComponent, IgxToggleActionDirective, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
 import { instagram, tiktok, youtube } from '@igniteui/material-icons-extended';
 import { GOOGLE_REVIEW_URL, YOUTUBE_CHANNEL_URL } from '../data/site-links';
@@ -10,7 +8,7 @@ import { ReviewCtaComponent } from './shared/review-cta/review-cta.component';
 import { LanguageSwitcherComponent } from './shared/language-switcher/language-switcher.component';
 import { I18nService } from './i18n/i18n.service';
 import { LocalizePathPipe, TranslatePipe } from './i18n/translate.pipe';
-import { DEFAULT_LOCALE, LOCALES, Locale, switchLocaleUrl } from './i18n/locales';
+import { Locale, switchLocaleUrl } from './i18n/locales';
 import { localizedAddress } from './i18n/business-copy';
 
 @Component({
@@ -34,13 +32,9 @@ export class AppComponent implements OnInit {
   /** YouTube channel — navbar + footer icon links (see site-links). */
   public readonly youtubeChannelUrl = YOUTUBE_CHANNEL_URL;
 
-  private readonly i18n = inject(I18nService);
-  protected readonly defaultLocale = DEFAULT_LOCALE;
-  protected readonly isDefaultLocale = computed(() => this.i18n.locale() === DEFAULT_LOCALE);
+  protected readonly i18n = inject(I18nService);
   /** Footer address in the page's language — from business.json, so it matches the schema and the map listing. */
   public readonly displayAddress = computed(() => localizedAddress(this.i18n.locale()));
-  /** The languages the footer links to: every one but the page's own. */
-  protected readonly otherLocales = computed(() => LOCALES.filter(l => l.code !== this.i18n.locale()));
 
   constructor(
     public router: Router,
@@ -54,22 +48,13 @@ export class AppComponent implements OnInit {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly host = inject(ElementRef<HTMLElement>);
 
-  /** The current URL, for the footer's language links (updated on every navigation). */
-  private readonly currentUrl = toSignal(
-    this.router.events.pipe(
-      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
-      map(event => event.urlAfterRedirects)
-    ),
-    { initialValue: this.router.url }
-  );
-
   /**
    * This page in `locale` (or that language's home page from a Bulgarian-only
-   * page) as a routerLink value — path only (a #fragment in a routerLink string
-   * would be encoded into the path) and slash-free like every routerLink.
+   * page) as a routerLink value — path only: a #fragment in a routerLink string
+   * would be encoded into the path.
    */
   protected languageLink(locale: Locale): string {
-    return switchLocaleUrl(this.currentUrl().split('#')[0], locale);
+    return switchLocaleUrl(this.router.url.split('#')[0], locale);
   }
 
   ngOnInit(): void {

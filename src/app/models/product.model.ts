@@ -71,7 +71,7 @@ export interface ProductVariant extends Product {
   /**
    * Language of the card's copy when it differs from the page's — set on
    * another language's page for a product with no translation yet, so the
-   * Bulgarian copy it falls back to is marked `lang="bg"`.
+   * Bulgarian copy it falls back to is marked `lang="bg"`; null otherwise.
    */
-  copyLang?: string;
+  copyLang?: string | null;
 }

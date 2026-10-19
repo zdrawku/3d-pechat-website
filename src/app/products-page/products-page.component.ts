@@ -13,7 +13,6 @@ import productsData from '../../data/products.json';
 import { I18nService } from '../i18n/i18n.service';
 import { TranslatePipe } from '../i18n/translate.pipe';
 import { localizeProduct } from '../i18n/localized-content';
-import { DEFAULT_LOCALE } from '../i18n/locales';
 import type { TranslationKey } from '../i18n/i18n.types';
 import productsMessages from '../../i18n/bg/products.json';
 
@@ -42,15 +41,10 @@ export class ProductsPageComponent implements OnInit {
   // this component are needed.
   private readonly catalog = computed<ProductVariant[]>(() => {
     const copy = this.i18n.content().products;
-    const untranslatedLang = this.i18n.locale() === DEFAULT_LOCALE ? undefined : DEFAULT_LOCALE;
     return (productsData as Product[]).map((product) => {
       const translation = copy[product.linkId];
-      return {
-        ...localizeProduct(product, translation),
-        showFront: true,
-        // No translation yet (e.g. added from the phone): the Bulgarian copy shows, marked as such.
-        ...(translation ? {} : { copyLang: untranslatedLang })
-      };
+      // No translation yet (e.g. added from the phone): the Bulgarian copy shows, marked as such.
+      return { ...localizeProduct(product, translation), showFront: true, copyLang: translation ? null : this.i18n.langIfForeign() };
     });
   });
 
@@ -83,9 +77,7 @@ export class ProductsPageComponent implements OnInit {
   }
 
   /** „продукта“ / "products" — agrees with the total in „Показани 5 от 14 продукта“. */
-  public get productCountNoun(): string {
-    return this.i18n.plural('products.count', this.totalCount);
-  }
+  readonly productCountNoun = computed(() => this.i18n.plural('products.count', this.catalog().length));
 
   public setSortOrder(order: string): void {
     this.sortOrder = order;

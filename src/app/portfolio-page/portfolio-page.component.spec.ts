@@ -1,6 +1,10 @@
+import { DOCUMENT } from '@angular/common';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
+import { I18nService } from '../i18n/i18n.service';
+import englishGallery from '../../i18n/en/content/gallery.json';
+import { carouselImages } from './carousel-images';
 import { PortfolioPageComponent } from './portfolio-page.component';
 
 describe('PortfolioPageComponent', () => {
@@ -21,6 +25,19 @@ describe('PortfolioPageComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('gives the photo wall English alt text on the English page, Bulgarian on the Bulgarian one', async () => {
+    const first = () => (fixture.nativeElement as HTMLElement).querySelector<HTMLImageElement>('img.masonry-image')!;
+    const src = first().getAttribute('src')!;
+    expect(first().alt).toBe(carouselImages.find(i => i.src === src)!.alt);
+    expect(first().hasAttribute('lang')).toBeFalse();
+
+    await TestBed.inject(I18nService).use('en');
+    fixture.detectChanges();
+    expect(first().alt).toBe((englishGallery as Record<string, string>)[src]);
+    expect(first().hasAttribute('lang')).withContext('translated: no lang="bg"').toBeFalse();
+    TestBed.inject(DOCUMENT).documentElement.setAttribute('lang', 'bg');
   });
 
   it('has one H1, an intro and a caption under each section heading', () => {

@@ -9,7 +9,7 @@ Bulgarian-only**. Plan, decisions and next steps: [`LOCALIZATION-PLAN.md`](../..
 | Languages and the pages that exist in each | [`locales.json`](locales.json) — the single source, also read by the sitemap, llms.txt and live-check scripts |
 | UI strings, Bulgarian (source) | `bg/*.json`, one file per page plus the shared ones |
 | UI strings, English | `en/*.json`, same files, same keys |
-| English copy of data (catalogue, FAQ, video alt text) | `en/content/products.json` (keyed by product `linkId`), `en/content/faq.json` (same ids and order as `src/data/faq.json`), `en/content/videos.json` (keyed by video `slug`) |
+| English copy of data (catalogue, FAQ, gallery and video alt text) | `en/content/products.json` (keyed by product `linkId`), `en/content/faq.json` (question + answer keyed by FAQ `id`; order and icons come from `src/data/faq.json`), `en/content/gallery.json` (gallery alt text keyed by image `src`), `en/content/videos.json` (keyed by video `slug`) |
 | Runtime: service, `t` / `localizePath` pipes, routes, guard | [`src/app/i18n/`](../app/i18n/) |
 | Switcher (navbar, approved design „A“) | [`src/app/shared/language-switcher/`](../app/shared/language-switcher/) |
 
@@ -47,7 +47,11 @@ English is one lazy chunk, fetched only on English pages.
   from the phone arrives without it: `/en/products/` then shows its Bulgarian
   copy marked `lang="bg"`, and `i18n.spec.ts` lists it as pending.
 - **The FAQ:** change `src/data/faq.json` and `en/content/faq.json` together
-  (same ids and order; numbers only from `business.json`).
+  (the English copy is keyed by the same `id`; numbers only from `business.json`).
+- **A gallery image** (a gallery `manifest.json`, see `GALLERY_MANIFESTS.md`):
+  add its English alt text to `en/content/gallery.json` under its `src` as
+  `carousel-images.ts` lists it. Until then the English page shows the
+  Bulgarian alt marked `lang="bg"`, and `i18n.spec.ts` lists it as pending.
 
 ## Adding a language (e.g. German)
 
@@ -71,10 +75,11 @@ the live check pick the new language up from `locales.json` by themselves.
   (`i18n.spec.ts`).
 - No euro amounts or hour counts typed by hand; nothing from
   `business.json` `neverClaim` (SLA/SLS, scanning, same-day, invoices).
-- English FAQ: every question, same ids/icons/order, only numbers that
+- English FAQ: every id translated (and no others), only numbers that
   `business.json` states.
 - Catalogue: no copy for products that don't exist; same structure
   (personalisation list, read-more, links); untranslated products reported as
-  pending.
+  pending. Gallery: alt text only for images that exist; untranslated images
+  reported as pending.
 - Routes: every localized page under each language, the blog Bulgarian-only
   (`app.routes.spec.ts`); sitemap hreflang pairs (`scripts/generate-sitemap.test.js`).

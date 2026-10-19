@@ -1,7 +1,6 @@
 import type { CoreMessages, Messages, PageMessages, PageNamespace } from '../../i18n/bg';
-import type { FaqItem } from '../models/faq.model';
 
-export type { CoreMessages, Messages, PageMessages, PageNamespace };
+export type { PageMessages, PageNamespace };
 
 type Join<P extends string, K extends string> = P extends '' ? K : `${P}.${K}`;
 
@@ -48,14 +47,22 @@ export interface VideoCopy {
   posterAlt?: string;
 }
 
+/** An FAQ entry's copy in one language (src/i18n/<lang>/content/faq.json, keyed by the entry's `id`). */
+export interface FaqCopy {
+  question: string;
+  answer: string;
+}
+
 /**
- * A language's copy of the content in src/data/. Bulgarian is the source: its
- * content IS src/data/, so its overlays are empty and components fall back to
- * the data itself (see faqFor() and localizeProduct()).
+ * A language's copy of the content in src/data/, keyed by each item's id.
+ * Everything else (order, icons, images, links) always comes from src/data/,
+ * via faqFor(), localizeGallery(), localizeProduct() and localizeVideo().
+ * Bulgarian is the source: its content IS src/data/, so its overlays are empty.
  */
 export interface LocaleContent {
-  /** The FAQ in this language — same ids, icons and order as src/data/faq.json. Empty = Bulgarian. */
-  faq: FaqItem[];
+  faq: Record<string, FaqCopy>;
+  /** Gallery images' alt text (src/i18n/<lang>/content/gallery.json, keyed by the image's `src`). */
+  gallery: Record<string, string>;
   products: Record<string, ProductCopy>;
   videos: Record<string, VideoCopy>;
 }

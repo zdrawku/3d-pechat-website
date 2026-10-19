@@ -1,7 +1,7 @@
 import { Route, Routes } from '@angular/router';
 
 import { localeGuard } from './i18n/provide-i18n';
-import { DEFAULT_LOCALE, LOCALES, Locale } from './i18n/locales';
+import { DEFAULT_LOCALE, Locale, TRANSLATED_LOCALES } from './i18n/locales';
 
 /**
  * Route props that put a route and everything under it in a language: the
@@ -50,7 +50,7 @@ const localizedPages = (): Routes => [
 export const routes: Routes = [
   // /en/… (and every language added to src/i18n/locales.json). '/en/' was the
   // standalone English landing until 2026-10-18; it is now the English home page.
-  ...LOCALES.filter(l => l.code !== DEFAULT_LOCALE).map((l): Route => ({
+  ...TRANSLATED_LOCALES.map((l): Route => ({
     ...inLocale(l.code),
     path: l.code,
     children: [...localizedPages(), notFound]

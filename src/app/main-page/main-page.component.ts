@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IGX_CAROUSEL_DIRECTIVES, IGX_CARD_DIRECTIVES, IgxButtonDirective, IgxIconComponent } from 'igniteui-angular';
+import { IGX_CAROUSEL_DIRECTIVES, IGX_CARD_DIRECTIVES, IgxAvatarComponent, IgxButtonDirective, IgxIconComponent } from 'igniteui-angular';
 
 import { carouselImages } from './carousel-images';
 import { SeoService } from '../services/seo.service';
@@ -11,7 +11,7 @@ import { YOUTUBE_SUBSCRIBE_URL } from '../../data/site-links';
 import { BUSINESS } from '../../data/business';
 import { I18nService } from '../i18n/i18n.service';
 import { LocalizePathPipe, TranslatePipe } from '../i18n/translate.pipe';
-import { localizeVideo } from '../i18n/localized-content';
+import { localizeGallery, localizeVideo } from '../i18n/localized-content';
 import type { TranslationKey } from '../i18n/i18n.types';
 import homeMessages from '../../i18n/bg/home.json';
 
@@ -22,25 +22,29 @@ interface CardCopy {
 
 @Component({
   selector: 'app-main-page',
-  imports: [IGX_CAROUSEL_DIRECTIVES, IGX_CARD_DIRECTIVES, IgxButtonDirective, IgxIconComponent, HappyCustomersComponent, YoutubeEmbedComponent, RouterLink, TranslatePipe, LocalizePathPipe],
+  imports: [IGX_CAROUSEL_DIRECTIVES, IGX_CARD_DIRECTIVES, IgxAvatarComponent, IgxButtonDirective, IgxIconComponent, HappyCustomersComponent, YoutubeEmbedComponent, RouterLink, TranslatePipe, LocalizePathPipe],
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.scss']
 })
 export class MainPageComponent {
   private readonly i18n = inject(I18nService);
 
-  carouselImages = carouselImages;
+  /** The about-section carousel, alt text in the page's language (src/i18n/<lang>/content/gallery.json). */
+  readonly carouselImages = computed(() =>
+    localizeGallery(carouselImages, this.i18n.content().gallery, this.i18n.langIfForeign())
+  );
   /** The promo video for the „Вижте ни в действие“ section (videos.json), with its UI copy in the page's language. */
   readonly featuredVideo = computed(() => localizeVideo(FEATURED_VIDEO, this.i18n.content().videos[FEATURED_VIDEO.slug]));
   readonly youtubeSubscribeUrl = YOUTUBE_SUBSCRIBE_URL;
   /** „Отговор до 24ч“ — business.json, the same number as every other page. */
   readonly replyHours = BUSINESS.replyWithinHours;
 
+  /** `icon`: a Material icon name, shown by igx-avatar (CLAUDE.md Rule 1 — no emoji as icons). */
   readonly props: readonly (CardCopy & { icon: string })[] = [
-    { icon: '🎯', title: 'home.props.precision.title', text: 'home.props.precision.text' },
-    { icon: '⚡', title: 'home.props.speed.title', text: 'home.props.speed.text' },
-    { icon: '🧩', title: 'home.props.shape.title', text: 'home.props.shape.text' },
-    { icon: '💬', title: 'home.props.support.title', text: 'home.props.support.text' }
+    { icon: 'straighten', title: 'home.props.precision.title', text: 'home.props.precision.text' },
+    { icon: 'bolt', title: 'home.props.speed.title', text: 'home.props.speed.text' },
+    { icon: 'category', title: 'home.props.shape.title', text: 'home.props.shape.text' },
+    { icon: 'forum', title: 'home.props.support.title', text: 'home.props.support.text' }
   ];
 
   readonly steps: readonly CardCopy[] = [

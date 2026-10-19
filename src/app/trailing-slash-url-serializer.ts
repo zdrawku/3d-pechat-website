@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { DefaultUrlSerializer, UrlTree } from '@angular/router';
 
 /**
@@ -20,5 +21,16 @@ export class TrailingSlashUrlSerializer extends DefaultUrlSerializer {
     const suffix = separatorIndex === -1 ? '' : url.slice(separatorIndex);
 
     return path.endsWith('/') ? url : `${path}/${suffix}`;
+  }
+
+  /**
+   * The inverse: '/en/prices/' parses like '/en/prices'. DefaultUrlSerializer
+   * reads a trailing slash as an extra empty segment, which matches no route —
+   * so any slash-ended URL handed to the router (navigateByUrl(router.url), a
+   * legacy redirect's '/blog/<new>/') landed on the 404. Location already strips
+   * it from browser URLs; this covers every string the router parses.
+   */
+  override parse(url: string): UrlTree {
+    return super.parse(Location.stripTrailingSlash(url));
   }
 }

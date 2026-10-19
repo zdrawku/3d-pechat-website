@@ -79,6 +79,36 @@ Reusable component for displaying products with flippable cards.
 
 *(Reference: `PRODUCT_GRID_QUICK_START.md`)*
 
+### Info cards (icon + title + text)
+The site's informative cards — home „Защо да изберете нас“ and „Как работим“, the price tiers on `/prices/` — share one layout ([approved design, variant C](https://claude.ai/artifact/4D1aY1vJzkf9Uwzg4CMeCu)): an icon (or a step number) and the title on one row, the rest below. Build new ones the same way:
+- **Markup** — Ignite components only (CLAUDE.md Rule 1); imports `IGX_CARD_DIRECTIVES`, `IgxAvatarComponent`:
+  ```html
+  <igx-card class="feature_card">
+    <igx-card-header class="feature_card_head">
+      <igx-avatar class="feature_icon" [icon]="item.icon" shape="rounded" size="small" [attr.aria-hidden]="true"></igx-avatar>
+      <h3 igxCardHeaderTitle class="feature_title">{{ item.title | t }}</h3>
+    </igx-card-header>
+    <igx-card-content class="feature_card_body">
+      <p>{{ item.text | t }}</p>
+    </igx-card-content>
+  </igx-card>
+  ```
+  A numbered step puts `<igx-avatar class="step_num" shape="circle" size="small" initials="{{ i + 1 }}" [attr.aria-hidden]="true">` in the header instead (inside an `<ol>`, see the home page's process steps).
+- **Styles** — the shared mixins in [`src/app/_info-card.scss`](src/app/_info-card.scss) (`@use '../info-card';`):
+  ```scss
+  .feature_card_head { @include info-card.head; }
+  .feature_card_body { @include info-card.body; }  // ($gap: …) spaces the body's elements
+  .feature_title     { @include info-card.title; }
+  .feature_icon      { @include info-card.icon; }  // (secondary) = teal; ($tint: 16%) for a stronger tile
+  .step_num          { @include info-card.number; }
+  ```
+  The card's surface — background, border, radius, shadow, the `sla-hover` effect — stays with the page: copy `.prop_card` (home) or `.tier-card` (prices).
+- **Icons**: a Material icon name (`bolt`, `straighten`, `layers`, …), never an emoji. Their colours come from the avatar's own theme variables (`--igx-avatar-*`) through the mixins — no inline `bgColor` / `color`.
+- **The trap**: Ignite gives every *direct* child of `igx-card-content` its body type and `margin: 0` (`.ig-typography .igx-card-content > :not(igx-icon)`), and that beats component classes. So the title goes in `igx-card-header`, never in the content, and the content's elements are spaced by the body mixin's `gap`, not margins. Elements nested one level deeper (e.g. `.tier-price > .tier-price-num`) can be styled freely.
+- **Text** from `src/i18n/<lang>/*.json` through the `t` pipe (Rule 6); numbers from `business.json` (Rule 5).
+- **Test**: the page's spec asserts the structure — `igx-card-header` → `igx-avatar` + `[igxCardHeaderTitle]`, then `igx-card-content` — and no emoji: see `main-page.component.spec.ts` and `prices-page.component.spec.ts`.
+- **A different look** is a design change: a design artifact first (Rule 2).
+
 ### Carousel Images
 Home page carousel images are dynamic.
 - **Management**: Add/remove images in `src/assets/real-images/first-page-images/`.
@@ -119,7 +149,7 @@ Click-to-play player for our YouTube videos (home „Вижте ни в дейс
 - **Live site check**: `npm run check:live`. It's a read-only crawl of https://3dpechat.bg covering crawler access (Googlebot, bingbot, OAI-SearchBot, PerplexityBot, ClaudeBot…), the schema vs `business.json`, every sitemap URL, redirects, llms.txt, the IndexNow key, the FAQ, and `lang` + `hreflang` on every page in every language. `.github/workflows/live-site-check.yml` runs it every Monday; run it by hand ~10 minutes after a deploy.
 
 ### FAQ and languages
-- **FAQ** — `src/data/faq.json` (6–10 Q&A) is rendered by `app-faq` (`src/app/shared/faq/`) on `/prices/` as always-visible `igx-card`s, mirrored as FAQPage JSON-LD via `faqPageSchema(faqFor(i18n))`, and copied into llms.txt. The English FAQ is `src/i18n/en/content/faq.json` (same ids and order).
+- **FAQ** — `src/data/faq.json` (6–10 Q&A) is rendered by `app-faq` (`src/app/shared/faq/`) on `/prices/` as always-visible `igx-card`s, mirrored as FAQPage JSON-LD via `faqPageSchema(faqFor(i18n))`, and copied into llms.txt. The English FAQ is `src/i18n/en/content/faq.json` (question and answer keyed by id; order and icons come from `src/data/faq.json`).
   - Answers may only state `business.json` facts. `src/data/faq.spec.ts` (Bulgarian) and `src/i18n/i18n.spec.ts` (other languages) fail if an answer uses a number the facts don't contain, or mentions SLA/SLS, scanning, same-day work or invoices (except "не издаваме фактури" / "we don't issue invoices").
   - Don't switch the FAQ to an accordion: collapsed answers drop out of the prerendered HTML.
 - **Languages** — the main pages exist in Bulgarian (`/…`) and English (`/en/…`); the blog stays Bulgarian. Guide: [`src/i18n/README.md`](src/i18n/README.md); plan and next steps: [`LOCALIZATION-PLAN.md`](LOCALIZATION-PLAN.md). CLAUDE.md Rule 6 has the must-follow rules.

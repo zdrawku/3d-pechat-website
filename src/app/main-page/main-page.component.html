@@ -50,10 +50,12 @@
     <div class="props_grid stagger-in">
       @for (prop of props; track prop.title; let i = $index) {
         <igx-card class="prop_card" [style.--i]="i">
+          <igx-card-header class="prop_card_head">
+            <igx-avatar class="prop_icon" [icon]="prop.icon" shape="rounded" size="small" [attr.aria-hidden]="true"></igx-avatar>
+            <h3 igxCardHeaderTitle class="prop_title">{{ prop.title | t }}</h3>
+          </igx-card-header>
           <igx-card-content class="prop_card_body">
-            <div class="prop_icon">{{ prop.icon }}</div>
-            <h3 class="prop_title">{{ prop.title | t }}</h3>
-            <p class="prop_text">{{ prop.text | t }}</p>
+            <p>{{ prop.text | t }}</p>
           </igx-card-content>
         </igx-card>
       }
@@ -70,10 +72,12 @@
       @for (step of steps; track step.title; let i = $index) {
         <li class="process_step_item">
           <igx-card class="process_step">
+            <igx-card-header class="process_step_head">
+              <igx-avatar class="step_num" shape="circle" size="small" initials="{{ i + 1 }}" [attr.aria-hidden]="true"></igx-avatar>
+              <h3 igxCardHeaderTitle class="step_title">{{ step.title | t }}</h3>
+            </igx-card-header>
             <igx-card-content class="process_step_body">
-              <span class="step_num">{{ i + 1 }}</span>
-              <h3 class="step_title">{{ step.title | t }}</h3>
-              <p class="step_text">{{ step.text | t }}</p>
+              <p>{{ step.text | t }}</p>
             </igx-card-content>
           </igx-card>
         </li>
@@ -135,9 +139,9 @@
     </div>
     <div class="about_media">
       <igx-carousel [vertical]="false" animationType="slide" [interval]="2000" indicatorsOrientation="end" class="carousel_1">
-        @for (image of carouselImages; track image.src; let i = $index) {
+        @for (image of carouselImages(); track image.src; let i = $index) {
           <igx-slide class="row-layout carousel_slide_1">
-            <img [src]="image.src" [alt]="image.alt || ('home.about.galleryAlt' | t: { n: i + 1 })" class="image_1" loading="lazy" />
+            <img [src]="image.src" [alt]="image.alt || ('home.about.galleryAlt' | t: { n: i + 1 })" [attr.lang]="image.lang" class="image_1" loading="lazy" />
           </igx-slide>
         }
       </igx-carousel>

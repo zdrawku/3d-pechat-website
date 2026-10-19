@@ -1,5 +1,6 @@
 import { BUSINESS } from '../../data/business';
 import type { I18nService } from './i18n.service';
+import type { TranslationKey } from './i18n.types';
 import { DEFAULT_LOCALE, Locale } from './locales';
 
 /**
@@ -17,9 +18,10 @@ const time = (hhmm: string): string => hhmm.replace(/^0(\d)/, '$1');
 type OpeningHours = { days: string[]; opens: string; closes: string }[];
 
 /**
- * Opening hours from business.json in the active language:
- * „всеки ден от 9:00 до 18:00“ / "every day, 9:00–18:00". Partial weeks name
- * their days with the language's short weekday names („пн–пт …“ / "Mon–Fri …").
+ * Opening hours from business.json in the active language — the site's one
+ * formatter for them (business.spec.ts checks the Bulgarian text against the
+ * facts): „всеки ден от 9:00 до 18:00“ / "every day, 9:00–18:00". Partial weeks
+ * name their days from `common.days` („пон.–пет. …“ / "Mon–Fri …").
  */
 export function openingHoursText(i18n: I18nService, hours: OpeningHours = BUSINESS.openingHours): string {
   return hours
@@ -28,7 +30,7 @@ export function openingHoursText(i18n: I18nService, hours: OpeningHours = BUSINE
       if (days.length === 7) {
         return i18n.t('common.hours.everyDay', times);
       }
-      const names = days.map((day) => i18n.weekdayName(day));
+      const names = days.map((day) => i18n.t(`common.days.${day}` as TranslationKey));
       const span = names.length > 2 ? `${names[0]}–${names[names.length - 1]}` : names.join(', ');
       return i18n.t('common.hours.days', { days: span, ...times });
     })

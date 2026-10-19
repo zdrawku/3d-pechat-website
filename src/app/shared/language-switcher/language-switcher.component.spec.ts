@@ -66,8 +66,8 @@ describe('LanguageSwitcherComponent', () => {
     const english = dropDown().items.find((item) => item.value === 'en')!;
     dropDown().selectItem(english);
 
-    // Slash-free router URL: '/en/prices/' would parse with an empty last segment and hit the 404.
-    expect(navigate).toHaveBeenCalledOnceWith('/en/prices');
+    // TrailingSlashUrlSerializer parses the trailing slash away, so this lands on the page.
+    expect(navigate).toHaveBeenCalledOnceWith('/en/prices/');
     dropDown().close();
   });
 

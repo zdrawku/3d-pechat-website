@@ -4,27 +4,10 @@ import { DOCUMENT } from '@angular/common';
 import { BLOG_POSTS } from './blog-posts.registry';
 import business from '../../data/business.json';
 import { I18nService } from '../i18n/i18n.service';
-import { LOCALES, LanguageAlternate, languageAlternates } from '../i18n/locales';
-import type { TranslationParams } from '../i18n/i18n.types';
+import { LanguageAlternate, languageAlternates, pagePath } from '../i18n/locales';
+import type { PageNamespace, TranslationParams } from '../i18n/i18n.types';
 
 export const SITE_ORIGIN = 'https://3dpechat.bg';
-
-export type { LanguageAlternate };
-
-/**
- * The pages that exist in every language, with their Bulgarian paths — the
- * same list as `localizedPages` in src/i18n/locales.json (seo.service.spec.ts
- * checks it). Their meta copy lives under `seo.<page>` in src/i18n/<lang>/seo.json.
- */
-export const PAGE_PATHS = {
-  home: '/',
-  portfolio: '/portfolio/',
-  products: '/products/',
-  prices: '/prices/',
-  contact: '/contact/'
-} as const;
-
-export type PageKey = keyof typeof PAGE_PATHS;
 
 /** Extra schema for a post that needs more than BlogPosting + BreadcrumbList. */
 export interface BlogPostSeoExtras {
@@ -57,9 +40,8 @@ export interface SeoConfig {
     publishedDate?: string;
     modifiedDate?: string;
     /**
-     * Language versions of this page. Omitted = derived from `url`: every
-     * language for a page in locales.json `localizedPages`, none for a
-     * Bulgarian-only page (the blog). Every navigation replaces them.
+     * Language versions of this page (`applyPageSeo` passes every language's);
+     * omitted = none, as for the Bulgarian-only blog. Every navigation replaces them.
      */
     alternates?: LanguageAlternate[];
 }
@@ -123,13 +105,9 @@ export class SeoService {
         // 8b. Language: og:locale and hreflang alternates, set on every navigation
         // so a Bulgarian-only page drops the previous page's links. <html lang>
         // belongs to I18nService (it follows the route's language).
-        const alternates = config.alternates
-            ?? (config.url ? languageAlternates(config.url.replace(/^https?:\/\/[^/]+/, ''), SITE_ORIGIN) : []);
-        const active = this.i18n.definition();
-        this.updateTag('property', 'og:locale', active.ogLocale);
-        this.setOgLocaleAlternates(alternates.length
-            ? LOCALES.filter(l => l.code !== active.code).map(l => l.ogLocale)
-            : []);
+        const alternates = config.alternates ?? [];
+        this.updateTag('property', 'og:locale', this.i18n.definition().ogLocale);
+        this.setOgLocaleAlternates(alternates.length ? this.i18n.otherLocales().map(l => l.ogLocale) : []);
         this.setLanguageAlternates(alternates);
 
         // 9. Article specific tags
@@ -147,17 +125,19 @@ export class SeoService {
     /**
      * Meta, canonical and hreflang for one of the pages that exist in every
      * language, in the active language: copy from `seo.<page>` in
-     * src/i18n/<lang>/seo.json, canonical '/en/prices/' on English pages.
-     * `params` fill the description's {placeholders} (prices: numbers from
-     * business.json, formatted for the language).
+     * src/i18n/<lang>/seo.json, canonical '/en/prices/' on English pages, and
+     * the page's version in every language. `params` fill the description's
+     * {placeholders} (prices: numbers from business.json, formatted for the language).
      */
-    public applyPageSeo(page: PageKey, params?: TranslationParams): void {
+    public applyPageSeo(page: PageNamespace, params?: TranslationParams): void {
+        const path = pagePath(page);
         this.updateSeo({
             title: this.i18n.t(`seo.${page}.title`),
             description: this.i18n.t(`seo.${page}.description`, params),
             keywords: this.i18n.t(`seo.${page}.keywords`),
-            url: `${SITE_ORIGIN}${this.i18n.path(PAGE_PATHS[page])}`,
-            type: 'website'
+            url: `${SITE_ORIGIN}${this.i18n.path(path)}`,
+            type: 'website',
+            alternates: languageAlternates(path, SITE_ORIGIN)
         });
     }
 

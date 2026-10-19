@@ -9,7 +9,7 @@ export interface RouteSpec {
   heading?: string;
   /** Substring expected in document <title>. */
   title?: string;
-  /** False for pages not reached through a Bulgarian drawer chip, e.g. the English pages. */
+  /** False for a core page that isn't a Bulgarian drawer chip (the English home page). */
   inDrawer?: boolean;
 }
 
@@ -30,10 +30,10 @@ export const CORE_ROUTES: RouteSpec[] = [
  * (yet) — add them here to CORE_ROUTES when regenerating baselines.
  */
 export const ENGLISH_ROUTES: RouteSpec[] = [
-  { path: '/en/portfolio', heading: 'Products and projects modelled for 3D printing', title: 'Portfolio', inDrawer: false },
-  { path: '/en/products', heading: '3D printed products', title: 'Products', inDrawer: false },
-  { path: '/en/prices', heading: '3D printing prices', title: 'Prices', inDrawer: false },
-  { path: '/en/contact', heading: 'Get in touch', title: 'Contact', inDrawer: false },
+  { path: '/en/portfolio', heading: 'Products and projects modelled for 3D printing', title: 'Portfolio' },
+  { path: '/en/products', heading: '3D printed products', title: 'Products' },
+  { path: '/en/prices', heading: '3D printing prices', title: 'Prices' },
+  { path: '/en/contact', heading: 'Get in touch', title: 'Contact' },
 ];
 
 export const BLOG_ROUTES: RouteSpec[] = [

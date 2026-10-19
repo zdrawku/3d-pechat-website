@@ -7,7 +7,10 @@ co-located `manifest.json` that is the **source of truth** for:
 - **display order** — the array order in the manifest *is* the on-screen order
   (top of the array = first image shown);
 - **`alt`** — per-image alt text (accessibility + SEO). Empty string = fall back
-  to a generic „3D печат проект N“ label in the template;
+  to a generic „3D печат проект N“ label in the template. The English pages
+  read their alt text from `src/i18n/en/content/gallery.json`, keyed by the
+  image's `src` — add the new image there too (until then the Bulgarian alt
+  shows, marked `lang="bg"`);
 - **`hidden`** — `true` keeps a file in the folder but out of the site (no need to
   delete it).
 

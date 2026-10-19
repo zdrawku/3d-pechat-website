@@ -4,6 +4,7 @@
 @use "minireset.css/minireset";
 @use "igniteui-angular/theming" as *;
 @use "app/fluid" as *;
+@use "app/button-tones" as *;
 
 @include core();
 
@@ -637,7 +638,12 @@ body {
     }
   }
 
+  // „Назад към статиите“ — a secondary action, so the site's teal outlined pill
+  // (AA contrast; app/_button-tones.scss). The theme's $roundness is 0, so
+  // without the radius token every Ignite button is square.
   .back-button {
+    @include teal-outlined-button;
+    --ig-outlined-button-border-radius: var(--radius-pill);
     display: flex;
     align-items: center;
     gap: rem(8px);

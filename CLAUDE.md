@@ -25,7 +25,7 @@ Never hand-roll a plain-HTML equivalent when an `igx-*` component exists.
 Plain HTML is correct **only** for semantics/layout with no component
 counterpart: `<section>`, `<ul>/<li>` wrappers, `<p>`, `<h1>`–`<h6>`.
 
-**Two traps, both of which have already bitten this project:**
+**Three traps, all of which have already bitten this project:**
 
 1. **`$exclude-components` in [`src/styles.scss`](src/styles.scss).** A component
    in that list gets **no CSS emitted** and renders unstyled. Currently excluded
@@ -38,11 +38,18 @@ counterpart: `<section>`, `<ul>/<li>` wrappers, `<p>`, `<h1>`–`<h6>`.
    to the `imports:` array (`IGX_CARD_DIRECTIVES`, `IgxButtonDirective`,
    `IgxAvatarComponent`, `IgxIconComponent`, …) or the template silently renders
    the tag as an unknown element.
+3. **`igx-card-content` restyles its direct children.** Ignite gives each one its
+   body type and `margin: 0`, beating component classes — a title, font size or
+   margin set on them silently does nothing. Titles go in `igx-card-header`
+   (`igxCardHeaderTitle`); space the content with a `gap` on the content itself.
+   Cards with an icon + title + text use the **info-card pattern**:
+   [`src/app/_info-card.scss`](src/app/_info-card.scss) and
+   [`AI_INSTRUCTIONS.md`](AI_INSTRUCTIONS.md) § Info cards.
 
 Style via the theme's CSS custom properties and the site's tokens
 (`--ig-*`, `--bg-*`, `--shadow-*`, `--radius-*`, `--space-*` in `styles.scss`)
-plus the `fluid()` and `sla-hover` mixins — not by overriding component
-internals. There are `mcp__igniteui-theming__*` MCP tools for theming work.
+plus the `fluid()`, `sla-hover` and `info-card` mixins — not by overriding
+component internals. There are `mcp__igniteui-theming__*` MCP tools for theming work.
 
 **Every new component gets a spec asserting the Ignite tags are present**, so a
 later edit can't quietly regress to plain HTML — see
@@ -145,7 +152,8 @@ steps: [`LOCALIZATION-PLAN.md`](LOCALIZATION-PLAN.md).
   English copy in `src/i18n/en/content/products.json` (until then `/en/products/`
   shows the Bulgarian copy, marked `lang="bg"`, and the spec reports it as
   pending); the FAQ changes in `src/data/faq.json` and
-  `src/i18n/en/content/faq.json` together.
+  `src/i18n/en/content/faq.json` together; a new gallery image's alt text goes
+  in `src/i18n/en/content/gallery.json` under its `src` (same fallback).
 - **Languages and localized pages have one source:** `src/i18n/locales.json`.
   Routes, hreflang, the switcher, sitemap alternates, llms.txt and the live check
   read it. A new localized page or language also needs `MAIN_PAGE_LASTMOD`

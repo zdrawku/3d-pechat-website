@@ -5,7 +5,8 @@ import { provideRouter } from '@angular/router';
 
 import { IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective } from 'igniteui-angular';
 import { ContactMePageComponent } from './contact-me-page.component';
-import { BUSINESS, openingHoursLabel } from '../../data/business';
+import { BUSINESS } from '../../data/business';
+import { openingHoursText } from '../i18n/business-copy';
 import { I18nService } from '../i18n/i18n.service';
 
 describe('ContactMePageComponent', () => {
@@ -59,7 +60,7 @@ describe('ContactMePageComponent', () => {
       expect(address.querySelector('igx-icon')).withContext('Ignite icon').not.toBeNull();
 
       const hours = host().querySelector('[data-testid="contact-hours"]')!;
-      expect(hours.textContent!.toLowerCase()).toContain(openingHoursLabel().toLowerCase());
+      expect(hours.textContent!.toLowerCase()).toContain(openingHoursText(TestBed.inject(I18nService)).toLowerCase());
       expect(hours.textContent).toContain('9:00 до 18:00');
 
       expect(host().querySelector('.response-note')?.textContent).toContain('24 часа');

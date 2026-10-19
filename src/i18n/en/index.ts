@@ -17,12 +17,14 @@ import contact from './contact.json';
 import reviews from './reviews.json';
 import misc from './misc.json';
 import faq from './content/faq.json';
+import gallery from './content/gallery.json';
 import products from './content/products.json';
 import videos from './content/videos.json';
 
 const english = {
   messages: { common, shell, seo, home, portfolio, products: productsUi, prices, faq: faqUi, contact, reviews, misc },
   faq,
+  gallery,
   products,
   videos
 } satisfies LocaleBundle;

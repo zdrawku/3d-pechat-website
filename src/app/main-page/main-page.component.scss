@@ -1,6 +1,7 @@
 @use "igniteui-angular/theming" as *;
 @use '../fluid' as *;
 @use '../sla-hover' as sla;
+@use '../info-card';
 @use '../button-tones' as *;
 
 :host {
@@ -408,9 +409,9 @@
   margin-top: rem(40px);
 }
 
-// Now an <igx-card>. The class overrides igx-card's default surface/elevation/
-// radius so the card looks unchanged; the padding lives on the inner
-// igx-card-content (.prop_card_body) since igx-card itself is padding-less.
+// The class overrides igx-card's default surface/elevation/radius; the padding
+// lives on its header and content (igx-card itself is padding-less). Layout:
+// "Both sections' cards" below.
 .prop_card {
   background: var(--bg-card);
   border: rem(1px) solid var(--line, var(--ig-gray-300));
@@ -420,59 +421,64 @@
   @include sla.sla-hover($bump: true);
 }
 
-.prop_card_body {
-  padding: rem(24px) rem(20px);
-}
-
-.prop_icon {
-  width: rem(46px);
-  height: rem(46px);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: rem(22.4px);
-  background: color-mix(in srgb, var(--ig-primary-500) 14%, transparent);
-  margin-bottom: rem(14px);
-}
-
-.prop_title {
-  margin: 0 0 rem(6px);
-  font-size: rem(16px);
-  font-weight: 700;
-  color: var(--ig-gray-900);
-}
-
-.prop_text {
-  margin: 0;
-  font-size: rem(13.6px);
-  color: var(--ig-gray-700);
-  line-height: 1.55;
-}
-
 // ===================== PROCESS =====================
 .process_section {
   background: var(--bg-alt);
 }
+
+$step-gap: rem(24px);
 
 .process_steps {
   list-style: none;
   padding: 0;
   margin: rem(40px) 0 0;
   display: grid;
-  // Intrinsic responsive (4 → 2 → 1), no breakpoints.
+  // Intrinsic responsive (4 → 3 → 2 → 1), no breakpoints.
   grid-template-columns: repeat(auto-fit, minmax(min(100%, rem(200px)), 1fr));
-  gap: rem(16px);
+  gap: $step-gap;
+  // The connector below asks how many steps fit in a row.
+  container-type: inline-size;
 }
 
 // The <li> stays for ordered-list semantics; the igx-card fills it so cards
 // keep equal heights across the grid row.
 .process_step_item {
+  position: relative;
   display: flex;
 }
 
-// Each step is now an <igx-card>. Class overrides igx-card's default chrome;
-// padding lives on the inner igx-card-content (.process_step_body).
+// The steps read as a sequence: a dashed line through the gaps, level with the
+// number avatars — across when all four fit in one row, down when they stack,
+// none at two or three per row (a row break would cut it). The thresholds are
+// the grid's: 4 × 200px tracks + 3 gaps, and 2 × 200px + 1 gap.
+// 43px / 41px = card border + header padding + half the 40px avatar.
+.process_step_item:not(:last-child)::after {
+  content: none;
+  position: absolute;
+  border: 0 dashed color-mix(in srgb, var(--ig-primary-500) 50%, transparent);
+}
+
+@container (width >= #{rem(872px)}) {
+  .process_step_item:not(:last-child)::after {
+    content: '';
+    top: rem(43px);
+    left: 100%;
+    width: $step-gap;
+    border-top-width: rem(2px);
+  }
+}
+
+@container (width < #{rem(424px)}) {
+  .process_step_item:not(:last-child)::after {
+    content: '';
+    top: 100%;
+    left: rem(41px);
+    height: $step-gap;
+    border-left-width: rem(2px);
+  }
+}
+
+// Each step is an <igx-card>; the class overrides igx-card's default chrome.
 .process_step {
   flex: 1;
   background: var(--bg-card);
@@ -483,36 +489,30 @@
   @include sla.sla-hover($bump: true);
 }
 
+// ================= Both sections' cards: info cards =================
+// Icon (or step number) and title on one row, description below — the shared
+// pattern in src/app/_info-card.scss (AI_INSTRUCTIONS.md § Info cards).
+.prop_card_head,
+.process_step_head {
+  @include info-card.head;
+}
+
+.prop_card_body,
 .process_step_body {
-  padding: rem(22px) rem(18px) rem(20px);
+  @include info-card.body;
+}
+
+.prop_title,
+.step_title {
+  @include info-card.title;
+}
+
+.prop_icon {
+  @include info-card.icon;
 }
 
 .step_num {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: rem(30px);
-  height: rem(30px);
-  border-radius: 50%;
-  font-size: rem(12.8px);
-  font-weight: 800;
-  color: var(--ig-primary-500-contrast);
-  background: linear-gradient(135deg, var(--ig-primary-400), var(--ig-primary-500));
-  margin-bottom: rem(12px);
-}
-
-.step_title {
-  margin: 0 0 rem(6px);
-  font-size: rem(15.2px);
-  font-weight: 700;
-  color: var(--ig-gray-900);
-}
-
-.step_text {
-  margin: 0;
-  font-size: rem(13px);
-  color: var(--ig-gray-700);
-  line-height: 1.5;
+  @include info-card.number;
 }
 
 // ===================== VIDEO („Вижте ни в действие“) =====================

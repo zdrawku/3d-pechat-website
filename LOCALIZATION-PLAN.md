@@ -43,10 +43,10 @@ following Angular best practices.
 
 **Runtime (`src/app/i18n/`)**
 - `locales.ts` — the registry (from `locales.json`), loaders, URL helpers (`splitLocalePath`, `localizePath`, `languageAlternates`, `switchLocaleUrl`).
-- `i18n.service.ts` — active language (signal), on-demand loading, `t()` / `plural()` (Intl.PluralRules), Intl number / list / month / weekday formatting, `registerPage()`, owns `<html lang>`.
+- `i18n.service.ts` — active language (signal), on-demand loading (the latest `use()` wins), `t()` / `plural()` (Intl.PluralRules), Intl number / list / month formatting, `langIfForeign()` (marks Bulgarian-only content on other languages' pages), `registerPage()`, owns `<html lang>`.
 - `translate.pipe.ts` — `t` (typed keys) and `localizePath` pipes.
-- `provide-i18n.ts` — app initializer (language from the URL before the first render, so prerender and hydration agree) and `localeGuard` (switches language on navigation).
-- `localized-content.ts`, `business-copy.ts` — product / video copy overlays; address and opening hours per language.
+- `provide-i18n.ts` — app initializer (language from the URL before the first render, so prerender and hydration agree; if that language's strings don't load, the page reloads once, then stays as prerendered), `localeGuard` (switches language on navigation), and a re-sync from the URL of the page shown after every finished, cancelled or failed navigation (a newer click can cancel a navigation whose guard already switched the language).
+- `localized-content.ts`, `business-copy.ts` — gallery / product / video copy overlays; address and opening hours per language.
 - `app.routes.ts` — `/en/` subtree generated from `locales.json`; Bulgarian pages, blog and 404 in Bulgarian. The blog block keeps the shape the auto-blog scaffolder's regex expects.
 
 **UI**
@@ -55,9 +55,9 @@ following Angular best practices.
 - Phone navbar: under 420 px the bar padding halves (Ignite spacing token) and the controls sit 6 px apart; under 350 px the menu pill drops its „Меню“ label. Verified on screen at 320 / 360 / 390 / 420 px.
 - Contact form: hCaptcha in the page's language; English enquiries arrive as "3dpechat.bg contact form (English)" ⚑.
 
-**Content (`src/i18n/`)** — Bulgarian source files (verbatim from the templates), English translations of all UI copy, all 14 products, the 10 FAQ answers and the video alt text.
+**Content (`src/i18n/`)** — Bulgarian source files (verbatim from the templates), English translations of all UI copy, all 14 products, the 10 FAQ answers, the video alt text and the alt text of all 33 captioned gallery images (`en/content/gallery.json`, keyed by image `src`; named like the English catalogue).
 
-**SEO / scripts** — `SeoService.applyPageSeo(page)`; hreflang derived for every localized page; sitemap with `xhtml:link` alternates (27 URLs); llms.txt gets an English section; the live check verifies `lang` + `hreflang` on every sitemap URL and English numbers / address.
+**SEO / scripts** — `SeoService.applyPageSeo(page)`; hreflang derived for every localized page; sitemap with `xhtml:link` alternates (27 URLs); llms.txt gets an English section; the live check verifies that the sitemap lists every language version, `lang` + `hreflang` on every sitemap URL (in any order) and English numbers / address.
 
 **Docs** — `src/i18n/README.md`, CLAUDE.md Rule 6, AI_INSTRUCTIONS.md, `src/data/README.md`, the `/add-product` skill (drafts English too), the phone add-product PR checklist, AI-VISIBILITY-PLAN.md Phase 5 note, FEATURE-IDEAS-PLAN.md artifact row.
 
@@ -66,14 +66,14 @@ following Angular best practices.
 | Check | Result |
 |-------|--------|
 | `npm run build` (lint + generators + prerender + internal-link check) | ✅ 31 static routes, all internal links canonical |
-| Unit tests (`npm test -- --watch=false --browsers=ChromeHeadless`) | ✅ 229 (170 before; the old English page's 5 removed, 64 added: translation contract, routes, service, switcher, English renders of every page) |
-| `npm run test:scripts` | ✅ 38 (sitemap + live-check language tests added) |
+| Unit tests (`npm test -- --watch=false --browsers=ChromeHeadless`) | ✅ 254 (170 before; the old English page's 5 removed, 89 added: translation contract, routes, service, startup / guard / cancelled-navigation language, switcher, gallery alt text, English renders of every page) |
+| `npm run test:scripts` | ✅ 49 (sitemap, llms.txt, locale URLs, live-check language + sitemap-completeness tests added) |
 | Playwright functional suite (e2e, locally against the build) | ✅ 148 — incl. switcher click-through and keyboard, 4 phone widths, hreflang on every page in both languages, axe on English pages |
 | Bulgarian pages vs `main` (text + head tags of all 27 prerendered pages) | ✅ identical except: the switcher in the navbar, the 500 page now in Bulgarian, the home H2 typo fix („Каквo“ had a Latin *o*), and hreflang on the 4 other main pages |
 | lang + hreflang of every sitemap URL in the build (same check as the live check) | ✅ 27 / 27 |
 | Screenshots light / dark, desktop / 320–390 px | ✅ matches artboard A |
 
-**Bundle cost** (initial JS + CSS, estimated transfer): `main` 217.3 kB → this branch 232.5 kB (**+15 kB, +7%**). About 9 kB is Ignite's drop-down module, which imports the input-group package (its autocomplete needs it); ~4 kB the Bulgarian shared strings (esbuild writes Cyrillic as `\uXXXX`); the rest the i18n code. Lighthouse's performance budget is a warning; see §7 for the 9 kB fix.
+**Bundle cost** (initial JS + CSS, estimated transfer): `main` 217.3 kB → this branch 232.9 kB (**+15.6 kB, +7%**). About 9 kB is Ignite's drop-down module, which imports the input-group package (its autocomplete needs it); ~4 kB the Bulgarian shared strings (esbuild writes Cyrillic as `\uXXXX`); the rest the i18n code. Lighthouse's performance budget is a warning; see §7 for the 9 kB fix.
 
 ## 5. Things found on the way (not changed unless noted)
 
@@ -81,6 +81,14 @@ following Angular best practices.
 - ✅ Fixed: the products template never closed its outer `<div>`.
 - ✅ Removed: a `≤360px` `.igx-navbar__right` padding rule in `app.component.scss` that never matched (Ignite's element is outside the component's encapsulated styles), and the unused `.icon_12` class.
 - Not changed: „Монетите се задържат **здрав** в слотовете“ (products page) — probably „здраво“.
+- Not changed: typos in the Bulgarian gallery alt text (the `manifest.json` files) — „Мехизъм“ (механизъм), „сухранение“ (съхранение), „Падъл БОрд“, „3Д“. The English alt text is keyed by image `src`, so fixing them won't break it.
+- Not changed, from the 2026-10-19 review (small; the owner decides):
+  - an untranslated product card puts `lang="bg"` on the whole card, its English buttons included — better on the name / description / tags only;
+  - the 404 page makes no SEO call, so after in-app navigation it keeps the previous page's canonical / hreflang (it isn't prerendered or indexed);
+  - the switcher's accessible name („Език: Български. Смени езика“) doesn't contain its visible „bg“ / „en“ (WCAG 2.5.3);
+  - opening hours on non-consecutive days would print as a range (`['Monday', 'Wednesday', 'Friday']` → „пон.–пет.“) — latent, today it's every day;
+  - llms.txt's Bulgarian page list and the e2e `ENGLISH_ROUTES` are hand-written, not derived from `locales.json`;
+  - the switcher drops a `?query`; `/en/prices//` lands on the 404.
 - `app.component.scss` is 381 bytes over its 12 kB *warning* budget (the switcher's phone rules); `main-page.component.scss` was already over.
 
 ## 6. Questions for the owner
@@ -93,7 +101,6 @@ following Angular best practices.
 6. ⚑ Remember the chosen language / suggest English to English browsers? (Today: neither — L10.)
 7. Visual regression baselines need regenerating after merge (the navbar changed on every page): run the *Visual regression* workflow with "update baselines".
 8. Accept the `app.component.scss` budget warning, or raise `anyComponentStyle` to 14 kB?
-9. Your git index holds a staged snapshot from earlier today (not staged by the agent); later edits are unstaged on top — check both `git diff --cached` and `git diff`.
 
 ## 7. Next steps (not done)
 
@@ -109,6 +116,6 @@ following Angular best practices.
 
 **Other**
 - `@defer` the switcher's menu (load the drop-down on first interaction / idle): −9 kB initial transfer; needs the trigger's keyboard handling re-done without `igxDropDownItemNavigation`.
-- English alt text for gallery images (the `manifest.json` alts are Bulgarian on English pages).
+- `<link rel="modulepreload">` for the English chunk in the prerendered `/en/…` pages, so it downloads in parallel with `main.js` instead of after it; needs a postbuild step that knows the chunk's hashed file name.
 - Add the English pages to Lighthouse CI (`lighthouserc.js`) and to the visual baselines (`ENGLISH_ROUTES` → `CORE_ROUTES`) when regenerating them.
 - After deploy: `npm run check:live`; IndexNow pings the new / changed URLs automatically; check Search Console's page indexing for `/en/…` after a week or two.

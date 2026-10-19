@@ -1,13 +1,11 @@
 const fs = require('fs');
 const path = require('path');
+const { SITE, hreflangAlternates, localizedPath, readLocales } = require('./locale-urls');
 
 // Reads the blog registry (blog-posts.registry.ts) to list the blog posts, and
 // src/i18n/locales.json for the languages and the pages that exist in each.
 const registryPath = path.join(__dirname, '../src/app/services/blog-posts.registry.ts');
-const localesPath = path.join(__dirname, '../src/i18n/locales.json');
 const sitemapPath = path.join(__dirname, '../src/sitemap.xml');
-
-const SITE = 'https://3dpechat.bg';
 
 // <lastmod> for every main page in every language, maintained BY HAND: bump the
 // date when a page's content or template meaningfully changes (a translation
@@ -22,8 +20,8 @@ const MAIN_PAGE_LASTMOD = {
   '/prices/': '2026-10-18',    // hreflang → /en/prices/, language switcher
   '/contact/': '2026-10-18',   // hreflang → /en/contact/, language switcher
   '/blog/': '2026-10-17',      // new posts / merged money post
-  '/en/': '2026-10-18',        // now the translated home page (was a separate English landing)
-  '/en/portfolio/': '2026-10-18', // English version created
+  '/en/': '2026-10-19',        // now the translated home page (was a separate English landing); English gallery alt text
+  '/en/portfolio/': '2026-10-19', // English version created; English gallery alt text
   '/en/products/': '2026-10-18',  // English version created
   '/en/prices/': '2026-10-18',    // English version created
   '/en/contact/': '2026-10-18'    // English version created
@@ -63,9 +61,6 @@ function readBlogPosts(registrySource) {
   return posts;
 }
 
-/** '/prices/' in `code` → '/en/prices/'; the default language has no prefix. */
-const localizedPath = (page, code, defaultLocale) => (code === defaultLocale ? page : `/${code}${page}`);
-
 /**
  * The sitemap XML. Every localized page is listed once per language, each with
  * the full set of xhtml:link hreflang alternates (Google reads them from the
@@ -73,21 +68,19 @@ const localizedPath = (page, code, defaultLocale) => (code === defaultLocale ? p
  */
 function buildSitemap({ locales, posts, lastmod = MAIN_PAGE_LASTMOD }) {
   const { defaultLocale, localizedPages } = locales;
-  const codes = locales.locales.map((l) => l.code);
 
   for (const page of localizedPages) {
     if (!PAGE_SETTINGS[page]) fail(`PAGE_SETTINGS has no entry for ${page} (scripts/generate-sitemap.js)`);
-    for (const code of codes) {
-      const loc = localizedPath(page, code, defaultLocale);
+    for (const { code } of locales.locales) {
+      const loc = localizedPath(page, code, locales);
       if (!lastmod[loc]) fail(`MAIN_PAGE_LASTMOD has no entry for ${loc}`);
     }
   }
   if (!lastmod[BLOG_INDEX.path]) fail(`MAIN_PAGE_LASTMOD has no entry for ${BLOG_INDEX.path}`);
 
-  const alternates = (page) => [
-    ...codes.map((code) => `    <xhtml:link rel="alternate" hreflang="${code}" href="${SITE}${localizedPath(page, code, defaultLocale)}"/>`),
-    `    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}${page}"/>`
-  ].join('\n');
+  const alternates = (page) => hreflangAlternates(page, locales)
+    .map(({ hreflang, href }) => `    <xhtml:link rel="alternate" hreflang="${hreflang}" href="${href}"/>`)
+    .join('\n');
 
   const urlEntry = ({ loc, lastmod: date, changefreq, priority, links }) => `  <url>
     <loc>${SITE}${loc}</loc>
@@ -96,12 +89,10 @@ ${links ? `${links}\n` : ''}    <lastmod>${date}T10:00:00+01:00</lastmod>
     <priority>${priority}</priority>
   </url>`;
 
-  const pagesIn = (code) => localizedPages.map((page) => urlEntry({
-    loc: localizedPath(page, code, defaultLocale),
-    lastmod: lastmod[localizedPath(page, code, defaultLocale)],
-    ...PAGE_SETTINGS[page],
-    links: alternates(page)
-  })).join('\n');
+  const pagesIn = (code) => localizedPages.map((page) => {
+    const loc = localizedPath(page, code, locales);
+    return urlEntry({ loc, lastmod: lastmod[loc], ...PAGE_SETTINGS[page], links: alternates(page) });
+  }).join('\n');
 
   const otherLanguages = locales.locales
     .filter((l) => l.code !== defaultLocale)
@@ -130,7 +121,7 @@ if (require.main === module) {
   try {
     console.log('🔍 Generating sitemap from blog posts and src/i18n/locales.json...');
     const posts = readBlogPosts(fs.readFileSync(registryPath, 'utf8'));
-    const locales = JSON.parse(fs.readFileSync(localesPath, 'utf8'));
+    const locales = readLocales();
     console.log(`✅ Found ${posts.length} blog posts`);
 
     fs.writeFileSync(sitemapPath, buildSitemap({ locales, posts }), 'utf8');

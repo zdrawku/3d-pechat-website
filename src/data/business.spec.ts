@@ -1,18 +1,11 @@
-import { BUSINESS, formatPhone, openingHoursLabel } from './business';
+import { TestBed } from '@angular/core/testing';
+
+import { BUSINESS, formatPhone } from './business';
+import { I18nService } from '../app/i18n/i18n.service';
+import { openingHoursText } from '../app/i18n/business-copy';
 
 describe('business data', () => {
-  it('formats the current opening hours as Bulgarian copy', () => {
-    expect(openingHoursLabel()).toBe('всеки ден от 9:00 до 18:00');
-  });
-
-  it('lists partial weeks by day', () => {
-    expect(openingHoursLabel([
-      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '09:00', closes: '18:00' },
-      { days: ['Saturday'], opens: '10:00', closes: '14:00' }
-    ])).toBe('пон.–пет. от 9:00 до 18:00; съб. от 10:00 до 14:00');
-  });
-
-  // English (and every other language's) hours are formatted by
+  // Opening hours as text (every language, partial weeks) are formatted by
   // src/app/i18n/business-copy.ts — see business-copy.spec.ts.
   it('formats the phone the way the site prints it', () => {
     expect(formatPhone()).toBe('+359 883 310 616');
@@ -39,7 +32,8 @@ describe('business data', () => {
     expect(facts).toContain(`${BUSINESS.rushSurchargePercent}% надценка`);
     expect(facts).toContain(`до ${BUSINESS.maxPieceCm} × ${BUSINESS.maxPieceCm} × ${BUSINESS.maxPieceCm} см`);
     expect(facts).toContain(`безплатна в цялата страна за поръчки над ${BUSINESS.freeDeliveryOverEur} €`);
-    expect(facts).toContain(openingHoursLabel());
+    // The hours exactly as the contact page renders them in Bulgarian.
+    expect(facts).toContain(openingHoursText(TestBed.inject(I18nService)));
     expect(facts).toContain(`до ${BUSINESS.replyWithinHours} часа`);
     for (const format of BUSINESS.fileFormats) {
       expect(facts).withContext(format).toContain(format);

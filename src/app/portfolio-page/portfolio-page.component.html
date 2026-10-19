@@ -20,9 +20,9 @@
       </p>
     </div>
     <div class="masonry-gallery img-focus stagger-in">
-      @for (image of carouselImages; track image.src; let i = $index) {
+      @for (image of carouselImages(); track image.src; let i = $index) {
         <div class="masonry-item" [style.--i]="i">
-          <img [src]="image.src" [alt]="image.alt || ('portfolio.galleryAlt' | t: { n: i + 1 })" class="masonry-image" loading="lazy" />
+          <img [src]="image.src" [alt]="image.alt || ('portfolio.galleryAlt' | t: { n: i + 1 })" [attr.lang]="image.lang" class="masonry-image" loading="lazy" />
         </div>
         <!-- Quote CTA (shared .cta-band) spanning the wall after ~4 rows of
              photos: after 4 at 1 column, 9 at 2, 13 at 3. One copy per column

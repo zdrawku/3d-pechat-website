@@ -131,7 +131,7 @@
         <!-- The blog is Bulgarian-only: from another language it leads to the
              Bulgarian articles, marked with hreflang. -->
         <a class="drawer_chip" [routerLink]="['/blog']" routerLinkActive="active"
-           [attr.hreflang]="isDefaultLocale() ? null : defaultLocale" (click)="closeDrawerOnMobile()">
+           [attr.hreflang]="i18n.langIfForeign()" (click)="closeDrawerOnMobile()">
           <span class="drawer_chip_tile">
             <igx-icon>article</igx-icon>
           </span>
@@ -209,12 +209,12 @@
               {{ 'shell.footer.prices' | t }}
             </a>
             <a [routerLink]="['/blog']" class="ig-typography__body-2 footer_link"
-               [attr.hreflang]="isDefaultLocale() ? null : defaultLocale">
+               [attr.hreflang]="i18n.langIfForeign()">
               {{ 'shell.footer.blog' | t }}
             </a>
             <!-- Plain, crawlable links to this page in every other language (the
                  navbar switcher's menu only exists while it is open). -->
-            @for (locale of otherLocales(); track locale.code) {
+            @for (locale of i18n.otherLocales(); track locale.code) {
               <a [routerLink]="languageLink(locale.code)" class="ig-typography__body-2 footer_link"
                  [attr.hreflang]="locale.code" [attr.lang]="locale.code"
                  [attr.data-testid]="'footer-language-' + locale.code">

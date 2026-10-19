@@ -5,12 +5,12 @@
 
 const fs = require('fs');
 const path = require('path');
+const { SITE, localizedPath, readLocales } = require('./locale-urls');
 
 const ROOT = path.resolve(__dirname, '..');
 const SERVICE_FILE = path.join(ROOT, 'src/app/services/blog-posts.registry.ts');
 const BUSINESS_FILE = path.join(ROOT, 'src/data/business.json');
 const FAQ_FILE = path.join(ROOT, 'src/data/faq.json');
-const LOCALES_FILE = path.join(ROOT, 'src/i18n/locales.json');
 const OUT_FILE = path.join(ROOT, 'src/llms.txt');
 
 // Trailing slashes match the canonical URLs (GitHub Pages 301-redirects the
@@ -29,7 +29,6 @@ const MAIN_PAGES = [
 // page has no entry here, so a new page or language can't be left out.
 const LANGUAGE_PAGES = {
   en: {
-    heading: 'English',
     intro: 'The main pages are also available in English (the blog is Bulgarian only). Enquiries are answered in English and Bulgarian.',
     pages: {
       '/': { label: 'Home', desc: 'Custom FDM 3D printing in Sofia: prototypes, functional parts, small batches and personalised gifts.' },
@@ -49,14 +48,14 @@ function languageSections(locales) {
       const copy = LANGUAGE_PAGES[l.code];
       if (!copy) throw new Error(`generate-llms.js: no LANGUAGE_PAGES entry for "${l.code}"`);
       return [
-        `## ${copy.heading}`,
+        `## ${l.label}`,
         '',
         copy.intro,
         '',
         ...locales.localizedPages.map((page) => {
           const entry = copy.pages[page];
           if (!entry) throw new Error(`generate-llms.js: no ${l.code} label/description for ${page}`);
-          return `- [${entry.label}](https://3dpechat.bg/${l.code}${page}): ${entry.desc}`;
+          return `- [${entry.label}](${SITE}${localizedPath(page, l.code, locales)}): ${entry.desc}`;
         }),
         '',
       ];
@@ -105,7 +104,7 @@ function generate() {
   const posts = parseBlogPosts(src);
   const business = JSON.parse(fs.readFileSync(BUSINESS_FILE, 'utf8'));
   const faq = JSON.parse(fs.readFileSync(FAQ_FILE, 'utf8'));
-  const locales = JSON.parse(fs.readFileSync(LOCALES_FILE, 'utf8'));
+  const locales = readLocales();
   const phone = business.telephone.replace(/^\+359(\d{3})(\d{3})(\d{3})$/, '+359 $1 $2 $3');
 
   const lines = [
@@ -143,4 +142,8 @@ function generate() {
   console.log(`✅ llms.txt regenerated with ${posts.length} blog posts → src/llms.txt`);
 }
 
-generate();
+if (require.main === module) {
+  generate();
+}
+
+module.exports = { languageSections };

@@ -29,6 +29,30 @@ describe('MainPageComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  // Design variant C (2026-10-19): icon / number and title on one row in the
+  // card header, description below. Guards against a slide back to plain HTML
+  // or emoji icons (CLAUDE.md Rule 1).
+  it('builds the „Защо да изберете нас“ and „Как работим“ cards from Ignite UI components', () => {
+    const el: HTMLElement = fixture.nativeElement;
+
+    const props = Array.from(el.querySelectorAll('.props_section igx-card'));
+    expect(props.length).toBe(4);
+    for (const card of props) {
+      const icon = card.querySelector('igx-card-header > .igx-card-header__thumbnail igx-avatar igx-icon');
+      expect(icon?.textContent?.trim()).withContext('a Material icon in the header avatar').toMatch(/^[a-z_]+$/);
+      expect(card.querySelector('igx-card-header [igxCardHeaderTitle]')?.textContent?.trim().length).toBeGreaterThan(0);
+      expect(card.querySelector('igx-card-content p')?.textContent?.trim().length).toBeGreaterThan(20);
+    }
+    expect(el.querySelector('.props_section')!.textContent).not.toMatch(/\p{Extended_Pictographic}/u);
+
+    const steps = Array.from(el.querySelectorAll('.process_steps > li > igx-card'));
+    expect(steps.map(s => s.querySelector('igx-card-header igx-avatar')?.textContent?.trim())).toEqual(['1', '2', '3', '4']);
+    for (const step of steps) {
+      expect(step.querySelector('igx-card-header [igxCardHeaderTitle]')?.textContent?.trim().length).toBeGreaterThan(0);
+      expect(step.querySelector('igx-card-content p')?.textContent?.trim().length).toBeGreaterThan(20);
+    }
+  });
+
   describe('„Вижте ни в действие“ video section', () => {
     const section = (): HTMLElement =>
       fixture.nativeElement.querySelector('[data-testid="home-video-section"]');

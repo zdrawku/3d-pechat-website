@@ -1,9 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { Meta, Title } from '@angular/platform-browser';
-import { PAGE_PATHS, SeoService, faqPageSchema } from './seo.service';
+import { SeoService, faqPageSchema } from './seo.service';
 import { BLOG_POSTS } from './blog-posts.registry';
 import { I18nService } from '../i18n/i18n.service';
-import { LOCALIZED_PAGES } from '../i18n/locales';
 
 /**
  * Unit tests for SeoService — the meta-tag/title/canonical logic that protects
@@ -72,7 +71,7 @@ describe('SeoService', () => {
     });
 
     it('pairs a page that exists in every language with its versions, Bulgarian as x-default', () => {
-      service.updateSeo({ title: 'T', description: 'D', url: 'https://3dpechat.bg/prices/' });
+      service.applyPageSeo('prices');
       expect(alternates()).toEqual([
         'bg https://3dpechat.bg/prices/',
         'en https://3dpechat.bg/en/prices/',
@@ -83,7 +82,7 @@ describe('SeoService', () => {
     });
 
     it('drops hreflang and og:locale:alternate on a Bulgarian-only page (the blog)', () => {
-      service.updateSeo({ title: 'T', description: 'D', url: 'https://3dpechat.bg/prices/' });
+      service.applyPageSeo('prices');
       service.updateSeo({ title: 'T2', description: 'D2', url: 'https://3dpechat.bg/blog/what-is-3d-printing/' });
       expect(alternates()).toEqual([]);
       expect(ogAlternates()).toEqual([]);
@@ -91,8 +90,8 @@ describe('SeoService', () => {
     });
 
     it('never duplicates hreflang links on repeated calls', () => {
-      service.updateSeo({ title: 'T', description: 'D', url: 'https://3dpechat.bg/' });
-      service.updateSeo({ title: 'T', description: 'D', url: 'https://3dpechat.bg/' });
+      service.applyPageSeo('home');
+      service.applyPageSeo('home');
       expect(alternates().length).toBe(3);
       expect(ogAlternates()).toEqual(['en_US']);
     });
@@ -114,10 +113,6 @@ describe('SeoService', () => {
       service.applyPageSeo('home');
       expect(title.getTitle()).toBe('3D печат и 3D принтиране по поръчка | Професионални услуги');
       expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe('https://3dpechat.bg/');
-    });
-
-    it('lists exactly the pages of src/i18n/locales.json as PAGE_PATHS', () => {
-      expect([...LOCALIZED_PAGES].sort()).toEqual(Object.values(PAGE_PATHS).sort());
     });
   });
 

@@ -88,7 +88,7 @@
         @if (product.readMore; as readMore) {
           <a igxButton="flat" class="read-more-link" [routerLink]="readMore.url"
             [attr.aria-label]="'products.grid.readMoreLabel' | t: { label: readMore.label }"
-            [attr.hreflang]="articleHreflang()" data-testid="product-read-more">
+            [attr.hreflang]="i18n.langIfForeign()" data-testid="product-read-more">
             {{ 'products.grid.readMore' | t }}
             <igx-icon family="material" aria-hidden="true">arrow_forward</igx-icon>
           </a>

@@ -1,13 +1,13 @@
 import registry from '../../i18n/locales.json';
 import { coreMessages } from '../../i18n/bg';
-import type { LocaleBundle, SourceBundle } from './i18n.types';
+import type { LocaleBundle, PageNamespace, SourceBundle } from './i18n.types';
 
 /**
  * Bulgarian, the source language: its core namespaces only (each page registers
  * its own — see src/i18n/bg/index.ts). Its content is src/data/ itself, so the
  * overlays are empty.
  */
-export const BULGARIAN: SourceBundle = { messages: coreMessages, faq: [], products: {}, videos: {} };
+export const BULGARIAN: SourceBundle = { messages: coreMessages, faq: {}, gallery: {}, products: {}, videos: {} };
 
 /**
  * How each language is loaded. Bulgarian's core strings ship in the main bundle
@@ -44,11 +44,23 @@ export const DEFAULT_LOCALE = registry.defaultLocale as Locale;
 /** Every language, default first (src/i18n/locales.json). */
 export const LOCALES = registry.locales as readonly LocaleDefinition[];
 
+/** Every language but the default one — each served under its own /<code>/ prefix. */
+export const TRANSLATED_LOCALES = LOCALES.filter((l) => l.code !== DEFAULT_LOCALE);
+
 /**
  * Pages that exist in every language, as Bulgarian paths with a trailing slash.
  * Everything else (the blog) is Bulgarian-only and has no language versions.
  */
 export const LOCALIZED_PAGES: readonly string[] = registry.localizedPages;
+
+/**
+ * A page namespace's Bulgarian path: 'home' → '/', 'prices' → '/prices/'.
+ * locales.spec.ts checks that the namespaces in seo.json map to exactly
+ * LOCALIZED_PAGES.
+ */
+export function pagePath(page: PageNamespace): string {
+  return page === 'home' ? '/' : `/${page}/`;
+}
 
 export function isLocale(value: unknown): value is Locale {
   return typeof value === 'string' && Object.prototype.hasOwnProperty.call(LOADERS, value);
@@ -63,6 +75,9 @@ export function localeDefinition(locale: Locale): LocaleDefinition {
 }
 
 const withoutTrailingSlash = (path: string): string => path.replace(/\/+$/, '') || '/';
+
+/** LOCALIZED_PAGES normalised once, for isLocalizedPage() (it runs for every localizePath call). */
+const LOCALIZED_PAGE_SET = new Set(LOCALIZED_PAGES.map(withoutTrailingSlash));
 
 /**
  * Splits a URL path into its language and the Bulgarian path:
@@ -80,8 +95,7 @@ export function splitLocalePath(url: string): { locale: Locale; path: string } {
 
 /** True for a page that exists in every language (`localizedPages`), with or without a trailing slash. */
 export function isLocalizedPage(path: string): boolean {
-  const normalized = withoutTrailingSlash(path);
-  return LOCALIZED_PAGES.some((page) => withoutTrailingSlash(page) === normalized);
+  return LOCALIZED_PAGE_SET.has(withoutTrailingSlash(path));
 }
 
 /**
@@ -124,16 +138,10 @@ export function languageAlternates(path: string, origin: string): LanguageAltern
  * Where the language switcher sends a visitor: the same page in `target`
  * (keeping a #fragment such as a product anchor), or that language's home page
  * when the current page exists only in Bulgarian.
- *
- * Returns a router URL — slash-free like every routerLink ('/en/prices',
- * '/en', '/'): the router parses a trailing slash as an extra empty segment,
- * which matches no page and lands on the 404. TrailingSlashUrlSerializer adds
- * the slash back in the address bar and in hrefs.
  */
 export function switchLocaleUrl(currentUrl: string, target: Locale): string {
   const [withoutFragment, fragment] = currentUrl.split('#');
   const { path } = splitLocalePath(withoutFragment);
-  const page = isLocalizedPage(path) ? withoutTrailingSlash(path) : '/';
-  const url = withoutTrailingSlash(localizePath(page, target));
+  const url = localizePath(isLocalizedPage(path) ? path : '/', target);
   return fragment ? `${url}#${fragment}` : url;
 }
