@@ -181,6 +181,13 @@ deploy, `npm run check:live` verifies production read-only (crawler access,
 schema vs `business.json`, every sitemap URL, redirects, llms.txt, FAQ, and
 `lang` + `hreflang` on every page in every language).
 
+**Close every change set with the [`handoff`](.claude/skills/handoff/SKILL.md)
+skill:** `node scripts/handoff-checklist.js` maps the changed files to their
+checks, and the final message carries a **Test plan** (what ran, with results;
+what to check by hand, with exact URLs in both languages) and a **What's next
+(once it's live)** list (check:live, Search Console, IndexNow, visual
+baselines, Analytics… — ordered, with who does each and when).
+
 ## Other standing rules
 
 - Keep `404.html` in sync with `index.html` (meta tags, CSP, scripts). The
@@ -197,3 +204,6 @@ schema vs `business.json`, every sitemap URL, redirects, llms.txt, FAQ, and
 - **`/add-product`** ([`.claude/skills/add-product/SKILL.md`](.claude/skills/add-product/SKILL.md))
   — add a catalog product from photos + a one-line brief; converts to webp,
   drafts the Bulgarian copy for approval, appends to `products.json`, opens a PR.
+- **`/handoff`** ([`.claude/skills/handoff/SKILL.md`](.claude/skills/handoff/SKILL.md))
+  — the end of every change: a test plan for exactly the changed files and the
+  steps to run once it's live (`scripts/handoff-checklist.js`).

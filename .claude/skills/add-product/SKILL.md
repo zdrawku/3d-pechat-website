@@ -135,6 +135,13 @@ sensible).
 
 Merging deploys automatically via `.github/workflows/github-pages.yml`.
 
+### 7. Hand off
+
+Close with the [`handoff`](../handoff/SKILL.md) skill: its **Test plan**
+(build + unit results; by hand: the card on `/products/#<linkId>` and
+`/en/products/#<linkId>`, both images, the order button, phone width) and
+**What's next** (after the deploy: open the deep link on a phone, `npm run check:live`).
+
 ## Notes
 
 - **Any UI you build must use Ignite UI Angular components** (`igx-card`,
