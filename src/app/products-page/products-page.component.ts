@@ -8,6 +8,7 @@ import { IgxButtonDirective, IgxIconModule, IgxInputGroupModule, IGX_CARD_DIRECT
 import { ProductGridComponent } from '../shared/product-grid/product-grid.component';
 import { HappyCustomersComponent } from '../shared/happy-customers/happy-customers.component';
 import { SeoService } from '../services/seo.service';
+import { AnalyticsService } from '../services/analytics.service';
 import { Product, ProductVariant } from '../models/product.model';
 import productsData from '../../data/products.json';
 import { I18nService } from '../i18n/i18n.service';
@@ -30,6 +31,7 @@ export class ProductsPageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
   private readonly i18n = inject(I18nService);
+  private readonly analytics = inject(AnalyticsService);
 
   // Products are data, not code: the catalog lives in `src/data/products.json`
   // and is imported at build time (keeps the prerendered SSR output complete for
@@ -197,16 +199,19 @@ export class ProductsPageComponent implements OnInit {
   }
 
   public navigateToContact(): void {
+    this.analytics.track('quote_click', { cta_location: 'products_cta' });
     this.router.navigate([this.i18n.path('/contact')]);
   }
 
   public orderProduct(product: ProductVariant): void {
     const message = this.i18n.t('products.orderMessage', { name: product.name, description: product.description });
 
+    this.analytics.track('order_click', { product_id: product.linkId, product_name: product.name });
     this.router.navigate([this.i18n.path('/contact')], {
       state: {
         prefilledMessage: message,
-        productName: product.name
+        productName: product.name,
+        leadSource: 'product_order'
       }
     });
   }

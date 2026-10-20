@@ -8,6 +8,7 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import registry from '../../i18n/locales.json';
 import { I18nService } from '../i18n/i18n.service';
 import { BLOG_POSTS } from '../services/blog-posts.registry';
+import { AnalyticsService } from '../services/analytics.service';
 
 describe('BlogListPageComponent', () => {
   let component: BlogListPageComponent;
@@ -88,6 +89,23 @@ describe('BlogListPageComponent', () => {
     component.clearSearch();
     expect(component.searchText).toBe('');
     expect(component.filteredBlogs.length).toBe(2);
+  });
+
+  it('reports a typed search to GA (which waits for a pause) with its result count', () => {
+    const search = spyOn(TestBed.inject(AnalyticsService), 'search');
+    component.searchText = 'Test Blog 1';
+    component.onSearchInput();
+
+    expect(component.filteredBlogs.length).toBe(1);
+    expect(search).toHaveBeenCalledOnceWith('Test Blog 1', 1, 'blog');
+  });
+
+  it('reports a tag click to GA at once', () => {
+    const search = spyOn(TestBed.inject(AnalyticsService), 'search');
+    spyOn(window, 'scrollTo');
+    component.searchByTag(new Event('click'), 'guide');
+
+    expect(search).toHaveBeenCalledOnceWith('guide', 1, 'blog_tag', true);
   });
 
   it('should format date correctly', () => {

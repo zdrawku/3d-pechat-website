@@ -1,7 +1,9 @@
+import { inject } from '@angular/core';
 import { Route, Routes } from '@angular/router';
 
 import { articleRoute } from './blog/article/article.routes';
 import { localeGuard } from './i18n/provide-i18n';
+import { I18nService } from './i18n/i18n.service';
 import { DEFAULT_LOCALE, Locale, TRANSLATED_LOCALES } from './i18n/locales';
 
 /**
@@ -44,7 +46,21 @@ const localizedPages = (): Routes => [
   {
     path: 'contact',
     loadComponent: () => import('./contact-me-page/contact-me-page.component').then(m => m.ContactMePageComponent)
-  }
+  },
+  // Privacy Policy and Terms of Use: one page component, the text from
+  // src/legal/<lang>/<doc>.md (legal-page/legal-docs.ts).
+  ...(['privacy', 'terms'] as const).map((doc): Route => ({
+    path: doc,
+    loadComponent: () => import('./legal-page/legal-page.component').then(m => m.LegalPageComponent),
+    resolve: {
+      // The language is read here, in the injection context; the localeGuard has set it.
+      legalText: () => {
+        const locale = inject(I18nService).locale();
+        return import('./legal-page/legal-docs').then(m => m.loadLegalText(doc, locale));
+      }
+    },
+    data: { doc }
+  }))
 ];
 
 const blogIndex: Route = {

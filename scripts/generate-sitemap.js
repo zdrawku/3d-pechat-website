@@ -28,7 +28,11 @@ const MAIN_PAGE_LASTMOD = {
   '/en/products/': '2026-10-18',  // English version created
   '/en/prices/': '2026-10-18',    // English version created
   '/en/contact/': '2026-10-18',   // English version created
-  '/en/blog/': '2026-10-19'       // English blog created (8 translated posts)
+  '/en/blog/': '2026-10-19',      // English blog created (8 translated posts)
+  '/privacy/': '2026-10-20',      // Privacy Policy created (src/legal/, LEGAL_DOCS in legal-page/legal-docs.ts)
+  '/terms/': '2026-10-20',        // Terms of Use created
+  '/en/privacy/': '2026-10-20',   // English Privacy Policy created
+  '/en/terms/': '2026-10-20'      // English Terms of Use created
 };
 
 // changefreq / priority per page, the same in every language.
@@ -38,7 +42,9 @@ const PAGE_SETTINGS = {
   '/products/': { changefreq: 'weekly', priority: '0.8' },
   '/prices/': { changefreq: 'monthly', priority: '0.7' },
   '/contact/': { changefreq: 'monthly', priority: '0.6' },
-  '/blog/': { changefreq: 'weekly', priority: '0.9' }
+  '/blog/': { changefreq: 'weekly', priority: '0.9' },
+  '/privacy/': { changefreq: 'yearly', priority: '0.3' },
+  '/terms/': { changefreq: 'yearly', priority: '0.3' }
 };
 const POST_SETTINGS = { changefreq: 'monthly', priority: '0.8' };
 

@@ -1,5 +1,5 @@
 @if (view(); as post) {
-  <article class="blog-container">
+  <article class="blog-container" data-analytics-area="article">
     <app-article-toolbar [slug]="post.source"></app-article-toolbar>
     <markdown [data]="post.postContent"></markdown>
     @if (post.extras.video === 'featured') {
@@ -23,7 +23,8 @@
        it with the primary colour, which would paint the contained button's label
        orange-on-orange (axe color-contrast). -->
   @if (post.extras.cta; as cta) {
-    <nav class="article-cta" [attr.aria-label]="'blog.article.nextSteps' | t" data-testid="article-cta">
+    <nav class="article-cta" [attr.aria-label]="'blog.article.nextSteps' | t" data-testid="article-cta"
+         data-analytics-area="article_cta">
       <a igxButton="contained" [routerLink]="'/products' | localizePath" data-testid="article-cta-products">
         <igx-icon>inventory_2</igx-icon>
         {{ 'blog.article.products' | t }}

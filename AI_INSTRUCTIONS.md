@@ -137,6 +137,37 @@ Click-to-play player for our YouTube videos (home „Вижте ни в дейс
 
 ---
 
+## 📈 Analytics
+
+GA4 property `G-YBR644GQL9`, behind the cookie consent card (below): nothing from Google loads until the visitor accepts. Page views are automatic once it loads; everything else goes through **`AnalyticsService`** (`src/app/services/analytics.service.ts`). New code calls `analytics.track('<event>', {...})` and never `gtag()` directly; the service is a no-op before consent, during prerender, in unit tests and when GA is blocked. (The YouTube `video_start` and error-handler `exception` events predate it and still call `gtag` themselves.)
+
+| Event | Sent when | Parameters |
+|-------|-----------|------------|
+| `quote_click` | A link to the contact page (any language) is clicked, or the products page's „оферта“ button / the price calculator's estimate button | `cta_location` |
+| `contact_click` | A `tel:`, `viber:` or `mailto:` link is clicked, anywhere | `method` (`phone` \| `viber` \| `email`), `cta_location` |
+| `order_click` | A product card's „Поръчайте сега“ | `product_id` (the `linkId`), `product_name` |
+| `generate_lead` | The contact form was sent (Web3Forms accepted it) | `lead_source` (`contact_form` \| `product_order` \| `price_calculator`) |
+| `select_language` | The navbar switcher or a footer language link | `language`, `previous_language`, `cta_location` |
+| `search` | Blog search, once typing pauses for 1.5 s (2+ characters), or a tag click | `search_term`, `search_type` (`blog` \| `blog_tag`), `result_count` |
+
+- **Links need no code.** `trackLinks()` (started by `AppComponent`) listens for clicks site-wide, so a new phone link, contact CTA or a link in blog markdown is tracked by itself. Its `cta_location` is the nearest `data-analytics-area` around it — `navbar`, `menu`, `footer`, `home_hero`, `home_video`, `home_about`, `home_cta`, `portfolio_cta`, `article`, `article_cta`, `contact_info`, `contact_form` — else `content`. A new CTA section gets its own `data-analytics-area`.
+- **Buttons call `track()`** themselves; add the event and its parameters to `AnalyticsEvents` first, so the call is typed.
+- **Renaming an event or parameter breaks the GA setup.** One-time setup in GA4 → Admin: *Key events* — `generate_lead` and `contact_click` (optionally `quote_click`, `order_click`); *Custom definitions* → event-scoped dimensions for `cta_location`, `method`, `lead_source`, `product_id`, `language`, `search_type` (`search_term` is built in). Check new events in Admin → DebugView.
+- **Consent** ([approved design „B“](https://claude.ai/artifact/LkW9j6L1ZpAqANj1hTKWLP)): Consent Mode v2 in **basic mode**. The inline Google tag block in `index.html` and `404.html` (keep them identical) starts every visitor with all four signals `denied` and defines `grantAnalytics()`, which grants `analytics_storage`, runs `config` and loads `gtag.js`. `ConsentService` (`src/app/services/consent.service.ts`) keeps the answer in localStorage under `consent` (`{"analytics":"granted"|"denied","at":<ms>}`) for 182 days; the inline block reads the same key to load GA on `load` for a visitor who accepted. Change the key, format or age in both places together.
+  - **The card** — `app-consent-banner` (`src/app/shared/consent-banner/`): an `igx-card` in the bottom-right corner (a sheet along the bottom on phones), browser-only, two equal `igxButton="contained"` answers. The footer's „Бисквитки“ button reopens it; declining after accepting sends a `denied` update and deletes the `_ga*` cookies. The Google review snackbar waits while the card is open.
+  - **Only Google Analytics needs consent.** The theme choice (localStorage), hCaptcha (loads when the visitor starts the contact form) and YouTube (click-to-play) don't. Adding anything that sets non-essential cookies (an ads pixel, a chat widget) means a second category in the card — variant D of the artifact.
+  - **e2e:** `playwright.config.ts` seeds a „declined“ answer for every test, so the card stays out of screenshots and no test loads GA; `e2e/consent.spec.ts` starts without one.
+
+### Legal pages (Privacy Policy, Terms of Use)
+`/privacy/` and `/terms/` (and `/en/…`): one component, `src/app/legal-page/` ([approved design „B“](https://claude.ai/artifact/GWYULPeXsb6CdQtBUKFisy): a „Накратко“ card, a contents list, numbered sections). The site is run by a private individual, named in `business.json` → `operator` — never call it a company or firm.
+- **Text**: markdown per language, `src/legal/<lang>/privacy.md` and `terms.md`. Lines before the first section are the summary points, ``- `material_icon` text``; each section is `## Title {#id}` (no number: the page numbers them). The ids are the same in every language, so `/privacy/#cookies` and `/en/privacy/#cookies` both work — the consent card links to `#cookies`.
+- **Facts**: `{operator}` and `{operatorAddress}` (the operator's permanent address, which the e-commerce act asks a private individual to show), `{address}` (where the work is done), `{email}`, `{phone}`, `{freeDeliveryOver}` come from `business.json`; anything else the texts state about the service must match its `facts` (Rule 5). Prices, lead times and delivery terms are referred to the `/prices/` page and the offer rather than repeated.
+- **Changing a text**: change every language, bump `dateModified` in `LEGAL_DOCS` (`legal-docs.ts`) and the four `MAIN_PAGE_LASTMOD` entries in `scripts/generate-sitemap.js`. If what is collected, by whom or for how long changes (a new tool, a longer retention), the Privacy Policy must change before the tool goes live. `legal-docs.spec.ts` checks both languages have the same sections and summary icons and that every placeholder is filled.
+- **Links**: footer bottom row (Поверителност · Общи условия · Бисквитки), the consent card („Повече за данните“ → `#cookies`) and a line under the contact form's send button.
+- **Third parties**: the Privacy Policy names every service that receives visitor or customer data. Adding one (a script, an embed, a font or analytics host) means adding it to the policy in both languages first. Fonts are self-hosted (`src/assets/fonts/`, CSP `font-src 'self'`) for this reason — never link Google Fonts again.
+
+---
+
 ## ⚡ Performance & Optimization
 - **Images**:
     - Hero: 1920x1080px, <200KB, `fetchpriority="high"`, `loading="eager"`.

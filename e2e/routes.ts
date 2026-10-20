@@ -27,6 +27,9 @@ export const CORE_ROUTES: RouteSpec[] = [
   { path: '/blog', title: 'Блог' },
   // The English home page (src/i18n/locales.json); kept here for its visual baseline.
   { path: '/en', heading: 'Professional custom 3D printing', title: 'Custom 3D Printing', inDrawer: false },
+  // The legal pages, linked from the footer (not drawer chips).
+  { path: '/privacy', heading: 'Политика за поверителност', title: 'Политика за поверителност', inDrawer: false },
+  { path: '/terms', heading: 'Общи условия', title: 'Общи условия', inDrawer: false },
 ];
 
 /**
@@ -40,6 +43,8 @@ export const ENGLISH_ROUTES: RouteSpec[] = [
   { path: '/en/prices', heading: '3D printing prices', title: 'Prices' },
   { path: '/en/contact', heading: 'Get in touch', title: 'Contact' },
   { path: '/en/blog', heading: '3D Printing Blog', title: 'Blog' },
+  { path: '/en/privacy', heading: 'Privacy Policy', title: 'Privacy Policy' },
+  { path: '/en/terms', heading: 'Terms of Use', title: 'Terms of Use' },
 ];
 
 /**

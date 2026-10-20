@@ -28,5 +28,15 @@
     "title": "3D Printing Blog – Guides and Tips | 3dpechat.bg",
     "description": "Guides and practical tips about 3D printing from our studio in Sofia: choosing PLA filament, infill settings, smoothing prints, lithophanes and our own designs.",
     "keywords": "3D printing blog, 3D printing guide, PLA filament, infill, PLA smoothing, lithophane, 3D printing Sofia"
+  },
+  "privacy": {
+    "title": "Privacy Policy - 3D Printing Bulgaria",
+    "description": "Who handles your data, what we receive through the form, email and Viber, how long we keep it, cookies and your rights.",
+    "keywords": "privacy policy, personal data, GDPR, cookies, 3dpechat.bg"
+  },
+  "terms": {
+    "title": "Terms of Use - 3D Printing Bulgaria",
+    "description": "How ordering works, payment and delivery, cancellation and returns, defects and the legal guarantee, rights to the 3D models you send.",
+    "keywords": "terms of use, 3D printing order, returns, guarantee, delivery, 3dpechat.bg"
   }
 }

@@ -15,7 +15,7 @@
 
   <div class="contact-shell">
     <!-- Info panel -->
-    <div class="contact-info">
+    <div class="contact-info" data-analytics-area="contact_info">
       <h2 class="info-title">{{ 'contact.info.heading' | t }}</h2>
       <p class="info-lead">{{ 'contact.info.lead' | t }}</p>
 
@@ -98,7 +98,7 @@
     </div>
 
     <!-- Form panel -->
-    <div class="contact-form-wrap">
+    <div class="contact-form-wrap" data-analytics-area="contact_form">
       <h3 class="form-title">{{ 'contact.form.heading' | t }}</h3>
       <form class="contact-form" #contactForm="ngForm" (focusin)="onFormInteraction()">
         <div class="form-grid">
@@ -195,6 +195,13 @@
             <igx-icon>arrow_forward</igx-icon>
           }
         </button>
+
+        <!-- Where the data is collected, say what it's for (GDPR Art. 13). No checkbox:
+             the basis is answering the request, not consent. -->
+        <p class="privacy-note" data-testid="contact-privacy-note">
+          {{ 'contact.form.privacyBefore' | t }}
+          <a [routerLink]="'/privacy' | localizePath">{{ 'contact.form.privacyLink' | t }}</a>{{ 'contact.form.privacyAfter' | t }}
+        </p>
 
         @if (submitStatus === 'success') {
           <p class="form-status form-status--success">

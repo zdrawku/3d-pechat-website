@@ -240,6 +240,18 @@
   }
 }
 
+.privacy-note {
+  margin: rem(10px) 0 0;
+  font-size: rem(13px);
+  line-height: 1.5;
+  color: var(--ig-gray-700);
+
+  a {
+    color: var(--accent-on-tint);
+    text-underline-offset: 0.2em;
+  }
+}
+
 .submit-btn {
   --ig-size: var(--ig-size-medium);
   display: inline-flex;

@@ -8,6 +8,7 @@ import productsData from '../../data/products.json';
 import { VIDEOS } from '../shared/youtube-embed/video.util';
 import { I18nService } from '../i18n/i18n.service';
 import { localizeProduct } from '../i18n/localized-content';
+import { AnalyticsService } from '../services/analytics.service';
 
 describe('ProductsPageComponent', () => {
   let component: ProductsPageComponent;
@@ -27,6 +28,29 @@ describe('ProductsPageComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  describe('analytics', () => {
+    let track: jasmine.Spy;
+    let navigate: jasmine.Spy;
+
+    beforeEach(() => {
+      track = spyOn(TestBed.inject(AnalyticsService), 'track');
+      navigate = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true);
+    });
+
+    it('reports an order click with the product, and tells the form the lead came from it', () => {
+      const product = component.productVariants[0];
+      component.orderProduct(product);
+
+      expect(track).toHaveBeenCalledOnceWith('order_click', { product_id: product.linkId, product_name: product.name });
+      expect(navigate.calls.mostRecent().args[1]?.state?.['leadSource']).toBe('product_order');
+    });
+
+    it('reports the page’s „ask for an offer“ button as a quote click', () => {
+      component.navigateToContact();
+      expect(track).toHaveBeenCalledOnceWith('quote_click', { cta_location: 'products_cta' });
+    });
   });
 
   it('sorts A-Я with Bulgarian collation regardless of browser locale', () => {

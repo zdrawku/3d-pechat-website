@@ -1,0 +1,22 @@
+@if (consent.visible()) {
+  <section class="consent" aria-labelledby="consent-title" data-testid="consent-card">
+    <igx-card class="consent-card">
+      <igx-card-header class="consent-card_head">
+        <igx-avatar class="consent-card_icon" icon="cookie" shape="rounded" size="small" [attr.aria-hidden]="true"></igx-avatar>
+        <h2 igxCardHeaderTitle class="consent-card_title" id="consent-title">{{ 'shell.consent.title' | t }}</h2>
+      </igx-card-header>
+      <igx-card-content class="consent-card_body">
+        <p>{{ 'shell.consent.text' | t }}</p>
+        <a class="consent-card_more" [routerLink]="'/privacy' | localizePath" fragment="cookies"
+           data-testid="consent-more">{{ 'shell.consent.more' | t }}</a>
+      </igx-card-content>
+      <!-- Equal answers: same size, both filled, one row (design rule 1). -->
+      <igx-card-actions layout="justify" class="consent-card_actions">
+        <button igxButton="contained" type="button" class="consent-card_decline" (click)="consent.decline()"
+                data-testid="consent-decline">{{ 'shell.consent.decline' | t }}</button>
+        <button igxButton="contained" type="button" class="consent-card_accept" (click)="consent.accept()"
+                data-testid="consent-accept">{{ 'shell.consent.accept' | t }}</button>
+      </igx-card-actions>
+    </igx-card>
+  </section>
+}

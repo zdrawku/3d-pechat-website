@@ -11,6 +11,7 @@ import { TranslatePipe } from '../i18n/translate.pipe';
 import { BlogService } from '../services/blog.service';
 import { BlogPost } from '../models/blog-post.model';
 import { SeoService } from '../services/seo.service';
+import { AnalyticsService } from '../services/analytics.service';
 
 /**
  * The blog index in every language: /blog/ lists every post, /en/blog/ the
@@ -39,6 +40,7 @@ import { SeoService } from '../services/seo.service';
 })
 export class BlogListPageComponent implements OnInit {
   protected readonly i18n = inject(I18nService);
+  private readonly analytics = inject(AnalyticsService);
 
   allBlogs: BlogPost[] = [];
   filteredBlogs: BlogPost[] = [];
@@ -67,6 +69,12 @@ export class BlogListPageComponent implements OnInit {
       this.allBlogs = [...posts].sort((a, b) => b.date.getTime() - a.date.getTime());
       this.filteredBlogs = [...this.allBlogs];
     });
+  }
+
+  /** Typing in the search box: filters at once, reports the search to GA once the visitor pauses. */
+  onSearchInput(): void {
+    this.onSearch();
+    this.analytics.search(this.searchText, this.resultCount, 'blog');
   }
 
   onSearch(): void {
@@ -110,6 +118,7 @@ export class BlogListPageComponent implements OnInit {
     event.preventDefault();
     this.searchText = tag;
     this.onSearch();
+    this.analytics.search(tag, this.resultCount, 'blog_tag', true);
     // Scroll to top to show search results
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }

@@ -6,6 +6,7 @@ import { IgxButtonDirective, IgxSnackbarComponent } from 'igniteui-angular';
 
 import { GOOGLE_REVIEW_URL } from '../../../data/site-links';
 import { TranslatePipe } from '../../i18n/translate.pipe';
+import { ConsentService } from '../../services/consent.service';
 
 /** localStorage key holding the epoch-ms timestamp of the last time we asked. */
 const STORAGE_KEY = 'reviewCtaDismissedAt';
@@ -33,7 +34,9 @@ const SHOW_DELAY_MS = 2500;
  * - appears only after {@link NAVIGATIONS_BEFORE_ASK} route navigations in the session;
  * - clicking through *or* dismissing writes a timestamp to localStorage, which
  *   silences it for {@link COOL_DOWN_MS} (~30 days) — nobody is asked twice a month;
- * - fully browser-guarded, so SSR prerender never emits it into the static HTML.
+ * - fully browser-guarded, so SSR prerender never emits it into the static HTML;
+ * - waits while the cookie consent card is open, so two prompts never stack at
+ *   the bottom of a phone (the navigation after the answer can trigger it).
  *
  * Copy asks for an honest opinion, not a good rating: soliciting *positive*
  * reviews ("give us 5 stars") violates Google's review policy.
@@ -53,6 +56,7 @@ export class ReviewCtaComponent implements OnInit, OnDestroy {
 
   private readonly platformId = inject(PLATFORM_ID);
   private readonly router = inject(Router);
+  private readonly consent = inject(ConsentService);
 
   /** Gates the template: nothing is rendered during SSR prerender. */
   public readonly isBrowser = isPlatformBrowser(this.platformId);
@@ -93,7 +97,7 @@ export class ReviewCtaComponent implements OnInit, OnDestroy {
 
   private onNavigated(): void {
     this.navigations++;
-    if (this.navigations < NAVIGATIONS_BEFORE_ASK) {
+    if (this.navigations < NAVIGATIONS_BEFORE_ASK || this.consent.visible()) {
       return;
     }
 
@@ -101,7 +105,9 @@ export class ReviewCtaComponent implements OnInit, OnDestroy {
     this.routerSub?.unsubscribe();
     this.showHandle = setTimeout(() => {
       this.showHandle = null;
-      this.snackbar?.open();
+      if (!this.consent.visible()) {
+        this.snackbar?.open();
+      }
     }, SHOW_DELAY_MS);
   }
 

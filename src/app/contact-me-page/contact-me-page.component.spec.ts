@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
@@ -8,6 +8,7 @@ import { ContactMePageComponent } from './contact-me-page.component';
 import { BUSINESS } from '../../data/business';
 import { openingHoursText } from '../i18n/business-copy';
 import { I18nService } from '../i18n/i18n.service';
+import { AnalyticsService } from '../services/analytics.service';
 
 describe('ContactMePageComponent', () => {
   let component: ContactMePageComponent;
@@ -117,6 +118,54 @@ describe('ContactMePageComponent', () => {
       const open = spyOn(window, 'open');
       pill!.click();
       expect(open).toHaveBeenCalledWith('https://www.youtube.com/@3dpechatbg', '_blank');
+    });
+  });
+
+  describe('GA lead event', () => {
+    const form = { resetForm: () => undefined } as unknown as NgForm;
+    let track: jasmine.Spy;
+
+    beforeEach(() => track = spyOn(TestBed.inject(AnalyticsService), 'track'));
+    afterEach(() => history.replaceState(null, ''));
+
+    function fillIn(page: ContactMePageComponent): void {
+      page.value = 'Иван';
+      page.value1 = 'ivan@example.com';
+      page.value2 = 'Запитване';
+      page.message = 'Здравейте';
+      (page as unknown as { hcaptchaToken: string }).hcaptchaToken = 'token';
+    }
+    const web3formsReplies = (success: boolean) =>
+      spyOn(window, 'fetch').and.callFake(async () => new Response(JSON.stringify({ success })));
+
+    it('sends generate_lead once Web3Forms accepts the message', async () => {
+      web3formsReplies(true);
+      fillIn(component);
+      await component.sendEmail(form);
+
+      expect(component.submitStatus).toBe('success');
+      expect(track).toHaveBeenCalledOnceWith('generate_lead', { lead_source: 'contact_form' });
+    });
+
+    it('sends nothing for a rejected message or an incomplete form', async () => {
+      web3formsReplies(false);
+      fillIn(component);
+      await component.sendEmail(form);
+      component.message = '';
+      await component.sendEmail(form);
+
+      expect(track).not.toHaveBeenCalled();
+    });
+
+    it('credits the product order or the price calculator that opened the form', async () => {
+      history.replaceState({ leadSource: 'price_calculator', prefilledMessage: '100 g' }, '');
+      const page = TestBed.createComponent(ContactMePageComponent);
+      page.detectChanges();
+      web3formsReplies(true);
+      fillIn(page.componentInstance);
+      await page.componentInstance.sendEmail(form);
+
+      expect(track).toHaveBeenCalledOnceWith('generate_lead', { lead_source: 'price_calculator' });
     });
   });
 

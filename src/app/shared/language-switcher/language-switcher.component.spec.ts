@@ -6,6 +6,7 @@ import { IgxDropDownComponent } from 'igniteui-angular';
 import { LanguageSwitcherComponent } from './language-switcher.component';
 import { I18nService } from '../../i18n/i18n.service';
 import { LOCALES } from '../../i18n/locales';
+import { AnalyticsService } from '../../services/analytics.service';
 
 describe('LanguageSwitcherComponent', () => {
   let fixture: ComponentFixture<LanguageSwitcherComponent>;
@@ -107,12 +108,24 @@ describe('LanguageSwitcherComponent', () => {
 
   it('does nothing when the current language is chosen again', async () => {
     const navigate = spyOn(router, 'navigateByUrl').and.resolveTo(true);
+    const track = spyOn(TestBed.inject(AnalyticsService), 'track');
 
     await openMenu();
     const bulgarian = dropDown().items.find((item) => item.value === 'bg')!;
     dropDown().selectItem(bulgarian);
 
     expect(navigate).not.toHaveBeenCalled();
+    expect(track).not.toHaveBeenCalled();
+  });
+
+  it('reports the switch to GA as select_language', async () => {
+    spyOn(router, 'navigateByUrl').and.resolveTo(true);
+    const track = spyOn(TestBed.inject(AnalyticsService), 'track');
+
+    await openMenu();
+    dropDown().selectItem(dropDown().items.find((item) => item.value === 'en')!);
+
+    expect(track).toHaveBeenCalledOnceWith('select_language', { language: 'en', previous_language: 'bg', cta_location: 'navbar' });
   });
 
   it('works from the keyboard on the pill: arrows move, Enter chooses, Escape closes', async () => {

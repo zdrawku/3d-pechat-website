@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { IgxAvatarComponent, IgxIconComponent, IgxButtonDirective, IGX_INPUT_GROUP_DIRECTIVES, IGX_SELECT_DIRECTIVES, IGX_CARD_DIRECTIVES } from 'igniteui-angular';
 import { SeoService, faqPageSchema } from '../services/seo.service';
+import { AnalyticsService } from '../services/analytics.service';
 import { FaqComponent, faqFor } from '../shared/faq/faq.component';
 import { BUSINESS } from '../../data/business';
 import { I18nService } from '../i18n/i18n.service';
@@ -31,6 +32,7 @@ interface PricingTier {
 })
 export class PricesPageComponent {
   private readonly i18n = inject(I18nService);
+  private readonly analytics = inject(AnalyticsService);
 
   public tiers: PricingTier[] = [
     {
@@ -131,9 +133,11 @@ export class PricesPageComponent {
       total: this.totalPrice
     });
 
+    this.analytics.track('quote_click', { cta_location: 'price_calculator' });
     this.router.navigate([this.i18n.path('/contact')], {
       state: {
-        prefilledMessage: message
+        prefilledMessage: message,
+        leadSource: 'price_calculator'
       }
     });
   }

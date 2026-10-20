@@ -6,7 +6,9 @@ import { IGX_CARD_DIRECTIVES, IgxAvatarComponent, IgxIconComponent, IGX_INPUT_GR
 import { PricesPageComponent } from './prices-page.component';
 import { FAQ, faqFor } from '../shared/faq/faq.component';
 import business from '../../data/business.json';
+import { Router } from '@angular/router';
 import { I18nService } from '../i18n/i18n.service';
+import { AnalyticsService } from '../services/analytics.service';
 
 describe('PricesPageComponent', () => {
   let component: PricesPageComponent;
@@ -25,6 +27,16 @@ describe('PricesPageComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('reports „order with this estimate“ as a quote click, and tells the form the lead came from it', () => {
+    const track = spyOn(TestBed.inject(AnalyticsService), 'track');
+    const navigate = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true);
+
+    component.navigateWithEstimate();
+
+    expect(track).toHaveBeenCalledOnceWith('quote_click', { cta_location: 'price_calculator' });
+    expect(navigate.calls.mostRecent().args[1]?.state?.['leadSource']).toBe('price_calculator');
   });
 
   // Info cards (src/app/_info-card.scss, AI_INSTRUCTIONS.md § Info cards): icon

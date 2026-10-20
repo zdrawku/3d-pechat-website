@@ -30,7 +30,7 @@
              (not 8 and 12) leave the smallest gap under the shortest column
              with the current photo set; retune if the photos change a lot. -->
         @if (i === 3 || i === 8 || i === 12) {
-          <div class="cta-band portfolio-cta" [attr.data-after]="i + 1" data-testid="portfolio-cta">
+          <div class="cta-band portfolio-cta" [attr.data-after]="i + 1" data-testid="portfolio-cta" data-analytics-area="portfolio_cta">
             <p class="cta-band__title">{{ 'portfolio.cta.title' | t }}</p>
             <p class="cta-band__desc">
               {{ 'portfolio.cta.description' | t }}

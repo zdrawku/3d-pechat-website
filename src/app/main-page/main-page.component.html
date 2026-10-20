@@ -13,7 +13,7 @@
       <p class="hero_desc">
         {{ 'home.hero.description' | t }}
       </p>
-      <div class="hero_cta_row">
+      <div class="hero_cta_row" data-analytics-area="home_hero">
         <a igxButton="contained" [routerLink]="'/contact' | localizePath" class="btn_primary">
           {{ 'home.ctaQuote' | t }}
         </a>
@@ -101,7 +101,7 @@
     <p class="video_desc">
       {{ 'home.video.description' | t }}
     </p>
-    <div class="hero_cta_row video_cta">
+    <div class="hero_cta_row video_cta" data-analytics-area="home_video">
       <a igxButton="contained" [routerLink]="'/contact' | localizePath" class="btn_primary">
         {{ 'home.ctaQuote' | t }}
       </a>
@@ -131,7 +131,7 @@
       <p class="title_2">
         {{ 'home.about.p3' | t }}
       </p>
-      <div class="hero_cta_row about_cta">
+      <div class="hero_cta_row about_cta" data-analytics-area="home_about">
         <a igxButton="contained" [routerLink]="'/contact' | localizePath" class="btn_primary">
           {{ 'home.ctaQuote' | t }}
         </a>
@@ -155,7 +155,7 @@
 <app-happy-customers variant="section"></app-happy-customers>
 
 <!-- FINAL CTA — shared .cta-band (see styles.scss) -->
-<section class="cta-band-section">
+<section class="cta-band-section" data-analytics-area="home_cta">
   <div class="cta-band">
     <h2 class="cta-band__title">{{ 'home.cta.title' | t }}</h2>
     <p class="cta-band__desc">

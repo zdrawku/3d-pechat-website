@@ -25,6 +25,17 @@ export default defineConfig({
     trace: 'on-first-retry',
     // Deterministic screenshots later (step 2): kill animations up front.
     reducedMotion: 'reduce',
+    // Every test starts as a visitor who already declined analytics: the cookie
+    // consent card stays out of the screenshots and the way of clicks, and no
+    // test loads Google Analytics. e2e/consent.spec.ts starts without an answer.
+    // Key and format: src/app/services/consent.service.ts.
+    storageState: {
+      cookies: [],
+      origins: [{
+        origin: new URL(baseURL).origin,
+        localStorage: [{ name: 'consent', value: JSON.stringify({ analytics: 'denied', at: Date.now() }) }],
+      }],
+    },
   },
 
   // Consistent snapshot naming across OSes: without this, Playwright appends

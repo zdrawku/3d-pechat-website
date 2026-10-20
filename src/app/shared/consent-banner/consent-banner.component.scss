@@ -1,0 +1,79 @@
+@use "igniteui-angular/theming" as *;
+@use "../../info-card";
+@use "../../button-tones" as *;
+
+// Fixed to the viewport: no layout shift. Above the page and the mobile menu
+// overlay; Ignite's own overlays (tooltips, the language menu) stay on top.
+.consent {
+  position: fixed;
+  z-index: 1100;
+  right: max(var(--space-6), env(safe-area-inset-right, 0px));
+  bottom: calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+  width: min(#{rem(360px)}, calc(100vw - 2 * var(--space-6)));
+}
+
+// Phones: a sheet along the bottom, so the hero title and „Заяви оферта“ stay visible.
+@media (max-width: 599px) {
+  .consent {
+    left: max(var(--space-3), env(safe-area-inset-left, 0px));
+    right: max(var(--space-3), env(safe-area-inset-right, 0px));
+    bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+    width: auto;
+  }
+}
+
+.consent-card {
+  background: var(--bg-card);
+  border: rem(1px) solid var(--ig-gray-300);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.consent-card_head  { @include info-card.head; }
+.consent-card_title { @include info-card.title; }
+.consent-card_icon  { @include info-card.icon; }
+
+.consent-card_body {
+  @include info-card.body;
+  padding-bottom: 0;
+  color: var(--ig-gray-800);
+}
+
+.consent-card_more {
+  justify-self: start;
+  color: var(--accent-on-tint);
+  text-underline-offset: rem(3px);
+}
+
+.consent-card_actions {
+  padding: var(--space-4) rem(20px) rem(20px);
+}
+
+// Pill, like every other button on the site: the theme's $roundness is 0, so
+// without the radius token Ignite buttons are square.
+.consent-card_decline,
+.consent-card_accept {
+  flex: 1 1 0;
+  --ig-contained-button-border-radius: var(--radius-pill);
+}
+
+.consent-card_accept {
+  @include primary-contained-button;
+}
+
+// „Отказвам“: filled like „Приемам“, in the neutral tone, so the two answers
+// weigh the same. The gray ramp inverts under .dark-theme, so this works in both.
+.consent-card_decline {
+  --ig-contained-button-background: var(--ig-gray-200);
+  --ig-contained-button-hover-background: var(--ig-gray-300);
+  --ig-contained-button-focus-background: var(--ig-gray-300);
+  --ig-contained-button-focus-hover-background: var(--ig-gray-300);
+  --ig-contained-button-focus-visible-background: var(--ig-gray-200);
+  --ig-contained-button-active-background: var(--ig-gray-300);
+  --ig-contained-button-foreground: var(--ig-gray-900);
+  --ig-contained-button-hover-foreground: var(--ig-gray-900);
+  --ig-contained-button-focus-foreground: var(--ig-gray-900);
+  --ig-contained-button-focus-hover-foreground: var(--ig-gray-900);
+  --ig-contained-button-focus-visible-foreground: var(--ig-gray-900);
+  --ig-contained-button-active-foreground: var(--ig-gray-900);
+}

@@ -22,6 +22,8 @@ const MAIN_PAGES = [
   { url: 'https://3dpechat.bg/prices/', label: 'Цени', desc: 'Цени за 3D печат по грамаж и онлайн калкулатор.' },
   { url: 'https://3dpechat.bg/contact/', label: 'Контакти', desc: 'Форма за запитване и контактна информация.' },
   { url: 'https://3dpechat.bg/blog/', label: 'Блог', desc: 'Статии за 3D принтиране на български език.' },
+  { url: 'https://3dpechat.bg/privacy/', label: 'Политика за поверителност', desc: 'Кой обработва данните, какво получаваме, колко дълго го пазим и вашите права.' },
+  { url: 'https://3dpechat.bg/terms/', label: 'Общи условия', desc: 'Поръчка, плащане, доставка, връщане, гаранция и права върху изпратените модели.' },
 ];
 
 // The same pages in the site's other languages (src/i18n/locales.json), with
@@ -38,6 +40,8 @@ const LANGUAGE_PAGES = {
       '/prices/': { label: 'Prices', desc: 'Prices by weight, a price calculator and the FAQ in English.' },
       '/contact/': { label: 'Contact', desc: 'Phone, Viber, email, address, opening hours and the enquiry form.' },
       '/blog/': { label: 'Blog', desc: 'The articles translated into English; the rest of the blog is in Bulgarian.' },
+      '/privacy/': { label: 'Privacy Policy', desc: 'Who handles your data, what we receive, how long we keep it and your rights.' },
+      '/terms/': { label: 'Terms of Use', desc: 'Ordering, payment, delivery, returns, the legal guarantee and rights to the models you send.' },
     },
   },
 };

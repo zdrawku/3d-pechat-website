@@ -14,6 +14,7 @@ import {
 } from 'igniteui-angular';
 
 import { I18nService } from '../../i18n/i18n.service';
+import { AnalyticsService } from '../../services/analytics.service';
 import { LOCALES, isLocale, switchLocaleUrl } from '../../i18n/locales';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import type { LanguageMenuHandle } from './language-menu.api';
@@ -50,6 +51,7 @@ export class LanguageMenuComponent implements AfterViewInit, LanguageMenuHandle 
 
   protected readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
+  private readonly analytics = inject(AnalyticsService);
   private readonly dropDown = viewChild.required(IgxDropDownComponent);
 
   protected readonly locales = LOCALES;
@@ -125,6 +127,7 @@ export class LanguageMenuComponent implements AfterViewInit, LanguageMenuHandle 
     if (!isLocale(target) || target === this.i18n.locale()) {
       return;
     }
+    this.analytics.track('select_language', { language: target, previous_language: this.i18n.locale(), cta_location: 'navbar' });
     void this.router.navigateByUrl(switchLocaleUrl(this.router.url, target));
   }
 }

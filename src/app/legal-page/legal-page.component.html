@@ -1,0 +1,44 @@
+<header class="page-banner">
+  <div class="page-banner__titles">
+    <h1 class="page-banner__title">{{ keys.title | t }}</h1>
+    <p class="page-banner__subtitle">{{ keys.subtitle | t }}</p>
+  </div>
+</header>
+
+<div class="legal">
+  <nav class="legal_toc" [attr.aria-label]="keys.contents | t" data-testid="legal-contents">
+    <p class="legal_toc-title">{{ keys.contents | t }}</p>
+    <ol>
+      @for (section of text.sections; track section.id) {
+        <li><a [routerLink]="[]" [fragment]="section.id">{{ section.title }}</a></li>
+      }
+    </ol>
+  </nav>
+
+  <div class="legal_body">
+    @if (text.summary.length) {
+      <igx-card class="legal_summary" data-testid="legal-summary">
+        <igx-card-header class="legal_summary-head">
+          <igx-avatar class="legal_summary-icon" [icon]="icon" shape="rounded" size="small" [attr.aria-hidden]="true"></igx-avatar>
+          <h2 igxCardHeaderTitle class="legal_summary-title">{{ keys.summary | t }}</h2>
+        </igx-card-header>
+        <igx-card-content class="legal_summary-body">
+          <ul class="legal_points">
+            @for (point of text.summary; track $index) {
+              <li><igx-icon aria-hidden="true">{{ point.icon }}</igx-icon><span>{{ point.text }}</span></li>
+            }
+          </ul>
+        </igx-card-content>
+      </igx-card>
+    }
+
+    <p class="legal_updated" data-testid="legal-updated">{{ keys.updated | t: { date: updated() } }}</p>
+
+    @for (section of text.sections; track section.id; let i = $index) {
+      <section class="legal_section" [id]="section.id" [attr.aria-labelledby]="section.id + '-title'">
+        <h2 class="legal_section-title" [id]="section.id + '-title'">{{ i + 1 }}. {{ section.title }}</h2>
+        <markdown class="legal_text" [data]="section.body" (ready)="onTextReady()"></markdown>
+      </section>
+    }
+  </div>
+</div>

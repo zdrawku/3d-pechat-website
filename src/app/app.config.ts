@@ -1,4 +1,5 @@
-import { ApplicationConfig, ErrorHandler, Provider } from '@angular/core';
+import { ApplicationConfig, ErrorHandler, Provider, inject, provideAppInitializer } from '@angular/core';
+import { ViewportScroller } from '@angular/common';
 import { provideRouter, withInMemoryScrolling, UrlSerializer } from '@angular/router';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -20,6 +21,9 @@ const providers: Provider = [
     scrollPositionRestoration: 'enabled'
   })),
   { provide: UrlSerializer, useClass: TrailingSlashUrlSerializer },
+  // Anchor links (/privacy/#cookies) land below the fixed navbar, not under
+  // it: the router's anchor scrolling ignores CSS scroll-margin.
+  provideAppInitializer(() => inject(ViewportScroller).setOffset([0, 80])),
   // The URL's language (/en/… → English) is active before the first render.
   provideI18n(),
   provideClientHydration(withEventReplay()),
