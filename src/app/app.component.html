@@ -1,4 +1,4 @@
-<igx-navbar class="navigation_bar_1">
+<igx-navbar class="navigation_bar_1" data-analytics-area="navbar">
   <igx-navbar-title class="navbar-content">
     <button type="button" [igxToggleAction]="navigationdrawer1" class="menu-trigger"
       [attr.aria-label]="'shell.navbar.openMenu' | t" data-testid="menu-trigger">
@@ -70,7 +70,7 @@
        click. Anything that closes the drawer must also set drawerOpen=false. -->
   <igx-nav-drawer [isOpen]="drawerOpen" width="232px" #navigationdrawer1 class="navigation_drawer_1"
     (opened)="drawerOpen = true" (closed)="drawerOpen = false"
-    [enableGestures]="true" data-testid="nav-drawer">
+    [enableGestures]="true" data-testid="nav-drawer" data-analytics-area="menu">
     <ng-template igxDrawer>
       <div class="drawer_group_label">{{ 'shell.drawer.explore' | t }}</div>
       <div class="drawer_chip_list drawer_chip_list_first">
@@ -151,7 +151,7 @@
     <main class="main_view_container_2">
       <router-outlet></router-outlet>
     </main>
-    <footer class="column-layout footer_section">
+    <footer class="column-layout footer_section" data-analytics-area="footer">
       <div class="row-layout row_layout_-6">
         <div class="row-layout row_layout_-5">
           <div class="column-layout column_layout">
@@ -214,7 +214,7 @@
             @for (locale of i18n.otherLocales(); track locale.code) {
               <a [routerLink]="languageLink(locale.code)" class="ig-typography__body-2 footer_link"
                  [attr.hreflang]="locale.code" [attr.lang]="locale.code"
-                 [attr.data-testid]="'footer-language-' + locale.code">
+                 [attr.data-testid]="'footer-language-' + locale.code" (click)="trackLanguageLink(locale.code)">
                 {{ locale.label }}
               </a>
             }
@@ -271,6 +271,18 @@
         <p class="ig-typography__body-2 content_2">
           {{ 'shell.footer.copyright' | t }}
         </p>
+        <!-- Legal links together (approved design „B“, artifact "Legal Pages Layout"). -->
+        <nav class="footer_legal" [attr.aria-label]="'shell.footer.legal' | t" data-testid="footer-legal">
+          <a [routerLink]="'/privacy' | localizePath" class="ig-typography__body-2 footer_link"
+             data-testid="footer-privacy">{{ 'shell.footer.privacy' | t }}</a>
+          <a [routerLink]="'/terms' | localizePath" class="ig-typography__body-2 footer_link"
+             data-testid="footer-terms">{{ 'shell.footer.terms' | t }}</a>
+          <!-- A button, not a link: it reopens the consent card, it doesn't navigate. -->
+          <button igxButton="flat" type="button" class="ig-typography__body-2 footer_link footer_link--button"
+                  (click)="consent.reopen()" data-testid="footer-cookies">
+            {{ 'shell.footer.cookies' | t }}
+          </button>
+        </nav>
         <a [href]="googleReviewUrl" target="_blank" rel="noopener noreferrer"
            class="review_cta_footer" data-testid="footer-review-cta">
           <span class="review_cta_google_mark" aria-hidden="true">G</span>
@@ -287,3 +299,6 @@
 
 <!-- Review CTA layer 3: opens itself after the visitor's second navigation. -->
 <app-review-cta></app-review-cta>
+
+<!-- Cookie consent card (approved design „B“): browser-only, until the visitor answers. -->
+<app-consent-banner></app-consent-banner>

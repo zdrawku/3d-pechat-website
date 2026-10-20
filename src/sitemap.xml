@@ -47,6 +47,24 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://3dpechat.bg/privacy/</loc>
+    <xhtml:link rel="alternate" hreflang="bg" href="https://3dpechat.bg/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://3dpechat.bg/en/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://3dpechat.bg/privacy/"/>
+    <lastmod>2026-10-20T10:00:00+01:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://3dpechat.bg/terms/</loc>
+    <xhtml:link rel="alternate" hreflang="bg" href="https://3dpechat.bg/terms/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://3dpechat.bg/en/terms/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://3dpechat.bg/terms/"/>
+    <lastmod>2026-10-20T10:00:00+01:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
     <loc>https://3dpechat.bg/blog/</loc>
     <xhtml:link rel="alternate" hreflang="bg" href="https://3dpechat.bg/blog/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://3dpechat.bg/en/blog/"/>
@@ -101,6 +119,24 @@
     <lastmod>2026-10-18T10:00:00+01:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://3dpechat.bg/en/privacy/</loc>
+    <xhtml:link rel="alternate" hreflang="bg" href="https://3dpechat.bg/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://3dpechat.bg/en/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://3dpechat.bg/privacy/"/>
+    <lastmod>2026-10-20T10:00:00+01:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://3dpechat.bg/en/terms/</loc>
+    <xhtml:link rel="alternate" hreflang="bg" href="https://3dpechat.bg/terms/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://3dpechat.bg/en/terms/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://3dpechat.bg/terms/"/>
+    <lastmod>2026-10-20T10:00:00+01:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://3dpechat.bg/en/blog/</loc>

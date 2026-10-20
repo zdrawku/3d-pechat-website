@@ -92,6 +92,10 @@ every reference use the trailing-slash form:
   page score even after all other fixes.
 
 ### P6. Fonts: self-host and set font-display
+✅ **Self-hosted 2026-10-20** (`src/assets/fonts/`, linked from `index.html` / `404.html`; CSP narrowed to `'self'`) —
+done for privacy as much as speed: Google Fonts received every visitor's IP before consent. All of Google's
+subsets are kept (each loads only when a page uses its characters); icons use `font-display: block`. The
+SVG-icons idea below is still open.
 **File:** `src/index.html:57-58`
 Roboto + Material Icons come from Google Fonts with no `font-display` (flagged, ~40 ms FCP) and add a
 third-party connection chain (257 KB).

@@ -121,19 +121,33 @@ const AREAS = [
     live: ['Watch the changed workflow’s next run', 'New visual tests → run *Visual regression* with „update baselines“ once, so they have Linux baselines']
   },
   {
+    id: 'legal',
+    title: 'Privacy Policy and Terms of Use',
+    match: (f) => /^src\/legal\//.test(f) || /^src\/app\/legal-page\//.test(f),
+    tests: [`${UNIT} — legal-docs.spec (both languages: same sections, every placeholder filled, the summary points)`, `${BUILD} — every legal page prerendered`],
+    manual: [
+      'Read each changed document in BOTH languages: it may state only `src/data/business.json` facts and must not contradict the consent card or the order flow',
+      'Substantive change → `dateModified` bumped in LEGAL_DOCS (src/app/legal-page/legal-docs.ts) and the four MAIN_PAGE_LASTMOD entries in scripts/generate-sitemap.js',
+      'A change in what data is collected, by whom, or for how long → have the text checked by a lawyer'
+    ],
+    live: [LIVE_CHECK, 'Open /privacy/#cookies and /en/terms/ on the live site: the summary card, the contents links, the „Последна промяна“ date']
+  },
+  {
     id: 'analytics',
     title: 'Analytics',
+    // gtag itself, the AnalyticsService, a component that sends an event, a
+    // template labelling a `cta_location` area, or the cookie consent.
     match: (f) => {
       if (!/\.(ts|html)$/.test(f) || /\.spec\.ts$/.test(f)) return false;
       try {
-        return /gtag\(/.test(fs.readFileSync(path.join(ROOT, f), 'utf8'));
+        return /gtag\(|AnalyticsService|ConsentService|data-analytics-area/.test(fs.readFileSync(path.join(ROOT, f), 'utf8'));
       } catch {
         return false;
       }
     },
-    tests: [UNIT],
-    manual: ['GA4 → Admin → DebugView (or Realtime) with the site open: each changed event arrives with its parameters'],
-    live: ['GA4: mark new conversion events as key events; check the Events report after 24–48 h']
+    tests: [`${UNIT} — analytics.service.spec and the specs of the components that send events`],
+    manual: ['GA4 → Admin → DebugView (or Realtime) with the site open: each changed event arrives with its parameters (event list: AI_INSTRUCTIONS.md § Analytics)'],
+    live: ['GA4: mark new conversion events as key events and register new parameters as custom dimensions; check the Events report after 24–48 h']
   }
 ];
 
@@ -160,6 +174,8 @@ const PAGE_DIRS = {
   'main-page': '/', 'portfolio-page': '/portfolio/', 'products-page': '/products/',
   'prices-page': '/prices/', 'contact-me-page': '/contact/', 'blog-list-page': '/blog/'
 };
+// legal-page serves two pages; a change to the component affects both.
+const MULTI_PAGE_DIRS = { 'legal-page': ['/privacy/', '/terms/'] };
 
 /** The public URLs a change shows up on, where the path says so (both languages for localized pages). */
 function affectedUrls(files) {
@@ -175,11 +191,13 @@ function affectedUrls(files) {
     }
     const translated = /^src\/assets\/blogs\/([a-z]{2})\/([^/]+)\.md$/.exec(f);
     if (translated) urls.add(`${SITE}/${translated[1]}/blog/${translated[2]}/`);
+    const legal = /^src\/legal\/([a-z]{2})\/(privacy|terms)\.md$/.exec(f);
+    if (legal) urls.add(`${SITE}${legal[1] === locales.defaultLocale ? '' : `/${legal[1]}`}/${legal[2]}/`);
     const page = /^src\/app\/([a-z-]+-page)\//.exec(f);
-    if (page && PAGE_DIRS[page[1]]) {
-      urls.add(`${SITE}${PAGE_DIRS[page[1]]}`);
+    for (const pagePath of page ? [PAGE_DIRS[page[1]], ...(MULTI_PAGE_DIRS[page[1]] ?? [])].filter(Boolean) : []) {
+      urls.add(`${SITE}${pagePath}`);
       for (const { code } of locales.locales.filter((l) => l.code !== locales.defaultLocale)) {
-        urls.add(`${SITE}/${code}${PAGE_DIRS[page[1]]}`);
+        urls.add(`${SITE}/${code}${pagePath}`);
       }
     }
   }

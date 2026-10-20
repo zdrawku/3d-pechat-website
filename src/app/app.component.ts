@@ -6,14 +6,17 @@ import { instagram, tiktok, youtube } from '@igniteui/material-icons-extended';
 import { GOOGLE_REVIEW_URL, YOUTUBE_CHANNEL_URL } from '../data/site-links';
 import { ReviewCtaComponent } from './shared/review-cta/review-cta.component';
 import { LanguageSwitcherComponent } from './shared/language-switcher/language-switcher.component';
+import { ConsentBannerComponent } from './shared/consent-banner/consent-banner.component';
 import { I18nService } from './i18n/i18n.service';
 import { LocalizePathPipe, TranslatePipe } from './i18n/translate.pipe';
 import { Locale, switchLocaleUrl } from './i18n/locales';
 import { localizedAddress } from './i18n/business-copy';
+import { AnalyticsService } from './services/analytics.service';
+import { ConsentService } from './services/consent.service';
 
 @Component({
   selector: 'app-root',
-  imports: [IGX_NAVIGATION_DRAWER_DIRECTIVES, IGX_NAVBAR_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxToggleActionDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective, RouterOutlet, RouterLink, RouterLinkActive, ReviewCtaComponent, LanguageSwitcherComponent, TranslatePipe, LocalizePathPipe],
+  imports: [IGX_NAVIGATION_DRAWER_DIRECTIVES, IGX_NAVBAR_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxToggleActionDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective, RouterOutlet, RouterLink, RouterLinkActive, ReviewCtaComponent, LanguageSwitcherComponent, ConsentBannerComponent, TranslatePipe, LocalizePathPipe],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
@@ -33,6 +36,8 @@ export class AppComponent implements OnInit {
   public readonly youtubeChannelUrl = YOUTUBE_CHANNEL_URL;
 
   protected readonly i18n = inject(I18nService);
+  /** The footer's „Бисквитки“ button reopens the consent card. */
+  protected readonly consent = inject(ConsentService);
   /** Footer address in the page's language — from business.json, so it matches the schema and the map listing. */
   public readonly displayAddress = computed(() => localizedAddress(this.i18n.locale()));
 
@@ -47,6 +52,7 @@ export class AppComponent implements OnInit {
 
   private readonly platformId = inject(PLATFORM_ID);
   private readonly host = inject(ElementRef<HTMLElement>);
+  private readonly analytics = inject(AnalyticsService);
 
   /**
    * This page in `locale` (a post's translation, or that language's blog or
@@ -57,11 +63,20 @@ export class AppComponent implements OnInit {
     return switchLocaleUrl(this.router.url.split('#')[0], locale);
   }
 
+  /** A footer language link: the same `select_language` event as the navbar switcher's. */
+  protected trackLanguageLink(locale: Locale): void {
+    this.analytics.track('select_language', { language: locale, previous_language: this.i18n.locale(), cta_location: 'footer' });
+  }
+
   ngOnInit(): void {
     // Theme detection needs localStorage/matchMedia — skip during prerendering
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
+
+    // GA events for contact links (tel:, viber:, mailto:) and links to the
+    // contact page, anywhere on the site — see AnalyticsService.
+    this.analytics.trackLinks();
 
     // The drawer's open state is bound to `drawerOpen` rather than a literal
     // `true`: a static binding is re-applied on every change-detection pass, so

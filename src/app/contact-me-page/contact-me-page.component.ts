@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
 import { IGX_CARD_DIRECTIVES, IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, IgxIconComponent, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
 import { SeoService } from '../services/seo.service';
+import { AnalyticsService, LeadSource } from '../services/analytics.service';
 import { environment } from '../../environments/environment';
 import { GOOGLE_REVIEW_URL, YOUTUBE_CHANNEL_URL } from '../../data/site-links';
 import { BUSINESS } from '../../data/business';
@@ -20,6 +21,9 @@ declare const hcaptcha: {
 const HCAPTCHA_CALLBACK = 'onHcaptchaLoad';
 
 const capitalize = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1);
+
+/** The pages that open this form prefilled say so in the navigation state. */
+const LEAD_SOURCES: readonly LeadSource[] = ['product_order', 'price_calculator'];
 
 @Component({
   selector: 'app-contact-me-page',
@@ -52,6 +56,9 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
   private hcaptchaToken = '';
 
   private readonly i18n = inject(I18nService);
+  private readonly analytics = inject(AnalyticsService);
+  /** What brought the visitor to the form — the `generate_lead` event's `lead_source`. */
+  private leadSource: LeadSource = 'contact_form';
 
   /** Direct Google write-review link, shared by every review CTA (see site-links). */
   public readonly googleReviewUrl = GOOGLE_REVIEW_URL;
@@ -85,6 +92,14 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
       if (state['productName']) {
         this.value2 = this.orderSubject(state['productName']);
       }
+      this.readLeadSource(state);
+    }
+  }
+
+  private readLeadSource(state: Record<string, unknown>): void {
+    const source = state['leadSource'] as LeadSource;
+    if (LEAD_SOURCES.includes(source)) {
+      this.leadSource = source;
     }
   }
 
@@ -107,6 +122,9 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
     }
     if (state && state['productName'] && !this.value2) {
       this.value2 = this.orderSubject(state['productName']);
+    }
+    if (state) {
+      this.readLeadSource(state);
     }
     // hCaptcha (~1.3 MB incl. worker) is loaded lazily on first form
     // interaction — see onFormInteraction() — to keep it off the LCP path.
@@ -250,6 +268,7 @@ export class ContactMePageComponent implements OnInit, OnDestroy {
 
       const result = await response.json();
       if (result.success) {
+        this.analytics.track('generate_lead', { lead_source: this.leadSource });
         this.submitStatus = 'success';
         form.resetForm();
         this.attachedFile = null;

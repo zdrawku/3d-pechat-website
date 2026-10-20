@@ -7,22 +7,49 @@
         content="default-src 'self';
                  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://js.hcaptcha.com https://newassets.hcaptcha.com https://*.hcaptcha.com;
                  script-src-elem 'self' 'unsafe-inline' https://www.googletagmanager.com https://js.hcaptcha.com https://newassets.hcaptcha.com https://*.hcaptcha.com;
-                 style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-                 font-src 'self' https://fonts.gstatic.com;
+                 style-src 'self' 'unsafe-inline';
+                 font-src 'self';
                  img-src 'self' data: https:;
                  frame-src https://newassets.hcaptcha.com https://*.hcaptcha.com https://www.youtube-nocookie.com;
                  connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://stats.g.doubleclick.net https://api.web3forms.com https://*.hcaptcha.com;
                  object-src 'none';
                  base-uri 'self';">
 
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YBR644GQL9"></script>
+  <!-- Google tag (gtag.js) with Consent Mode v2 in basic mode: nothing from
+       Google loads until the visitor accepts analytics in the consent card.
+       Every visitor starts with all four signals denied; grantAnalytics() (called
+       by ConsentService on „Приемам“) grants analytics and loads gtag.js. A
+       visitor who accepted in the last 182 days gets it after window 'load', so
+       it doesn't compete for bandwidth with the first render (SI/LCP). The
+       'consent' localStorage key, its format and the 182 days are shared with
+       src/app/services/consent.service.ts — change them together, and keep this
+       block identical in index.html and 404.html. -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-YBR644GQL9');
+    gtag('consent', 'default', {
+      analytics_storage: 'denied',
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied'
+    });
+    window.grantAnalytics = function () {
+      if (window.grantAnalytics.done) return;
+      window.grantAnalytics.done = true;
+      gtag('consent', 'update', { analytics_storage: 'granted' });
+      gtag('js', new Date());
+      gtag('config', 'G-YBR644GQL9');
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-YBR644GQL9';
+      document.head.appendChild(s);
+    };
+    try {
+      var consent = JSON.parse(localStorage.getItem('consent') || 'null');
+      if (consent && consent.analytics === 'granted' && Date.now() - consent.at < 182 * 864e5) {
+        window.addEventListener('load', window.grantAnalytics);
+      }
+    } catch (e) { /* storage blocked: no answer, so no analytics */ }
   </script>
 
   <meta charset="utf-8">
@@ -54,8 +81,9 @@
   <meta property="og:locale" content="bg_BG">
   <meta property="og:locale:alternate" content="en_US">
 
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;600;700" rel="stylesheet">
+  <!-- Roboto + Material Icons, self-hosted: no request reaches Google before
+       consent (src/assets/fonts/fonts.css, Privacy Policy). -->
+  <link href="assets/fonts/fonts.css" rel="stylesheet">
 
   <!-- Site-wide LocalBusiness schema — ties the site, the map listing and the
        social profiles (sameAs) into one business entity. GENERATED from

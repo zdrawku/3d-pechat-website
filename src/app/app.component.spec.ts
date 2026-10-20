@@ -6,7 +6,10 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { IGX_NAVBAR_DIRECTIVES, IgxIconComponent, IgxButtonDirective, IgxIconButtonDirective, IGX_NAVIGATION_DRAWER_DIRECTIVES } from 'igniteui-angular';
 import { AppComponent } from './app.component';
 import { BUSINESS } from '../data/business';
+import { Router } from '@angular/router';
 import { I18nService } from './i18n/i18n.service';
+import { AnalyticsService } from './services/analytics.service';
+import { CONSENT_STORAGE_KEY, ConsentService } from './services/consent.service';
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -25,6 +28,51 @@ describe('AppComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  describe('cookie consent', () => {
+    afterEach(() => localStorage.removeItem(CONSENT_STORAGE_KEY));
+
+    it('shows the consent card until the visitor answers', () => {
+      const host = fixture.nativeElement as HTMLElement;
+      expect(host.querySelector('app-consent-banner [data-testid="consent-card"]')).not.toBeNull();
+
+      host.querySelector<HTMLButtonElement>('[data-testid="consent-decline"]')!.click();
+      fixture.detectChanges();
+      expect(host.querySelector('[data-testid="consent-card"]')).toBeNull();
+    });
+
+    it('links the Privacy Policy and the Terms of Use from the footer, beside the cookie button', () => {
+      const legal = (fixture.nativeElement as HTMLElement).querySelector('footer [data-testid="footer-legal"]')!;
+      expect(legal.querySelector('[data-testid="footer-privacy"]')?.getAttribute('href')).toMatch(/^\/privacy\/?$/);
+      expect(legal.querySelector('[data-testid="footer-terms"]')?.getAttribute('href')).toMatch(/^\/terms\/?$/);
+      expect(legal.querySelector('[data-testid="footer-cookies"]')).not.toBeNull();
+    });
+
+    it('reopens it from an Ignite button in the footer', () => {
+      const consent = TestBed.inject(ConsentService);
+      consent.decline();
+      fixture.detectChanges();
+      const button = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('footer [data-testid="footer-cookies"]')!;
+      expect(button.hasAttribute('igxButton')).withContext('igxButton').toBeTrue();
+      expect(button.textContent?.trim()).toBe('Бисквитки');
+
+      button.click();
+      fixture.detectChanges();
+      expect(consent.visible()).toBeTrue();
+    });
+  });
+
+  it('starts the site-wide GA link tracking and labels the shell’s areas for it', () => {
+    const start = spyOn(TestBed.inject(AnalyticsService), 'trackLinks');
+    const shell = TestBed.createComponent(AppComponent);
+    shell.detectChanges();
+
+    expect(start).toHaveBeenCalled();
+    const area = (selector: string) => (shell.nativeElement as HTMLElement).querySelector(selector)?.getAttribute('data-analytics-area');
+    expect(area('igx-navbar')).toBe('navbar');
+    expect(area('igx-nav-drawer')).toBe('menu');
+    expect(area('footer')).toBe('footer');
   });
 
   it('makes the footer phone and Viber entries clickable links', () => {
@@ -74,6 +122,15 @@ describe('AppComponent', () => {
       expect(link?.getAttribute('hreflang')).toBe('en');
       expect(link?.getAttribute('lang')).toBe('en');
       expect(link?.getAttribute('href')).toMatch(/^\/en\/?$/);
+    });
+
+    it('reports a footer language link to GA as select_language', () => {
+      const track = spyOn(TestBed.inject(AnalyticsService), 'track');
+      spyOn(TestBed.inject(Router), 'navigateByUrl').and.resolveTo(true);
+
+      (fixture.nativeElement as HTMLElement).querySelector<HTMLAnchorElement>('footer [data-testid="footer-language-en"]')!.click();
+
+      expect(track).toHaveBeenCalledWith('select_language', { language: 'en', previous_language: 'bg', cta_location: 'footer' });
     });
 
     it('renders the shell in English on English pages', async () => {

@@ -51,6 +51,17 @@
     "copyright": "© 2026 3dpechat.bg - All Rights Reserved",
     "reviewTitle": "Did you like our work?",
     "reviewText": "Share your opinion on Google",
-    "reviewButton": "⭐ Leave a review"
+    "reviewButton": "⭐ Leave a review",
+    "cookies": "Cookies",
+    "legal": "Legal",
+    "privacy": "Privacy",
+    "terms": "Terms of Use"
+  },
+  "consent": {
+    "title": "Analytics cookies",
+    "text": "With your consent we use Google Analytics to see which pages are useful. The site works just as well without it.",
+    "decline": "Decline",
+    "accept": "Accept",
+    "more": "How we use data"
   }
 }

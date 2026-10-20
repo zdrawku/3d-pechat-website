@@ -1,0 +1,215 @@
+@use "igniteui-angular/theming" as *;
+@use "../info-card";
+
+// Contents beside the text on desktop, above it on phones (approved design „B“).
+.legal {
+  display: grid;
+  grid-template-columns: rem(240px) minmax(0, 1fr);
+  gap: var(--space-8);
+  max-width: rem(1100px);
+  margin: 0 auto;
+  padding: var(--space-8) rem(32px) rem(64px);
+
+  @media (max-width: 900px) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+    padding: var(--space-6) rem(20px) rem(48px);
+  }
+
+  @media (max-width: 480px) {
+    padding-inline: rem(16px);
+  }
+}
+
+.legal_toc {
+  position: sticky;
+  top: rem(88px); // below the sticky navbar
+  align-self: start;
+  border-left: rem(2px) solid var(--ig-gray-300);
+  padding-left: var(--space-4);
+
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-2);
+    counter-reset: toc;
+  }
+
+  li {
+    counter-increment: toc;
+    font-size: rem(14px);
+    line-height: 1.35;
+  }
+
+  li::before {
+    content: counter(toc) ". ";
+    color: var(--ig-gray-700);
+  }
+
+  a {
+    color: var(--ig-gray-900);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--accent-on-tint);
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: rem(2px) solid var(--ig-primary-500);
+      outline-offset: rem(2px);
+      border-radius: rem(4px);
+    }
+  }
+
+  @media (max-width: 900px) {
+    position: static;
+    order: 1; // after the summary card on phones
+    border: rem(1px) solid var(--ig-gray-300);
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    padding: var(--space-4);
+  }
+}
+
+.legal_toc-title {
+  margin: 0 0 var(--space-3);
+  font-size: rem(12px);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ig-gray-700);
+}
+
+.legal_body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-width: 0;
+  max-width: rem(760px);
+
+  @media (max-width: 900px) {
+    display: contents; // its children join the .legal grid, so the contents can sit between the summary and the text
+  }
+}
+
+@media (max-width: 900px) {
+  .legal_summary { order: 0; }
+  .legal_updated,
+  .legal_section { order: 2; }
+}
+
+.legal_summary {
+  background: var(--bg-card);
+  border: rem(1px) solid var(--ig-gray-300);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.legal_summary-head  { @include info-card.head; }
+.legal_summary-title { @include info-card.title; }
+.legal_summary-icon  { @include info-card.icon; }
+.legal_summary-body  { @include info-card.body; }
+
+.legal_points {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+
+  li {
+    display: grid;
+    grid-template-columns: rem(24px) minmax(0, 1fr);
+    gap: var(--space-3);
+    align-items: start;
+    color: var(--ig-gray-800);
+    line-height: 1.5;
+  }
+
+  igx-icon {
+    --ig-icon-color: var(--accent-on-tint);
+  }
+}
+
+.legal_updated {
+  margin: 0;
+  font-size: rem(14px);
+  color: var(--ig-gray-700);
+}
+
+.legal_section {
+  scroll-margin-top: rem(88px);
+  display: grid;
+  // minmax(0, …) and min-width: 0 so a wide table scrolls inside its own box
+  // instead of widening the section on a phone.
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.legal_text {
+  display: block;
+  min-width: 0;
+}
+
+.legal_section-title {
+  margin: 0;
+  font-size: rem(22px);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ig-gray-900);
+}
+
+// The section's markdown (rendered by ngx-markdown, so outside this
+// component's style scope — the same approach as the blog's blog-styles).
+.legal_text ::ng-deep {
+  color: var(--ig-gray-800);
+  line-height: 1.7;
+
+  > :first-child { margin-top: 0; }
+  > :last-child { margin-bottom: 0; }
+
+  p, ul, ol { margin: 0 0 var(--space-3); }
+  ul, ol { padding-left: rem(22px); }
+  li + li { margin-top: var(--space-1); }
+
+  h3 {
+    margin: var(--space-5) 0 var(--space-2);
+    font-size: rem(17px);
+    font-weight: 600;
+    color: var(--ig-gray-900);
+  }
+
+  strong { color: var(--ig-gray-900); }
+
+  a {
+    color: var(--accent-on-tint);
+    text-underline-offset: rem(3px);
+    overflow-wrap: anywhere;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 var(--space-3);
+    font-size: rem(14px);
+    display: block;
+    overflow-x: auto;
+
+    &:focus-visible {
+      outline: rem(2px) solid var(--ig-primary-500);
+      outline-offset: rem(2px);
+    }
+  }
+
+  th, td {
+    text-align: left;
+    vertical-align: top;
+    padding: var(--space-2) var(--space-3);
+    border-bottom: rem(1px) solid var(--ig-gray-300);
+  }
+
+  th { color: var(--ig-gray-900); font-weight: 600; }
+}

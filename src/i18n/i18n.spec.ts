@@ -5,6 +5,8 @@ import products from './bg/products.json';
 import prices from './bg/prices.json';
 import contact from './bg/contact.json';
 import blog from './bg/blog.json';
+import privacy from './bg/privacy.json';
+import terms from './bg/terms.json';
 import english from './en';
 import business from '../data/business.json';
 import faqData from '../data/faq.json';
@@ -26,7 +28,7 @@ import { TRANSLATED_BLOG_CONTENT } from '../app/services/blog-content.translatio
 const BUNDLES: Record<string, LocaleBundle> = { en: english };
 
 /** All Bulgarian messages: the core namespaces plus every page's own file. */
-const bulgarian = { ...coreMessages, home, portfolio, products, prices, contact, blog };
+const bulgarian = { ...coreMessages, home, portfolio, products, prices, contact, blog, privacy, terms };
 
 const placeholders = (text: string): string[] => [...text.matchAll(/\{(\w+)\}/g)].map(m => m[1]).sort();
 

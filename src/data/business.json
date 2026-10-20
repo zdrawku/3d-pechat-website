@@ -2,6 +2,14 @@
   "name": "3dpechat",
   "alternateName": ["3dpechat.bg", "3D Печат България", "3D Печат Услуги"],
   "titleBrand": "3D Печат България",
+  "operator": {
+    "type": "Person",
+    "name": "Здравко Колев",
+    "nameEn": "Zdravko Kolev",
+    "address": "ул. „Нишава“ 5, ап. 31, София",
+    "addressEn": "5 Nishava St., apt. 31, Sofia, Bulgaria",
+    "note": "The site and the service are run by a private individual, not a registered company. Named as the data controller in the Privacy Policy and as the provider in the Terms of Use. `address` is the permanent address the e-commerce act (ЗЕТ чл. 4) asks a natural person to show; the top-level address is where the work is done."
+  },
   "url": "https://3dpechat.bg/",
   "telephone": "+359883310616",
   "email": "3dpechat.bg@gmail.com",

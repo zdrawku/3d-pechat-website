@@ -5,6 +5,7 @@ import { NavigationEnd, Router } from '@angular/router';
 
 import { ReviewCtaComponent } from './review-cta.component';
 import { GOOGLE_REVIEW_URL } from '../../../data/site-links';
+import { CONSENT_STORAGE_KEY, ConsentService } from '../../services/consent.service';
 
 const STORAGE_KEY = 'reviewCtaDismissedAt';
 
@@ -23,6 +24,8 @@ describe('ReviewCtaComponent', () => {
 
   beforeEach(async () => {
     localStorage.removeItem(STORAGE_KEY);
+    // The visitor already answered the cookie card (the snackbar waits for that).
+    localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify({ analytics: 'denied', at: Date.now() }));
 
     await TestBed.configureTestingModule({
       imports: [ReviewCtaComponent, NoopAnimationsModule, RouterTestingModule]
@@ -36,6 +39,7 @@ describe('ReviewCtaComponent', () => {
 
   afterEach(() => {
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(CONSENT_STORAGE_KEY);
   });
 
   it('should create', () => {
@@ -56,6 +60,19 @@ describe('ReviewCtaComponent', () => {
     navigate(2);
     tick(5000);
     expect(component.snackbar?.isVisible).toBeTrue();
+  }));
+
+  it('waits while the cookie consent card is open, then asks on a later navigation', fakeAsync(() => {
+    const consent = TestBed.inject(ConsentService);
+    consent.reopen();
+    navigate(2);
+    tick(5000);
+    expect(component.snackbar?.isVisible).withContext('card open').toBeFalsy();
+
+    consent.decline();
+    navigate(1);
+    tick(5000);
+    expect(component.snackbar?.isVisible).withContext('after the answer').toBeTrue();
   }));
 
   it('records a timestamp when dismissed', () => {

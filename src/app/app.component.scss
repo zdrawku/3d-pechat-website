@@ -211,7 +211,9 @@
 }
 
 .main_view_container_2 {
-  overflow: auto;
+  // clip, not auto: the document scrolls, never <main>, and a scroll container
+  // here would stop position: sticky inside pages (the legal pages' contents).
+  overflow: clip;
   position: relative;
   min-width: 0;
   min-height: 0;
@@ -467,6 +469,18 @@
   }
 }
 
+// Privacy · Terms · Cookies, beside the copyright.
+.footer_legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: rem(4px) var(--space-5);
+
+  @media (max-width: 700px) {
+    justify-content: center;
+  }
+}
+
 // Google review CTA (Idea 4, layer 1) — quiet, permanent, on every page.
 // The whole block is the link; the pill on the right is only a visual affordance.
 .review_cta_footer {
@@ -710,6 +724,30 @@
     outline-offset: rem(2px);
     border-radius: rem(4px);
   }
+}
+
+// „Бисквитки“: a flat igxButton dressed as the links around it, through the
+// button's own variables.
+.footer_link--button {
+  --ig-flat-button-foreground: var(--ig-gray-700);
+  --ig-flat-button-hover-foreground: var(--ig-primary-500);
+  --ig-flat-button-focus-foreground: var(--ig-gray-700);
+  --ig-flat-button-focus-visible-foreground: var(--ig-gray-700);
+  --ig-flat-button-hover-background: transparent;
+  --ig-flat-button-focus-background: transparent;
+  --ig-flat-button-focus-hover-background: transparent;
+  --ig-flat-button-focus-visible-background: transparent;
+  --ig-flat-button-active-background: transparent;
+  justify-content: flex-start;
+  text-align: start;
+  min-height: 0;
+  height: auto;
+  // The button's own type style beats .ig-typography__body-2; restate body-2.
+  font-size: var(--ig-body-2-font-size);
+  font-weight: var(--ig-body-2-font-weight);
+  line-height: var(--ig-body-2-line-height);
+  letter-spacing: var(--ig-body-2-letter-spacing);
+  text-transform: none;
 }
 
 .link_customer_support_footer {
