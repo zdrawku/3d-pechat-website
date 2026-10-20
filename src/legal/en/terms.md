@@ -2,7 +2,7 @@
 - `request_quote` Quotes are free. An order is placed once you confirm the quote in writing, by email or on Viber.
 - `precision_manufacturing` Items made from your model or to your specifications are made just for you and can't be returned unless they are defective.
 - `assignment_return` Ready-made products from the catalogue can be returned within 14 days of receipt.
-- `verified` If an item is defective, you get a reprint, a discount or your money back, under the 2-year legal guarantee.
+- `verified` Check your item on receipt. The legal guarantee covers defects that existed at delivery, not changes to PLA from use (heat, sunlight, load).
 
 ## Who provides the service {#provider}
 
@@ -117,14 +117,11 @@ Modelling is a service. You can cancel within **14 days** of confirming the quot
 
 ## Defects and the legal guarantee {#guarantee}
 
-Every item has a **2-year legal guarantee of conformity** from delivery. If a defect appears within the first year, it is presumed to have existed at delivery.
+**Check your item on receipt.** If you see a defect (a broken or missing part, a size or colour different from the quote), write to us straight away by email or on Viber, with a short description and a photo. That is when the cause is easiest to establish.
 
-If an item is defective:
+**PLA changes with use.** Most items are made of PLA. This plastic softens and can deform at high temperatures (for example in a car in the sun or near a heat source), fades in direct sunlight and wears under load and friction. These are properties of the material, not defects.
 
-1. Write to us by email or on Viber with a short description and a photo.
-2. We log the complaint and reply.
-3. We reprint or repair the item free of charge within a reasonable time, at most one month.
-4. If that isn't possible or isn't done in time, you can ask for a discount or your money back.
+**Legal guarantee.** Items carry the legal guarantee of conformity (2 years from delivery). It covers defects that existed at delivery, not changes from use, misuse or damage after receipt. We log every complaint, examine the item or its photos and tell you what you are entitled to under the law.
 
 When we print from your file, we are responsible for the print quality agreed in the quote. We are responsible for errors in the model itself (dimensions, tolerances, structural strength) when we designed it.
 
