@@ -309,5 +309,17 @@
         "url": "https://makerworld.com/en/models/3435739-euro-coin-holders-up-to-6-coins-fidget-spinners#profileId-3917511"
       }
     ]
+  },
+  {
+    "id": 17,
+    "linkId": "kola-dodge-charger-2018",
+    "name": "Кола - Dodge Charger 2018",
+    "description": "Персонализиран макет като подарък за рожден ден - Dodge Charger 2018 - 28см.",
+    "frontImage": "/assets/real-images/kola-dodge-charger-2018.webp",
+    "backImage": "/assets/real-images/kola-dodge-charger-2018-back.webp",
+    "dateAdded": "2026-10-23",
+    "hasOldCoins": false,
+    "hasEuroCoins": false,
+    "tags": ["подарък", "кола", "играчка", "персонален", "персонализиран", "рожден ден"]
   }
 ]
