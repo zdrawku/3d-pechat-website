@@ -90,7 +90,19 @@ const goodSpec = () => ({
     { source: 'm1', start: 0, seconds: 4, position: 'top', caption: '1. Избери продукт', highlight: 'продукт', voiceover: '' },
   ],
   endCard: { line: 'Отпечатан на 3D принтер в София', voiceover: '' },
-  post: { title: 'Държач за евро монети', description: 'Описание', hashtags: ['#3dпечат', '#евро'] },
+  post: {
+    link: '/products/',
+    tiktok: {
+      caption: 'Държиш ли още евромонетите в джоба? 👀\n\nТози държач събира 2 €, 1 € и 50 евроцента.\n\nКакво да отпечатаме следващо? Пиши ни на 3dpechat.bg 👇',
+      hashtags: ['#3dпечат', '#3dprinting', '#софия', '#подарък'],
+    },
+    youtube: {
+      title: 'Държач за евро монети, който се върти | 3D печат',
+      description: 'Отпечатан на 3D принтер в София.\nАбонирай се за още отпечатани идеи.',
+      tags: ['3d печат', '3d printing', '3д печат', '3d pechat', 'подарък', 'софия'],
+    },
+    pinnedComment: 'За бюрото или за подарък? 👇',
+  },
 });
 
 test('validateSpec accepts a good storyboard and names each problem in a bad one', () => {
@@ -101,7 +113,7 @@ test('validateSpec accepts a good storyboard and names each problem in a bad one
   bad.beats[1].highlight = 'липсва';
   bad.beats[1].seconds = 12;
   bad.beats[1].position = 'bottom';
-  bad.post.hashtags = ['без решетка'];
+  bad.post.tiktok.hashtags = ['без решетка', '#a', '#b'];
   const problems = lib.validateSpec(bad);
   assert.strictEqual(problems.length, 6, problems.join('\n'));
   assert.deepStrictEqual(lib.validateSpec({ ...goodSpec(), beats: [goodSpec().beats[0]] }), ['Трябват между 2 и 6 кадъра.']);
@@ -113,6 +125,48 @@ test('voice: only the two Bulgarian voices or null, and no voice lines without a
   assert.match(lib.validateSpec(silent)[0], /гласът е изключен/);
   silent.beats = silent.beats.map((b) => ({ ...b, voiceover: '' }));
   assert.deepStrictEqual(lib.validateSpec(silent), []);
+});
+
+test('upload copy: each rule names its problem', () => {
+  const cases = [
+    [(p) => { p.link = '/products'; }, /post\.link/],
+    [(p) => { p.tiktok.caption = `${'Много дълга кука '.repeat(8)}\n\nтекст`; }, /първият ред/],
+    [(p) => { p.tiktok.caption += ' #3dпечат'; }, /не в текста/],
+    [(p) => { p.tiktok.hashtags = ['#3dпечат', '#fyp', '#софия']; }, /fyp/],
+    [(p) => { p.tiktok.hashtags = ['#3dпечат']; }, /3–8 хаштага/],
+    [(p) => { p.youtube.title = 'Кратко'; }, /заглавието/],
+    [(p) => { p.youtube.description += '\nhttps://3dpechat.bg'; }, /без линк/],
+    [(p) => { p.youtube.tags = ['#3dпечат', 'a', 'b', 'c', 'd']; }, /без #/],
+    [(p) => { p.youtube.tags = ['a', 'b']; }, /5–20 тага/],
+    [(p) => { p.pinnedComment = ''; }, /Закаченият коментар/],
+  ];
+  for (const [mutate, expected] of cases) {
+    const spec = goodSpec();
+    mutate(spec.post);
+    const problems = lib.validatePost(spec.post);
+    assert.strictEqual(problems.length, 1, `${expected}: ${problems.join(' | ')}`);
+    assert.match(problems[0], expected);
+  }
+  assert.match(lib.validatePost(undefined)[0], /post\.tiktok/);
+});
+
+test('upload copy is facts-checked like the video', () => {
+  const spec = goodSpec();
+  spec.post.youtube.description = 'Сега само за 99 € и с безплатна доставка в същия ден!';
+  const problems = lib.factsCheck(lib.specTexts(spec), { facts: business.facts, sources: [coin.name, coin.description] });
+  assert.ok(problems.some((p) => /99/.test(p)), problems.join('\n'));
+  assert.ok(problems.some((p) => /същия ден/.test(p)), problems.join('\n'));
+});
+
+test('the finished copy: hashtags appended, tracked links, #shorts on YouTube', () => {
+  const c = lib.uploadCopy(goodSpec(), 'short-issue-12');
+  assert.match(c.tiktok, /Пиши ни на 3dpechat\.bg 👇\n\n#3dпечат #3dprinting #софия #подарък$/);
+  assert.match(c.youtubeDescription, /👉 https:\/\/3dpechat\.bg\/products\/\?utm_source=youtube&utm_medium=shorts&utm_campaign=short-issue-12/);
+  assert.match(c.youtubeDescription, /#3dпечат #3dprinting #софия #shorts$/);
+  assert.strictEqual(c.youtubeTags, '3d печат, 3d printing, 3д печат, 3d pechat, подарък, софия');
+  assert.match(c.siteLink, /utm_source=tiktok/);
+  const text = lib.postText(goodSpec(), 'short-issue-12');
+  for (const heading of ['TikTok', 'YouTube Shorts', 'Заглавие:', 'Тагове', 'Закачен коментар']) assert.ok(text.includes(heading), heading);
 });
 
 test('beat timing follows the voice line, or the wanted length for a recorded step', () => {

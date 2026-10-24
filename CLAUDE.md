@@ -209,9 +209,9 @@ baselines, Analytics… — ordered, with who does each and when).
   uploaded clips/photos + catalog photos, and/or a phone-screen Playwright
   recording of a site flow; Bulgarian captions + voice checked against
   `business.json`. The same skill is the agent behind the „🎬 Ново кратко
-  видео“ issue (`make-short.yml`, Claude Code on the owner's subscription via
-  `CLAUDE_CODE_OAUTH_TOKEN` — never `ANTHROPIC_API_KEY` in that job). Both
-  issue forms are limited to the people in `.github/issue-authors.json`.
+  видео“ issue (`make-short.yml`, Claude Code in CI). The auto-blog also writes
+  through Claude Code (`scripts/auto-blog/claude.js`). Both issue forms are
+  limited to the people in `.github/issue-authors.json`.
 - **`/handoff`** ([`.claude/skills/handoff/SKILL.md`](.claude/skills/handoff/SKILL.md))
   — the end of every change: a test plan for exactly the changed files and the
   steps to run once it's live (`scripts/handoff-checklist.js`).

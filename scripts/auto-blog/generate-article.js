@@ -1,12 +1,11 @@
-// Generates a Bulgarian-language blog article via the Anthropic Claude API.
+// Generates a Bulgarian-language blog article with Claude (via Claude Code, see claude.js).
 
+const { askClaude, MODEL } = require('./claude');
 const { slugify } = require('./scrape-ideas');
 const { getBlogPosts, getStaticPages, fixInternalLinks } = require('./internal-links');
 // The one source of truth for what the business offers. Every claim the article
 // makes about our services must come from here (see CLAUDE.md, Rule 5).
 const business = require('../../src/data/business.json');
-
-const MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-5-20250929';
 
 // Topic ideas are often numbered list items ("1. По-бързи машини"), which
 // slugify turns into "1-po-barzi-…". Drop leading numeric segments; "3d-" has a
@@ -106,30 +105,10 @@ function parseResponse(text) {
 }
 
 async function generateArticle(topicObj) {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) throw new Error('ANTHROPIC_API_KEY env var is required');
-
-  let Anthropic;
-  try {
-    Anthropic = require('@anthropic-ai/sdk');
-  } catch {
-    throw new Error('@anthropic-ai/sdk is not installed. Run: npm install --save-dev @anthropic-ai/sdk');
-  }
-
-  const client = Anthropic.default ? new Anthropic.default({ apiKey }) : new Anthropic({ apiKey });
   const prompt = buildPrompt(topicObj);
 
   console.log(`[generate-article] requesting article from ${MODEL}…`);
-  const response = await client.messages.create({
-    model: MODEL,
-    max_tokens: 8000,
-    messages: [{ role: 'user', content: prompt }]
-  });
-
-  const text = response.content
-    .filter(b => b.type === 'text')
-    .map(b => b.text)
-    .join('\n');
+  const text = await askClaude(prompt, { label: 'generate-article' });
 
   const { meta, markdown: rawMarkdown } = parseResponse(text);
 

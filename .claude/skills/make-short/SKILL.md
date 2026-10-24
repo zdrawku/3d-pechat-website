@@ -41,6 +41,10 @@ decide and explain in result.md.
 - Feedback round (there is a `W/previous/`): start from the previous spec and
   flows, change only what the latest comment asks, re-record only if a flow
   changed, and say in result.md what you changed.
+- **The run is capped** (estimated spend, steps and minutes — see the env at
+  the top of `make-short.yml`); past a cap you are stopped mid-work. So work
+  lean: read each preview once, record once, render once, and write
+  result.md as soon as the video is good enough.
 
 ## Locally
 
@@ -112,7 +116,19 @@ to copy the files into the product's Drive folder under `_shorts/`.
        { "source": "m2", "start": 0, "caption": "Върти се между пръстите", "highlight": "пръстите", "voiceover": "А версията спинър се върти, без метални части." }
      ],
      "endCard": { "line": "Отпечатан на 3D принтер в София", "voiceover": "Отпечатан на 3D принтер в София. 3dpechat.bg." },
-     "post": { "title": "…", "description": "… Безплатна оферта на 3dpechat.bg", "hashtags": ["#3dпечат", "#3dprinting", "…"] }
+     "post": {
+       "link": "/products/",
+       "tiktok": {
+         "caption": "Държиш ли още евромонетите в джоба? 👀\n\nТози държач събира 2 €, 1 € и 50 евроцента — и се върти като спинър.\nОтпечатан на 3D принтер в София.\n\nКакво да отпечатаме следващо? Пиши ни 👇",
+         "hashtags": ["#3dпечат", "#3dprinting", "#евромонети", "#подарък", "#софия"]
+       },
+       "youtube": {
+         "title": "Държач за евро монети, който се върти 🌀 | 3D печат",
+         "description": "Гнезда за монети от 2 €, 1 € и 50 евроцента, по около 7 във всяко — и версия спинър без метални части.\nОтпечатан на 3D принтер в нашата работилница в София.\n\nАбонирай се за още отпечатани идеи. Безплатна оферта на 3dpechat.bg",
+         "tags": ["3d печат", "3d printing", "3д печат", "3d pechat", "държач за монети", "евро монети", "фиджет спинър", "подарък", "софия"]
+       },
+       "pinnedComment": "За бюрото или за подарък — ти за какво би го взел? 👇"
+     }
    }
    ```
    - 2–6 beats, then the end card; 15–25 s in total. `product` only when the
@@ -131,7 +147,50 @@ to copy the files into the product's Drive folder under `_shorts/`.
      `src/data/business.json` facts, the product text, or the request. Euro
      only. Never what `neverClaim` lists: SLA/resin, SLS, scanning, same-day,
      invoices, fixed modeling prices, invented reviews/customers.
-   - post: title ≤ 70 chars; description ends with „Безплатна оферта на 3dpechat.bg“; 5–8 hashtags incl. #3dпечат and #3dprinting.
+   - `post` is the upload copy — see „Upload copy“ below. `check` validates it
+     with the same facts rules as the video.
+
+## Upload copy — grow the audience
+
+The short is half the job; the text under it decides whether people stop,
+comment and follow. Write it in Bulgarian, warm and specific, like the
+workshop talking — not an ad. Emoji are fine here (1–3), not in the video.
+The code adds the tracked link, `#shorts` and the YouTube hashtags for you.
+
+- **`link`** — the site page the call to action points to: `/products/` for a
+  product, `/prices/` for prices/calculator, `/contact/` for "how to order",
+  `/` otherwise. It becomes a tracked link (Analytics shows which short
+  brought each visit).
+- **TikTok `caption`** (also used for Reels):
+  - **Line 1 is the hook** (≤ 100 chars, shown before „още“): a question the
+    viewer recognises („Държиш ли още евромонетите в джоба?“), a surprising
+    detail, or a promise („3 стъпки и поръчката е готова“). Never „Здравейте“.
+  - 1–3 short lines: what it is and one concrete fact from the footage,
+    product text or facts.
+  - **End with one call to action**, chosen for this short: a comment prompt
+    („Какво да отпечатаме следващо? 👇“ — comments push reach most), follow
+    („Последвай за още отпечатани идеи“), save/share („Запази го за
+    подарък“), or the offer („Безплатна оферта на 3dpechat.bg“). Mention
+    3dpechat.bg in the text — TikTok captions aren't clickable, the name is.
+  - No hashtags in the caption — they go in `hashtags`.
+- **`hashtags`** (3–8): one broad English (#3dprinting), one or two Bulgarian
+  niche (#3dпечат, #3dпринтиране), one local (#софия or #българия), one or two
+  about the product or occasion (#подарък, #евромонети, #геймър). Never
+  #fyp/#viral/#foryou — `check` refuses them.
+- **YouTube `title`** (≤ 100, best ≤ 70): the searchable thing first
+  („Държач за евро монети…“, „Как се поръчва 3D печат…“), then a curiosity
+  hook. No clickbait the video doesn't deliver.
+- **YouTube `description`**: 2–4 lines that add to the title, then
+  „Абонирай се…“ and the offer. No links, no hashtags (added automatically).
+- **YouTube `tags`** (5–20): Bulgarian and English, plus the spellings people
+  actually type — transliterated („3d pechat“, „3д печат“), product words,
+  occasion („подарък“), place („софия“). No `#`, no commas.
+- **`pinnedComment`**: the team writes it first and pins it. An easy
+  question with two answers („за бюрото или за подарък?“), or „Какво да
+  отпечатаме следващо? 👇“ — every reply helps the next viewers find it.
+- **Facts still rule:** only what the footage, product text, facts or request
+  say. The offer is a free *quote* („безплатна оферта“) — never free prints,
+  giveaways, discounts or deadlines that aren't in business.json.
 
 6. **Check:** `npm run make-short -- check --work W`; fix until it passes. A
    number the facts contain can still be misused — reread every line.

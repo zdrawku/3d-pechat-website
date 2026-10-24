@@ -136,13 +136,53 @@ function factsCheck(texts, { facts, sources = [] }) {
   return problems;
 }
 
-/** Every text in a spec that ends up on screen, in the voice or in the post. */
+/** Every text in a spec that ends up on screen, in the voice or in the upload copy. */
 function specTexts(spec) {
+  const post = spec.post || {};
   return [
     ...spec.beats.flatMap((b) => [b.caption, b.voiceover]),
     spec.endCard.line, spec.endCard.voiceover,
-    spec.post.title, spec.post.description,
+    post.tiktok && post.tiktok.caption,
+    post.youtube && post.youtube.title,
+    post.youtube && post.youtube.description,
+    post.pinnedComment,
   ];
+}
+
+const HASHTAG = /^#[\p{L}\p{N}_]+$/u;
+
+/**
+ * The upload copy (spec.post) — what goes under the video on each platform:
+ *   { link: "/products/",
+ *     tiktok: { caption, hashtags: [] },              also used for Instagram Reels
+ *     youtube: { title, description, tags: [] },
+ *     pinnedComment }
+ * Returns a list of problems, empty when fine.
+ */
+function validatePost(post) {
+  if (!post || !post.tiktok || !post.youtube) return ['Липсва текстът за качване (post.tiktok и post.youtube).'];
+  const problems = [];
+  const { tiktok, youtube } = post;
+  if (!/^\/([a-z0-9-]+\/)*$/.test(post.link || '')) problems.push('post.link е път от сайта, напр. "/products/" (с / накрая).');
+  const caption = String(tiktok.caption || '');
+  if (caption.length < 20 || caption.length > 1000) problems.push('TikTok: текстът трябва да е 20–1000 знака.');
+  if (caption.split('\n')[0].length > 100) problems.push('TikTok: първият ред (куката) трябва да е до 100 знака — толкова се вижда преди „още“.');
+  if (/#/.test(caption)) problems.push('TikTok: хаштаговете са в tiktok.hashtags, не в текста.');
+  const tags = tiktok.hashtags || [];
+  if (tags.length < 3 || tags.length > 8) problems.push('TikTok: 3–8 хаштага.');
+  if (tags.some((h) => !HASHTAG.test(h))) problems.push('Хаштаговете започват с # и са една дума (букви, цифри, _).');
+  if (tags.some((h) => /^#(fyp|foryou|foryoupage|viral|xyzbca)$/i.test(h))) problems.push('Без #fyp/#viral — не помагат, а изглеждат като спам.');
+  const title = String(youtube.title || '');
+  if (title.length < 10 || title.length > 100) problems.push('YouTube: заглавието трябва да е 10–100 знака.');
+  const description = String(youtube.description || '');
+  if (description.length < 20 || description.length > 3000) problems.push('YouTube: описанието трябва да е 20–3000 знака.');
+  if (/https?:\/\//.test(description)) problems.push('YouTube: без линк в описанието — добавя се автоматично с проследяване.');
+  const ytTags = youtube.tags || [];
+  if (ytTags.length < 5 || ytTags.length > 20 || ytTags.some((t) => !t || t.includes('#') || t.includes(','))) problems.push('YouTube: 5–20 тага, без # и без запетаи.');
+  if (ytTags.join(',').length > 450) problems.push('YouTube: таговете са общо до 450 знака.');
+  const pinned = String(post.pinnedComment || '');
+  if (pinned.length < 5 || pinned.length > 300) problems.push('Закаченият коментар трябва да е 5–300 знака.');
+  return problems;
 }
 
 /** Structural checks on a spec. Returns a list of problems, empty when fine. */
@@ -168,9 +208,7 @@ function validateSpec(spec) {
     if (!spec.voice && b.voiceover) problems.push(`Кадър ${n}: има текст за глас, а гласът е изключен.`);
   });
   if (!spec.endCard || !spec.endCard.line || spec.endCard.line.length > 60) problems.push('Финалният кадър: редът трябва да е 1–60 знака.');
-  if (!spec.post || !spec.post.title || !Array.isArray(spec.post.hashtags)) problems.push('Липсва текст за публикуване.');
-  else if (spec.post.hashtags.some((h) => !/^#\S+$/.test(h))) problems.push('Хаштаговете трябва да започват с # и да са без интервали.');
-  return problems;
+  return [...problems, ...validatePost(spec.post)];
 }
 
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
@@ -211,9 +249,59 @@ function photoFilter(seconds, zoomIn = true) {
   return `[0:v]zoompan=z='${z}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=${frames}:s=${SIZE.width}x${SIZE.height}:fps=${SIZE.fps},setsar=1,format=yuv420p[base];[base][1:v]overlay=0:0[v]`;
 }
 
-/** The text to paste under the video on TikTok, YouTube Shorts and Reels. */
-function postText(spec) {
-  return `${spec.post.title}\n\n${spec.post.description}\n\n${spec.post.hashtags.join(' ')}\n`;
+/**
+ * The site link for a platform, tagged so GA4 shows which short brought the
+ * visit (Acquisition → Traffic acquisition, session campaign).
+ */
+function trackedLink(post, source, campaign) {
+  const params = new URLSearchParams({ utm_source: source, utm_medium: 'shorts', utm_campaign: campaign });
+  return `https://3dpechat.bg${post.link}?${params}`;
+}
+
+/**
+ * The copy to paste on each platform, finished: hashtags appended, the
+ * tracked link and #shorts added to YouTube (its first three hashtags show
+ * above the title).
+ */
+function uploadCopy(spec, campaign) {
+  const { tiktok, youtube, pinnedComment } = spec.post;
+  const hashtags = tiktok.hashtags.join(' ');
+  return {
+    tiktok: `${tiktok.caption.trim()}\n\n${hashtags}`,
+    youtubeTitle: youtube.title.trim(),
+    youtubeDescription: `${youtube.description.trim()}\n\n👉 ${trackedLink(spec.post, 'youtube', campaign)}\n\n${[...tiktok.hashtags.slice(0, 3), '#shorts'].join(' ')}`,
+    youtubeTags: youtube.tags.join(', '),
+    pinnedComment: pinnedComment.trim(),
+    siteLink: trackedLink(spec.post, 'tiktok', campaign),
+  };
+}
+
+/** post.txt: everything to paste when uploading, in the order you need it. */
+function postText(spec, campaign) {
+  const c = uploadCopy(spec, campaign);
+  return [
+    '=== TikTok (и Instagram Reels) — описание ===',
+    c.tiktok,
+    '',
+    '=== YouTube Shorts ===',
+    'Заглавие:',
+    c.youtubeTitle,
+    '',
+    'Описание:',
+    c.youtubeDescription,
+    '',
+    'Тагове (поле „Тагове“ / Tags):',
+    c.youtubeTags,
+    '',
+    '=== Закачен коментар (напиши го първи и го закачи) ===',
+    c.pinnedComment,
+    '',
+    '=== Линк за TikTok био или сторис (с проследяване) ===',
+    c.siteLink,
+    '',
+    'Съвет: отговаряй на коментарите през първия час — това е времето, в което платформите решават дали да покажат видеото на повече хора.',
+    '',
+  ].join('\n');
 }
 
 /**
@@ -240,7 +328,7 @@ module.exports = {
   readProducts, readBusiness,
   parseIssueForm, clean, isAttachmentUrl, extractAttachmentUrls, findProduct, parseShortIssue,
   STATE_MARKER, embedState, extractState,
-  numbersIn, factsCheck, specTexts, validateSpec,
-  beatDuration, endCardDuration, clipFilter, photoFilter, postText,
+  numbersIn, factsCheck, specTexts, validateSpec, validatePost,
+  beatDuration, endCardDuration, clipFilter, photoFilter, trackedLink, uploadCopy, postText,
   pickProductFolder, socialHandles,
 };

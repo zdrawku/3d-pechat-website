@@ -2,7 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert');
 const lib = require('./lib');
 const { readAuthors } = require('../check-issue-author');
-const { conversation, readable, requestMarkdown } = require('./from-issue');
+const { conversation, readable, requestMarkdown, uploadSection } = require('./from-issue');
 
 const authors = readAuthors();
 const user = (login, id) => ({ login, id });
@@ -42,4 +42,37 @@ test('request.md lists the request, the conversation, the files and the previous
   assert.match(md, /### mariyajablqnova-ux · 2026-10-24 09:00\n\nПо-кратко/);
   assert.match(md, /`tmp\/make-short\/issue-1\/uploads\/01-zayavka\.mp4` — от заявката/);
   assert.match(md, /## Предишната версия/);
+});
+
+test('the reply has one copyable code block per upload field', () => {
+  const md = uploadSection({
+    tiktok: 'Кука\n\nТекст\n\n#3dпечат #3dprinting',
+    youtubeTitle: 'Заглавие | 3D печат',
+    youtubeDescription: 'Описание\n\n👉 https://3dpechat.bg/products/?utm_source=youtube\n\n#3dпечат #shorts',
+    youtubeTags: '3d печат, 3d printing',
+    pinnedComment: 'Какво да отпечатаме следващо? 👇',
+    siteLink: 'https://3dpechat.bg/products/?utm_source=tiktok',
+  });
+  assert.strictEqual((md.match(/^```text$/gm) || []).length, 6);
+  assert.match(md, /\*\*TikTok\*\*/);
+  assert.match(md, /\*\*YouTube Shorts\*\*/);
+  assert.match(md, /\*\*Закачен коментар\*\*/);
+});
+
+test('capReached names the cap that stopped the agent', () => {
+  const fs = require('fs');
+  const os = require('os');
+  const path = require('path');
+  const { capReached } = require('./from-issue');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cap-'));
+  const transcript = path.join(dir, 't.jsonl');
+  const run = (subtype) => {
+    fs.writeFileSync(transcript, `{"type":"system"}\n{"type":"result","subtype":"${subtype}"}\n`);
+    process.env.TRANSCRIPT = transcript;
+    return capReached();
+  };
+  assert.match(run('error_max_budget_usd'), /бюджет/);
+  assert.match(run('error_max_turns'), /стъпки/);
+  assert.strictEqual(run('success'), '');
+  delete process.env.TRANSCRIPT;
 });

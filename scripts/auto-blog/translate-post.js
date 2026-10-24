@@ -3,7 +3,7 @@
 //
 //   npm run translate-post -- <bulgarian-slug>
 //
-// Needs ANTHROPIC_API_KEY (in .env locally). Writes
+// Needs Claude Code installed and signed in (see claude.js). Writes
 // src/assets/blogs/en/<english-slug>.md, the copy in
 // src/i18n/en/content/blog.json and the slug in src/i18n/locales.json, then
 // regenerates the content maps, sitemap and llms.txt. Review the draft (facts,

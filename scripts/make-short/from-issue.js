@@ -25,6 +25,7 @@ const { execFileSync } = require('child_process');
 const lib = require('./lib');
 const media = require('./media');
 const { readAuthors, findAuthor } = require('../check-issue-author');
+const { RUN_MARKER } = require('./limits');
 
 const RELEASE = 'shorts-drafts';
 const BOT = 'github-actions[bot]';
@@ -162,6 +163,34 @@ function upload(files) {
   return files.map((f) => `https://github.com/${REPO}/releases/download/${RELEASE}/${encodeURIComponent(path.basename(f))}`);
 }
 
+/**
+ * The upload copy as one code block per field — GitHub gives every code block
+ * a copy button, so on a phone each field is one tap to copy.
+ */
+function uploadSection(c) {
+  const block = (text) => ['```text', text, '```'];
+  return [
+    '### 📋 Текст за качване',
+    '',
+    '**TikTok** (и Instagram Reels) — описание:',
+    ...block(c.tiktok),
+    '',
+    '**YouTube Shorts** — заглавие:',
+    ...block(c.youtubeTitle),
+    'описание:',
+    ...block(c.youtubeDescription),
+    'тагове:',
+    ...block(c.youtubeTags),
+    '',
+    '**Закачен коментар** — напиши го първи и го закачи:',
+    ...block(c.pinnedComment),
+    '',
+    '<details><summary>Линк за TikTok био или сторис</summary>', '', ...block(c.siteLink), '</details>',
+    '',
+    '_Отговаряй на коментарите през първия час — тогава платформите решават дали да покажат видеото на повече хора._',
+  ].join('\n');
+}
+
 /** The spec and recording scripts of this version, for the next round. */
 function currentState() {
   const specFile = path.join(WORK, 'spec.json');
@@ -180,7 +209,8 @@ async function publish() {
   const started = Number(process.env.RUN_STARTED_MS || 0);
   const fresh = fs.existsSync(video) && fs.statSync(video).mtimeMs >= started;
 
-  if (!message && !fresh) throw new Error('The agent finished without a video or a message (no result.md).');
+  const stoppedBy = capReached();
+  if (!message && !fresh && !stoppedBy) throw new Error('The agent finished without a video or a message (no result.md).');
 
   const parts = [];
   if (fresh) {
@@ -198,18 +228,42 @@ async function publish() {
     if (coverUrl) parts.push(`[![Корица](${coverUrl})](${videoUrl})`, '');
   }
   if (message) parts.push(message, '');
-  const post = path.join(out, 'post.txt');
-  if (fresh && fs.existsSync(post)) {
-    parts.push('<details><summary>Текст за публикуване (TikTok, YouTube Shorts, Reels)</summary>', '', '```', fs.readFileSync(post, 'utf8').trim(), '```', '</details>', '');
-  }
-  parts.push('_За промени просто напиши коментар. Коментар, който започва с `//`, е бележка и не пуска нова версия._');
   const state = currentState();
+  if (fresh && state && state.spec && state.spec.post && state.spec.post.tiktok) {
+    parts.push(uploadSection(lib.uploadCopy(state.spec, `short-issue-${ISSUE_NUMBER}`)), '');
+  }
+  if (stoppedBy) {
+    parts.push(`⏹️ **Спрях по лимит: ${stoppedBy}.** ${fresh ? 'Видеото по-горе е последното, което успях да направя.' : 'Не стигнах до готово видео.'} Опрости заявката (по-малко кадри, по-кратък запис) или напиши коментар, за да продължа.`, '');
+  }
+  parts.push('_За промени просто напиши коментар. Коментар, който започва с `//`, е бележка и не пуска нова версия._', RUN_MARKER);
   if (state) parts.push('', lib.embedState(state));
   await comment(parts.join('\n'));
 }
 
+/**
+ * Which cap stopped the agent, in words, or '' when it finished normally.
+ * Reads the CLI's final `result` line (TRANSCRIPT) and the `.stopped` file
+ * the workflow writes when its `timeout` killed the agent.
+ */
+function capReached() {
+  const file = process.env.TRANSCRIPT;
+  let subtype = '';
+  if (file && fs.existsSync(file)) {
+    const lines = fs.readFileSync(file, 'utf8').trim().split('\n');
+    try {
+      subtype = JSON.parse(lines[lines.length - 1]).subtype || '';
+    } catch {
+      subtype = '';
+    }
+  }
+  if (subtype === 'error_max_budget_usd') return 'изразходвах определения бюджет за една заявка';
+  if (subtype === 'error_max_turns') return 'стигнах максималния брой стъпки';
+  if (fs.existsSync(path.join(WORK, '.stopped'))) return 'изтече времето за една заявка';
+  return '';
+}
+
 async function fail() {
-  await comment(`Нещо се обърка и видеото не стана.${process.env.RUN_URL ? ` Логът: ${process.env.RUN_URL}` : ''}\n\nНапиши коментар, за да опитам пак.`);
+  await comment(`Нещо се обърка и видеото не стана.${process.env.RUN_URL ? ` Логът: ${process.env.RUN_URL}` : ''}\n\nНапиши коментар, за да опитам пак.\n\n${RUN_MARKER}`);
 }
 
 const modes = { prepare, publish, fail };
@@ -225,4 +279,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { conversation, readable, requestMarkdown };
+module.exports = { conversation, readable, requestMarkdown, uploadSection, capReached };

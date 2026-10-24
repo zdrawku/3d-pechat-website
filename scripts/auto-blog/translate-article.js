@@ -1,5 +1,5 @@
-// Drafts the English version of a Bulgarian blog post via the Anthropic Claude
-// API: the text, its copy (title, description, tags, keywords) and its slug.
+// Drafts the English version of a Bulgarian blog post with Claude (via Claude
+// Code, see claude.js): the text, its copy (title, description, tags, keywords) and its slug.
 // The pipeline (index.js) runs it right after the Bulgarian post, so both land
 // in the same PR and are reviewed together — nothing is published unreviewed.
 // `npm run translate-post -- <slug>` runs it for an existing post.
@@ -11,12 +11,12 @@
 
 const fs = require('fs');
 const path = require('path');
+const { askClaude, MODEL } = require('./claude');
 const { slugify } = require('./scrape-ideas');
 const { readLocales, localizedPath } = require('../locale-urls');
 const business = require('../../src/data/business.json');
 
 const ROOT = path.resolve(__dirname, '../..');
-const MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-5-20250929';
 const LOCALE = 'en';
 const MAX_DESCRIPTION = 160;
 
@@ -178,23 +178,8 @@ function normalizeTranslation({ meta, markdown }, { date, takenSlugs = [] }) {
 }
 
 async function translateArticle({ markdown, seo }, { date = new Date().toISOString().slice(0, 10) } = {}) {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) throw new Error('ANTHROPIC_API_KEY env var is required');
-  let Anthropic;
-  try {
-    Anthropic = require('@anthropic-ai/sdk');
-  } catch {
-    throw new Error('@anthropic-ai/sdk is not installed. Run: npm install --save-dev @anthropic-ai/sdk');
-  }
-  const client = Anthropic.default ? new Anthropic.default({ apiKey }) : new Anthropic({ apiKey });
-
   console.log(`[translate] requesting the English version from ${MODEL}…`);
-  const response = await client.messages.create({
-    model: MODEL,
-    max_tokens: 12000,
-    messages: [{ role: 'user', content: buildTranslationPrompt({ markdown, seo }) }]
-  });
-  const text = response.content.filter((b) => b.type === 'text').map((b) => b.text).join('\n');
+  const text = await askClaude(buildTranslationPrompt({ markdown, seo }), { label: 'translate' });
   const takenSlugs = Object.values(readLocales().translatedPosts?.[LOCALE] ?? {});
   return normalizeTranslation(parseTranslation(text), { date, takenSlugs });
 }

@@ -145,7 +145,8 @@ async function main() {
       const tracks = fs.readdirSync(musicDir).filter((f) => media.AUDIO_EXT.test(f)).sort();
       if (tracks.length) music = path.join(musicDir, tracks[0]);
     }
-    const result = await renderShort({ spec, files, outDir, workDir: path.join(work, 'render'), music });
+    const campaign = `short-${path.basename(work)}`;
+    const result = await renderShort({ spec, files, outDir, workDir: path.join(work, 'render'), music, campaign });
     console.log(`Rendered ${result.seconds} s${music ? ' with music' : ' without music'}:\n  ${result.video}\n  ${result.cover}\n  ${result.post}`);
   } else if (cmd === 'frames') {
     if (!opts.video) throw new Error('frames needs --video <file>');

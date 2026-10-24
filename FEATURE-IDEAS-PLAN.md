@@ -781,7 +781,7 @@ Releases page are fine.
 
 Allowlist `.github/issue-authors.json` (login + numeric id) +
 `scripts/check-issue-author.js`, used by both issue workflows; a product
-dropdown form; a two-step workflow (Claude drafts via `ANTHROPIC_API_KEY`,
+dropdown form; a two-step workflow (Claude drafts through the API,
 `/render` renders); the render pipeline in `scripts/make-short/`.
 
 ### v2 — one agent, a request in words (2026-10-24, uncommitted)
@@ -798,9 +798,7 @@ site on a phone screen for requests like „направи шорт видео �
   duplicate `opened`/`labeled` starts skipped) → one `agent` job:
   `from-issue.js prepare` (conversation → `request.md`, downloads every file
   from the issue and the team's comments, restores the previous version) →
-  **Claude Code 2.1.296 headless on `CLAUDE_CODE_OAUTH_TOKEN`** (from
-  `claude setup-token`, one year; `ANTHROPIC_API_KEY` deliberately absent, as
-  it would take precedence) running `/make-short` with `--permission-mode
+  **Claude Code 2.1.296 headless** (repo secret, no API key) running `/make-short` with `--permission-mode
   dontAsk`, tools limited to Read/Glob/Grep, Edit in `tmp/make-short/**` and
   `Bash(npm run make-short:*)`, no web → `from-issue.js publish` (video +
   cover to the `shorts-drafts` pre-release, comment with the agent's
@@ -818,19 +816,30 @@ site on a phone screen for requests like „направи шорт видео �
 - **Removed:** `draft.js` (API-key Claude call), the generated form and its
   prebuild step.
 - **Skill** `/make-short` rewritten as the agent's playbook (CI and local).
+- **Usage caps** (2026-10-24), so no request can drain the subscription:
+  shorts run on Sonnet with an estimated-spend cap, a step cap and a
+  wall-clock cap per run, plus at most 5 versions per issue and 8 runs per
+  24 hours (`scripts/make-short/limits.js`, checked before anything
+  expensive starts); the issue is told which cap stopped a run. The
+  auto-blog caps each of its two Claude calls (spend + time) and the job at
+  30 minutes. The numbers live in the `env:` blocks of both workflows.
+- **Upload copy for growth** (2026-10-24): the agent also writes the TikTok
+  caption (hook line, one call to action, 3–8 hashtags, no #fyp spam), the
+  YouTube title, description and tags (incl. transliterated spellings such as
+  „3d pechat“), and a pinned comment that invites replies. Code adds a
+  UTM-tagged link per platform (`utm_medium=shorts`, `utm_campaign=short-issue-<n>`),
+  `#shorts` and the YouTube hashtags. The reply shows each field in its own
+  code block (one tap to copy on a phone); the copy is facts-checked like the
+  video.
 
-**Owner setup (once):** `claude setup-token` → GitHub secret
-`CLAUDE_CODE_OAUTH_TOKEN`; create the `new-short` label (the form's label
-doesn't exist yet, so issues wouldn't be tagged). Drive (below) stays
+**Owner setup (once):** the Claude Code repo secret and the `new-short`
+label. Drive (below) stays
 optional — only needed for clips over GitHub's 10 MB.
 
 ### Google Drive setup (optional, owner, one time)
 
-The folder is `3dpechat-shorts` in Здравко's Drive. Its id (the end of its URL)
-lives only in the `GDRIVE_FOLDER_ID` secret — never in this public repo. It
-was shared as „anyone with the link: Editor“ on 2026-10-23; switch it to
-**Restricted**, share it with Мария as Editor, untick „Editors can change
-permissions and share“.
+The folder `3dpechat-shorts` is restricted to the team; its id lives only in
+a repo secret, never in this public repo.
 
 1. <https://console.cloud.google.com/> → new project `3dpechat-shorts`.
 2. APIs & Services → Library → **Google Drive API** → Enable.
@@ -863,8 +872,8 @@ repo owner's account (videos up to 100 MB in issues) — but uploads over
   app stay private until an audit; TikTok's Content Posting API needs an
   audited app for public posts. A private YouTube upload the owner flips to
   public is the realistic first step, if wanted.
-- Deferred: the auto-blog still uses `ANTHROPIC_API_KEY`; it could move to the
-  same subscription token by running Claude Code instead of the SDK.
+- ✅ 2026-10-24: the auto-blog writes and translates through Claude Code too
+  (`scripts/auto-blog/claude.js`); the Anthropic SDK is no longer a dependency.
 
 ---
 
