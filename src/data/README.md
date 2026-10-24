@@ -78,12 +78,6 @@ Two automated routes exist — both end in a PR you review and merge:
 Both share [`scripts/add-product/lib.js`](../../scripts/add-product/lib.js),
 which owns id/`linkId`/`dateAdded` generation, webp conversion, and the
 append-without-reformatting write.
-
-A merged product also appears in the „🎬 Ново кратко видео“ issue form: the
-form's product list is generated from `products.json` in prebuild
-(`scripts/make-short/generate-issue-form.js`), and
-`generate-issue-form.test.js` fails if the committed form is out of date.
-
 ## `reviews.json` — the „Доволни клиенти" curated reviews
 
 Hand-picked Google reviews shown by

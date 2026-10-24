@@ -43,7 +43,7 @@ async function renderShort({ spec, files, outDir, workDir, music }) {
     return { file, seconds: speak(text, spec.voice, file) };
   });
   const durations = [
-    ...spec.beats.map((_, i) => lib.beatDuration(voice[i].seconds)),
+    ...spec.beats.map((b, i) => lib.beatDuration(voice[i].seconds, b.seconds)),
     lib.endCardDuration(voice[spec.beats.length].seconds),
   ];
 

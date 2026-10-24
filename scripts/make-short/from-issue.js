@@ -1,31 +1,36 @@
 /**
- * The `🎬 Ново кратко видео` issue flow, run by .github/workflows/make-short.yml
- * after the author/commenter passed scripts/check-issue-author.js.
+ * The GitHub side of the `🎬 Ново кратко видео` flow, around the agent run in
+ * .github/workflows/make-short.yml. The agent itself never gets a GitHub
+ * token: this script hands it files and posts its answer.
  *
- *   node scripts/make-short/from-issue.js draft   — issue opened, or `/redo <note>`
- *   node scripts/make-short/from-issue.js render  — `/render`
+ *   node scripts/make-short/from-issue.js prepare   before the agent
+ *   node scripts/make-short/from-issue.js publish   after the agent
  *
- * draft: downloads the issue's photos/clips (and the product's Drive folder
- * when ticked), asks Claude for a storyboard, and comments it for approval
- * with the spec embedded. render: takes the newest bot comment's spec, renders
- * the short, attaches it to the `shorts-drafts` pre-release and comments the
- * links. Nothing is committed and nothing is posted to TikTok or YouTube.
+ * prepare → tmp/make-short/issue-<n>/
+ *   request.md   the request, the whole conversation, the files and what the
+ *                previous run made — the agent starts here
+ *   uploads/     every photo/clip from the issue and from the team's comments
+ *   previous/    spec.json and flows/*.json of the last version, if any
+ * publish ← result.md (the agent's message, Bulgarian) and out/ (the short):
+ *   uploads the video and cover to the `shorts-drafts` pre-release and
+ *   comments the message, the links, the post text and the state for the next
+ *   round.
  *
- * Env: ISSUE_NUMBER, ISSUE_BODY, REPO (owner/name), GITHUB_TOKEN,
- *      ANTHROPIC_API_KEY (draft), COMMENT_BODY (redo note),
- *      GDRIVE_SA_KEY + GDRIVE_FOLDER_ID (optional), RUN_URL (optional)
+ * Env: ISSUE_NUMBER, REPO (owner/name), GITHUB_TOKEN, RUN_URL (optional),
+ *      TRIGGER_COMMENT_ID (when a comment started the run)
  */
 const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 const lib = require('./lib');
 const media = require('./media');
-const drive = require('./drive');
-const { collect } = require('./collect');
+const { readAuthors, findAuthor } = require('../check-issue-author');
 
 const RELEASE = 'shorts-drafts';
+const BOT = 'github-actions[bot]';
 const { ISSUE_NUMBER, REPO } = process.env;
 const WORK = path.join(lib.ROOT, 'tmp', 'make-short', `issue-${ISSUE_NUMBER}`);
+const rel = (p) => path.relative(lib.ROOT, p).replace(/\\/g, '/');
 
 async function github(pathname, { method = 'GET', body } = {}) {
   const res = await fetch(`https://api.github.com/repos/${REPO}${pathname}`, {
@@ -39,108 +44,109 @@ async function github(pathname, { method = 'GET', body } = {}) {
     body: body ? JSON.stringify(body) : undefined,
   });
   if (!res.ok) throw new Error(`GitHub ${method} ${pathname}: HTTP ${res.status} ${await res.text()}`);
-  return res.json();
+  return res.status === 204 ? null : res.json();
 }
 
 const comment = (body) => github(`/issues/${ISSUE_NUMBER}/comments`, { method: 'POST', body: { body } });
 
-/** Where each media item came from, in words for the comment. */
-function describe(m) {
-  if (m.origin === 'catalog') return m.name;
-  const where = m.origin === 'drive' ? 'Drive' : 'issue';
-  return m.kind === 'video' ? `клип ${m.name} (${where})` : `снимка ${m.name} (${where})`;
+/** Text of a message without attachment markup and the bot's hidden state. */
+function readable(text) {
+  return String(text || '')
+    .replace(new RegExp(`<!-- ${lib.STATE_MARKER}[\\s\\S]*?-->`, 'g'), '')
+    .replace(/<img\b[^>]*>/gi, '[снимка]')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, '[снимка]')
+    .replace(/^https:\/\/github\.com\/user-attachments\/\S+$/gm, '[файл]')
+    .trim();
 }
 
-function storyboardComment(spec, product, warnings, problems) {
-  const beat = (b, i) => {
-    const m = spec.media[b.source];
-    const src = m.kind === 'video' ? `${describe(m)}, от ${b.start} s` : describe(m);
-    return `${i + 1}. **${b.caption}**${b.voiceover ? `\n   🔊 ${b.voiceover}` : ''}\n   <sub>${src}</sub>`;
-  };
-  return [
-    `### Чернова за **${product.name}**`,
-    '',
-    ...spec.beats.map(beat),
-    `${spec.beats.length + 1}. **3dpechat.bg · ${spec.endCard.line}**${spec.endCard.voiceover ? `\n   🔊 ${spec.endCard.voiceover}` : ''}\n   <sub>финален кадър</sub>`,
-    '',
-    `**Глас:** ${spec.voice || 'без глас, само музика'}`,
-    '',
-    '<details><summary>Текст за публикуване</summary>',
-    '',
-    '```',
-    lib.postText(spec).trim(),
-    '```',
-    '</details>',
-    '',
-    ...(warnings.length ? ['**Бележки:**', ...warnings.map((w) => `- ${w}`), ''] : []),
-    ...(problems.length
-      ? ['⚠️ **Черновата не мина проверката на фактите** и няма да бъде направена:', ...problems.map((p) => `- ${p}`), '', 'Отговори с `/redo` и бележка какво да промени.']
-      : ['Отговори с `/render`, за да направя видеото, или с `/redo` и бележка за нова чернова.']),
-    '',
-    // Every draft is marked, so /render always acts on the newest one — a
-    // draft that failed its checks carries no spec and blocks rendering.
-    DRAFT_MARKER,
-    problems.length ? '' : lib.embedSpec(spec),
-  ].join('\n');
+/**
+ * The messages that matter, in order: the issue, the team's comments and the
+ * bot's replies. Comments starting with `//` are notes between people and are
+ * left out; so is anyone outside the allowlist.
+ */
+function conversation(issue, comments, authors) {
+  const messages = [{ who: issue.user.login, at: issue.created_at, body: issue.body, isRequest: true }];
+  for (const c of comments) {
+    const fromBot = c.user && c.user.login === BOT;
+    const fromTeam = c.user && findAuthor(authors, c.user.id);
+    if (!fromBot && !fromTeam) continue;
+    if (!fromBot && c.body.trim().startsWith('//')) continue;
+    messages.push({ who: fromBot ? 'агентът' : c.user.login, at: c.created_at, body: c.body, fromBot });
+  }
+  return messages;
 }
 
-const DRAFT_MARKER = '<!-- make-short-draft -->';
-
-/** Photos and clips from the issue and (if ticked) the product's Drive folder. */
-async function gatherExtras(request, dir) {
-  const warnings = [];
-  const extras = [];
-  fs.mkdirSync(dir, { recursive: true });
-
-  for (const [i, url] of request.attachmentUrls.entries()) {
-    try {
-      const file = await media.downloadAttachment(url, dir, `issue-${i + 1}`);
-      extras.push({ origin: 'issue', ref: url, name: `файл ${i + 1}`, file });
-    } catch (err) {
-      warnings.push(`Не успях да изтегля файл ${i + 1} от issue-то: ${err.message}`);
-    }
+/** request.md: what the agent reads first. */
+function requestMarkdown({ request, messages, files, previous }) {
+  const lines = [
+    `# Заявка за кратко видео — issue #${ISSUE_NUMBER}`,
+    '',
+    '## Какво искат',
+    '',
+    request,
+    '',
+  ];
+  const rest = messages.slice(1);
+  if (rest.length) {
+    lines.push('## Разговор досега (най-новото е последно — то е важното)', '');
+    for (const m of rest) lines.push(`### ${m.who} · ${m.at.slice(0, 16).replace('T', ' ')}`, '', readable(m.body) || '(само файлове)', '');
   }
-
-  if (request.useDrive && !drive.configured()) {
-    warnings.push('Google Drive още не е свързан (липсват GDRIVE_SA_KEY / GDRIVE_FOLDER_ID), затова използвах само файловете от issue-то и каталога.');
-  } else if (request.useDrive) {
-    const token = await drive.accessToken(process.env.GDRIVE_SA_KEY);
-    const { files, folderName } = await drive.productMedia(token, process.env.GDRIVE_FOLDER_ID, request.product);
-    if (!folderName) warnings.push(`В Drive няма папка „${request.product.linkId}“ (или „${request.product.name}“), затова не взех нищо оттам.`);
-    for (const f of files) {
-      const file = path.join(dir, `drive-${f.id}${path.extname(f.name).toLowerCase()}`);
-      await drive.download(token, f.id, file);
-      extras.push({ origin: 'drive', ref: f.id, name: f.name, file });
-    }
+  lines.push('## Качени файлове', '');
+  if (files.length) for (const f of files) lines.push(`- \`${rel(f.file)}\` — ${f.from}`);
+  else lines.push('- (няма — използвай снимки от каталога или запис на сайта)');
+  lines.push('');
+  if (previous) {
+    lines.push('## Предишната версия', '', `Сценарият и записите на сайта ѝ са в \`${rel(path.join(WORK, 'previous'))}/\`. Промени само това, което поискаха в последния коментар.`, '');
   }
-  // Clips first: the short opens with movement when there is any.
-  extras.sort((a, b) => (media.kindOf(a.file) === 'video' ? 0 : 1) - (media.kindOf(b.file) === 'video' ? 0 : 1));
-  return { extras, warnings };
+  return lines.join('\n');
 }
 
-async function draft() {
-  // An issue created from the form can fire both `opened` and `labeled`;
-  // only `/redo` may draft again once a draft exists.
-  if (process.env.EVENT_NAME === 'issues') {
-    const comments = await github(`/issues/${ISSUE_NUMBER}/comments?per_page=100`);
-    if (comments.some((c) => c.user && c.user.login === 'github-actions[bot]' && c.body.includes(DRAFT_MARKER))) {
-      console.log('A draft already exists for this issue — nothing to do.');
-      return;
-    }
-  }
-  const request = lib.parseShortIssue(process.env.ISSUE_BODY, lib.readProducts());
-  if (request.errors.length) {
-    await comment(`Не мога да започна:\n${request.errors.map((e) => `- ${e}`).join('\n')}\n\nОправи issue-то и напиши \`/redo\`.`);
-    return;
-  }
-  const note = (lib.parseCommand(process.env.COMMENT_BODY || '') || {}).note || '';
+async function react() {
+  const target = process.env.TRIGGER_COMMENT_ID ? `/issues/comments/${process.env.TRIGGER_COMMENT_ID}/reactions` : `/issues/${ISSUE_NUMBER}/reactions`;
+  await github(target, { method: 'POST', body: { content: 'eyes' } }).catch(() => {});
+}
+
+async function prepare() {
+  await react();
+  const authors = readAuthors();
+  const issue = await github(`/issues/${ISSUE_NUMBER}`);
+  const comments = await github(`/issues/${ISSUE_NUMBER}/comments?per_page=100`);
+  const messages = conversation(issue, comments, authors);
+  const { request } = lib.parseShortIssue(issue.body);
+
   fs.rmSync(WORK, { recursive: true, force: true });
-  const { extras, warnings } = await gatherExtras(request, path.join(WORK, 'files'));
-  const manifest = await collect({ product: request.product, extras, workDir: WORK });
+  const uploads = path.join(WORK, 'uploads');
+  fs.mkdirSync(uploads, { recursive: true });
 
-  const { draftSpec } = require('./draft');
-  const { spec, problems } = await draftSpec({ product: request.product, manifest, idea: request.idea, note, voice: request.voice });
-  await comment(storyboardComment(spec, request.product, [...warnings, ...manifest.warnings], problems));
+  // Files from the request and from the team's comments (never the bot's).
+  const files = [];
+  const problems = [];
+  let n = 0;
+  for (const [i, m] of messages.entries()) {
+    if (m.fromBot) continue;
+    for (const url of lib.extractAttachmentUrls(m.body)) {
+      n += 1;
+      try {
+        const file = await media.downloadAttachment(url, uploads, `${String(n).padStart(2, '0')}-${i === 0 ? 'zayavka' : `komentar${i}`}`);
+        files.push({ file, from: i === 0 ? 'от заявката' : `от коментара на ${m.who} (${m.at.slice(0, 10)})` });
+      } catch (err) {
+        problems.push(`Не успях да изтегля файл ${n}: ${err.message}`);
+      }
+    }
+  }
+
+  // The last version, so feedback changes it instead of starting over.
+  const lastBot = [...comments].reverse().find((c) => c.user && c.user.login === BOT && lib.extractState(c.body));
+  const previous = lastBot ? lib.extractState(lastBot.body) : null;
+  if (previous) {
+    const dir = path.join(WORK, 'previous');
+    fs.mkdirSync(path.join(dir, 'flows'), { recursive: true });
+    if (previous.spec) fs.writeFileSync(path.join(dir, 'spec.json'), JSON.stringify(previous.spec, null, 2));
+    for (const [name, flow] of Object.entries(previous.flows || {})) fs.writeFileSync(path.join(dir, 'flows', `${name}.json`), JSON.stringify(flow, null, 2));
+  }
+
+  fs.writeFileSync(path.join(WORK, 'request.md'), requestMarkdown({ request, messages, files, previous }) + (problems.length ? `\n## Проблеми при изтеглянето\n\n${problems.map((p) => `- ${p}`).join('\n')}\n` : ''));
+  console.log(fs.readFileSync(path.join(WORK, 'request.md'), 'utf8'));
 }
 
 /** Makes sure the pre-release exists, then uploads (replacing same-named files). */
@@ -156,87 +162,67 @@ function upload(files) {
   return files.map((f) => `https://github.com/${REPO}/releases/download/${RELEASE}/${encodeURIComponent(path.basename(f))}`);
 }
 
-async function render() {
-  const comments = await github(`/issues/${ISSUE_NUMBER}/comments?per_page=100`);
-  // Only the bot's own comments count — a person can't paste in a spec.
-  const latest = comments.reverse().find((c) => c.user && c.user.login === 'github-actions[bot]' && c.body.includes(DRAFT_MARKER));
-  if (!latest || !lib.extractSpec(latest.body)) {
-    await comment('Последната чернова не мина проверката (или още няма чернова), затова няма какво да направя. Напиши `/redo` и бележка за нова.');
-    return;
-  }
-  const spec = lib.extractSpec(latest.body);
-  const product = lib.findProduct(lib.readProducts(), spec.product);
-  const problems = [...lib.validateSpec(spec), ...lib.factsCheck(lib.specTexts(spec), {
-    facts: lib.readBusiness().facts, sources: [product.name, product.description, spec.idea],
-  })];
-  if (problems.length) throw new Error(`The stored storyboard fails its checks:\n${problems.join('\n')}`);
-
-  // Fetch only the media the beats use, from where each one came from.
-  const dir = path.join(WORK, 'files');
-  fs.rmSync(WORK, { recursive: true, force: true });
-  fs.mkdirSync(dir, { recursive: true });
-  const token = drive.configured() ? await drive.accessToken(process.env.GDRIVE_SA_KEY) : null;
-  const files = {};
-  for (const id of new Set(spec.beats.map((b) => b.source))) {
-    const m = spec.media[id];
-    if (m.origin === 'catalog') {
-      if (!/^src\/assets\/[\w./-]+$/.test(m.ref)) throw new Error(`Bad catalog path ${m.ref}`);
-      files[id] = path.join(lib.ROOT, m.ref);
-    } else if (m.origin === 'issue') {
-      files[id] = await media.downloadAttachment(m.ref, dir, id);
-    } else if (m.origin === 'drive' && token) {
-      files[id] = await drive.download(token, m.ref, path.join(dir, `${id}${path.extname(m.name).toLowerCase()}`));
-    } else {
-      throw new Error(`Can't fetch ${id} (${m.origin}) — is Google Drive still connected?`);
-    }
-  }
-
-  // Music from Drive `_music`, the same track for the same issue.
-  let music;
-  if (token) {
-    const { music: tracks } = await drive.productMedia(token, process.env.GDRIVE_FOLDER_ID, product);
-    if (tracks.length) {
-      const track = tracks[Number(ISSUE_NUMBER) % tracks.length];
-      music = await drive.download(token, track.id, path.join(dir, `music${path.extname(track.name).toLowerCase()}`));
-    }
-  }
-
-  const { renderShort } = require('./render');
-  const out = path.join(WORK, 'out');
-  const result = await renderShort({ spec, files, outDir: out, workDir: path.join(WORK, 'render'), music });
-
-  const stamp = new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '');
-  const base = `${product.linkId}-issue${ISSUE_NUMBER}-${stamp}`;
-  const named = [['short.mp4', `${base}.mp4`], ['cover.jpg', `${base}.jpg`]].map(([from, to]) => {
-    const dest = path.join(out, to);
-    fs.renameSync(path.join(out, from), dest);
-    return dest;
-  });
-  const [videoUrl, coverUrl] = upload(named);
-
-  await comment([
-    `### Готово: ${product.name} (${result.seconds} s, 1080 × 1920)`,
-    '',
-    `▶️ **[Гледай или свали видеото](${videoUrl})**${music ? '' : ' · без музика (в Drive няма папка `_music`)'}`,
-    '',
-    `[![Корица](${coverUrl})](${videoUrl})`,
-    '',
-    '**Текст за публикуване** (TikTok, YouTube Shorts, Reels):',
-    '```',
-    fs.readFileSync(result.post, 'utf8').trim(),
-    '```',
-    '',
-    'Качи го ръчно и затвори issue-то. За промени напиши `/redo` и бележка.',
-  ].join('\n'));
+/** The spec and recording scripts of this version, for the next round. */
+function currentState() {
+  const specFile = path.join(WORK, 'spec.json');
+  const flowsDir = path.join(WORK, 'flows');
+  const flows = fs.existsSync(flowsDir)
+    ? Object.fromEntries(fs.readdirSync(flowsDir).filter((f) => f.endsWith('.json')).map((f) => [path.basename(f, '.json'), JSON.parse(fs.readFileSync(path.join(flowsDir, f), 'utf8'))]))
+    : {};
+  return fs.existsSync(specFile) ? { spec: JSON.parse(fs.readFileSync(specFile, 'utf8')), flows } : null;
 }
 
-const mode = process.argv[2];
-(mode === 'render' ? render : draft)().catch(async (err) => {
-  console.error('[make-short] FAILED:', (err && err.stack) || err);
-  try {
-    await comment(`Нещо се обърка: ${String(err.message).split('\n')[0]}${process.env.RUN_URL ? `\n\nЛогът: ${process.env.RUN_URL}` : ''}`);
-  } catch {
-    // The workflow log still has the error.
+async function publish() {
+  const resultFile = path.join(WORK, 'result.md');
+  const message = fs.existsSync(resultFile) ? fs.readFileSync(resultFile, 'utf8').trim() : '';
+  const out = path.join(WORK, 'out');
+  const video = path.join(out, 'short.mp4');
+  const started = Number(process.env.RUN_STARTED_MS || 0);
+  const fresh = fs.existsSync(video) && fs.statSync(video).mtimeMs >= started;
+
+  if (!message && !fresh) throw new Error('The agent finished without a video or a message (no result.md).');
+
+  const parts = [];
+  if (fresh) {
+    const seconds = Math.round(media.probe(video).duration * 10) / 10;
+    const base = `issue${ISSUE_NUMBER}-${new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '')}`;
+    const named = [['short.mp4', `${base}.mp4`], ['cover.jpg', `${base}.jpg`]]
+      .filter(([from]) => fs.existsSync(path.join(out, from)))
+      .map(([from, to]) => {
+        const dest = path.join(out, to);
+        fs.copyFileSync(path.join(out, from), dest);
+        return dest;
+      });
+    const [videoUrl, coverUrl] = upload(named);
+    parts.push(`### 🎬 Готово (${seconds} s, 1080 × 1920)`, '', `▶️ **[Гледай или свали видеото](${videoUrl})**`, '');
+    if (coverUrl) parts.push(`[![Корица](${coverUrl})](${videoUrl})`, '');
   }
-  process.exit(1);
-});
+  if (message) parts.push(message, '');
+  const post = path.join(out, 'post.txt');
+  if (fresh && fs.existsSync(post)) {
+    parts.push('<details><summary>Текст за публикуване (TikTok, YouTube Shorts, Reels)</summary>', '', '```', fs.readFileSync(post, 'utf8').trim(), '```', '</details>', '');
+  }
+  parts.push('_За промени просто напиши коментар. Коментар, който започва с `//`, е бележка и не пуска нова версия._');
+  const state = currentState();
+  if (state) parts.push('', lib.embedState(state));
+  await comment(parts.join('\n'));
+}
+
+async function fail() {
+  await comment(`Нещо се обърка и видеото не стана.${process.env.RUN_URL ? ` Логът: ${process.env.RUN_URL}` : ''}\n\nНапиши коментар, за да опитам пак.`);
+}
+
+const modes = { prepare, publish, fail };
+const mode = modes[process.argv[2]];
+if (require.main === module) {
+  if (!mode) {
+    console.error('Usage: from-issue.js prepare|publish|fail');
+    process.exit(1);
+  }
+  mode().catch((err) => {
+    console.error('[make-short] FAILED:', (err && err.stack) || err);
+    process.exit(1);
+  });
+}
+
+module.exports = { conversation, readable, requestMarkdown };

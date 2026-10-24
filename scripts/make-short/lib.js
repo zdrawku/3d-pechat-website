@@ -3,10 +3,11 @@
  * parsing, the storyboard ("spec") format, the facts check and the ffmpeg
  * filter strings. No network and no ffmpeg here, so all of it is unit-tested.
  *
- * A spec is the storyboard Claude drafts and a person approves:
- *   { product, voice, media: { m1: {kind, origin, ref, name, duration?} },
- *     beats: [{ source, start, caption, highlight, voiceover }],
+ * A spec is the storyboard the agent writes (spec.json in the work folder):
+ *   { product?, voice, media: { m1: {kind, origin, ref, name, duration?} },
+ *     beats: [{ source, start, seconds?, position?, caption, highlight, voiceover }],
  *     endCard: { line, voiceover }, post: { title, description, hashtags } }
+ * `media` is filled in from manifest.json; the agent writes the rest.
  */
 const fs = require('fs');
 const path = require('path');
@@ -14,22 +15,14 @@ const path = require('path');
 const ROOT = path.join(__dirname, '..', '..');
 const SIZE = { width: 1080, height: 1920, fps: 30 };
 
-/** Issue-form labels — the generator writes them, the parser reads them back. */
+/** Issue-form labels (.github/ISSUE_TEMPLATE/new-short.yml) — the parser reads them back. */
 const FORM = {
-  product: 'Продукт',
-  media: 'Снимки и клипове',
-  drive: 'Google Drive',
-  driveOption: 'Използвай и папката на продукта в Google Drive',
-  idea: 'Идея (по избор)',
-  voice: 'Глас',
+  request: 'Какво видео искаш?',
+  media: 'Снимки и клипове (по избор)',
 };
 
-/** Dropdown label → edge-tts voice (null = music only). First one is the default. */
-const VOICES = {
-  'Калина (женски)': 'bg-BG-KalinaNeural',
-  'Борислав (мъжки)': 'bg-BG-BorislavNeural',
-  'Без глас (само музика)': null,
-};
+/** The voices a spec may name; null = music only. */
+const VOICES = ['bg-BG-KalinaNeural', 'bg-BG-BorislavNeural', null];
 
 const readJson = (rel) => JSON.parse(fs.readFileSync(path.join(ROOT, rel), 'utf8'));
 const readProducts = () => readJson('src/data/products.json');
@@ -53,8 +46,8 @@ function clean(value) {
 }
 
 /**
- * Files dropped into an issue live on these hosts only. Anything else in the
- * text (a link someone pasted) is never downloaded.
+ * Files dropped into an issue or comment live on these hosts only. Anything
+ * else in the text (a link someone pasted) is never downloaded.
  */
 function isAttachmentUrl(raw) {
   let url;
@@ -72,12 +65,11 @@ function isAttachmentUrl(raw) {
 }
 
 /**
- * Every attachment URL in a form field, in the order they appear. Covers the
- * shapes GitHub emits: `![x](url)`, `<img src="url">`, `[name.mp4](url)` and a
- * bare video URL on its own line.
+ * Every attachment URL in a text, in order. Covers the shapes GitHub emits:
+ * `![x](url)`, `<img src="url">`, `[name.mp4](url)` and a bare video URL.
  */
-function extractAttachmentUrls(value) {
-  const found = String(value || '').match(/https:\/\/[^\s"'<>()\]]+/g) || [];
+function extractAttachmentUrls(text) {
+  const found = String(text || '').match(/https:\/\/[^\s"'<>()\]]+/g) || [];
   return [...new Set(found.filter(isAttachmentUrl))];
 }
 
@@ -92,43 +84,24 @@ function findProduct(products, query) {
     || null;
 }
 
-/** Reads a `🎬 Ново кратко видео` issue. Returns the request plus any problems found. */
-function parseShortIssue(body, products) {
+/** Reads a `🎬 Ново кратко видео` issue body: the request in words, plus attachments. */
+function parseShortIssue(body) {
   const f = parseIssueForm(body);
-  const get = (label) => clean(f[label.toLowerCase()]);
-  const errors = [];
-
-  const productLabel = get(FORM.product);
-  const product = findProduct(products, productLabel);
-  if (!product) errors.push(`Не намирам продукта „${productLabel || '—'}“ в products.json.`);
-
-  const voiceLabel = get(FORM.voice);
-  const voice = voiceLabel in VOICES ? VOICES[voiceLabel] : Object.values(VOICES)[0];
-
+  const request = clean(f[FORM.request.toLowerCase()]);
   return {
-    product,
-    attachmentUrls: extractAttachmentUrls(get(FORM.media)),
-    useDrive: /\[x\]/i.test(get(FORM.drive)),
-    idea: get(FORM.idea),
-    voice,
-    errors,
+    request,
+    attachmentUrls: extractAttachmentUrls(f[FORM.media.toLowerCase()] || body),
+    errors: request ? [] : ['Липсва описание какво видео искаш.'],
   };
 }
 
-/** `/render` or `/redo <note>` on the first line of a comment; anything else is ignored. */
-function parseCommand(body) {
-  const text = String(body || '').trim();
-  const m = text.match(/^\/(render|redo)\b([\s\S]*)$/i);
-  if (!m) return null;
-  return { cmd: m[1].toLowerCase(), note: m[2].trim() };
-}
-
-// The approved storyboard travels between workflow runs inside the bot's
-// comment. Base64 keeps `-->` or backticks in captions from breaking it.
-const SPEC_MARKER = 'make-short-spec';
-const embedSpec = (spec) => `<!-- ${SPEC_MARKER}\n${Buffer.from(JSON.stringify(spec), 'utf8').toString('base64')}\n-->`;
-function extractSpec(body) {
-  const m = String(body || '').match(new RegExp(`<!-- ${SPEC_MARKER}\\n([A-Za-z0-9+/=]+)\\n-->`));
+// The agent's storyboard and recording scripts travel between workflow runs
+// inside the bot's comment, so feedback can build on them. Base64 keeps `-->`
+// or backticks in captions from breaking the HTML comment.
+const STATE_MARKER = 'make-short-state';
+const embedState = (state) => `<!-- ${STATE_MARKER}\n${Buffer.from(JSON.stringify(state), 'utf8').toString('base64')}\n-->`;
+function extractState(body) {
+  const m = String(body || '').match(new RegExp(`<!-- ${STATE_MARKER}\\n([A-Za-z0-9+/=]+)\\n-->`));
   return m ? JSON.parse(Buffer.from(m[1], 'base64').toString('utf8')) : null;
 }
 
@@ -149,7 +122,7 @@ const NEVER = [
 /**
  * Checks on-screen and spoken text against the facts. Every number must
  * appear in business.json facts or in the request's own sources (product
- * text, the requester's note). Returns a list of problems, empty when fine.
+ * text, the requester's words). Returns a list of problems, empty when fine.
  */
 function factsCheck(texts, { facts, sources = [] }) {
   const allowed = new Set(numbersIn([...facts, ...sources].join(' ')));
@@ -172,12 +145,13 @@ function specTexts(spec) {
   ];
 }
 
-/** Structural checks on a drafted spec. Returns a list of problems, empty when fine. */
+/** Structural checks on a spec. Returns a list of problems, empty when fine. */
 function validateSpec(spec) {
   const problems = [];
   const media = spec.media || {};
-  if (!Array.isArray(spec.beats) || spec.beats.length < 2 || spec.beats.length > 5) {
-    return ['Трябват между 2 и 5 кадъра.'];
+  if (!VOICES.includes(spec.voice === undefined ? null : spec.voice)) problems.push(`Непознат глас „${spec.voice}“ (${VOICES.filter(Boolean).join(', ')} или null).`);
+  if (!Array.isArray(spec.beats) || spec.beats.length < 2 || spec.beats.length > 6) {
+    return [...problems, 'Трябват между 2 и 6 кадъра.'];
   }
   spec.beats.forEach((b, i) => {
     const n = i + 1;
@@ -186,9 +160,12 @@ function validateSpec(spec) {
     else if (m.kind === 'video' && !(b.start >= 0 && b.start < Math.max(0.5, (m.duration || 0) - 0.5))) {
       problems.push(`Кадър ${n}: началото ${b.start} s е извън клипа (${m.duration} s).`);
     }
+    if (b.seconds !== undefined && !(b.seconds >= 1.5 && b.seconds <= 8)) problems.push(`Кадър ${n}: seconds трябва да е между 1,5 и 8.`);
+    if (b.position !== undefined && !['middle', 'top'].includes(b.position)) problems.push(`Кадър ${n}: position е "middle" или "top".`);
     if (!b.caption || b.caption.length > 60) problems.push(`Кадър ${n}: надписът трябва да е 1–60 знака.`);
     if (b.highlight && !b.caption.includes(b.highlight)) problems.push(`Кадър ${n}: акцентът „${b.highlight}“ не е в надписа.`);
     if ((b.voiceover || '').length > 160) problems.push(`Кадър ${n}: гласът е твърде дълъг.`);
+    if (!spec.voice && b.voiceover) problems.push(`Кадър ${n}: има текст за глас, а гласът е изключен.`);
   });
   if (!spec.endCard || !spec.endCard.line || spec.endCard.line.length > 60) problems.push('Финалният кадър: редът трябва да е 1–60 знака.');
   if (!spec.post || !spec.post.title || !Array.isArray(spec.post.hashtags)) problems.push('Липсва текст за публикуване.');
@@ -198,8 +175,14 @@ function validateSpec(spec) {
 
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
-/** Seconds a beat stays on screen: long enough for its voice line, never a slog. */
-const beatDuration = (voiceSeconds) => (voiceSeconds ? clamp(voiceSeconds + 0.45, 2.5, 7) : 3);
+/**
+ * Seconds a beat stays on screen: long enough for its voice line and, for a
+ * recorded flow, for the action the agent asked to show (`seconds`).
+ */
+function beatDuration(voiceSeconds, wanted) {
+  const forVoice = voiceSeconds ? clamp(voiceSeconds + 0.45, 2.5, 7) : 3;
+  return wanted ? clamp(Math.max(forVoice, wanted), 1.5, 8) : forVoice;
+}
 const endCardDuration = (voiceSeconds) => (voiceSeconds ? clamp(voiceSeconds + 0.6, 3, 6) : 3.5);
 
 /**
@@ -255,8 +238,8 @@ function socialHandles(business) {
 module.exports = {
   ROOT, SIZE, FORM, VOICES,
   readProducts, readBusiness,
-  parseIssueForm, clean, isAttachmentUrl, extractAttachmentUrls, findProduct, parseShortIssue, parseCommand,
-  SPEC_MARKER, embedSpec, extractSpec,
+  parseIssueForm, clean, isAttachmentUrl, extractAttachmentUrls, findProduct, parseShortIssue,
+  STATE_MARKER, embedState, extractState,
   numbersIn, factsCheck, specTexts, validateSpec,
   beatDuration, endCardDuration, clipFilter, photoFilter, postText,
   pickProductFolder, socialHandles,

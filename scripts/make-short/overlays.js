@@ -24,6 +24,10 @@ const CAPTION_CSS = `
   font: 800 99px/1.08 RC, sans-serif; color: #fff; letter-spacing: .01em; text-wrap: balance;
   -webkit-text-stroke: 17px #000; paint-order: stroke fill; }
 .cap em { font-style: normal; color: #ff7043; }
+/* Over a website recording the middle is where the action is: caption just
+   below the platform's top bar, on a dark box so it reads over any page. */
+.cap.top { top: 190px; right: auto; max-width: 842px; padding: 22px 30px 26px; border-radius: 28px;
+  background: rgba(28, 23, 20, .82); -webkit-text-stroke: 0; font-size: 84px; text-align: left; }
 `;
 
 const END_CSS = `
@@ -70,7 +74,7 @@ async function renderOverlays(spec, business, dir) {
 
     const captions = [];
     for (const [i, beat] of spec.beats.entries()) {
-      const html = page(CAPTION_CSS, `<p class="cap">${captionHtml(beat.caption, beat.highlight)}</p>`);
+      const html = page(CAPTION_CSS, `<p class="cap${beat.position === 'top' ? ' top' : ''}">${captionHtml(beat.caption, beat.highlight)}</p>`);
       captions.push(await shoot(html, path.join(dir, `cap-${i + 1}.png`), true));
     }
 

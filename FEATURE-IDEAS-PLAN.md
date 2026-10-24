@@ -705,9 +705,10 @@ into the LCP slot.
 
 ## Idea 8 — 🎬 `/make-short`: vertical shorts from the catalog
 
-> Added 2026-10-23. Status: **✅ format A and the intake (issue attachments +
-> Drive folder, both Здравко and Мария) approved 2026-10-23; built the same day,
-> uncommitted, awaiting review. Drive needs the service-account setup below.**
+> Added 2026-10-23. Status: **v1 (format A, issue + Drive intake, Мария in both
+> forms) committed on `short-video-testing` (60e6fc9). v2 — one agent does
+> everything from a request in words, on the Claude subscription — built
+> 2026-10-24, uncommitted, see „v2“ below.**
 > Artifact: [🎬 Shorts Format Variants](https://claude.ai/artifact/DemQiy5xiNbuVfMxPFe9o5).
 
 A Claude Code command that renders 9:16 shorts (1080 × 1920 MP4, 15–20 s) for
@@ -776,33 +777,54 @@ into the issue are used, and the product's Drive folder too when ticked.
 Мария (`mariyajablqnova-ux`) may use **both** forms. Public drafts on the
 Releases page are fine.
 
-### What was built (2026-10-23, uncommitted)
+### v1 (2026-10-23, committed on `short-video-testing`)
 
-- **Allowlist** `.github/issue-authors.json` (login + numeric id; ids can't be
-  renamed or re-registered) + `scripts/check-issue-author.js`. Both
-  `add-product.yml` and `make-short.yml` gate on it; the old
-  `login == zdrawku && OWNER` check is gone.
-- **Issue form** `.github/ISSUE_TEMPLATE/new-short.yml`, generated from
-  `products.json` in prebuild (`npm run generate-short-form`); fields: product,
-  photos/clips, Drive checkbox, idea, voice.
-- **Workflow** `.github/workflows/make-short.yml`: gate → `draft` (on open or
-  `/redo <note>`: downloads attachments + Drive, Claude drafts the storyboard
-  with structured output, facts-checked with one retry, posted as a comment
-  with the spec embedded) → `render` (on `/render`: renders, uploads to the
-  `shorts-drafts` pre-release, comments the video + cover + post text).
-- **Pipeline** `scripts/make-short/` — `lib.js` (parsing, facts check,
-  filters), `media.js`, `collect.js`, `drive.js` (service-account JWT, no
-  Google SDK), `draft.js` (Claude, `claude-opus-5-5` by default, server-side
-  refusal fallback), `overlays.js` (Playwright draws word-pop captions and the
-  paper end card), `render.js` (ffmpeg + edge-tts), `make-short.js` (local
-  CLI), `from-issue.js` (CI). Fonts: Roboto Condensed (OFL) vendored in
-  `scripts/make-short/fonts/`.
-- **Skill** `/make-short` (`.claude/skills/make-short/SKILL.md`): local runs
-  where Claude Code looks at the frames and writes the storyboard itself.
-- Verified locally: euro-coin short from catalog photos + two test clips,
-  17.9 s, 1080 × 1920, voice + music, ~30 s to render.
+Allowlist `.github/issue-authors.json` (login + numeric id) +
+`scripts/check-issue-author.js`, used by both issue workflows; a product
+dropdown form; a two-step workflow (Claude drafts via `ANTHROPIC_API_KEY`,
+`/render` renders); the render pipeline in `scripts/make-short/`.
 
-### Google Drive setup (owner, one time)
+### v2 — one agent, a request in words (2026-10-24, uncommitted)
+
+The owner found v1 too manual (product dropdown, approval step, Google Cloud
+setup) and wanted no platform API key. Asked for: describe the short in
+words, attach clips, and let an agent do the rest, including recording the
+site on a phone screen for requests like „направи шорт видео което показва
+как да направиш поръчка през сайта в 3 лесни стъпки“.
+
+- **Form** `new-short.yml`: two fields — „Какво видео искаш?“ and optional
+  files. No product list, no generator.
+- **Workflow** `make-short.yml`: gate (allowlist by id; `//` comments ignored;
+  duplicate `opened`/`labeled` starts skipped) → one `agent` job:
+  `from-issue.js prepare` (conversation → `request.md`, downloads every file
+  from the issue and the team's comments, restores the previous version) →
+  **Claude Code 2.1.296 headless on `CLAUDE_CODE_OAUTH_TOKEN`** (from
+  `claude setup-token`, one year; `ANTHROPIC_API_KEY` deliberately absent, as
+  it would take precedence) running `/make-short` with `--permission-mode
+  dontAsk`, tools limited to Read/Glob/Grep, Edit in `tmp/make-short/**` and
+  `Bash(npm run make-short:*)`, no web → `from-issue.js publish` (video +
+  cover to the `shorts-drafts` pre-release, comment with the agent's
+  `result.md`, post text and the saved spec/flows). Any later team comment =
+  feedback = a new version built on the saved one. Transcript kept 14 days as
+  an artifact.
+- **Website recordings** `record-flow.js`: a JSON step list (goto, mark,
+  scroll, scrollTo, tap, type, wait) filmed at 360 × 640 × 3 = 1080 × 1920.
+  Chrome's screencast only gives CSS-pixel frames, so each step is a full
+  screenshot on a synthetic 30 fps timeline (smooth regardless of CI speed).
+  Consent pre-answered „denied“, review snackbar pre-dismissed, analytics,
+  Web3Forms and hCaptcha blocked; only 3dpechat.bg or localhost.
+- **Spec additions:** `product` optional; per-beat `seconds` (1.5–8, for
+  recorded steps) and `position: "top"` (captions over the site).
+- **Removed:** `draft.js` (API-key Claude call), the generated form and its
+  prebuild step.
+- **Skill** `/make-short` rewritten as the agent's playbook (CI and local).
+
+**Owner setup (once):** `claude setup-token` → GitHub secret
+`CLAUDE_CODE_OAUTH_TOKEN`; create the `new-short` label (the form's label
+doesn't exist yet, so issues wouldn't be tagged). Drive (below) stays
+optional — only needed for clips over GitHub's 10 MB.
+
+### Google Drive setup (optional, owner, one time)
 
 The folder is `3dpechat-shorts` in Здравко's Drive. Its id (the end of its URL)
 lives only in the `GDRIVE_FOLDER_ID` secret — never in this public repo. It
@@ -822,17 +844,27 @@ permissions and share“.
 7. Inside the folder: one subfolder per product, named by its `linkId` (or its
    catalog name), plus `_music` for royalty-free tracks you chose.
 
-Without the two secrets the workflow still works with issue attachments and
-catalog photos, and says in its comment that Drive isn't connected.
+Without the two secrets the agent works with issue attachments, catalog
+photos and site recordings; `npm run make-short -- drive` just says Drive
+isn't connected. The other way past the 10 MB limit is GitHub Pro on the
+repo owner's account (videos up to 100 MB in issues) — but uploads over
+10 MB also need the uploader to be a collaborator or on a paid plan, which
+Мария isn't today.
 
 ### Next
 
-- First real run: a `🎬 Ново кратко видео` issue for the euro-coin holder, after
-  merge (workflows only run from `main`).
+- First real run after merge to `main` (issue workflows run from the default
+  branch): „направи шорт … поръчка … в 3 лесни стъпки“, then a product short
+  with a clip.
 - Watch edge-tts: it broke once already (7.2.x → 403, Oct 2026). If it breaks
   again, bump the pin in `make-short.yml`, or switch to Azure Speech (same
   voices, licensed, needs a key).
-- Later, if wanted: B (site walkthrough) as one pinned "how to order" short.
+- Deferred: automatic posting. YouTube Data API uploads from an unverified
+  app stay private until an audit; TikTok's Content Posting API needs an
+  audited app for public posts. A private YouTube upload the owner flips to
+  public is the realistic first step, if wanted.
+- Deferred: the auto-blog still uses `ANTHROPIC_API_KEY`; it could move to the
+  same subscription token by running Claude Code instead of the SDK.
 
 ---
 

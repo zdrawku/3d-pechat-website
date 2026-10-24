@@ -205,12 +205,13 @@ baselines, Analytics… — ordered, with who does each and when).
   — add a catalog product from photos + a one-line brief; converts to webp,
   drafts the Bulgarian copy for approval, appends to `products.json`, opens a PR.
 - **`/make-short`** ([`.claude/skills/make-short/SKILL.md`](.claude/skills/make-short/SKILL.md))
-  — render a 15–20 s vertical short (TikTok/Shorts/Reels) for a product from its
-  catalog photos plus uploaded photos/clips; Bulgarian captions + voice checked
-  against `business.json`, output to gitignored `shorts/`. The same pipeline
-  runs from a phone via the „🎬 Ново кратко видео“ issue form
-  (`make-short.yml`). Both issue forms are limited to the people in
-  `.github/issue-authors.json`.
+  — make a vertical short (TikTok/Shorts/Reels) from a request in words:
+  uploaded clips/photos + catalog photos, and/or a phone-screen Playwright
+  recording of a site flow; Bulgarian captions + voice checked against
+  `business.json`. The same skill is the agent behind the „🎬 Ново кратко
+  видео“ issue (`make-short.yml`, Claude Code on the owner's subscription via
+  `CLAUDE_CODE_OAUTH_TOKEN` — never `ANTHROPIC_API_KEY` in that job). Both
+  issue forms are limited to the people in `.github/issue-authors.json`.
 - **`/handoff`** ([`.claude/skills/handoff/SKILL.md`](.claude/skills/handoff/SKILL.md))
   — the end of every change: a test plan for exactly the changed files and the
   steps to run once it's live (`scripts/handoff-checklist.js`).

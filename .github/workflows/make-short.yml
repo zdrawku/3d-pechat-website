@@ -1,19 +1,22 @@
 name: Make Short from Issue
 
-# „🎬 Ново кратко видео“ flow (FEATURE-IDEAS-PLAN.md, Idea 8). Здравко or
-# Мария opens the issue with photos/clips; this comments a storyboard drafted
-# by Claude, `/render` turns it into an MP4 attached to the `shorts-drafts`
-# pre-release, `/redo <note>` drafts again. Nothing is committed and nothing
-# is posted to TikTok or YouTube.
+# „🎬 Ново кратко видео“ (FEATURE-IDEAS-PLAN.md, Idea 8). Здравко or Мария
+# describes a short in words, optionally with photos/clips; a Claude Code agent
+# (on Здравко's Claude subscription, not an API key) picks the shots, records
+# the website on a phone screen when the request is about the site, renders
+# the short and replies with it. Every later comment from the team is
+# feedback and produces a new version. Nothing is committed and nothing is
+# posted to TikTok or YouTube.
 #
 # SECURITY — anyone can open an issue or comment on a public repo:
 #   1. `gate` checks the numeric GitHub id of whoever opened the issue or wrote
-#      the command against .github/issue-authors.json before anything runs.
+#      the comment against .github/issue-authors.json before anything runs.
 #   2. Strangers' issues are closed without running anything; strangers'
-#      commands are ignored.
-#   3. Only GitHub-hosted attachments and the shared Drive folder are
-#      downloaded, and the storyboard is read back only from the bot's own
-#      comments.
+#      comments are ignored (and left out of the agent's input).
+#   3. The agent gets only CLAUDE_CODE_OAUTH_TOKEN (+ read-only Drive, if set):
+#      no GitHub token, no ANTHROPIC_API_KEY. It may read the repo, write in
+#      its work folder and run `npm run make-short` — nothing else.
+#      scripts/make-short/from-issue.js does the GitHub side before and after.
 
 on:
   issues:
@@ -34,14 +37,28 @@ jobs:
     if: >-
       contains(github.event.issue.labels.*.name, 'new-short') &&
       !github.event.issue.pull_request &&
+      github.event.issue.state == 'open' &&
       (github.event_name == 'issues' ||
-       startsWith(github.event.comment.body, '/render') ||
-       startsWith(github.event.comment.body, '/redo'))
+       (github.event.comment.user.type != 'Bot' && !startsWith(github.event.comment.body, '//')))
     runs-on: ubuntu-latest
     outputs:
       allowed: ${{ steps.verify.outputs.allowed }}
-      mode: ${{ steps.mode.outputs.mode }}
+      duplicate: ${{ steps.dup.outputs.duplicate }}
     steps:
+      # A new issue can fire both `opened` and `labeled`. Runs queue one after
+      # the other (concurrency below), so the second one sees the bot's reply
+      # and stops here.
+      - name: Skip a second start of the same new issue
+        id: dup
+        if: github.event_name == 'issues'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          n=$(gh api "repos/$REPO/issues/$ISSUE/comments" --jq '[.[] | select(.user.login == "github-actions[bot]")] | length')
+          if [[ "$n" -gt 0 ]]; then echo "duplicate=true" >> "$GITHUB_OUTPUT"; else echo "duplicate=false" >> "$GITHUB_OUTPUT"; fi
+
       # Only the allowlist and its checker — nothing from the issue runs here.
       - uses: actions/checkout@v4
         with:
@@ -57,23 +74,9 @@ jobs:
           ACTOR_LOGIN: ${{ github.event_name == 'issues' && github.event.issue.user.login || github.event.comment.user.login }}
         run: node scripts/check-issue-author.js
 
-      - name: Pick draft or render
-        id: mode
-        env:
-          EVENT: ${{ github.event_name }}
-          COMMENT: ${{ github.event.comment.body }}
-        run: |
-          if [[ "$EVENT" == "issues" || "$COMMENT" =~ ^/redo([[:space:]]|$) ]]; then
-            echo "mode=draft" >> "$GITHUB_OUTPUT"
-          elif [[ "$COMMENT" =~ ^/render([[:space:]]|$) ]]; then
-            echo "mode=render" >> "$GITHUB_OUTPUT"
-          else
-            echo "mode=none" >> "$GITHUB_OUTPUT"
-          fi
-
   reject:
     needs: gate
-    if: needs.gate.outputs.allowed != 'true' && github.event_name == 'issues'
+    if: needs.gate.outputs.allowed != 'true' && github.event_name == 'issues' && needs.gate.outputs.duplicate != 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Comment and close
@@ -89,13 +92,21 @@ jobs:
             gh issue close "$ISSUE" --repo "$REPO" --reason "not planned"
           fi
 
-  draft:
+  agent:
     needs: gate
-    if: needs.gate.outputs.allowed == 'true' && needs.gate.outputs.mode == 'draft'
+    if: needs.gate.outputs.allowed == 'true' && needs.gate.outputs.duplicate != 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 45
+    env:
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+      REPO: ${{ github.repository }}
+      WORK: tmp/make-short/issue-${{ github.event.issue.number }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Remember when the run started
+        run: echo "RUN_STARTED_MS=$(date +%s%3N)" >> "$GITHUB_ENV"
 
       - uses: actions/setup-node@v4
         with:
@@ -107,39 +118,7 @@ jobs:
       - name: Install ffmpeg
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
 
-      - name: Draft the storyboard
-        env:
-          EVENT_NAME: ${{ github.event_name }}
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
-          ISSUE_BODY: ${{ github.event.issue.body }}
-          COMMENT_BODY: ${{ github.event.comment.body }}
-          REPO: ${{ github.repository }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          GDRIVE_SA_KEY: ${{ secrets.GDRIVE_SA_KEY }}
-          GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        run: node scripts/make-short/from-issue.js draft
-
-  render:
-    needs: gate
-    if: needs.gate.outputs.allowed == 'true' && needs.gate.outputs.mode == 'render'
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - run: npm ci
-
-      - name: Install ffmpeg
-        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
-
-      # Captions and the end card are drawn in Chromium.
+      # Recording the site and drawing captions both use Chromium.
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
@@ -152,13 +131,54 @@ jobs:
       - name: Install edge-tts
         run: pip install edge-tts==7.3.1
 
-      - name: Render the short
+      # Pinned to a release at least two weeks old.
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code@2.1.296
+
+      - name: Collect the request, conversation and files
         env:
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
-          REPO: ${{ github.repository }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TRIGGER_COMMENT_ID: ${{ github.event.comment.id }}
+        run: node scripts/make-short/from-issue.js prepare
+
+      - name: Make the short (Claude Code on the subscription)
+        env:
+          # The subscription token only. ANTHROPIC_API_KEY must NOT be set
+          # here: if both are present the CLI bills the API key instead.
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           GDRIVE_SA_KEY: ${{ secrets.GDRIVE_SA_KEY }}
           GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        run: node scripts/make-short/from-issue.js render
+        run: |
+          if [[ -z "$CLAUDE_CODE_OAUTH_TOKEN" ]]; then
+            echo "::error::The CLAUDE_CODE_OAUTH_TOKEN secret is missing. Run 'claude setup-token' and save the token under Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+          claude auth status --text
+          claude -p "/make-short CI: work folder $WORK. Start by reading $WORK/request.md, then follow the skill's „In GitHub Actions“ section and finish by writing $WORK/result.md." \
+            --permission-mode dontAsk \
+            --tools "Read,Write,Edit,Glob,Grep,Bash" \
+            --allowedTools "Read" "Glob" "Grep" "Edit(./tmp/make-short/**)" "Bash(npm run make-short:*)" \
+            --disallowedTools "WebFetch" "WebSearch" \
+            --max-turns 120 \
+            --output-format stream-json --verbose > "$RUNNER_TEMP/transcript.jsonl"
+
+      - name: Post the result
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/make-short/from-issue.js publish
+
+      - name: Tell the issue it failed
+        if: failure()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/make-short/from-issue.js fail
+
+      - name: Keep the agent's transcript
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: make-short-transcript-${{ github.event.issue.number }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/transcript.jsonl
+          retention-days: 14
+          if-no-files-found: ignore

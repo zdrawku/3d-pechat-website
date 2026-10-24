@@ -7,56 +7,38 @@ const business = lib.readBusiness();
 const coin = products.find((p) => p.linkId === 'darzhach-za-evro-moneti-fidzhet-spinar');
 
 // What GitHub puts in an issue created from .github/ISSUE_TEMPLATE/new-short.yml.
-const ISSUE = `### Продукт
+const ISSUE = `### Какво видео искаш?
 
-Държач за евро монети — фиджет спинър
+Направи шорт видео което показва как да направиш поръчка през сайта в 3 лесни стъпки
 
-### Снимки и клипове
+### Снимки и клипове (по избор)
 
 <img width="1080" height="1440" alt="Image" src="https://github.com/user-attachments/assets/0b1c2d3e-aaaa-4bbb-8ccc-123456789abc" />
 
 https://github.com/user-attachments/assets/9f8e7d6c-1111-4222-8333-abcdefabcdef
 
-[not-ours](https://example.com/evil.mp4)
+[not-ours](https://example.com/evil.mp4)`;
 
-### Google Drive
-
-- [X] Използвай и папката на продукта в Google Drive
-
-### Идея (по избор)
-
-Започни с въртенето
-
-### Глас
-
-Борислав (мъжки)`;
-
-test('parses a short request: product, attachments, Drive, idea, voice', () => {
-  const req = lib.parseShortIssue(ISSUE, products);
+test('parses a request: the words and the attachments', () => {
+  const req = lib.parseShortIssue(ISSUE);
   assert.deepStrictEqual(req.errors, []);
-  assert.strictEqual(req.product.linkId, 'darzhach-za-evro-moneti-fidzhet-spinar');
+  assert.match(req.request, /3 лесни стъпки/);
   assert.deepStrictEqual(req.attachmentUrls, [
     'https://github.com/user-attachments/assets/0b1c2d3e-aaaa-4bbb-8ccc-123456789abc',
     'https://github.com/user-attachments/assets/9f8e7d6c-1111-4222-8333-abcdefabcdef',
   ]);
-  assert.strictEqual(req.useDrive, true);
-  assert.strictEqual(req.idea, 'Започни с въртенето');
-  assert.strictEqual(req.voice, 'bg-BG-BorislavNeural');
 });
 
-test('defaults: no attachments, Drive unticked, unknown voice → Калина', () => {
-  const body = '### Продукт\n\nРазделители за книги\n\n### Снимки и клипове\n\n_No response_\n\n### Google Drive\n\n- [ ] Използвай и папката на продукта в Google Drive\n\n### Глас\n\n_No response_';
-  const req = lib.parseShortIssue(body, products);
-  assert.strictEqual(req.product.linkId, 'razdeliteli-za-knigi');
+test('an empty request is reported; no attachments is fine', () => {
+  const req = lib.parseShortIssue('### Какво видео искаш?\n\n_No response_\n\n### Снимки и клипове (по избор)\n\n_No response_');
   assert.deepStrictEqual(req.attachmentUrls, []);
-  assert.strictEqual(req.useDrive, false);
-  assert.strictEqual(req.voice, 'bg-BG-KalinaNeural');
+  assert.strictEqual(req.errors.length, 1);
 });
 
-test('an unknown product is reported, not guessed', () => {
-  const req = lib.parseShortIssue('### Продукт\n\nНещо несъществуващо', products);
-  assert.strictEqual(req.product, null);
-  assert.match(req.errors[0], /Нещо несъществуващо/);
+test('products by linkId or name, punctuation ignored', () => {
+  assert.strictEqual(lib.findProduct(products, 'darzhach-za-evro-moneti-fidzhet-spinar'), coin);
+  assert.strictEqual(lib.findProduct(products, 'държач за евро монети - фиджет спинър'), coin);
+  assert.strictEqual(lib.findProduct(products, 'няма такъв'), null);
 });
 
 test('only GitHub attachment hosts are downloadable', () => {
@@ -76,25 +58,18 @@ test('only GitHub attachment hosts are downloadable', () => {
   ]) assert.ok(!lib.isAttachmentUrl(bad), bad);
 });
 
-test('commands: /render and /redo with a note; everything else ignored', () => {
-  assert.deepStrictEqual(lib.parseCommand('/render'), { cmd: 'render', note: '' });
-  assert.deepStrictEqual(lib.parseCommand('  /redo по-кратко второто изречение\nи без глас'), { cmd: 'redo', note: 'по-кратко второто изречение\nи без глас' });
-  assert.strictEqual(lib.parseCommand('Супер! /render'), null);
-  assert.strictEqual(lib.parseCommand('/rendering'), null);
+test('the state survives a round trip through a comment, captions with --> included', () => {
+  const state = { spec: { beats: [{ caption: 'стрелка --> и `код`' }] }, flows: { order: { steps: [] } } };
+  const body = `Готово\n\n${lib.embedState(state)}\n`;
+  assert.deepStrictEqual(lib.extractState(body), state);
+  assert.strictEqual(lib.extractState('no state here'), null);
 });
 
-test('the spec survives a round trip through a comment, captions with --> included', () => {
-  const spec = { product: 'x', beats: [{ caption: 'стрелка --> и `код`' }] };
-  const body = `Чернова\n\n${lib.embedSpec(spec)}\n`;
-  assert.deepStrictEqual(lib.extractSpec(body), spec);
-  assert.strictEqual(lib.extractSpec('no spec here'), null);
-});
-
-test('facts check: product numbers pass, invented numbers and never-claims fail', () => {
-  const sources = [coin.name, coin.description];
-  assert.deepStrictEqual(lib.factsCheck(['Гнезда за 2 €, 1 € и 50 евроцента', 'Отпечатан на 3D принтер в София', 'От 0,80 € на 10 г'], { facts: business.facts, sources }), []);
+test('facts check: product and request numbers pass, invented numbers and never-claims fail', () => {
+  const sources = [coin.name, coin.description, 'покажи поръчката в 3 лесни стъпки'];
+  assert.deepStrictEqual(lib.factsCheck(['Гнезда за 2 €, 1 € и 50 евроцента', 'Отпечатан на 3D принтер в София', 'От 0,80 € на 10 г', '3 лесни стъпки'], { facts: business.facts, sources }), []);
   // A number the facts do contain ("2 часа" — 2 is in "2 евро") can't be
-  // caught this way; that is what the human approval step is for.
+  // caught this way; that is why the agent rereads every line.
   const problems = lib.factsCheck([
     'Готово за 48 часа',
     'Печатаме и със смола',
@@ -109,9 +84,10 @@ test('facts check: product numbers pass, invented numbers and never-claims fail'
 const media = { m1: { kind: 'photo' }, m2: { kind: 'video', duration: 12 } };
 const goodSpec = () => ({
   media,
+  voice: 'bg-BG-KalinaNeural',
   beats: [
     { source: 'm2', start: 4, caption: 'Къде държите евромонетите?', highlight: 'евромонетите?', voiceover: 'Къде държите евромонетите?' },
-    { source: 'm1', start: 0, caption: 'Гнезда за 2 €, 1 € и 50 евроцента', highlight: '', voiceover: '' },
+    { source: 'm1', start: 0, seconds: 4, position: 'top', caption: '1. Избери продукт', highlight: 'продукт', voiceover: '' },
   ],
   endCard: { line: 'Отпечатан на 3D принтер в София', voiceover: '' },
   post: { title: 'Държач за евро монети', description: 'Описание', hashtags: ['#3dпечат', '#евро'] },
@@ -123,17 +99,30 @@ test('validateSpec accepts a good storyboard and names each problem in a bad one
   bad.beats[0].start = 11.8;
   bad.beats[1].source = 'm9';
   bad.beats[1].highlight = 'липсва';
+  bad.beats[1].seconds = 12;
+  bad.beats[1].position = 'bottom';
   bad.post.hashtags = ['без решетка'];
   const problems = lib.validateSpec(bad);
-  assert.strictEqual(problems.length, 4, problems.join('\n'));
-  assert.deepStrictEqual(lib.validateSpec({ ...goodSpec(), beats: [goodSpec().beats[0]] }), ['Трябват между 2 и 5 кадъра.']);
+  assert.strictEqual(problems.length, 6, problems.join('\n'));
+  assert.deepStrictEqual(lib.validateSpec({ ...goodSpec(), beats: [goodSpec().beats[0]] }), ['Трябват между 2 и 6 кадъра.']);
 });
 
-test('beat timing follows the voice line within limits', () => {
+test('voice: only the two Bulgarian voices or null, and no voice lines without a voice', () => {
+  assert.match(lib.validateSpec({ ...goodSpec(), voice: 'en-US-AriaNeural' })[0], /Непознат глас/);
+  const silent = { ...goodSpec(), voice: null };
+  assert.match(lib.validateSpec(silent)[0], /гласът е изключен/);
+  silent.beats = silent.beats.map((b) => ({ ...b, voiceover: '' }));
+  assert.deepStrictEqual(lib.validateSpec(silent), []);
+});
+
+test('beat timing follows the voice line, or the wanted length for a recorded step', () => {
   assert.strictEqual(lib.beatDuration(0), 3);
   assert.strictEqual(lib.beatDuration(1), 2.5);
   assert.strictEqual(lib.beatDuration(3), 3.45);
   assert.strictEqual(lib.beatDuration(9), 7);
+  assert.strictEqual(lib.beatDuration(2, 5), 5);
+  assert.strictEqual(lib.beatDuration(4, 2), 4.45);
+  assert.strictEqual(lib.beatDuration(0, 20), 8);
   assert.strictEqual(lib.endCardDuration(4), 4.6);
 });
 
