@@ -12,7 +12,7 @@
 const fs = require('fs');
 const crypto = require('crypto');
 const { pickProductFolder } = require('./lib');
-const { VIDEO_EXT, IMAGE_EXT, AUDIO_EXT } = require('./media');
+const { VIDEO_EXT, IMAGE_EXT } = require('./media');
 
 const SCOPE = 'https://www.googleapis.com/auth/drive.readonly';
 const API = 'https://www.googleapis.com/drive/v3';
@@ -62,18 +62,15 @@ async function download(token, fileId, dest) {
 }
 
 /**
- * The product's photos and clips, plus the tracks in `_music`. Returns
- * `{ files, music, folderName }`; `folderName` is null when the product has no
- * folder yet.
+ * The product's photos and clips. Returns `{ files, folderName }`;
+ * `folderName` is null when the product has no folder yet.
  */
 async function productMedia(token, rootId, product) {
   const root = await listChildren(token, rootId);
   const folders = root.filter((f) => f.mimeType === FOLDER);
   const own = pickProductFolder(folders, product);
-  const musicFolder = folders.find((f) => f.name.toLowerCase() === '_music');
   const files = own ? (await listChildren(token, own.id)).filter((f) => VIDEO_EXT.test(f.name) || IMAGE_EXT.test(f.name)) : [];
-  const music = musicFolder ? (await listChildren(token, musicFolder.id)).filter((f) => AUDIO_EXT.test(f.name)) : [];
-  return { files, music, folderName: own ? own.name : null };
+  return { files, folderName: own ? own.name : null };
 }
 
 /** True when both secrets are present, so callers can skip Drive cleanly. */

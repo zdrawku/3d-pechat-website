@@ -111,6 +111,11 @@ async function prepare() {
   await react();
   const authors = readAuthors();
   const issue = await github(`/issues/${ISSUE_NUMBER}`);
+  // Second lock behind the workflow's gate: the request text goes to the
+  // agent, so it must come from the team.
+  if (!findAuthor(authors, issue.user && issue.user.id)) {
+    throw new Error(`Issue #${ISSUE_NUMBER} was opened by ${issue.user && issue.user.login}, who is not in .github/issue-authors.json — refusing to run.`);
+  }
   const comments = await github(`/issues/${ISSUE_NUMBER}/comments?per_page=100`);
   const messages = conversation(issue, comments, authors);
   const { request } = lib.parseShortIssue(issue.body);
@@ -186,6 +191,8 @@ function uploadSection(c) {
     ...block(c.pinnedComment),
     '',
     '<details><summary>Линк за TikTok био или сторис</summary>', '', ...block(c.siteLink), '</details>',
+    '',
+    '🔊 _Видеото е без звук: при качване добави популярен звук от библиотеката на TikTok / YouTube — така видеото стига и до хората, които следят този звук._',
     '',
     '_Отговаряй на коментарите през първия час — тогава платформите решават дали да покажат видеото на повече хора._',
   ].join('\n');

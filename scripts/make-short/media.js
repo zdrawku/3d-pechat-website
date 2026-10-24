@@ -17,7 +17,6 @@ const EXT_BY_TYPE = {
 };
 const VIDEO_EXT = /\.(mp4|mov|m4v|webm|mkv)$/i;
 const IMAGE_EXT = /\.(jpe?g|png|webp|gif|heic|heif|avif)$/i;
-const AUDIO_EXT = /\.(mp3|m4a|aac|wav|ogg)$/i;
 
 const run = (cmd, args) => execFileSync(cmd, args, { stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 64 * 1024 * 1024 }).toString();
 
@@ -111,10 +110,7 @@ async function renderReadyPhoto(file, out) {
   return out;
 }
 
-/** Seconds of audio in a file. */
-const audioDuration = (file) => Number(run('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', file]).trim()) || 0;
-
 module.exports = {
-  VIDEO_EXT, IMAGE_EXT, AUDIO_EXT, run, kindOf, probe, downloadAttachment,
-  sampleTimes, extractFrames, photoPreview, renderReadyPhoto, audioDuration,
+  VIDEO_EXT, IMAGE_EXT, run, kindOf, probe, downloadAttachment,
+  sampleTimes, extractFrames, photoPreview, renderReadyPhoto,
 };

@@ -4,9 +4,10 @@
  * filter strings. No network and no ffmpeg here, so all of it is unit-tested.
  *
  * A spec is the storyboard the agent writes (spec.json in the work folder):
- *   { product?, voice, media: { m1: {kind, origin, ref, name, duration?} },
- *     beats: [{ source, start, seconds?, position?, caption, highlight, voiceover }],
- *     endCard: { line, voiceover }, post: { title, description, hashtags } }
+ *   { product?, media: { m1: {kind, origin, ref, name, duration?} },
+ *     beats: [{ source, start, seconds?, position?, caption, highlight }],
+ *     endCard: { line }, post: { link, tiktok, youtube, pinnedComment } }
+ * Text only: no voice and no music (the team adds a sound in the app).
  * `media` is filled in from manifest.json; the agent writes the rest.
  */
 const fs = require('fs');
@@ -21,8 +22,6 @@ const FORM = {
   media: 'Снимки и клипове (по избор)',
 };
 
-/** The voices a spec may name; null = music only. */
-const VOICES = ['bg-BG-KalinaNeural', 'bg-BG-BorislavNeural', null];
 
 const readJson = (rel) => JSON.parse(fs.readFileSync(path.join(ROOT, rel), 'utf8'));
 const readProducts = () => readJson('src/data/products.json');
@@ -136,12 +135,12 @@ function factsCheck(texts, { facts, sources = [] }) {
   return problems;
 }
 
-/** Every text in a spec that ends up on screen, in the voice or in the upload copy. */
+/** Every text in a spec that ends up on screen or in the upload copy. */
 function specTexts(spec) {
   const post = spec.post || {};
   return [
-    ...spec.beats.flatMap((b) => [b.caption, b.voiceover]),
-    spec.endCard.line, spec.endCard.voiceover,
+    ...spec.beats.map((b) => b.caption),
+    spec.endCard.line,
     post.tiktok && post.tiktok.caption,
     post.youtube && post.youtube.title,
     post.youtube && post.youtube.description,
@@ -189,7 +188,6 @@ function validatePost(post) {
 function validateSpec(spec) {
   const problems = [];
   const media = spec.media || {};
-  if (!VOICES.includes(spec.voice === undefined ? null : spec.voice)) problems.push(`Непознат глас „${spec.voice}“ (${VOICES.filter(Boolean).join(', ')} или null).`);
   if (!Array.isArray(spec.beats) || spec.beats.length < 2 || spec.beats.length > 6) {
     return [...problems, 'Трябват между 2 и 6 кадъра.'];
   }
@@ -204,8 +202,6 @@ function validateSpec(spec) {
     if (b.position !== undefined && !['middle', 'top'].includes(b.position)) problems.push(`Кадър ${n}: position е "middle" или "top".`);
     if (!b.caption || b.caption.length > 60) problems.push(`Кадър ${n}: надписът трябва да е 1–60 знака.`);
     if (b.highlight && !b.caption.includes(b.highlight)) problems.push(`Кадър ${n}: акцентът „${b.highlight}“ не е в надписа.`);
-    if ((b.voiceover || '').length > 160) problems.push(`Кадър ${n}: гласът е твърде дълъг.`);
-    if (!spec.voice && b.voiceover) problems.push(`Кадър ${n}: има текст за глас, а гласът е изключен.`);
   });
   if (!spec.endCard || !spec.endCard.line || spec.endCard.line.length > 60) problems.push('Финалният кадър: редът трябва да е 1–60 знака.');
   return [...problems, ...validatePost(spec.post)];
@@ -214,14 +210,17 @@ function validateSpec(spec) {
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
 /**
- * Seconds a beat stays on screen: long enough for its voice line and, for a
- * recorded flow, for the action the agent asked to show (`seconds`).
+ * Seconds a beat stays on screen: long enough to read its caption (about
+ * 1.5 s plus 0.06 s per character) or, for a recorded website step, as long
+ * as the agent asked for (`seconds`), within 2.5–8 s.
  */
-function beatDuration(voiceSeconds, wanted) {
-  const forVoice = voiceSeconds ? clamp(voiceSeconds + 0.45, 2.5, 7) : 3;
-  return wanted ? clamp(Math.max(forVoice, wanted), 1.5, 8) : forVoice;
+function beatDuration(caption, wanted) {
+  const toRead = 1.5 + 0.06 * String(caption || '').length;
+  return Math.round(clamp(Math.max(toRead, wanted || 0), 2.5, 8) * 100) / 100;
 }
-const endCardDuration = (voiceSeconds) => (voiceSeconds ? clamp(voiceSeconds + 0.6, 3, 6) : 3.5);
+
+/** The end card's length (logo, site, offer). */
+const END_CARD_SECONDS = 3.5;
 
 /**
  * ffmpeg filter for one clip beat. Input 0 is the clip (already trimmed with
@@ -299,7 +298,9 @@ function postText(spec, campaign) {
     '=== Линк за TikTok био или сторис (с проследяване) ===',
     c.siteLink,
     '',
-    'Съвет: отговаряй на коментарите през първия час — това е времето, в което платформите решават дали да покажат видеото на повече хора.',
+    'Съвети:',
+    '- Видеото е без звук: при качване добави популярен звук от библиотеката на TikTok / YouTube — така видеото се показва и на хората, които следят този звук.',
+    '- Отговаряй на коментарите през първия час — тогава платформите решават дали да покажат видеото на повече хора.',
     '',
   ].join('\n');
 }
@@ -324,11 +325,11 @@ function socialHandles(business) {
 }
 
 module.exports = {
-  ROOT, SIZE, FORM, VOICES,
+  ROOT, SIZE, FORM, END_CARD_SECONDS,
   readProducts, readBusiness,
   parseIssueForm, clean, isAttachmentUrl, extractAttachmentUrls, findProduct, parseShortIssue,
   STATE_MARKER, embedState, extractState,
   numbersIn, factsCheck, specTexts, validateSpec, validatePost,
-  beatDuration, endCardDuration, clipFilter, photoFilter, trackedLink, uploadCopy, postText,
+  beatDuration, clipFilter, photoFilter, trackedLink, uploadCopy, postText,
   pickProductFolder, socialHandles,
 };

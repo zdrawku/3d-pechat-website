@@ -51,7 +51,9 @@ jobs:
        (github.event.comment.user.type != 'Bot' && !startsWith(github.event.comment.body, '//')))
     runs-on: ubuntu-latest
     outputs:
-      allowed: ${{ steps.verify.outputs.allowed }}
+      # A comment counts only when both the commenter and whoever opened the
+      # issue are on the allowlist — the agent reads the issue's request too.
+      allowed: ${{ steps.verify.outputs.allowed == 'true' && (github.event_name == 'issues' || steps.verify_issue.outputs.allowed == 'true') }}
       duplicate: ${{ steps.dup.outputs.duplicate }}
       over: ${{ steps.limits.outputs.over }}
     steps:
@@ -85,9 +87,19 @@ jobs:
           ACTOR_LOGIN: ${{ github.event_name == 'issues' && github.event.issue.user.login || github.event.comment.user.login }}
         run: node scripts/check-issue-author.js
 
+      - name: Verify who opened the issue (for comments)
+        id: verify_issue
+        if: github.event_name == 'issue_comment'
+        env:
+          ACTOR_ID: ${{ github.event.issue.user.id }}
+          ACTOR_LOGIN: ${{ github.event.issue.user.login }}
+        run: node scripts/check-issue-author.js
+
       - name: Check usage limits (versions per issue, runs per day)
         id: limits
-        if: steps.verify.outputs.allowed == 'true' && steps.dup.outputs.duplicate != 'true'
+        if: >-
+          steps.verify.outputs.allowed == 'true' && steps.dup.outputs.duplicate != 'true' &&
+          (github.event_name == 'issues' || steps.verify_issue.outputs.allowed == 'true')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
@@ -141,15 +153,6 @@ jobs:
       # Recording the site and drawing captions both use Chromium.
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      # Bulgarian voice. 7.2.x gets HTTP 403 from Microsoft's service since
-      # October 2026; 7.3.1 works. If the voice breaks again, try a newer one.
-      - name: Install edge-tts
-        run: pip install edge-tts==7.3.1
 
       # Pinned to a release at least two weeks old.
       - name: Install Claude Code
