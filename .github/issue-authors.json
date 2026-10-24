@@ -1,0 +1,7 @@
+{
+  "_comment": "Who may drive the issue-form workflows (📦 Нов продукт, 🎬 Ново кратко видео). Checked by scripts/check-issue-author.js against the numeric GitHub user id, which never changes — a login can be renamed and then re-registered by someone else. Look an id up with: gh api users/<login> --jq .id",
+  "authors": [
+    { "login": "zdrawku", "id": 11193764, "name": "Здравко" },
+    { "login": "mariyajablqnova-ux", "id": 347078913, "name": "Мария" }
+  ]
+}

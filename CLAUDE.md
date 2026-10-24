@@ -204,6 +204,14 @@ baselines, Analytics… — ordered, with who does each and when).
 - **`/add-product`** ([`.claude/skills/add-product/SKILL.md`](.claude/skills/add-product/SKILL.md))
   — add a catalog product from photos + a one-line brief; converts to webp,
   drafts the Bulgarian copy for approval, appends to `products.json`, opens a PR.
+- **`/make-short`** ([`.claude/skills/make-short/SKILL.md`](.claude/skills/make-short/SKILL.md))
+  — make a vertical short (TikTok/Shorts/Reels) from a request in words:
+  uploaded clips/photos + catalog photos, and/or a phone-screen Playwright
+  recording of a site flow; Bulgarian captions + voice checked against
+  `business.json`. The same skill is the agent behind the „🎬 Ново кратко
+  видео“ issue (`make-short.yml`, Claude Code in CI). The auto-blog also writes
+  through Claude Code (`scripts/auto-blog/claude.js`). Both issue forms are
+  limited to the people in `.github/issue-authors.json`.
 - **`/handoff`** ([`.claude/skills/handoff/SKILL.md`](.claude/skills/handoff/SKILL.md))
   — the end of every change: a test plan for exactly the changed files and the
   steps to run once it's live (`scripts/handoff-checklist.js`).

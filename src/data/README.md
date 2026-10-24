@@ -69,14 +69,15 @@ Two automated routes exist — both end in a PR you review and merge:
   Fill in the form, drag in the photos;
   [`add-product.yml`](../../.github/workflows/add-product.yml) runs
   [`scripts/add-product/from-issue.js`](../../scripts/add-product/from-issue.js)
-  and opens the PR. Owner-only: the workflow refuses to run unless the issue
-  author is `zdrawku` *and* GitHub reports them as `OWNER`; anyone else's issue
-  is commented on and closed without any code running.
+  and opens the PR. Team-only: the workflow refuses to run unless the issue
+  author's numeric GitHub id is in
+  [`.github/issue-authors.json`](../../.github/issue-authors.json) (Здравко and
+  Мария, checked by `scripts/check-issue-author.js`); anyone else's issue is
+  commented on and closed without any code running.
 
 Both share [`scripts/add-product/lib.js`](../../scripts/add-product/lib.js),
 which owns id/`linkId`/`dateAdded` generation, webp conversion, and the
 append-without-reformatting write.
-
 ## `reviews.json` — the „Доволни клиенти" curated reviews
 
 Hand-picked Google reviews shown by

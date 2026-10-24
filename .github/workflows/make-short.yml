@@ -1,0 +1,217 @@
+name: Make Short from Issue
+
+# „🎬 Ново кратко видео“ (FEATURE-IDEAS-PLAN.md, Idea 8). Здравко or Мария
+# describes a short in words, optionally with photos/clips; a Claude Code agent
+# picks the shots, records
+# the website on a phone screen when the request is about the site, renders
+# the short and replies with it. Every later comment from the team is
+# feedback and produces a new version. Nothing is committed and nothing is
+# posted to TikTok or YouTube.
+#
+# SECURITY — anyone can open an issue or comment on a public repo:
+#   1. `gate` checks the numeric GitHub id of whoever opened the issue or wrote
+#      the comment against .github/issue-authors.json before anything runs.
+#   2. Strangers' issues are closed without running anything; strangers'
+#      comments are ignored (and left out of the agent's input).
+#   3. The agent gets no GitHub token. It may read the repo, write in
+#      its work folder and run `npm run make-short` — nothing else.
+#      scripts/make-short/from-issue.js does the GitHub side before and after.
+
+on:
+  issues:
+    types: [opened, labeled]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write # create the shorts-drafts pre-release and upload to it
+  issues: write
+
+concurrency:
+  group: make-short-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+# Caps, so no request can drain the Claude subscription. The agent stops at
+# whichever comes first and the issue is told which one (from-issue.js).
+env:
+  SHORTS_MODEL: sonnet
+  SHORTS_MAX_BUDGET_USD: '4' # estimated spend per run
+  SHORTS_MAX_TURNS: '100' # agent steps per run
+  SHORTS_MAX_MINUTES: '25' # wall-clock per run
+  SHORTS_MAX_VERSIONS: '5' # runs per issue (first version + feedback)
+  SHORTS_MAX_PER_DAY: '8' # runs across all issues per 24 hours
+
+jobs:
+  gate:
+    if: >-
+      contains(github.event.issue.labels.*.name, 'new-short') &&
+      !github.event.issue.pull_request &&
+      github.event.issue.state == 'open' &&
+      (github.event_name == 'issues' ||
+       (github.event.comment.user.type != 'Bot' && !startsWith(github.event.comment.body, '//')))
+    runs-on: ubuntu-latest
+    outputs:
+      allowed: ${{ steps.verify.outputs.allowed }}
+      duplicate: ${{ steps.dup.outputs.duplicate }}
+      over: ${{ steps.limits.outputs.over }}
+    steps:
+      # A new issue can fire both `opened` and `labeled`. Runs queue one after
+      # the other (concurrency below), so the second one sees the bot's reply
+      # and stops here.
+      - name: Skip a second start of the same new issue
+        id: dup
+        if: github.event_name == 'issues'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          n=$(gh api "repos/$REPO/issues/$ISSUE/comments" --jq '[.[] | select(.user.login == "github-actions[bot]")] | length')
+          if [[ "$n" -gt 0 ]]; then echo "duplicate=true" >> "$GITHUB_OUTPUT"; else echo "duplicate=false" >> "$GITHUB_OUTPUT"; fi
+
+      # Only the allowlist and its checker — nothing from the issue runs here.
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github/issue-authors.json
+            scripts/check-issue-author.js
+            scripts/make-short/limits.js
+          sparse-checkout-cone-mode: false
+
+      - name: Verify who is asking
+        id: verify
+        env:
+          ACTOR_ID: ${{ github.event_name == 'issues' && github.event.issue.user.id || github.event.comment.user.id }}
+          ACTOR_LOGIN: ${{ github.event_name == 'issues' && github.event.issue.user.login || github.event.comment.user.login }}
+        run: node scripts/check-issue-author.js
+
+      - name: Check usage limits (versions per issue, runs per day)
+        id: limits
+        if: steps.verify.outputs.allowed == 'true' && steps.dup.outputs.duplicate != 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: node scripts/make-short/limits.js
+
+  reject:
+    needs: gate
+    if: needs.gate.outputs.allowed != 'true' && github.event_name == 'issues' && needs.gate.outputs.duplicate != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment and close
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          # `opened` and `labeled` can both arrive; close only once.
+          if [[ "$(gh issue view "$ISSUE" --repo "$REPO" --json state -q .state)" == "OPEN" ]]; then
+            gh issue comment "$ISSUE" --repo "$REPO" --body \
+              "Кратки видеа може да заявява само екипът на сайта, затова това issue се затваря автоматично. За поръчки пиши ни през https://3dpechat.bg/contact/ 🙂"
+            gh issue close "$ISSUE" --repo "$REPO" --reason "not planned"
+          fi
+
+  agent:
+    needs: gate
+    if: needs.gate.outputs.allowed == 'true' && needs.gate.outputs.duplicate != 'true' && needs.gate.outputs.over != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+      REPO: ${{ github.repository }}
+      WORK: tmp/make-short/issue-${{ github.event.issue.number }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Remember when the run started
+        run: echo "RUN_STARTED_MS=$(date +%s%3N)" >> "$GITHUB_ENV"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
+
+      # Recording the site and drawing captions both use Chromium.
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Bulgarian voice. 7.2.x gets HTTP 403 from Microsoft's service since
+      # October 2026; 7.3.1 works. If the voice breaks again, try a newer one.
+      - name: Install edge-tts
+        run: pip install edge-tts==7.3.1
+
+      # Pinned to a release at least two weeks old.
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code@2.1.296
+
+      - name: Collect the request, conversation and files
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TRIGGER_COMMENT_ID: ${{ github.event.comment.id }}
+        run: node scripts/make-short/from-issue.js prepare
+
+      - name: Make the short (Claude Code)
+        # Backstop only: `timeout` below stops the agent first.
+        timeout-minutes: 35
+        env:
+          # Keep other Claude credentials out of this step.
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          GDRIVE_SA_KEY: ${{ secrets.GDRIVE_SA_KEY }}
+          GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
+        run: |
+          if [[ -z "$CLAUDE_CODE_OAUTH_TOKEN" ]]; then
+            echo "::error::Claude Code is not set up for this repo (missing secret)."
+            exit 1
+          fi
+          claude auth status --text
+          # Spend, steps and time are all capped (env at the top). Hitting a cap
+          # is not a failure here: `publish` reports which cap and posts
+          # whatever video was finished.
+          set +e
+          timeout --signal=TERM "${SHORTS_MAX_MINUTES}m" \
+            claude -p "/make-short CI: work folder $WORK. Start by reading $WORK/request.md, then follow the skill's „In GitHub Actions“ section and finish by writing $WORK/result.md." \
+            --model "$SHORTS_MODEL" \
+            --max-budget-usd "$SHORTS_MAX_BUDGET_USD" \
+            --max-turns "$SHORTS_MAX_TURNS" \
+            --permission-mode dontAsk \
+            --tools "Read,Write,Edit,Glob,Grep,Bash" \
+            --allowedTools "Read" "Glob" "Grep" "Edit(./tmp/make-short/**)" "Bash(npm run make-short:*)" \
+            --disallowedTools "WebFetch" "WebSearch" \
+            --output-format stream-json --verbose > "$RUNNER_TEMP/transcript.jsonl"
+          code=$?
+          echo "Claude Code exit code: $code"
+          if [[ $code -eq 124 ]]; then echo "time" > "$WORK/.stopped"; fi
+          exit 0
+
+      - name: Post the result
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TRANSCRIPT: ${{ runner.temp }}/transcript.jsonl
+        run: node scripts/make-short/from-issue.js publish
+
+      - name: Tell the issue it failed
+        if: failure()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/make-short/from-issue.js fail
+
+      - name: Keep the agent's transcript
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: make-short-transcript-${{ github.event.issue.number }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/transcript.jsonl
+          retention-days: 14
+          if-no-files-found: ignore

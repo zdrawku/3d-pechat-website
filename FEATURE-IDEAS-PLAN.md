@@ -12,7 +12,9 @@
 > added 2026-10-11 and is ⬜ proposed, with no design artifact yet. **Idea 7**
 > (YouTube channel + promo video) was added 2026-10-14: variant **A + „Абонирай се“**
 > approved by Zdravko the same day; phases 0–3 are built on `zkolev/youtube-channel`
-> and awaiting his review. See the build-order table at the bottom.
+> and awaiting his review. **Idea 8** (`/make-short` vertical shorts) was added
+> 2026-10-23, approved and built the same day (uncommitted, awaiting review).
+> See the build-order table at the bottom.
 
 ## Context (how the site works today — constraints the plan must respect)
 
@@ -701,6 +703,180 @@ into the LCP slot.
 
 ---
 
+## Idea 8 — 🎬 `/make-short`: vertical shorts from the catalog
+
+> Added 2026-10-23. Status: **v1 (format A, issue + Drive intake, Мария in both
+> forms) committed on `short-video-testing` (60e6fc9). v2 — one agent does
+> everything from a request in words, on the Claude subscription — built
+> 2026-10-24, uncommitted, see „v2“ below.**
+> Artifact: [🎬 Shorts Format Variants](https://claude.ai/artifact/DemQiy5xiNbuVfMxPFe9o5).
+
+A Claude Code command that renders 9:16 shorts (1080 × 1920 MP4, 15–20 s) for
+TikTok, YouTube Shorts and Instagram Reels, locally, with tools already in the
+repo or on the machine (ffmpeg, Playwright, sharp) plus edge-tts for the
+Bulgarian voice (`bg-BG-KalinaNeural` / `BorislavNeural`). Output goes to a
+gitignored `shorts/<slug>/` (`short.mp4`, `cover.jpg`, `post.txt` with title,
+description and hashtags); the owner uploads by hand.
+
+**Why not MoneyPrinterTurbo** (evaluated 2026-10-23, v1.3.9): it is maintained
+and its 2025 path-traversal CVEs are fixed, but its API has no auth by default
+and binds `0.0.0.0` outside Docker, publishing goes through the third-party
+Upload-Post service, it bundles music ripped from YouTube, and its AI script
+writer doesn't know `business.json` (it can state `neverClaim` items). Its core
+value, stock footage plus an AI-written script, is the part this site doesn't
+want. Auto-posting is also not worth building: YouTube and TikTok keep uploads
+from unaudited API apps private.
+
+**Rules the pipeline must keep:**
+- Captions and voiceover are drafted from the product text and `business.json`
+  only, approved by the owner before rendering; a check blocks numbers not in
+  the facts and anything on the `neverClaim` list (Rule 5).
+- Music comes from a folder the owner fills; no bundled tracks.
+- The Playwright recorder declines the cookie banner first. It covers half
+  the phone screen otherwise.
+- Text stays out of the TikTok/Shorts UI zones (top ~9 %, right ~15 %, bottom ~22 %).
+
+**Part 1 — format.** Variants: A product reveal from `products.json` photos ·
+B site walkthrough recorded with Playwright · C the owner's own clips with the
+same branding. Caption styles: 1 word-pop · 2 brand bar · 3 paper card. End
+card: paper · night.
+
+✅ APPROVED 2026-10-23: **A**. Caption style and end card weren't named in the
+reply, so the recommended **word-pop + paper end card** are assumed until said
+otherwise. C's clip handling is folded into A: each short draws on the catalog
+photos **and** the product's uploaded photos/clips (clips first; Claude samples
+one frame per second to pick 2–4 s segments and caption what's on screen;
+clip audio muted; empty folder → catalog photos only). B stays an option for
+one pinned "how to order" short.
+
+**Part 2 — how photos/clips arrive and how a short is requested** (asked for
+2026-10-23: an issue-driven flow like `/add-product`, Drive folders per product
+so the owner and Maria can upload and request). Variants in the artifact:
+1. **Issue form only** — attachments in the „🎬 Кратко видео“ issue. GitHub
+   caps videos at **10 MB per file on a free plan** (≈5 s of phone video), and
+   attachments on this public repo are public.
+2. **Drive folders + issue form (recommended)** — `3dpechat-shorts/<linkId>/`
+   in the owner's Drive, shared with Maria as Editor; requests via the issue
+   form (product dropdown generated from `products.json`); the bot reads the
+   folder through a **read-only Google service account** (`GDRIVE_SA_KEY`
+   secret). Service accounts **can't create files in a personal Drive**, so
+   finished videos come back through GitHub (a `shorts-drafts` pre-release
+   asset linked in the issue); local `/make-short` runs can still write to
+   `<linkId>/_shorts/` through Drive for desktop.
+3. **Drive folders + „Заявки“ Google Sheet** — no GitHub for Maria; a scheduled
+   workflow fills the script into the row, a tick approves, the next run
+   renders. Slower (two scheduled runs per short).
+
+Shared by 1 and 2: owner-style allowlist guard (`zdrawku` + Maria's login;
+others' issues closed without running), draft script posted as a comment,
+render on a `/render` reply, `/redo <note>` for a new draft.
+
+✅ APPROVED 2026-10-23: **1 + 2 combined** — the „🎬 Ново кратко видео“ form
+sits next to „📦 Нов продукт“ in the issue chooser; photos and clips dragged
+into the issue are used, and the product's Drive folder too when ticked.
+Мария (`mariyajablqnova-ux`) may use **both** forms. Public drafts on the
+Releases page are fine.
+
+### v1 (2026-10-23, committed on `short-video-testing`)
+
+Allowlist `.github/issue-authors.json` (login + numeric id) +
+`scripts/check-issue-author.js`, used by both issue workflows; a product
+dropdown form; a two-step workflow (Claude drafts through the API,
+`/render` renders); the render pipeline in `scripts/make-short/`.
+
+### v2 — one agent, a request in words (2026-10-24, uncommitted)
+
+The owner found v1 too manual (product dropdown, approval step, Google Cloud
+setup) and wanted no platform API key. Asked for: describe the short in
+words, attach clips, and let an agent do the rest, including recording the
+site on a phone screen for requests like „направи шорт видео което показва
+как да направиш поръчка през сайта в 3 лесни стъпки“.
+
+- **Form** `new-short.yml`: two fields — „Какво видео искаш?“ and optional
+  files. No product list, no generator.
+- **Workflow** `make-short.yml`: gate (allowlist by id; `//` comments ignored;
+  duplicate `opened`/`labeled` starts skipped) → one `agent` job:
+  `from-issue.js prepare` (conversation → `request.md`, downloads every file
+  from the issue and the team's comments, restores the previous version) →
+  **Claude Code 2.1.296 headless** (repo secret, no API key) running `/make-short` with `--permission-mode
+  dontAsk`, tools limited to Read/Glob/Grep, Edit in `tmp/make-short/**` and
+  `Bash(npm run make-short:*)`, no web → `from-issue.js publish` (video +
+  cover to the `shorts-drafts` pre-release, comment with the agent's
+  `result.md`, post text and the saved spec/flows). Any later team comment =
+  feedback = a new version built on the saved one. Transcript kept 14 days as
+  an artifact.
+- **Website recordings** `record-flow.js`: a JSON step list (goto, mark,
+  scroll, scrollTo, tap, type, wait) filmed at 360 × 640 × 3 = 1080 × 1920.
+  Chrome's screencast only gives CSS-pixel frames, so each step is a full
+  screenshot on a synthetic 30 fps timeline (smooth regardless of CI speed).
+  Consent pre-answered „denied“, review snackbar pre-dismissed, analytics,
+  Web3Forms and hCaptcha blocked; only 3dpechat.bg or localhost.
+- **Spec additions:** `product` optional; per-beat `seconds` (1.5–8, for
+  recorded steps) and `position: "top"` (captions over the site).
+- **Removed:** `draft.js` (API-key Claude call), the generated form and its
+  prebuild step.
+- **Skill** `/make-short` rewritten as the agent's playbook (CI and local).
+- **Usage caps** (2026-10-24), so no request can drain the subscription:
+  shorts run on Sonnet with an estimated-spend cap, a step cap and a
+  wall-clock cap per run, plus at most 5 versions per issue and 8 runs per
+  24 hours (`scripts/make-short/limits.js`, checked before anything
+  expensive starts); the issue is told which cap stopped a run. The
+  auto-blog caps each of its two Claude calls (spend + time) and the job at
+  30 minutes. The numbers live in the `env:` blocks of both workflows.
+- **Upload copy for growth** (2026-10-24): the agent also writes the TikTok
+  caption (hook line, one call to action, 3–8 hashtags, no #fyp spam), the
+  YouTube title, description and tags (incl. transliterated spellings such as
+  „3d pechat“), and a pinned comment that invites replies. Code adds a
+  UTM-tagged link per platform (`utm_medium=shorts`, `utm_campaign=short-issue-<n>`),
+  `#shorts` and the YouTube hashtags. The reply shows each field in its own
+  code block (one tap to copy on a phone); the copy is facts-checked like the
+  video.
+
+**Owner setup (once):** the Claude Code repo secret and the `new-short`
+label. Drive (below) stays
+optional — only needed for clips over GitHub's 10 MB.
+
+### Google Drive setup (optional, owner, one time)
+
+The folder `3dpechat-shorts` is restricted to the team; its id lives only in
+a repo secret, never in this public repo.
+
+1. <https://console.cloud.google.com/> → new project `3dpechat-shorts`.
+2. APIs & Services → Library → **Google Drive API** → Enable.
+3. IAM & Admin → Service accounts → Create (`make-short`), no roles needed.
+4. The account → Keys → Add key → JSON. Download it once; don't commit it.
+5. In Drive, share `3dpechat-shorts` with the account's e-mail
+   (`make-short@<project>.iam.gserviceaccount.com`) as **Viewer**.
+6. GitHub → Settings → Secrets and variables → Actions → New repository secret:
+   `GDRIVE_SA_KEY` = the whole JSON file; `GDRIVE_FOLDER_ID` = the folder id
+   from its URL. Then delete the downloaded JSON.
+7. Inside the folder: one subfolder per product, named by its `linkId` (or its
+   catalog name), plus `_music` for royalty-free tracks you chose.
+
+Without the two secrets the agent works with issue attachments, catalog
+photos and site recordings; `npm run make-short -- drive` just says Drive
+isn't connected. The other way past the 10 MB limit is GitHub Pro on the
+repo owner's account (videos up to 100 MB in issues) — but uploads over
+10 MB also need the uploader to be a collaborator or on a paid plan, which
+Мария isn't today.
+
+### Next
+
+- First real run after merge to `main` (issue workflows run from the default
+  branch): „направи шорт … поръчка … в 3 лесни стъпки“, then a product short
+  with a clip.
+- Watch edge-tts: it broke once already (7.2.x → 403, Oct 2026). If it breaks
+  again, bump the pin in `make-short.yml`, or switch to Azure Speech (same
+  voices, licensed, needs a key).
+- Deferred: automatic posting. YouTube Data API uploads from an unverified
+  app stay private until an audit; TikTok's Content Posting API needs an
+  audited app for public posts. A private YouTube upload the owner flips to
+  public is the realistic first step, if wanted.
+- ✅ 2026-10-24: the auto-blog writes and translates through Claude Code too
+  (`scripts/auto-blog/claude.js`); the Anthropic SDK is no longer a dependency.
+
+---
+
 ## How the ideas reinforce each other
 
 - **Idea 3 Phase 1 (products.json) ships first** — it's the foundation: Idea 1's
@@ -746,6 +922,7 @@ variant. All five were produced and **approved by Zdravko on 2026-07-13**:
 | Cookie consent (GA4 + Consent Mode v2) | [🍪 Cookie Consent Variants](https://claude.ai/artifact/LkW9j6L1ZpAqANj1hTKWLP) | A bottom bar · B floating card · C dialog (not recommended) · D card + settings layer; shared rules, BG/EN copy, Consent Mode snippet | **B — floating card, Consent Mode v2 in basic mode** (`gtag.js` loads only after „Приемам“). ✅ Approved by Zdravko 2026-10-20; implemented the same day (uncommitted). Still missing: the privacy page and the card's „Повече за данните“ link (build item 22) |
 | Privacy Policy + Terms of Use | [⚖️ Legal Pages Layout](https://claude.ai/artifact/GWYULPeXsb6CdQtBUKFisy) | A article · B summary + contents · C section cards (not recommended); footer / contact form / consent card links; outline of both documents | **B**, with Zdravko's own first summary point („Сайтът 3dpechat.bg се поддържа от Здравко Колев, физическо лице в София“); legal links together in the footer's bottom row. ✅ Approved 2026-10-20; implemented the same day (uncommitted). Text needs Zdravko's read (and ideally a lawyer's) before going live |
 | Card hover effect | [🖨️ Hero анимация — 3D печат ефекти](https://claude.ai/code/artifact/c107c8e6-da1d-4b48-a233-d86443f30e9c) (hover section) | full SLA sweep → subtler → no transform, unified across elements | **Faint violet beam sweeps bottom-up once per hover-enter + soft shadow deepen; no movement. Identical on `prop_card`, `process_step`, `.masonry-item`, `.tier-card` via `src/app/_sla-hover.scss` mixin (tier-card uses inner `.sla-sweep` layer so the featured badge isn't clipped)** ✅ implemented 2026-07-14 |
+| 8 · `/make-short` vertical shorts | [🎬 Shorts Format Variants](https://claude.ai/artifact/DemQiy5xiNbuVfMxPFe9o5) | Part 1: A product reveal · B site walkthrough · C owner's clips; caption style; end card — Part 2: 1 issue only · 2 Drive folders + issue form · 3 Drive folders + request sheet | **A** ✅ approved 2026-10-23 (word-pop + paper end card assumed; C's clips folded into A) · Part 2 ✅ **1 + 2 combined** (issue attachments + Drive folder; Мария allowed in both issue forms) — built 2026-10-23, uncommitted |
 
 To iterate on any of them, ask Claude to update the artifact — same link is kept.
 

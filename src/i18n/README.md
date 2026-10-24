@@ -65,7 +65,7 @@ posts plus one card pointing to the rest; every translated post has a „Read in
 Bulgarian“ / „Прочетете на английски“ link beside „Back“).
 
 **The quick way:** `npm run translate-post -- <bulgarian-slug>` drafts the
-English version with Claude (needs `ANTHROPIC_API_KEY` in `.env`) and does
+English version with Claude (needs Claude Code installed and signed in) and does
 steps 1–3 below for you — the auto-blog pipeline does the same for every new
 post, in the same PR. Then review the draft (facts, links, slug) and build.
 
