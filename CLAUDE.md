@@ -207,7 +207,7 @@ baselines, Analytics… — ordered, with who does each and when).
 - **`/make-short`** ([`.claude/skills/make-short/SKILL.md`](.claude/skills/make-short/SKILL.md))
   — make a vertical short (TikTok/Shorts/Reels) from a request in words:
   uploaded clips/photos + catalog photos, and/or a phone-screen Playwright
-  recording of a site flow; Bulgarian captions + voice checked against
+  recording of a site flow; Bulgarian captions only (no sound) checked against
   `business.json`. The same skill is the agent behind the „🎬 Ново кратко
   видео“ issue (`make-short.yml`, Claude Code in CI). The auto-blog also writes
   through Claude Code (`scripts/auto-blog/claude.js`). Both issue forms are

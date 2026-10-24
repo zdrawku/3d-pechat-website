@@ -84,12 +84,11 @@ test('facts check: product and request numbers pass, invented numbers and never-
 const media = { m1: { kind: 'photo' }, m2: { kind: 'video', duration: 12 } };
 const goodSpec = () => ({
   media,
-  voice: 'bg-BG-KalinaNeural',
   beats: [
-    { source: 'm2', start: 4, caption: 'Къде държите евромонетите?', highlight: 'евромонетите?', voiceover: 'Къде държите евромонетите?' },
-    { source: 'm1', start: 0, seconds: 4, position: 'top', caption: '1. Избери продукт', highlight: 'продукт', voiceover: '' },
+    { source: 'm2', start: 4, caption: 'Къде държите евромонетите?', highlight: 'евромонетите?' },
+    { source: 'm1', start: 0, seconds: 4, position: 'top', caption: '1. Избери продукт', highlight: 'продукт' },
   ],
-  endCard: { line: 'Отпечатан на 3D принтер в София', voiceover: '' },
+  endCard: { line: 'Отпечатан на 3D принтер в София' },
   post: {
     link: '/products/',
     tiktok: {
@@ -117,14 +116,6 @@ test('validateSpec accepts a good storyboard and names each problem in a bad one
   const problems = lib.validateSpec(bad);
   assert.strictEqual(problems.length, 6, problems.join('\n'));
   assert.deepStrictEqual(lib.validateSpec({ ...goodSpec(), beats: [goodSpec().beats[0]] }), ['Трябват между 2 и 6 кадъра.']);
-});
-
-test('voice: only the two Bulgarian voices or null, and no voice lines without a voice', () => {
-  assert.match(lib.validateSpec({ ...goodSpec(), voice: 'en-US-AriaNeural' })[0], /Непознат глас/);
-  const silent = { ...goodSpec(), voice: null };
-  assert.match(lib.validateSpec(silent)[0], /гласът е изключен/);
-  silent.beats = silent.beats.map((b) => ({ ...b, voiceover: '' }));
-  assert.deepStrictEqual(lib.validateSpec(silent), []);
 });
 
 test('upload copy: each rule names its problem', () => {
@@ -169,15 +160,20 @@ test('the finished copy: hashtags appended, tracked links, #shorts on YouTube', 
   for (const heading of ['TikTok', 'YouTube Shorts', 'Заглавие:', 'Тагове', 'Закачен коментар']) assert.ok(text.includes(heading), heading);
 });
 
-test('beat timing follows the voice line, or the wanted length for a recorded step', () => {
-  assert.strictEqual(lib.beatDuration(0), 3);
-  assert.strictEqual(lib.beatDuration(1), 2.5);
-  assert.strictEqual(lib.beatDuration(3), 3.45);
-  assert.strictEqual(lib.beatDuration(9), 7);
-  assert.strictEqual(lib.beatDuration(2, 5), 5);
-  assert.strictEqual(lib.beatDuration(4, 2), 4.45);
-  assert.strictEqual(lib.beatDuration(0, 20), 8);
-  assert.strictEqual(lib.endCardDuration(4), 4.6);
+test('beat timing: long enough to read the caption, or the wanted length for a recorded step', () => {
+  assert.strictEqual(lib.beatDuration('Кратко'), 2.5); // floor
+  assert.strictEqual(lib.beatDuration('Къде държите евромонетите?'), 3.06); // 26 chars
+  assert.strictEqual(lib.beatDuration('Гнезда за 2 €, 1 € и 50 евроцента дълго'), 3.84);
+  assert.strictEqual(lib.beatDuration('Кратко', 5), 5);
+  assert.strictEqual(lib.beatDuration('Кратко', 20), 8); // ceiling
+  assert.strictEqual(lib.END_CARD_SECONDS, 3.5);
+});
+
+test('a spec carries no sound: no voice settings are needed or read', () => {
+  const spec = goodSpec();
+  assert.deepStrictEqual(lib.validateSpec(spec), []);
+  assert.ok(!lib.specTexts(spec).some((t) => t === undefined), 'every text is a caption, end-card line or upload copy');
+  assert.match(lib.postText(spec, 'short-x'), /без звук/);
 });
 
 test('clip filter: upright clips fill the frame, landscape ones get a blurred backdrop', () => {

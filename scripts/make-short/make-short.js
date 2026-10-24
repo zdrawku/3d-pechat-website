@@ -8,7 +8,7 @@
  *   npm run make-short -- drive   --work <dir> --product <linkId>     product's Drive folder → drive/ (needs GDRIVE_*)
  *   npm run make-short -- prepare --work <dir> [--product <linkId>] [--media <file|dir>]… [--no-catalog]
  *   npm run make-short -- check   --work <dir>                        spec.json: structure + facts
- *   npm run make-short -- render  --work <dir> [--out <dir>] [--music <file>]
+ *   npm run make-short -- render  --work <dir> [--out <dir>]
  *   npm run make-short -- frames  --work <dir> --video <file> --at 1,4.5,9   stills to look at
  *
  * `prepare` writes manifest.json and previews/; the agent looks at the
@@ -61,7 +61,6 @@ function loadSpec(work) {
   return {
     manifest,
     spec: {
-      voice: 'bg-BG-KalinaNeural',
       product: manifest.product,
       ...spec,
       media: publicMedia(manifest),
@@ -105,17 +104,13 @@ async function main() {
       return;
     }
     const token = await drive.accessToken(process.env.GDRIVE_SA_KEY);
-    const { files, music, folderName } = await drive.productMedia(token, process.env.GDRIVE_FOLDER_ID, product);
+    const { files, folderName } = await drive.productMedia(token, process.env.GDRIVE_FOLDER_ID, product);
     const dir = path.join(work, 'drive');
     fs.mkdirSync(dir, { recursive: true });
     for (const f of files) await drive.download(token, f.id, path.join(dir, f.name.replace(/[^\p{L}\p{N}._-]+/gu, '_')));
-    if (music.length) {
-      fs.mkdirSync(path.join(work, 'music'), { recursive: true });
-      for (const t of music) await drive.download(token, t.id, path.join(work, 'music', t.name.replace(/[^\p{L}\p{N}._-]+/gu, '_')));
-    }
     console.log(folderName
-      ? `Downloaded ${files.length} file(s) from Drive folder „${folderName}“ to ${path.relative(lib.ROOT, dir)}; ${music.length} music track(s).`
-      : `No Drive folder named "${product.linkId}" or „${product.name}“; ${music.length} music track(s) downloaded.`);
+      ? `Downloaded ${files.length} file(s) from Drive folder „${folderName}“ to ${path.relative(lib.ROOT, dir)}.`
+      : `No Drive folder named "${product.linkId}" or „${product.name}“ — nothing downloaded.`);
   } else if (cmd === 'prepare') {
     const product = productFrom(opts.product);
     const manifest = await collect({ product, extras: localExtras(opts.media), useCatalog: !opts.noCatalog, workDir: work });
@@ -139,15 +134,9 @@ async function main() {
     const { manifest, spec } = loadSpec(work);
     const files = Object.fromEntries(Object.entries(manifest.media).map(([id, m]) => [id, m.file]));
     const outDir = path.resolve(opts.out || path.join(work, 'out'));
-    let music = opts.music;
-    const musicDir = path.join(work, 'music');
-    if (!music && fs.existsSync(musicDir)) {
-      const tracks = fs.readdirSync(musicDir).filter((f) => media.AUDIO_EXT.test(f)).sort();
-      if (tracks.length) music = path.join(musicDir, tracks[0]);
-    }
     const campaign = `short-${path.basename(work)}`;
-    const result = await renderShort({ spec, files, outDir, workDir: path.join(work, 'render'), music, campaign });
-    console.log(`Rendered ${result.seconds} s${music ? ' with music' : ' without music'}:\n  ${result.video}\n  ${result.cover}\n  ${result.post}`);
+    const result = await renderShort({ spec, files, outDir, workDir: path.join(work, 'render'), campaign });
+    console.log(`Rendered ${result.seconds} s (captions only, silent):\n  ${result.video}\n  ${result.cover}\n  ${result.post}`);
   } else if (cmd === 'frames') {
     if (!opts.video) throw new Error('frames needs --video <file>');
     const dir = path.join(work, 'check');

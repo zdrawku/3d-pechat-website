@@ -1,6 +1,6 @@
 ---
 name: make-short
-description: Make a 15–25 s vertical short (TikTok, YouTube Shorts, Reels) for 3dpechat.bg from a request in words — a product reveal from uploaded clips/photos plus catalog photos, a phone-screen recording of a website flow (e.g. „как се поръчва в 3 стъпки“), or both. Writes the Bulgarian captions and voiceover, checks them against business.json, renders short.mp4 + cover.jpg + post.txt. Runs locally and as the agent behind the „🎬 Ново кратко видео“ GitHub issue. Use when the user says "/make-short", "make a short", "направи кратко видео/шорт", or asks for a TikTok/Shorts/Reels video.
+description: Make a 15–25 s vertical short (TikTok, YouTube Shorts, Reels) for 3dpechat.bg from a request in words — a product reveal from uploaded clips/photos plus catalog photos, a phone-screen recording of a website flow (e.g. „как се поръчва в 3 стъпки“), or both. Writes the Bulgarian captions (text only — no voice, no music), checks them against business.json, renders short.mp4 + cover.jpg + post.txt. Runs locally and as the agent behind the „🎬 Ново кратко видео“ GitHub issue. Use when the user says "/make-short", "make a short", "направи кратко видео/шорт", or asks for a TikTok/Shorts/Reels video.
 ---
 
 # Make a short
@@ -8,7 +8,9 @@ description: Make a 15–25 s vertical short (TikTok, YouTube Shorts, Reels) for
 You are the whole production team: read the request, pick or record the
 footage, write the storyboard, render, look at the result, report. Approved
 look (FEATURE-IDEAS-PLAN.md Idea 8): word-pop captions, paper end card,
-1080 × 1920, Bulgarian voice `bg-BG-KalinaNeural` by default.
+1080 × 1920. **Text only:** no voice and no music — the video is silent and
+the team adds a sound from the TikTok/YouTube library when uploading, so the
+captions must tell the whole story on their own.
 
 All work goes through one tool, in one work folder `W`:
 
@@ -51,7 +53,7 @@ decide and explain in result.md.
 The user gives the request in chat, plus files or a folder (pasted files, a
 folder such as `G:\My Drive\3dpechat-shorts\<linkId>\`). Use
 `--work tmp/make-short/<something>` and pass their files with `--media`.
-Show the storyboard (beats, voice lines, end card) before rendering when the
+Show the storyboard (beats, captions, end card) before rendering when the
 user is around; render to `--out shorts/<name>/` (gitignored). Afterwards offer
 to copy the files into the product's Drive folder under `_shorts/`.
 
@@ -109,13 +111,12 @@ to copy the files into the product's Drive folder under `_shorts/`.
    ```json
    {
      "product": "darzhach-za-evro-moneti-fidzhet-spinar",
-     "voice": "bg-BG-KalinaNeural",
      "beats": [
-       { "source": "m1", "start": 4, "caption": "Къде държите евромонетите?", "highlight": "евромонетите?", "voiceover": "Къде държите евромонетите?" },
-       { "source": "m3", "start": 0, "caption": "Гнезда за 2 €, 1 € и 50 евроцента", "highlight": "50 евроцента", "voiceover": "По около 7 монети във всяко гнездо." },
-       { "source": "m2", "start": 0, "caption": "Върти се между пръстите", "highlight": "пръстите", "voiceover": "А версията спинър се върти, без метални части." }
+       { "source": "m1", "start": 4, "caption": "Къде държите евромонетите?", "highlight": "евромонетите?" },
+       { "source": "m3", "start": 0, "caption": "Гнезда за 2 €, 1 € и 50 евроцента", "highlight": "50 евроцента" },
+       { "source": "m2", "start": 0, "caption": "Върти се между пръстите", "highlight": "пръстите" }
      ],
-     "endCard": { "line": "Отпечатан на 3D принтер в София", "voiceover": "Отпечатан на 3D принтер в София. 3dpechat.bg." },
+     "endCard": { "line": "Отпечатан на 3D принтер в София" },
      "post": {
        "link": "/products/",
        "tiktok": {
@@ -132,9 +133,8 @@ to copy the files into the product's Drive folder under `_shorts/`.
    }
    ```
    - 2–6 beats, then the end card; 15–25 s in total. `product` only when the
-     short is about one. `voice`: `bg-BG-KalinaNeural`, `bg-BG-BorislavNeural`,
-     or `null` (music only — then every `voiceover` is `""`). Follow what the
-     request says about voice.
+     short is about one. Each beat stays on screen long enough to read its
+     caption; there is no voice, so the captions carry the story.
    - `start`: where a clip beat begins (seconds; from frames or marks); 0 for photos.
    - `seconds` (optional, 1.5–8): how long the beat lasts at least — use it for
      recording beats so the whole step is shown (gap between two marks).
@@ -142,7 +142,6 @@ to copy the files into the product's Drive folder under `_shorts/`.
      in the middle), otherwise leave it out.
    - caption ≤ 6 words / 40 characters, no emoji; numbered steps are fine
      („1. Избери продукт“). `highlight`: 1–2 words copied exactly from the caption (orange).
-   - voiceover: one sentence ≤ 12 words that adds to the caption.
    - **Only what the footage shows or the facts say.** Numbers only from
      `src/data/business.json` facts, the product text, or the request. Euro
      only. Never what `neverClaim` lists: SLA/resin, SLS, scanning, same-day,
@@ -155,7 +154,9 @@ to copy the files into the product's Drive folder under `_shorts/`.
 The short is half the job; the text under it decides whether people stop,
 comment and follow. Write it in Bulgarian, warm and specific, like the
 workshop talking — not an ad. Emoji are fine here (1–3), not in the video.
-The code adds the tracked link, `#shorts` and the YouTube hashtags for you.
+The code adds the tracked link, `#shorts` and the YouTube hashtags for you,
+plus a reminder to add a sound from the platform's library. Don't name a
+song or "trending sound" yourself — you can't know what is trending today.
 
 - **`link`** — the site page the call to action points to: `/products/` for a
   product, `/prices/` for prices/calculator, `/contact/` for "how to order",
@@ -195,8 +196,8 @@ The code adds the tracked link, `#shorts` and the YouTube hashtags for you.
 6. **Check:** `npm run make-short -- check --work W`; fix until it passes. A
    number the facts contain can still be misused — reread every line.
 
-7. **Render:** `npm run make-short -- render --work W` (music from `W/music/`
-   if the Drive step found any; otherwise none). About 30 s.
+7. **Render:** `npm run make-short -- render --work W` — silent video with
+   captions. About 30 s.
 
 8. **Look at it:** `npm run make-short -- frames --work W --video W/out/short.mp4 --at …`
    with one time inside each beat, Read the stills: caption readable and
@@ -207,10 +208,6 @@ The code adds the tracked link, `#shorts` and the YouTube hashtags for you.
 
 ## Gotchas
 
-- edge-tts (the free voice) is Microsoft's read-aloud service, used
-  unofficially; 7.2.x started failing with HTTP 403 in October 2026 and
-  7.3.1 fixed it. If the voice step fails, say so in result.md — a person
-  must bump the pin in `make-short.yml`.
 - Landscape photos/clips sit on a blurred copy of themselves; upright ones
   fill the frame. Website recordings are already 1080 × 1920.
 - Nothing here commits, pushes or posts to TikTok/YouTube; people upload.

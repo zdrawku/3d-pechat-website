@@ -713,8 +713,8 @@ into the LCP slot.
 
 A Claude Code command that renders 9:16 shorts (1080 × 1920 MP4, 15–20 s) for
 TikTok, YouTube Shorts and Instagram Reels, locally, with tools already in the
-repo or on the machine (ffmpeg, Playwright, sharp) plus edge-tts for the
-Bulgarian voice (`bg-BG-KalinaNeural` / `BorislavNeural`). Output goes to a
+repo or on the machine (ffmpeg, Playwright, sharp). Text only since
+2026-10-24 — no voice, no music (see „Text only“ below). Output goes to a
 gitignored `shorts/<slug>/` (`short.mp4`, `cover.jpg`, `post.txt` with title,
 description and hashtags); the owner uploads by hand.
 
@@ -728,7 +728,7 @@ want. Auto-posting is also not worth building: YouTube and TikTok keep uploads
 from unaudited API apps private.
 
 **Rules the pipeline must keep:**
-- Captions and voiceover are drafted from the product text and `business.json`
+- Captions are drafted from the product text and `business.json`
   only, approved by the owner before rendering; a check blocks numbers not in
   the facts and anything on the `neverClaim` list (Rule 5).
 - Music comes from a folder the owner fills; no bundled tracks.
@@ -816,6 +816,17 @@ site on a phone screen for requests like „направи шорт видео �
 - **Removed:** `draft.js` (API-key Claude call), the generated form and its
   prebuild step.
 - **Skill** `/make-short` rewritten as the agent's playbook (CI and local).
+- **Text only** (2026-10-24, owner's call): no generated sound — no voice,
+  no music. Beats last as long as their caption takes to read; the MP4 has a
+  silent audio track (platforms expect one) and the upload copy reminds the
+  team to add a sound from the TikTok/YouTube library, which also helps reach.
+  edge-tts and the Python setup are gone from the workflow.
+- **Access check** (2026-10-24): the shorts gate now requires both the
+  commenter **and** whoever opened the issue to be on the allowlist (a
+  comment from the team on a stranger's reopened issue could otherwise start
+  the agent with the stranger's text); `from-issue.js prepare` refuses on its
+  own too. `scripts/issue-workflows.test.js` reads both workflows and fails
+  if any of these checks is removed.
 - **Usage caps** (2026-10-24), so no request can drain the subscription:
   shorts run on Sonnet with an estimated-spend cap, a step cap and a
   wall-clock cap per run, plus at most 5 versions per issue and 8 runs per
@@ -851,7 +862,7 @@ a repo secret, never in this public repo.
    `GDRIVE_SA_KEY` = the whole JSON file; `GDRIVE_FOLDER_ID` = the folder id
    from its URL. Then delete the downloaded JSON.
 7. Inside the folder: one subfolder per product, named by its `linkId` (or its
-   catalog name), plus `_music` for royalty-free tracks you chose.
+   catalog name).
 
 Without the two secrets the agent works with issue attachments, catalog
 photos and site recordings; `npm run make-short -- drive` just says Drive
@@ -865,9 +876,6 @@ repo owner's account (videos up to 100 MB in issues) — but uploads over
 - First real run after merge to `main` (issue workflows run from the default
   branch): „направи шорт … поръчка … в 3 лесни стъпки“, then a product short
   with a clip.
-- Watch edge-tts: it broke once already (7.2.x → 403, Oct 2026). If it breaks
-  again, bump the pin in `make-short.yml`, or switch to Azure Speech (same
-  voices, licensed, needs a key).
 - Deferred: automatic posting. YouTube Data API uploads from an unverified
   app stay private until an audit; TikTok's Content Posting API needs an
   audited app for public posts. A private YouTube upload the owner flips to
