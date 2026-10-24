@@ -53,3 +53,6 @@ NOTES.local.md
 # Local environment variables (API keys etc.)
 .env
 .env.local
+
+# Shorts rendered by /make-short (scripts/make-short/)
+/shorts

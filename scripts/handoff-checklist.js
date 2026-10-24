@@ -105,6 +105,17 @@ const AREAS = [
     live: ['The next scheduled run (the 1st, 11th and 21st, 09:00 UTC) or *Run workflow* by hand: review its PR in both languages before merging']
   },
   {
+    id: 'phone',
+    title: 'Issue-form flows (📦 Нов продукт, 🎬 Ново кратко видео)',
+    match: (f) => /^\.github\/ISSUE_TEMPLATE\//.test(f) || f === '.github/issue-authors.json'
+      || /^\.github\/workflows\/(add-product|make-short)\.yml$/.test(f)
+      || /^scripts\/(add-product|make-short)\//.test(f) || /^scripts\/check-issue-author/.test(f)
+      || /^\.claude\/skills\/(add-product|make-short)\//.test(f),
+    tests: [`${SCRIPTS} — allowlist, issue parsing, facts check, generated form`, 'Local render: `npm run make-short -- prepare|check|render --product <linkId>`, then look at a frame from each beat'],
+    manual: ['On a phone: New issue → the form appears in the chooser and its product list matches /products/', 'A comment from an account outside `.github/issue-authors.json` does nothing; an issue from one is closed'],
+    live: ['After merge: open a real `🎬 Ново кратко видео` (or `📦 Нов продукт`) issue and follow it to the draft comment, `/render` and the video link (Actions tab for the logs)']
+  },
+  {
     id: 'scripts',
     title: 'Build and maintenance scripts',
     match: (f) => /^scripts\//.test(f) && !/^scripts\/auto-blog\//.test(f) || f === 'package.json',

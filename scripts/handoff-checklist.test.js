@@ -20,6 +20,9 @@ test('maps each kind of file to its area', () => {
   assert.deepEqual(ids(['scripts/auto-blog/generate-article.js']), ['pipeline']);
   assert.deepEqual(ids(['scripts/generate-sitemap.js']), ['seo', 'scripts']);
   assert.deepEqual(ids(['e2e/shell.spec.ts']), ['ci']);
+  assert.deepEqual(ids(['scripts/make-short/render.js']), ['phone', 'scripts']);
+  assert.deepEqual(ids(['.github/workflows/make-short.yml']), ['phone', 'ci']);
+  assert.deepEqual(ids(['.github/issue-authors.json']), ['phone']);
   assert.deepEqual(ids(['src/legal/en/privacy.md']), ['legal']);
 });
 

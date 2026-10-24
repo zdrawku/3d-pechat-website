@@ -1,0 +1,164 @@
+name: Make Short from Issue
+
+# „🎬 Ново кратко видео“ flow (FEATURE-IDEAS-PLAN.md, Idea 8). Здравко or
+# Мария opens the issue with photos/clips; this comments a storyboard drafted
+# by Claude, `/render` turns it into an MP4 attached to the `shorts-drafts`
+# pre-release, `/redo <note>` drafts again. Nothing is committed and nothing
+# is posted to TikTok or YouTube.
+#
+# SECURITY — anyone can open an issue or comment on a public repo:
+#   1. `gate` checks the numeric GitHub id of whoever opened the issue or wrote
+#      the command against .github/issue-authors.json before anything runs.
+#   2. Strangers' issues are closed without running anything; strangers'
+#      commands are ignored.
+#   3. Only GitHub-hosted attachments and the shared Drive folder are
+#      downloaded, and the storyboard is read back only from the bot's own
+#      comments.
+
+on:
+  issues:
+    types: [opened, labeled]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write # create the shorts-drafts pre-release and upload to it
+  issues: write
+
+concurrency:
+  group: make-short-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  gate:
+    if: >-
+      contains(github.event.issue.labels.*.name, 'new-short') &&
+      !github.event.issue.pull_request &&
+      (github.event_name == 'issues' ||
+       startsWith(github.event.comment.body, '/render') ||
+       startsWith(github.event.comment.body, '/redo'))
+    runs-on: ubuntu-latest
+    outputs:
+      allowed: ${{ steps.verify.outputs.allowed }}
+      mode: ${{ steps.mode.outputs.mode }}
+    steps:
+      # Only the allowlist and its checker — nothing from the issue runs here.
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github/issue-authors.json
+            scripts/check-issue-author.js
+          sparse-checkout-cone-mode: false
+
+      - name: Verify who is asking
+        id: verify
+        env:
+          ACTOR_ID: ${{ github.event_name == 'issues' && github.event.issue.user.id || github.event.comment.user.id }}
+          ACTOR_LOGIN: ${{ github.event_name == 'issues' && github.event.issue.user.login || github.event.comment.user.login }}
+        run: node scripts/check-issue-author.js
+
+      - name: Pick draft or render
+        id: mode
+        env:
+          EVENT: ${{ github.event_name }}
+          COMMENT: ${{ github.event.comment.body }}
+        run: |
+          if [[ "$EVENT" == "issues" || "$COMMENT" =~ ^/redo([[:space:]]|$) ]]; then
+            echo "mode=draft" >> "$GITHUB_OUTPUT"
+          elif [[ "$COMMENT" =~ ^/render([[:space:]]|$) ]]; then
+            echo "mode=render" >> "$GITHUB_OUTPUT"
+          else
+            echo "mode=none" >> "$GITHUB_OUTPUT"
+          fi
+
+  reject:
+    needs: gate
+    if: needs.gate.outputs.allowed != 'true' && github.event_name == 'issues'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment and close
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          # `opened` and `labeled` can both arrive; close only once.
+          if [[ "$(gh issue view "$ISSUE" --repo "$REPO" --json state -q .state)" == "OPEN" ]]; then
+            gh issue comment "$ISSUE" --repo "$REPO" --body \
+              "Кратки видеа може да заявява само екипът на сайта, затова това issue се затваря автоматично. За поръчки пиши ни през https://3dpechat.bg/contact/ 🙂"
+            gh issue close "$ISSUE" --repo "$REPO" --reason "not planned"
+          fi
+
+  draft:
+    needs: gate
+    if: needs.gate.outputs.allowed == 'true' && needs.gate.outputs.mode == 'draft'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
+
+      - name: Draft the storyboard
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          REPO: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GDRIVE_SA_KEY: ${{ secrets.GDRIVE_SA_KEY }}
+          GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: node scripts/make-short/from-issue.js draft
+
+  render:
+    needs: gate
+    if: needs.gate.outputs.allowed == 'true' && needs.gate.outputs.mode == 'render'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
+
+      # Captions and the end card are drawn in Chromium.
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Bulgarian voice. 7.2.x gets HTTP 403 from Microsoft's service since
+      # October 2026; 7.3.1 works. If the voice breaks again, try a newer one.
+      - name: Install edge-tts
+        run: pip install edge-tts==7.3.1
+
+      - name: Render the short
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GDRIVE_SA_KEY: ${{ secrets.GDRIVE_SA_KEY }}
+          GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: node scripts/make-short/from-issue.js render

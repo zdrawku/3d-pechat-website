@@ -1,15 +1,16 @@
 name: Add Product from Issue
 
-# "Add from phone" flow (Idea 3, Phase 3): the owner opens a `📦 Нов продукт`
-# issue with photos, this converts them and opens a PR.
+# "Add from phone" flow (Idea 3, Phase 3): Здравко or Мария opens a
+# `📦 Нов продукт` issue with photos, this converts them and opens a PR.
 #
 # SECURITY — anyone can open an issue on a public repo, so the pipeline is
 # fail-closed and layered:
-#   1. `check-owner` gates every subsequent job on the issue author being the
-#      repo owner (login AND author_association must both match).
-#   2. Non-owner issues are commented on and closed without any code running.
-#   3. Even for the owner, the result is only a PR — nothing reaches the live
-#      site until it is reviewed and merged.
+#   1. `check-owner` gates every subsequent job on the issue author's numeric
+#      GitHub id being in `.github/issue-authors.json` (ids can't be renamed
+#      or re-registered the way logins can).
+#   2. Anyone else's issue is commented on and closed without any code running.
+#   3. Even for an allowed author, the result is only a PR — nothing reaches
+#      the live site until it is reviewed and merged.
 
 on:
   issues:
@@ -26,25 +27,25 @@ jobs:
     if: contains(github.event.issue.labels.*.name, 'new-product')
     runs-on: ubuntu-latest
     outputs:
-      is_owner: ${{ steps.verify.outputs.is_owner }}
+      is_owner: ${{ steps.verify.outputs.allowed }}
     steps:
+      # Only the allowlist and its checker are needed here — no dependencies,
+      # nothing from the issue is executed.
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github/issue-authors.json
+            scripts/check-issue-author.js
+          sparse-checkout-cone-mode: false
+
       - name: Verify issue author
         id: verify
         env:
-          AUTHOR: ${{ github.event.issue.user.login }}
-          ASSOCIATION: ${{ github.event.issue.author_association }}
-        run: |
-          # Belt and braces: the login must be the owner AND GitHub must agree
-          # the author is the repo OWNER. Either check failing = no run.
-          if [[ "$AUTHOR" == "zdrawku" && "$ASSOCIATION" == "OWNER" ]]; then
-            echo "is_owner=true" >> $GITHUB_OUTPUT
-            echo "Author '$AUTHOR' verified as repo owner."
-          else
-            echo "is_owner=false" >> $GITHUB_OUTPUT
-            echo "Author '$AUTHOR' ($ASSOCIATION) is not the owner — refusing to run."
-          fi
+          ACTOR_ID: ${{ github.event.issue.user.id }}
+          ACTOR_LOGIN: ${{ github.event.issue.user.login }}
+        run: node scripts/check-issue-author.js
 
-  # Gate 2: politely close anything that isn't from the owner. No code runs here.
+  # Gate 2: politely close anything from outside the allowlist. No code runs here.
   reject-non-owner:
     needs: check-owner
     if: needs.check-owner.outputs.is_owner != 'true'
@@ -57,7 +58,7 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           gh issue comment "$ISSUE" --repo "$REPO" --body \
-            "Продукти може да добавя само собственикът на сайта, затова това issue се затваря автоматично. Ако искаш да предложиш продукт, пиши ни през формата за контакт на https://3dpechat.bg/contact/ 🙂"
+            "Продукти може да добавя само екипът на сайта, затова това issue се затваря автоматично. Ако искаш да предложиш продукт, пиши ни през формата за контакт на https://3dpechat.bg/contact/ 🙂"
           gh issue close "$ISSUE" --repo "$REPO" --reason "not planned"
 
   add-product:
