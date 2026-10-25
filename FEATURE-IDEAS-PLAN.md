@@ -258,6 +258,15 @@ author login to be `zdrawku` **and** `author_association == 'OWNER'` (both, not
 either), every other job `needs:` that verdict, and a `reject-non-owner` job
 comments + closes anything else before any code runs.
 
+Updated 2026-10-25: the guard is now the id allowlist (`.github/issue-authors.json`,
+Здравко and Мария) **plus** the issue must come from the form
+(`scripts/check-issue-template.js` — the form's `### <label>` headings, in
+order), and only `opened` starts it (the old `labeled` trigger opened a second,
+duplicate PR — #40/#41). The 🎬 shorts flow has the same two checks. After the
+product PR is merged and deployed, `product-live.yml` waits until the product
+shows on https://3dpechat.bg/products/ and comments its link
+(`/products/#<linkId>`) on the issue (`scripts/add-product/live.js`).
+
 For adding a product from a phone (photo taken at the printer): a GitHub **Issue
 template** (`new-product.yml` form: title, description, category, drag-in photos —
 GitHub hosts issue images for free) plus a GitHub Action that triggers on the

@@ -61,6 +61,23 @@ test('the shorts agent can reach no credential and runs only the shorts tool', {
   assert.doesNotMatch(agentStep.run, /auth status/, 'the log is public');
 });
 
+test('both issue-form flows start only for a new issue from their form, by the team', { skip: !yaml && 'js-yaml not installed' }, () => {
+  for (const [file, gateJob, form, output] of [
+    ['add-product.yml', 'check-owner', 'new-product.yml', 'is_owner'],
+    ['make-short.yml', 'gate', 'new-short.yml', 'allowed'],
+  ]) {
+    const wf = load(file);
+    // A label added to some other issue later must not start anything.
+    assert.deepStrictEqual(wf.on.issues.types, ['opened'], file);
+    const template = steps(wf.jobs[gateJob]).find((s) => /node scripts\/check-issue-template\.js/.test(s.run || ''));
+    assert.ok(template, `${file}: checks the form`);
+    assert.strictEqual(template.env.TEMPLATE, form, file);
+    assert.strictEqual(template.env.ISSUE_BODY, '${{ github.event.issue.body }}', file);
+    assert.match(wf.jobs[gateJob].outputs[output], /steps\.verify\.outputs\.allowed == 'true'/, file);
+    assert.match(wf.jobs[gateJob].outputs[output], /steps\.template\.outputs\.template == 'true'/, file);
+  }
+});
+
 const allWorkflows = () => fs.readdirSync(path.join(__dirname, '..', '.github', 'workflows'))
   .filter((f) => /\.ya?ml$/.test(f)).map((f) => [f, load(f)]);
 
