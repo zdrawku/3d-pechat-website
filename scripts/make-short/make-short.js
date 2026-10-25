@@ -77,13 +77,28 @@ function check(work) {
   const product = spec.product ? productFrom(spec.product) : null;
   const sources = [readIf(path.join(work, 'request.md'))];
   if (product) sources.push(product.name, product.description);
+  const business = lib.readBusiness();
+  const texts = lib.specTexts(spec);
   return [
     ...lib.validateSpec(spec),
-    ...lib.factsCheck(lib.specTexts(spec), { facts: lib.readBusiness().facts, sources }),
+    ...lib.factsCheck(texts, { facts: business.facts, sources }),
+    ...lib.scopeCheck(texts, { email: business.email }),
   ];
 }
 
+/**
+ * In CI the agent runs this tool with credentials scrubbed from its
+ * environment (CLAUDE_CODE_SUBPROCESS_ENV_SCRUB in make-short.yml). If one
+ * ever shows up here, stop rather than run with it.
+ */
+function refuseCredentials(env = process.env) {
+  if (!env.GITHUB_ACTIONS) return;
+  const leaked = ['CLAUDE_CODE_OAUTH_TOKEN', 'ANTHROPIC_API_KEY', 'GITHUB_TOKEN', 'GH_TOKEN'].filter((k) => env[k]);
+  if (leaked.length) throw new Error(`Refusing to run: ${leaked.join(', ')} reached the shorts tool. Set CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1 on the agent step.`);
+}
+
 async function main() {
+  refuseCredentials();
   const { cmd, opts } = parseArgs(process.argv.slice(2));
   const work = path.resolve(opts.work || path.join(lib.ROOT, 'tmp', 'make-short', 'local'));
   fs.mkdirSync(work, { recursive: true });
@@ -126,7 +141,7 @@ async function main() {
     if (problems.length) {
       console.log(problems.join('\n'));
       process.exitCode = 1;
-    } else console.log('spec.json passes: structure, facts and never-claim checks.');
+    } else console.log('spec.json passes: structure, facts, never-claim and public-text checks.');
   } else if (cmd === 'render') {
     const problems = check(work);
     if (problems.length) throw new Error(`Fix spec.json first:\n${problems.join('\n')}`);
@@ -138,7 +153,8 @@ async function main() {
     const result = await renderShort({ spec, files, outDir, workDir: path.join(work, 'render'), campaign });
     console.log(`Rendered ${result.seconds} s (captions only, silent):\n  ${result.video}\n  ${result.cover}\n  ${result.post}`);
   } else if (cmd === 'frames') {
-    if (!opts.video) throw new Error('frames needs --video <file>');
+    // A local file only: ffmpeg would otherwise fetch whatever URL it is given.
+    if (!opts.video || !fs.existsSync(opts.video)) throw new Error('frames needs --video <file> (an existing local file)');
     const dir = path.join(work, 'check');
     fs.mkdirSync(dir, { recursive: true });
     for (const t of String(opts.at || '1').split(',').map(Number)) {
@@ -158,4 +174,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { parseArgs, localExtras, check };
+module.exports = { parseArgs, localExtras, check, refuseCredentials };

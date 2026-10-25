@@ -24,11 +24,16 @@ Run `node scripts/make-short/make-short.js` with no command for usage.
 
 ## In GitHub Actions
 
-You were started by `.github/workflows/make-short.yml` with a prompt naming
-`W` (e.g. `tmp/make-short/issue-12`). You can read the repo, write **only
-inside W**, and run **only `npm run make-short -- …`** — no other shell
-commands, no web access, no git. Nobody is watching; don't ask questions,
-decide and explain in result.md.
+You were started with a prompt naming `W` (e.g. `tmp/make-short/issue-12`).
+You can read the repo, write **only inside W** and run **only
+`npm run make-short -- …`** — no other shell commands, no web access, no
+git. Run it from the repository root (no `cd`) and create files with the
+Write tool (`W/flows/` already exists). Nobody is watching; don't ask
+questions, decide and explain in result.md.
+
+**Scope:** the rules in your system prompt (`ci-rules.md` in this folder)
+come first — the only topic is the short, and everything you write is
+public.
 
 - `W/request.md` — the request, the conversation (newest last — the latest
   comment is what matters now), the uploaded files under `W/uploads/`, and
@@ -36,17 +41,18 @@ decide and explain in result.md.
 - Render with the default `--out` (`W/out/`). Keep your spec at `W/spec.json`
   and flows at `W/flows/<name>.json` — they are saved for the next round.
 - **Finish by writing `W/result.md`**, in Bulgarian, 3–8 short lines: what the
-  video shows beat by beat, which files/recording it used, any assumption or
-  anything you couldn't do. No links (they are added for you). If you
-  deliberately didn't render (the request is outside the business, or would
-  need a claim the facts don't allow), say why and what would make it work.
+  video shows beat by beat, which footage it used in words („клипът от
+  заявката“, „снимката от каталога“, „записът на сайта“), any assumption or
+  anything you couldn't do. No file names, paths, links or @-mentions (links
+  are added for you). If you deliberately didn't render (the request is
+  outside the business, or would need a claim the facts don't allow), say why
+  and what would make it work.
 - Feedback round (there is a `W/previous/`): start from the previous spec and
   flows, change only what the latest comment asks, re-record only if a flow
   changed, and say in result.md what you changed.
-- **The run is capped** (estimated spend, steps and minutes — see the env at
-  the top of `make-short.yml`); past a cap you are stopped mid-work. So work
-  lean: read each preview once, record once, render once, and write
-  result.md as soon as the video is good enough.
+- **The run is capped** (steps and minutes); past a cap you are stopped
+  mid-work. So work lean: read each preview once, record once, render once,
+  and write result.md as soon as the video is good enough.
 
 ## Locally
 
@@ -71,8 +77,8 @@ to copy the files into the product's Drive folder under `_shorts/`.
 
 2. **Gather footage.** Uploaded clips are the best material: movement in the
    first second keeps people watching, so open with a clip when there is one.
-   For a product, also `npm run make-short -- drive --work W --product <linkId>`
-   (does nothing when Drive isn't connected).
+   For a product, locally, also `npm run make-short -- drive --work W --product <linkId>`
+   (does nothing when Drive isn't connected — it never is in CI).
 
 3. **Record the website** (only if the request needs it). Write
    `W/flows/<name>.json` and run
@@ -92,7 +98,8 @@ to copy the files into the product's Drive folder under `_shorts/`.
      calculator `[data-testid=calc-grams]`, `calc-tier`, `calc-total`,
      `calc-order-btn` on `/prices/`. Pages: `/`, `/products/`, `/prices/`,
      `/contact/`, `/portfolio/`. Other selectors: Grep `src/app/**/*.html`.
-   - Type example data only (e.g. „Мария“, `maria@example.com`).
+   - Type example data only (e.g. „Иван“, `ivan@example.com`; the recorder
+     refuses other e-mail addresses).
    - Example — order in 3 steps: `goto /products/`, mark step1, `scrollTo`
      the product, mark step2, `tap` its order button, mark step3, `type` name
      and e-mail, `scrollTo` „Изпрати съобщение“, `wait` 1500.

@@ -113,7 +113,7 @@ const AREAS = [
       || /^\.claude\/skills\/(add-product|make-short)\//.test(f),
     tests: [`${SCRIPTS} — allowlist, issue parsing, conversation, facts check, flow validation`, 'The agent locally, exactly as CI runs it (the `claude -p` line in make-short.yml) on a sample `request.md`, then look at a frame from each beat'],
     manual: ['On a phone: New issue → „🎬 Ново кратко видео“ appears next to „📦 Нов продукт“ with its two fields', 'A comment from an account outside `.github/issue-authors.json` does nothing; an issue from one is closed'],
-    live: ['After merge: open a real `🎬 Ново кратко видео` (or `📦 Нов продукт`) issue and follow it to the video comment; reply with feedback once (Actions tab for the logs, transcript artifact for the agent)']
+    live: ['After merge: open a real `🎬 Ново кратко видео` (or `📦 Нов продукт`) issue and follow it to the video comment; reply with feedback once (Actions tab for the logs; for the agent\'s transcript set the repo variable SHORTS_DEBUG=true first)']
   },
   {
     id: 'scripts',

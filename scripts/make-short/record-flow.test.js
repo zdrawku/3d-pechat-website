@@ -22,6 +22,14 @@ test('only 3dpechat.bg or localhost can be recorded', () => {
   }
 });
 
+test('typed text is on screen: example data only, nothing off limits', () => {
+  const typing = (text) => validateFlow({ steps: [{ goto: '/contact/' }, { type: { placeholder: 'Вашият имейл', text } }] });
+  assert.deepStrictEqual(typing('ivan@example.com'), []);
+  assert.match(typing('someone@company.com')[0], /имейл/);
+  assert.match(typing('Работя с Claude')[0], /typed text/);
+  assert.match(typing('x'.repeat(61))[0], /60 characters/);
+});
+
 test('malformed steps are named', () => {
   const problems = validateFlow({ steps: [{ goto: 'https://example.com' }, { eval: 'x' }, { tap: {}, wait: 1 }, { type: { placeholder: 'x' } }] });
   assert.strictEqual(problems.length, 4, problems.join('\n'));

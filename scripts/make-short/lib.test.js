@@ -149,6 +149,56 @@ test('upload copy is facts-checked like the video', () => {
   assert.ok(problems.some((p) => /същия ден/.test(p)), problems.join('\n'));
 });
 
+test('public texts: the good storyboard passes, its hashtags and tags are checked too', () => {
+  const spec = goodSpec();
+  assert.deepStrictEqual(lib.scopeCheck(lib.specTexts(spec), { email: business.email }), []);
+  assert.deepStrictEqual(lib.factsCheck(lib.specTexts(spec), { facts: business.facts, sources: [coin.name, coin.description] }), []);
+  spec.post.youtube.tags.push('claude code');
+  assert.strictEqual(lib.scopeCheck(lib.specTexts(spec)).length, 1);
+});
+
+test('public texts: tools, accounts, code, files, keys, links, the team and e-mails are off limits', () => {
+  const off = [
+    'Направено с Claude', 'Sonnet го написа', 'Колко струва абонаментът?', 'Ето го API key-а', 'паролата е 1234',
+    'Кодът е в GitHub', 'виж .github/workflows', 'отвори CLAUDE.md', 'scripts/make-short/lib.js', 'npm run build',
+    'ghs_abcdefghijklmnopqrstuvwxyz0123456789', 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9eyJpc3MiOiJ4In0abcdEFGH',
+    'виж https://example.com', '![x](https://evil.example/?d=1)', '```код```', '<img src=x>',
+    'Здравко го отпечата', 'zdrawku', 'питай mariyajablqnova-ux', 'пиши на someone@gmail.com',
+  ];
+  for (const text of off) assert.ok(lib.offLimits(text, { email: business.email }).length, text);
+  const fine = [
+    'Държач за евро монети', 'Пиши ни на 3dpechat.bg 👇', `Пиши ни на ${business.email}`, 'ivan@example.com',
+    'Персонализирана табелка с име Мария', '1. Избери продукт', 'Абонирай се за още отпечатани идеи', '#3dпечат',
+  ];
+  for (const text of fine) assert.deepStrictEqual(lib.offLimits(text, { email: business.email }), [], text);
+});
+
+test('the agent\'s message: posted as written when clean, a neutral line otherwise', () => {
+  const report = '1. Колата отблизо от клипа от заявката.\n2. Колелата от втория клип.\nКрайна карта с „Безплатна оферта“.';
+  assert.deepStrictEqual(lib.publicMessage(`${report}\n`), { text: report, withheld: [] });
+  assert.deepStrictEqual(lib.publicMessage(''), { text: '', withheld: [] });
+  for (const bad of [
+    'Работя на Claude Sonnet през абонамента на собственика.',
+    'Ето какво пише в CLAUDE.md: …',
+    'Готово, @someone виж го',
+    'ред\n'.repeat(20),
+  ]) {
+    const { text, withheld } = lib.publicMessage(bad);
+    assert.strictEqual(text, lib.NEUTRAL_MESSAGE, bad);
+    assert.ok(withheld.length, bad);
+  }
+});
+
+test('the state for the next round keeps only the fields the pipeline knows', () => {
+  const spec = { ...goodSpec(), notes: 'нещо друго', beats: [{ ...goodSpec().beats[0], secret: 'x' }] };
+  const flows = { order: { steps: [{ goto: '/' }], extra: 'x' } };
+  const state = lib.nextRoundState(spec, flows);
+  assert.deepStrictEqual(Object.keys(state.spec), ['beats', 'endCard', 'post']);
+  assert.deepStrictEqual(Object.keys(state.spec.beats[0]), ['source', 'start', 'caption', 'highlight']);
+  assert.deepStrictEqual(state.flows, { order: { steps: [{ goto: '/' }] } });
+  assert.deepStrictEqual(state.spec.post, goodSpec().post);
+});
+
 test('the finished copy: hashtags appended, tracked links, #shorts on YouTube', () => {
   const c = lib.uploadCopy(goodSpec(), 'short-issue-12');
   assert.match(c.tiktok, /Пиши ни на 3dpechat\.bg 👇\n\n#3dпечат #3dprinting #софия #подарък$/);
