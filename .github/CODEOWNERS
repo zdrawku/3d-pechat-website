@@ -1,0 +1,4 @@
+# Every change to main needs the owner's review (the `main` ruleset requires
+# a code-owner approval). This also keeps an approval by a bot — GitHub Actions
+# may create PRs here — from counting.
+* @zdrawku

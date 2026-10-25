@@ -20,6 +20,9 @@ permissions:
 jobs:
   generate-blog:
     runs-on: ubuntu-latest
+    # The Claude token lives in this environment, which only `main` may use
+    # (a manual run from another branch can't read it).
+    environment: claude
     # Caps, so one run can't drain the Claude subscription: each of the two
     # Claude calls (article, translation) stops past an estimated spend or
     # after a time limit (scripts/auto-blog/claude.js), and the job is killed

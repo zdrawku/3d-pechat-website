@@ -136,6 +136,9 @@ jobs:
   agent:
     needs: gate
     if: needs.gate.outputs.allowed == 'true' && needs.gate.outputs.duplicate != 'true' && needs.gate.outputs.over != 'true'
+    # The Claude token lives in this environment, which only `main` may use —
+    # a workflow pushed on any other branch can't read it.
+    environment: claude
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:

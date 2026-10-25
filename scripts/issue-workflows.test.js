@@ -1,6 +1,7 @@
 // Guards the guards: the two issue-form workflows may only do work for the
-// people in .github/issue-authors.json. These tests read the workflow files,
-// so a later edit can't quietly drop a check.
+// people in .github/issue-authors.json, the Claude token is reachable only
+// from `main`, and no workflow writes to `main` without a review. These tests
+// read the workflow files, so a later edit can't quietly drop a check.
 const test = require('node:test');
 const assert = require('node:assert');
 const fs = require('fs');
@@ -58,6 +59,34 @@ test('the shorts agent can reach no credential and runs only the shorts tool', {
   assert.match(agentStep.run, /"Read\(\/\.git\/\*\*\)"/);
   assert.match(agentStep.run, /--max-budget-usd/);
   assert.doesNotMatch(agentStep.run, /auth status/, 'the log is public');
+});
+
+const allWorkflows = () => fs.readdirSync(path.join(__dirname, '..', '.github', 'workflows'))
+  .filter((f) => /\.ya?ml$/.test(f)).map((f) => [f, load(f)]);
+
+// Anyone with write access can push a workflow on a branch and read every
+// repo-level secret. The `claude` environment only serves `main`.
+test('only jobs in the main-only `claude` environment get the Claude token', { skip: !yaml && 'js-yaml not installed' }, () => {
+  let users = 0;
+  for (const [file, wf] of allWorkflows()) {
+    for (const [name, job] of Object.entries(wf.jobs)) {
+      if (!JSON.stringify(job).includes('secrets.CLAUDE_CODE_OAUTH_TOKEN')) continue;
+      users += 1;
+      const env = typeof job.environment === 'string' ? job.environment : job.environment && job.environment.name;
+      assert.strictEqual(env, 'claude', `${file} → ${name}`);
+    }
+  }
+  assert.strictEqual(users, 2, 'make-short agent + auto-blog');
+});
+
+test('every workflow states its token permissions, and none pushes to a branch itself', { skip: !yaml && 'js-yaml not installed' }, () => {
+  for (const [file, wf] of allWorkflows()) {
+    const jobs = Object.entries(wf.jobs);
+    assert.ok(wf.permissions || jobs.every(([, job]) => job.permissions), `${file}: add a permissions block`);
+    for (const [name, job] of jobs) {
+      for (const s of steps(job)) assert.doesNotMatch(s.run || '', /git push/, `${file} → ${name}: open a PR instead (main only takes reviewed changes)`);
+    }
+  }
 });
 
 test('the shorts agent may only talk about the short', { skip: !yaml && 'js-yaml not installed' }, () => {
