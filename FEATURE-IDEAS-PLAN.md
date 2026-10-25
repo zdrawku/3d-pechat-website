@@ -860,8 +860,13 @@ site on a phone screen for requests like „направи шорт видео �
   and the agent sees „екипът“ instead of GitHub logins. Caps tightened to
   1.5 USD / 50 steps / 15 min (real runs: ≤ 0.33 USD, 24 steps, 85 s).
 
-**Owner setup (once):** the Claude Code repo secret and the `new-short`
-label. Drive (below) stays
+**Owner setup (once):** the Claude Code token (`claude setup-token`) as
+`CLAUDE_CODE_OAUTH_TOKEN` in the **`claude` environment** (Settings →
+Environments; deployment branches: `main` only) — never as a repo secret,
+which anyone with write access can read through a workflow on a branch —
+and the `new-short` label. `main` takes changes only through a PR with the
+code owner's approval (`.github/CODEOWNERS`), so no one else can change a
+workflow that gets the token. Drive (below) stays
 optional — only needed for clips over GitHub's 10 MB.
 
 ### Google Drive setup (optional, owner, one time)
