@@ -17,9 +17,8 @@ const ENCODE = ['-an', '-r', String(lib.SIZE.fps), '-c:v', 'libx264', '-preset',
 /**
  * @param spec     storyboard (see lib.js)
  * @param files    media id → local file path, for every id the beats use
- * @param campaign utm_campaign for the links in post.txt
  */
-async function renderShort({ spec, files, outDir, workDir, campaign = 'short' }) {
+async function renderShort({ spec, files, outDir, workDir }) {
   const business = lib.readBusiness();
   fs.mkdirSync(outDir, { recursive: true });
   fs.mkdirSync(workDir, { recursive: true });
@@ -70,7 +69,7 @@ async function renderShort({ spec, files, outDir, workDir, campaign = 'short' })
   const cover = path.join(outDir, 'cover.jpg');
   media.run('ffmpeg', ['-v', 'error', '-y', '-ss', '1.0', '-i', video, '-frames:v', '1', '-q:v', '3', cover]);
   const post = path.join(outDir, 'post.txt');
-  fs.writeFileSync(post, lib.postText(spec, campaign));
+  fs.writeFileSync(post, lib.postText(spec));
 
   return { video, cover, post, seconds: Math.round(total * 10) / 10 };
 }

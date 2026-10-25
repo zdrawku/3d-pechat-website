@@ -109,12 +109,16 @@ jobs:
           ACTOR_LOGIN: ${{ github.event.issue.user.login }}
         run: node scripts/check-issue-author.js
 
-      # „Качено“ + the link (lib.isUploadedNote): the short is published, so
-      # the `published` job closes the issue instead of a new version. The
-      # text goes in through env, never into the script.
+      # „Качено“, with or without the video link (lib.isUploadedNote): the
+      # short is published, so the `published` job closes the issue instead
+      # of a new version. Only the team's comments get here — whoever wrote it
+      # AND whoever opened the issue passed the allowlist. The text goes in
+      # through env, never into the script.
       - name: Is it the „Качено“ note?
         id: kind
-        if: github.event_name == 'issue_comment'
+        if: >-
+          github.event_name == 'issue_comment' &&
+          steps.verify.outputs.allowed == 'true' && steps.verify_issue.outputs.allowed == 'true'
         env:
           BODY: ${{ github.event.comment.body }}
         run: node -e "console.log('uploaded=' + require('./scripts/make-short/lib').isUploadedNote(process.env.BODY))" >> "$GITHUB_OUTPUT"
@@ -149,8 +153,9 @@ jobs:
             gh issue close "$ISSUE" --repo "$REPO" --reason "not planned"
           fi
 
-  # The team posted the published link: no reply and no new version — a 🎉
-  # on the comment, and the issue closes as completed.
+  # Здравко or Мария posted „Качено“ (with the video link or without): no
+  # reply and no new version — a 🎉 on the comment, and the issue closes as
+  # completed.
   published:
     needs: gate
     if: needs.gate.outputs.allowed == 'true' && needs.gate.outputs.uploaded == 'true'

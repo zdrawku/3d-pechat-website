@@ -194,8 +194,6 @@ function uploadSection(c) {
     '**Закачен коментар** — напиши го първи и го закачи:',
     ...block(c.pinnedComment),
     '',
-    '<details><summary>Линк за TikTok био или сторис</summary>', '', ...block(c.siteLink), '</details>',
-    '',
     '🔊 _Видеото е без звук: при качване добави популярен звук от библиотеката на TikTok / YouTube — така видеото стига и до хората, които следят този звук._',
     '',
     '_Отговаряй на коментарите през първия час — тогава платформите решават дали да покажат видеото на повече хора._',
@@ -260,7 +258,7 @@ async function publish() {
   if (message) parts.push(message, '');
   const state = publishableState(currentState(), email);
   if (fresh && state && !lib.validatePost(state.spec.post).length) {
-    parts.push(uploadSection(lib.uploadCopy(state.spec, `short-issue-${ISSUE_NUMBER}`)), '');
+    parts.push(uploadSection(lib.uploadCopy(state.spec)), '');
   }
   if (stoppedBy) {
     parts.push(`⏹️ **Спрях по лимит: ${stoppedBy}.** ${fresh ? 'Видеото по-горе е последното, което успях да направя.' : 'Не стигнах до готово видео.'} Опрости заявката (по-малко кадри, по-кратък запис) или напиши коментар, за да продължа.`, '');

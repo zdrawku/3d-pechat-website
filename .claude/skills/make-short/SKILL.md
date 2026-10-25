@@ -125,7 +125,6 @@ to copy the files into the product's Drive folder under `_shorts/`.
      ],
      "endCard": { "line": "Отпечатан на 3D принтер в София" },
      "post": {
-       "link": "/products/",
        "tiktok": {
          "caption": "Държиш ли още евромонетите в джоба? 👀\n\nТози държач събира 2 €, 1 € и 50 евроцента — и се върти като спинър.\nОтпечатан на 3D принтер в София.\n\nКакво да отпечатаме следващо? Пиши ни 👇",
          "hashtags": ["#3dпечат", "#3dprinting", "#евромонети", "#подарък", "#софия"]
@@ -161,14 +160,15 @@ to copy the files into the product's Drive folder under `_shorts/`.
 The short is half the job; the text under it decides whether people stop,
 comment and follow. Write it in Bulgarian, warm and specific, like the
 workshop talking — not an ad. Emoji are fine here (1–3), not in the video.
-The code adds the tracked link, `#shorts` and the YouTube hashtags for you,
-plus a reminder to add a sound from the platform's library. Don't name a
-song or "trending sound" yourself — you can't know what is trending today.
+The code adds `#shorts` and the YouTube hashtags for you, plus a reminder
+to add a sound from the platform's library. Don't name a song or "trending
+sound" yourself — you can't know what is trending today.
 
-- **`link`** — the site page the call to action points to: `/products/` for a
-  product, `/prices/` for prices/calculator, `/contact/` for "how to order",
-  `/` otherwise. It becomes a tracked link (Analytics shows which short
-  brought each visit).
+- **No http links** (the team's rule) — never `http(s)://` or `www.`; a page
+  of the site goes in as text where the call to action needs it:
+  „3dpechat.bg/products“ for a product, „3dpechat.bg/prices“ for
+  prices/calculator, „3dpechat.bg/contact“ for ordering and questions, plain
+  „3dpechat.bg“ otherwise. `check` refuses http links.
 - **TikTok `caption`** (also used for Reels):
   - **Line 1 is the hook** (≤ 100 chars, shown before „още“): a question the
     viewer recognises („Държиш ли още евромонетите в джоба?“), a surprising
@@ -178,7 +178,7 @@ song or "trending sound" yourself — you can't know what is trending today.
   - **End with one call to action**, chosen for this short: a comment prompt
     („Какво да отпечатаме следващо? 👇“ — comments push reach most), follow
     („Последвай за още отпечатани идеи“), save/share („Запази го за
-    подарък“), or the offer („Безплатна оферта на 3dpechat.bg“). Mention
+    подарък“), or the site („Безплатна оферта на 3dpechat.bg/contact“). Mention
     3dpechat.bg in the text — TikTok captions aren't clickable, the name is.
   - No hashtags in the caption — they go in `hashtags`.
 - **`hashtags`** (3–8): one broad English (#3dprinting), one or two Bulgarian
@@ -189,7 +189,8 @@ song or "trending sound" yourself — you can't know what is trending today.
   („Държач за евро монети…“, „Как се поръчва 3D печат…“), then a curiosity
   hook. No clickbait the video doesn't deliver.
 - **YouTube `description`**: 2–4 lines that add to the title, then
-  „Абонирай се…“ and the offer. No links, no hashtags (added automatically).
+  „Абонирай се…“ and the offer with the site's address as text
+  („3dpechat.bg/contact“). No http links, no hashtags (added automatically).
 - **YouTube `tags`** (5–20): Bulgarian and English, plus the spellings people
   actually type — transliterated („3d pechat“, „3д печат“), product words,
   occasion („подарък“), place („софия“). No `#`, no commas.

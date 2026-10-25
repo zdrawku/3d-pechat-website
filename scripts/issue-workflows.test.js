@@ -89,15 +89,18 @@ test('every workflow states its token permissions, and none pushes to a branch i
   }
 });
 
-test('🎬 „Качено“ + link closes the issue instead of starting the agent', { skip: !yaml && 'js-yaml not installed' }, () => {
+test('🎬 only the team\'s „Качено“ closes the issue, and it never starts the agent', { skip: !yaml && 'js-yaml not installed' }, () => {
   const wf = load('make-short.yml');
   const kind = steps(wf.jobs.gate).find((s) => s.id === 'kind');
   assert.match(kind.run, /isUploadedNote\(process\.env\.BODY\)/);
   assert.strictEqual(kind.env.BODY, '${{ github.event.comment.body }}');
-  assert.match(wf.jobs.agent.if, /needs\.gate\.outputs\.uploaded != 'true'/);
-  assert.match(steps(wf.jobs.gate).find((s) => s.id === 'limits').if, /steps\.kind\.outputs\.uploaded != 'true'/, 'a „Качено“ note never posts a limit message');
+  // Classified only after the commenter AND the issue's author passed the allowlist.
+  assert.match(kind.if, /steps\.verify\.outputs\.allowed == 'true' && steps\.verify_issue\.outputs\.allowed == 'true'/);
   assert.match(wf.jobs.published.if, /needs\.gate\.outputs\.allowed == 'true' && needs\.gate\.outputs\.uploaded == 'true'/);
   assert.match(steps(wf.jobs.published)[0].run, /gh issue close "\$ISSUE" --repo "\$REPO" --reason completed/);
+  // A „Качено“ note never makes a version or a limit message.
+  assert.match(wf.jobs.agent.if, /needs\.gate\.outputs\.uploaded != 'true'/);
+  assert.match(steps(wf.jobs.gate).find((s) => s.id === 'limits').if, /steps\.kind\.outputs\.uploaded != 'true'/);
 });
 
 // Text anyone can write (titles, bodies, comments) must reach a script only

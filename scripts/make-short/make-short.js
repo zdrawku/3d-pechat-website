@@ -149,8 +149,7 @@ async function main() {
     const { manifest, spec } = loadSpec(work);
     const files = Object.fromEntries(Object.entries(manifest.media).map(([id, m]) => [id, m.file]));
     const outDir = path.resolve(opts.out || path.join(work, 'out'));
-    const campaign = `short-${path.basename(work)}`;
-    const result = await renderShort({ spec, files, outDir, workDir: path.join(work, 'render'), campaign });
+    const result = await renderShort({ spec, files, outDir, workDir: path.join(work, 'render') });
     console.log(`Rendered ${result.seconds} s (captions only, silent):\n  ${result.video}\n  ${result.cover}\n  ${result.post}`);
   } else if (cmd === 'frames') {
     // A local file only: ffmpeg would otherwise fetch whatever URL it is given.

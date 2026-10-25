@@ -70,12 +70,12 @@ test('the reply has one copyable code block per upload field', () => {
   const md = uploadSection({
     tiktok: 'Кука\n\nТекст\n\n#3dпечат #3dprinting',
     youtubeTitle: 'Заглавие | 3D печат',
-    youtubeDescription: 'Описание\n\n👉 https://3dpechat.bg/products/?utm_source=youtube\n\n#3dпечат #shorts',
+    youtubeDescription: 'Описание\n\n#3dпечат #shorts',
     youtubeTags: '3d печат, 3d printing',
     pinnedComment: 'Какво да отпечатаме следващо? 👇',
-    siteLink: 'https://3dpechat.bg/products/?utm_source=tiktok',
   });
-  assert.strictEqual((md.match(/^```text$/gm) || []).length, 6);
+  assert.strictEqual((md.match(/^```text$/gm) || []).length, 5);
+  assert.doesNotMatch(md, /Линк|https?:/, 'no link to the site in the upload copy');
   assert.match(md, /\*\*TikTok\*\*/);
   assert.match(md, /\*\*YouTube Shorts\*\*/);
   assert.match(md, /\*\*Закачен коментар\*\*/);
