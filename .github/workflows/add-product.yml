@@ -14,6 +14,9 @@ name: Add Product from Issue
 #   3. Even for an allowed author, the result is only a PR — nothing reaches
 #      the live site until it is reviewed and merged. Once it is live,
 #      product-live.yml links it on the issue.
+#   4. The photos are untrusted files: only ones dropped into the issue are
+#      downloaded, with no token, and the steps that fetch and decode them
+#      have no token in their environment or in .git/config.
 
 on:
   issues:
@@ -80,7 +83,10 @@ jobs:
     if: needs.check-owner.outputs.is_owner == 'true'
     runs-on: ubuntu-latest
     steps:
+      # create-pull-request gets the token as an input, so git needs none.
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -94,7 +100,6 @@ jobs:
         id: add
         env:
           ISSUE_BODY: ${{ github.event.issue.body }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/add-product/from-issue.js
 
       - name: Validate build
@@ -137,3 +142,21 @@ jobs:
         run: |
           gh issue comment "$ISSUE" --repo "$REPO" --body \
             "Готово ✅ Отворих PR за ревю: $PR_URL"
+
+      # Whoever filed the issue learns why nothing happened, e.g. photos given
+      # as links to another site instead of uploaded. REASON is the script's
+      # own fixed text, never anything copied from the issue.
+      - name: Explain a failure on the issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+          REASON: ${{ steps.add.outputs.error }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh issue comment "$ISSUE" --repo "$REPO" --body "Не успях да добавя продукта ❌
+
+          ${REASON:-Нещо се обърка при обработката — екипът ще погледне.}
+
+          Подробности: $RUN_URL"

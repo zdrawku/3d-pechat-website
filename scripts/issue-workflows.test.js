@@ -26,6 +26,20 @@ test('📦 Нов продукт: the PR job runs only after the issue author pa
   assert.match(wf.jobs['reject-non-owner'].if, /is_owner != 'true'/);
 });
 
+// The photos are files anyone on the allowlist pasted or dropped in; the
+// steps that download and decode them must have no token to give away.
+test('📦 Нов продукт: no token reaches the photo download, and a failure is explained on the issue', { skip: !yaml && 'js-yaml not installed' }, () => {
+  const job = load('add-product.yml').jobs['add-product'];
+  const checkout = steps(job).find((s) => /actions\/checkout/.test(s.uses || ''));
+  assert.strictEqual(checkout.with && checkout.with['persist-credentials'], false);
+  const add = steps(job).find((s) => /node scripts\/add-product\/from-issue\.js/.test(s.run || ''));
+  assert.deepStrictEqual(Object.keys(add.env), ['ISSUE_BODY']);
+  const explain = steps(job).find((s) => s.if === 'failure()');
+  assert.ok(explain, 'a failure step comments on the issue');
+  assert.strictEqual(explain.env.REASON, '${{ steps.add.outputs.error }}');
+  assert.match(explain.run, /gh issue comment "\$ISSUE"/);
+});
+
 test('🎬 Ново кратко видео: the agent runs only when the requester AND the issue author are on the allowlist', { skip: !yaml && 'js-yaml not installed' }, () => {
   const wf = load('make-short.yml');
   const gate = wf.jobs.gate;

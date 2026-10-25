@@ -30,9 +30,8 @@ function plainText(markdown: string): string {
   return markdown
     .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
     .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
-    .replace(/<[^>]+>/g, '')
-    // and any bracket a tag left behind, so the text can't carry markup into the schema
-    .replace(/[<>]/g, '')
+    // tags and any lone bracket in one pass, so the text can't carry markup into the schema
+    .replace(/<[^>]*>|[<>]/g, '')
     .replace(/(\*\*|__)(.+?)\1/g, '$2')
     .replace(/(^|[^\w*])\*(?!\s)([^*]+?)\*/g, '$1$2')
     .replace(/`([^`]+)`/g, '$1')

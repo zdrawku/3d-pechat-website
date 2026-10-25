@@ -7,8 +7,10 @@
 >
 > **Status (2026-10-25):** the GitHub settings in §0 are ✅ done and verified
 > through the API, apart from the items still listed there. `SECURITY.md`,
-> `dependabot.yml`, §1.5 (Angular 21.2.25) and §1.6 (CodeQL) are done in the
-> working tree, uncommitted, awaiting review. Everything else in §1–§3 is ⬜ open.
+> `dependabot.yml`, §1.5 (Angular 21.2.25) and §1.6 (CodeQL) are merged
+> (`21cecc5`, live; Node.js CI and Deploy green). §1.3 and the last CodeQL
+> fix are done in the working tree, uncommitted. Everything else in §1–§3 is
+> ⬜ open.
 >
 > **Baseline at audit time (`d58e952`):** `npm run build` ✅ (44 routes),
 > `npm run lint` ✅, `npm run test:scripts` ✅ 142/142, `npm test` ❌ 348/350,
@@ -120,8 +122,11 @@ every merge with the owner.
     in `publish`, verify in `prepare`. Ignore unsigned bot comments.
   - Feed the agent the verified state only, not the text of earlier bot
     comments.
-- [ ] **1.3 🔒 add-product: download only GitHub attachments**
-  (`scripts/add-product/from-issue.js:71-82`).
+- [x] **1.3 🔒 add-product: download only GitHub attachments**
+  (`scripts/add-product/from-issue.js:71-82`). Done in the working tree
+  2026-10-25: allowlist + no token + 50 MB cap, `persist-credentials: false`,
+  the photo step has only `ISSUE_BODY` in its env, and a failure now posts
+  the reason on the issue. Tests: `from-issue.test.js`, `issue-workflows.test.js`.
   - Today any URL pasted into the form (MakerWorld, Google Photos, …) is
     fetched with `Authorization: Bearer $GITHUB_TOKEN`.
   - Reuse make-short's `lib.isAttachmentUrl` allowlist and drop the header
@@ -158,7 +163,12 @@ every merge with the owner.
     - dompurify, mermaid and katex come from ngx-markdown.
 - [x] **1.6 CodeQL's three alerts** (all low real risk; fix them so new alerts
   stand out). Fixed in the working tree 2026-10-25 as described below:
-  stray brackets stripped, unsafe characters refused, slug escaped:
+  stray brackets stripped, unsafe characters refused, slug escaped. CodeQL
+  closed the `claude.js` and `scaffold-post.js` alerts after `21cecc5`. It
+  kept the `article-markdown.ts` one, because a separate second `.replace`
+  doesn't count for it, so that line is now one regex
+  (`/<[^>]*>|[<>]/g`, same output). If the alert survives the next scan,
+  dismiss it as a false positive:
   - `js/incomplete-multi-character-sanitization`,
     `src/app/blog/shared/article-markdown.ts:30`. A single-pass tag strip in
     `plainText()` for FAQ schema text built from repo markdown; a surviving

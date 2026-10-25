@@ -9,10 +9,19 @@
  *
  * Env:
  *   ISSUE_BODY   — the raw markdown body of the issue (required)
- *   GITHUB_TOKEN — used for downloading attachments on private repos (optional)
+ *
+ * No token is needed or sent: attachments of a public repo download
+ * anonymously, and only files dropped into the issue are fetched at all.
  */
 const fs = require('fs');
 const lib = require('./lib');
+const { isAttachmentUrl } = require('../make-short/lib');
+
+// Phone photos are 3–15 MB; anything far bigger is not a product photo.
+const MAX_BYTES = 50 * 1024 * 1024;
+
+/** A problem the person who filed the issue can fix; the workflow posts its text on the issue. */
+class IssueError extends Error {}
 
 /**
  * GitHub issue *forms* render each field as `### Label` followed by the value.
@@ -68,17 +77,26 @@ function extractImageUrls(value) {
   return [...new Set(urls)];
 }
 
+/**
+ * The photos to download, in order, and the links left out. Only files
+ * dropped into the issue count: a link pasted from another site could point
+ * anywhere, and the photo has to end up in the repo anyway.
+ */
+function photosToDownload(value) {
+  const urls = extractImageUrls(value);
+  return { photos: urls.filter(isAttachmentUrl), ignored: urls.filter((u) => !isAttachmentUrl(u)) };
+}
+
 async function download(url) {
-  const headers = { 'User-Agent': '3dpechat-add-product' };
-  // Private-repo attachments need auth; public ones ignore the header.
-  if (process.env.GITHUB_TOKEN) {
-    headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
-  }
-  const res = await fetch(url, { headers });
+  if (!isAttachmentUrl(url)) throw new Error(`Not a GitHub attachment URL: ${url}`);
+  const res = await fetch(url, { headers: { 'User-Agent': '3dpechat-add-product' } });
   if (!res.ok) {
     throw new Error(`Failed to download ${url}: HTTP ${res.status}`);
   }
-  return Buffer.from(await res.arrayBuffer());
+  if (Number(res.headers.get('content-length') || 0) > MAX_BYTES) throw new Error(`${url} is larger than 50 MB`);
+  const buf = Buffer.from(await res.arrayBuffer());
+  if (buf.length > MAX_BYTES) throw new Error(`${url} is larger than 50 MB`);
+  return buf;
 }
 
 async function main() {
@@ -93,13 +111,16 @@ async function main() {
   const rawTags = clean(fields['ключови думи']);
   const featured = clean(fields['основен продукт?']).toLowerCase() === 'да';
   const modelUrl = clean(fields['линк към модела (по избор)']);
-  const imageUrls = extractImageUrls(clean(fields['снимки']));
+  const { photos: imageUrls, ignored } = photosToDownload(clean(fields['снимки']));
 
   if (!name || !description) {
-    throw new Error('Missing required field: name and/or description.');
+    throw new IssueError('Липсва име или описание на продукта.');
+  }
+  if (ignored.length) {
+    console.log(`Skipping ${ignored.length} link(s) that are not photos uploaded to the issue.`);
   }
   if (imageUrls.length === 0) {
-    throw new Error('No images found in the issue — attach at least one photo.');
+    throw new IssueError('Не намерих снимки, качени в issue-то. Снимките трябва да са прикачени директно (плъзнати във формата или избрани от телефона), а не линк към друг сайт.');
   }
 
   const products = lib.readProducts();
@@ -169,7 +190,15 @@ async function main() {
   }
 }
 
-main().catch((err) => {
-  console.error('[add-product/from-issue] FAILED:', (err && err.stack) || err);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((err) => {
+    console.error('[add-product/from-issue] FAILED:', (err && err.stack) || err);
+    // Our own fixed text only — never anything copied from the issue.
+    if (err instanceof IssueError && process.env.GITHUB_OUTPUT) {
+      fs.appendFileSync(process.env.GITHUB_OUTPUT, `error=${err.message.replace(/[\r\n]+/g, ' ')}\n`);
+    }
+    process.exit(1);
+  });
+}
+
+module.exports = { parseIssueForm, extractImageUrls, photosToDownload, download, MAX_BYTES };
