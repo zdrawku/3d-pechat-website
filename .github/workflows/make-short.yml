@@ -5,8 +5,9 @@ name: Make Short from Issue
 # picks the shots, records
 # the website on a phone screen when the request is about the site, renders
 # the short and replies with it. Every later comment from the team is
-# feedback and produces a new version. Nothing is committed and nothing is
-# posted to TikTok or YouTube.
+# feedback and produces a new version — except a `//` note, and the
+# „Качено“ + link note once the short is published, which closes the issue.
+# Nothing is committed and nothing is posted to TikTok or YouTube.
 #
 # SECURITY — anyone can open an issue or comment on a public repo, and
 # everything the agent writes ends up public:
@@ -65,6 +66,7 @@ jobs:
       allowed: ${{ steps.verify.outputs.allowed == 'true' && (github.event_name == 'issues' || steps.verify_issue.outputs.allowed == 'true') }}
       duplicate: ${{ steps.dup.outputs.duplicate }}
       over: ${{ steps.limits.outputs.over }}
+      uploaded: ${{ steps.kind.outputs.uploaded }}
     steps:
       # A new issue can fire both `opened` and `labeled`. Runs queue one after
       # the other (concurrency below), so the second one sees the bot's reply
@@ -80,14 +82,17 @@ jobs:
           n=$(gh api "repos/$REPO/issues/$ISSUE/comments" --jq '[.[] | select(.user.login == "github-actions[bot]")] | length')
           if [[ "$n" -gt 0 ]]; then echo "duplicate=true" >> "$GITHUB_OUTPUT"; else echo "duplicate=false" >> "$GITHUB_OUTPUT"; fi
 
-      # Only the allowlist and its checker — nothing from the issue runs here.
+      # Only the allowlist, its checker and the plain helpers — nothing from
+      # the issue runs here.
       - uses: actions/checkout@v4
         with:
           sparse-checkout: |
             .github/issue-authors.json
             scripts/check-issue-author.js
             scripts/make-short/limits.js
+            scripts/make-short/lib.js
           sparse-checkout-cone-mode: false
+          persist-credentials: false
 
       - name: Verify who is asking
         id: verify
@@ -104,10 +109,21 @@ jobs:
           ACTOR_LOGIN: ${{ github.event.issue.user.login }}
         run: node scripts/check-issue-author.js
 
+      # „Качено“ + the link (lib.isUploadedNote): the short is published, so
+      # the `published` job closes the issue instead of a new version. The
+      # text goes in through env, never into the script.
+      - name: Is it the „Качено“ note?
+        id: kind
+        if: github.event_name == 'issue_comment'
+        env:
+          BODY: ${{ github.event.comment.body }}
+        run: node -e "console.log('uploaded=' + require('./scripts/make-short/lib').isUploadedNote(process.env.BODY))" >> "$GITHUB_OUTPUT"
+
       - name: Check usage limits (versions per issue, runs per day)
         id: limits
         if: >-
           steps.verify.outputs.allowed == 'true' && steps.dup.outputs.duplicate != 'true' &&
+          steps.kind.outputs.uploaded != 'true' &&
           (github.event_name == 'issues' || steps.verify_issue.outputs.allowed == 'true')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -133,9 +149,26 @@ jobs:
             gh issue close "$ISSUE" --repo "$REPO" --reason "not planned"
           fi
 
+  # The team posted the published link: no reply and no new version — a 🎉
+  # on the comment, and the issue closes as completed.
+  published:
+    needs: gate
+    if: needs.gate.outputs.allowed == 'true' && needs.gate.outputs.uploaded == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close the issue as completed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+          COMMENT_ID: ${{ github.event.comment.id }}
+        run: |
+          gh api "repos/$REPO/issues/comments/$COMMENT_ID/reactions" -f content=hooray --silent
+          gh issue close "$ISSUE" --repo "$REPO" --reason completed
+
   agent:
     needs: gate
-    if: needs.gate.outputs.allowed == 'true' && needs.gate.outputs.duplicate != 'true' && needs.gate.outputs.over != 'true'
+    if: needs.gate.outputs.allowed == 'true' && needs.gate.outputs.duplicate != 'true' && needs.gate.outputs.over != 'true' && needs.gate.outputs.uploaded != 'true'
     # The Claude token lives in this environment, which only `main` may use —
     # a workflow pushed on any other branch can't read it.
     environment: claude
@@ -162,8 +195,18 @@ jobs:
 
       - run: npm ci
 
-      - name: Install ffmpeg
-        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
+      # ffmpeg renders. bubblewrap is what CLAUDE_CODE_SUBPROCESS_ENV_SCRUB runs
+      # every agent command in (own PID namespace, credentials removed) —
+      # without it Claude Code won't start. Ubuntu 24.04 blocks the user
+      # namespace bubblewrap needs unless this sysctl is 0 (throwaway VM).
+      - name: Install ffmpeg and the agent's sandbox (bubblewrap)
+        run: |
+          sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg bubblewrap
+          if sysctl -n kernel.apparmor_restrict_unprivileged_userns >/dev/null 2>&1; then
+            sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
+          # The shape Claude Code uses; fails here, clearly, if it can't run.
+          bwrap --new-session --die-with-parent --bind / / --dev /dev --unshare-pid --unshare-user --proc /proc -- true
 
       # Recording the site and drawing captions both use Chromium.
       - name: Install Playwright Chromium
@@ -214,7 +257,13 @@ jobs:
             --output-format stream-json --verbose > "$RUNNER_TEMP/transcript.jsonl"
           code=$?
           echo "Claude Code exit code: $code"
-          if [[ $code -eq 124 ]]; then echo "time" > "$WORK/.stopped"; fi
+          if [[ $code -eq 124 ]]; then echo "time" > "$WORK/.stopped"; exit 0; fi
+          # No final result line = Claude Code never got going (setup problem):
+          # fail this step, not `publish`.
+          if [[ $code -ne 0 ]] && ! grep -q '"type":"result"' "$RUNNER_TEMP/transcript.jsonl"; then
+            echo "::error::Claude Code didn't start (exit $code) — its error is above."
+            exit 1
+          fi
           exit 0
 
       - name: Post the result

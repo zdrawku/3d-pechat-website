@@ -859,6 +859,19 @@ site on a phone screen for requests like „направи шорт видео �
   that fail the same check don't render or don't ride along in the state,
   and the agent sees „екипът“ instead of GitHub logins. Caps tightened to
   1.5 USD / 50 steps / 15 min (real runs: ≤ 0.33 USD, 24 steps, 85 s).
+- **„Качено“ closes the issue** (2026-10-25): once the short is on
+  TikTok/YouTube, the team comments „Качено“ and the link (or any upload word
+  — „Качих го“ — plus a TikTok/YouTube/Instagram/Facebook link). The gate
+  recognises it (`lib.isUploadedNote`), no agent runs, the comment gets a 🎉
+  and the issue closes as completed. „Качих нов клип“ without a platform
+  link is still feedback.
+- **The scrub needs bubblewrap** (2026-10-25): on Linux,
+  `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1` runs every agent command through
+  `bwrap … --unshare-pid --unshare-user`; without bubblewrap Claude Code
+  refuses to start (the first run after the hardening failed this way). The
+  job installs it, lifts Ubuntu 24.04's AppArmor block on user namespaces,
+  and checks the sandbox before the agent starts. Chromium, ffmpeg and
+  /dev/shm work inside it (checked in an Ubuntu 24.04 Playwright container).
 
 **Owner setup (once):** the Claude Code token (`claude setup-token`) as
 `CLAUDE_CODE_OAUTH_TOKEN` in the **`claude` environment** (Settings →

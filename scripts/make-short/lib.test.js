@@ -58,6 +58,26 @@ test('only GitHub attachment hosts are downloadable', () => {
   ]) assert.ok(!lib.isAttachmentUrl(bad), bad);
 });
 
+test('„Качено“ notes close the issue; feedback, new clips and reference links don\'t', () => {
+  const uploaded = [
+    'https://vm.tiktok.com/ZN8DBaCwU/\nКачих го, не ми отговаряй, само информативно е', // Мария, issue #55
+    'Качено https://www.tiktok.com/@3dpechat.bg/video/7430000000000000000',
+    '✅ Качено: https://youtube.com/shorts/abc123',
+    'Качено',
+    'качихме го и в YouTube https://youtu.be/abc123',
+    'Публикувано: https://www.instagram.com/reel/abc/',
+  ];
+  for (const text of uploaded) assert.strictEqual(lib.isUploadedNote(text), true, text);
+  const feedback = [
+    'Качих нов клип, използвай него',
+    'Направи го като https://www.tiktok.com/@someone/video/1',
+    'Каченото видео е тъмно — направи го по-светло',
+    'По-кратко, и смени надписа на втория кадър',
+    '',
+  ];
+  for (const text of feedback) assert.strictEqual(lib.isUploadedNote(text), false, text);
+});
+
 test('the state survives a round trip through a comment, captions with --> included', () => {
   const state = { spec: { beats: [{ caption: 'стрелка --> и `код`' }] }, flows: { order: { steps: [] } } };
   const body = `Готово\n\n${lib.embedState(state)}\n`;

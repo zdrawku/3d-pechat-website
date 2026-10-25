@@ -94,6 +94,22 @@ function parseShortIssue(body) {
   };
 }
 
+const PLATFORM_LINK = /https?:\/\/([\w-]+\.)*(tiktok\.com|youtube\.com|youtu\.be|instagram\.com|facebook\.com|fb\.watch)\//i;
+// `\b` only knows Latin letters, so the Cyrillic boundaries are spelled out.
+const UPLOADED_WORD = /(^|[^\p{L}])(качено|качен[аи]?|качих(ме)?|публикуван[оаи]?|публикувах(ме)?)(?!\p{L})/iu;
+
+/**
+ * The team's „it's published“ comment, which closes the issue instead of
+ * starting a new version: an upload word plus the link on TikTok, YouTube,
+ * Instagram or Facebook („https://vm.tiktok.com/… Качих го“), or a comment
+ * that starts with „Качено“. „Качих нов клип“ (a file for the agent) has no
+ * platform link and stays feedback, as does a reference link on its own.
+ */
+function isUploadedNote(body) {
+  const text = String(body || '').trim();
+  return UPLOADED_WORD.test(text) && (PLATFORM_LINK.test(text) || /^[^\p{L}\p{N}]*качено(?!\p{L})/iu.test(text));
+}
+
 // The agent's storyboard and recording scripts travel between workflow runs
 // inside the bot's comment, so feedback can build on them. Base64 keeps `-->`
 // or backticks in captions from breaking the HTML comment.
@@ -404,7 +420,7 @@ function socialHandles(business) {
 module.exports = {
   ROOT, SIZE, FORM, END_CARD_SECONDS,
   readProducts, readBusiness,
-  parseIssueForm, clean, isAttachmentUrl, extractAttachmentUrls, findProduct, parseShortIssue,
+  parseIssueForm, clean, isAttachmentUrl, extractAttachmentUrls, findProduct, parseShortIssue, isUploadedNote,
   STATE_MARKER, embedState, extractState,
   numbersIn, factsCheck, specTexts, validateSpec, validatePost,
   offLimits, scopeCheck, publicMessage, nextRoundState, NEUTRAL_MESSAGE,
