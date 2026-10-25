@@ -163,7 +163,15 @@ describe('ProductsPageComponent', () => {
       expect(component.productVariants.length).toBe(productsData.length);
       for (const product of component.productVariants) {
         const original = source(product.linkId);
-        expect(product.name).withContext(product.linkId).not.toBe(original.name);
+        // A product added from the phone has no English copy until someone
+        // writes it: it shows the Bulgarian text marked lang="bg", and
+        // i18n.spec.ts reports it as pending — not a failure here.
+        if (product.copyLang) {
+          expect(product.copyLang).withContext(product.linkId).toBe('bg');
+          expect(product.name).withContext(product.linkId).toBe(original.name);
+        } else {
+          expect(product.name).withContext(product.linkId).not.toBe(original.name);
+        }
         expect(product.frontImage).withContext(product.linkId).toBe(original.frontImage);
         expect((product.links ?? []).map((l) => l.url)).withContext(product.linkId)
           .toEqual((original.links ?? []).map((l) => l.url));

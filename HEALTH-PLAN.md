@@ -149,7 +149,15 @@ every merge with the owner.
     (the repo is public).
   - Set `persist-credentials: false` on the checkout at `add-product.yml:83`;
     create-pull-request takes the token as an input.
-- [ ] **1.4 Unit tests are red on `main`, and CI doesn't run them.**
+- [x] **1.4 Unit tests are red on `main`, and CI doesn't run them.** Done
+  2026-10-25:
+  - English copy for both products is merged (`f262c34`).
+  - In the working tree: the two specs accept a not-yet-translated product
+    (Bulgarian text, `lang="bg"`; `i18n.spec.ts` reports it pending).
+  - Node.js CI runs the unit tests with Angular's built-in
+    `ChromeHeadlessNoSandbox` launcher.
+  - Verified locally: 351/351, and 350 + 1 pending with one translation
+    removed.
   - Add the English copy for `kola-dodge-charger-2018` and
     `statuetka-kral-i-kralitsa-…` in `src/i18n/en/content/products.json`.
   - Make a missing product translation *pending* in

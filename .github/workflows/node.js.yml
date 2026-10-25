@@ -36,4 +36,7 @@ jobs:
     - run: npm run lint
     - run: npm run test:scripts
     - run: npm run build
-    # - run: npm run test -- --watch=false --browsers ChromeHeadless
+    # The unit specs hold most of CLAUDE.md's guards (prices vs business.json,
+    # no leva, FAQ numbers, Ignite tags). NoSandbox: Ubuntu runners block
+    # Chrome's sandbox; the launcher comes with Angular's built-in Karma config.
+    - run: npm test -- --watch=false --browsers=ChromeHeadlessNoSandbox

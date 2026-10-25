@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 
 import { I18nService } from '../../i18n/i18n.service';
 import { RelatedContentComponent } from './related-content.component';
+import enProducts from '../../../i18n/en/content/products.json';
 
 describe('RelatedContentComponent', () => {
   let fixture: ComponentFixture<RelatedContentComponent>;
@@ -90,8 +91,10 @@ describe('RelatedContentComponent', () => {
       expect(links.length).toBe(3);
       expect(links.every((a) => (a.getAttribute('href') ?? '').startsWith('/en/products#'))).toBeTrue();
       expect(links.every((a) => /^View product: /.test(a.getAttribute('aria-label') ?? ''))).toBeTrue();
+      // A product without English copy yet keeps its Bulgarian name, marked
+      // lang="bg" (i18n.spec.ts reports it as pending).
       for (const product of english.componentInstance.products) {
-        expect(product.copyLang).withContext(product.linkId).toBeNull();
+        expect(product.copyLang).withContext(product.linkId).toBe(product.linkId in enProducts ? null : 'bg');
       }
     });
   });
