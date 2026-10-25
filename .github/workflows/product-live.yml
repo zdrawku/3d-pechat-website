@@ -1,0 +1,39 @@
+name: Product is live
+
+# After every GitHub Pages deploy (a few minutes after a product PR is
+# merged): once the product shows on https://3dpechat.bg/products/, its
+# 📦 Нов продукт issue gets a link to it. See scripts/add-product/live.js.
+
+on:
+  workflow_run:
+    workflows: [Deploy GitHub Pages]
+    types: [completed]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+# One at a time, so two deploys in a row never link the same product twice.
+concurrency:
+  group: product-live
+  cancel-in-progress: false
+
+jobs:
+  announce:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/add-product/live.js
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - name: Link the live product on its issue
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: node scripts/add-product/live.js

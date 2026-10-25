@@ -108,8 +108,8 @@ const AREAS = [
     id: 'phone',
     title: 'Issue-form flows (📦 Нов продукт, 🎬 Ново кратко видео)',
     match: (f) => /^\.github\/ISSUE_TEMPLATE\//.test(f) || f === '.github/issue-authors.json'
-      || /^\.github\/workflows\/(add-product|make-short)\.yml$/.test(f)
-      || /^scripts\/(add-product|make-short)\//.test(f) || /^scripts\/check-issue-author/.test(f)
+      || /^\.github\/workflows\/(add-product|make-short|product-live)\.yml$/.test(f)
+      || /^scripts\/(add-product|make-short)\//.test(f) || /^scripts\/check-issue-(author|template)/.test(f)
       || /^\.claude\/skills\/(add-product|make-short)\//.test(f),
     tests: [`${SCRIPTS} — allowlist, issue parsing, conversation, facts check, flow validation`, 'The agent locally, exactly as CI runs it (the `claude -p` line in make-short.yml) on a sample `request.md`, then look at a frame from each beat'],
     manual: ['On a phone: New issue → „🎬 Ново кратко видео“ appears next to „📦 Нов продукт“ with its two fields', 'A comment from an account outside `.github/issue-authors.json` does nothing; an issue from one is closed'],

@@ -7,14 +7,17 @@ name: Add Product from Issue
 # fail-closed and layered:
 #   1. `check-owner` gates every subsequent job on the issue author's numeric
 #      GitHub id being in `.github/issue-authors.json` (ids can't be renamed
-#      or re-registered the way logins can).
+#      or re-registered the way logins can) AND on the issue coming from the
+#      `📦 Нов продукт` form (scripts/check-issue-template.js) — only when it
+#      is opened, so a label added to some other issue later starts nothing.
 #   2. Anyone else's issue is commented on and closed without any code running.
 #   3. Even for an allowed author, the result is only a PR — nothing reaches
-#      the live site until it is reviewed and merged.
+#      the live site until it is reviewed and merged. Once it is live,
+#      product-live.yml links it on the issue.
 
 on:
   issues:
-    types: [opened, labeled]
+    types: [opened]
 
 permissions:
   contents: write
@@ -27,16 +30,19 @@ jobs:
     if: contains(github.event.issue.labels.*.name, 'new-product')
     runs-on: ubuntu-latest
     outputs:
-      is_owner: ${{ steps.verify.outputs.allowed }}
+      is_owner: ${{ steps.verify.outputs.allowed == 'true' && steps.template.outputs.template == 'true' }}
     steps:
-      # Only the allowlist and its checker are needed here — no dependencies,
-      # nothing from the issue is executed.
+      # Only the allowlist, the form and their checkers are needed here — no
+      # dependencies, nothing from the issue is executed.
       - uses: actions/checkout@v4
         with:
           sparse-checkout: |
             .github/issue-authors.json
+            .github/ISSUE_TEMPLATE/new-product.yml
             scripts/check-issue-author.js
+            scripts/check-issue-template.js
           sparse-checkout-cone-mode: false
+          persist-credentials: false
 
       - name: Verify issue author
         id: verify
@@ -45,7 +51,15 @@ jobs:
           ACTOR_LOGIN: ${{ github.event.issue.user.login }}
         run: node scripts/check-issue-author.js
 
-  # Gate 2: politely close anything from outside the allowlist. No code runs here.
+      - name: Verify the issue comes from the 📦 Нов продукт form
+        id: template
+        env:
+          TEMPLATE: new-product.yml
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: node scripts/check-issue-template.js
+
+  # Gate 2: politely close anything from outside the allowlist or the form. No
+  # code runs here.
   reject-non-owner:
     needs: check-owner
     if: needs.check-owner.outputs.is_owner != 'true'
@@ -58,7 +72,7 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           gh issue comment "$ISSUE" --repo "$REPO" --body \
-            "Продукти може да добавя само екипът на сайта, затова това issue се затваря автоматично. Ако искаш да предложиш продукт, пиши ни през формата за контакт на https://3dpechat.bg/contact/ 🙂"
+            "Продукти добавя само екипът на сайта, през формата „📦 Нов продукт“, затова това issue се затваря автоматично. Ако искаш да предложиш продукт, пиши ни през формата за контакт на https://3dpechat.bg/contact/ 🙂"
           gh issue close "$ISSUE" --repo "$REPO" --reason "not planned"
 
   add-product:
