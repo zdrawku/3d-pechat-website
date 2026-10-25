@@ -94,6 +94,24 @@ function parseShortIssue(body) {
   };
 }
 
+const PLATFORM_LINK = /https?:\/\/([\w-]+\.)*(tiktok\.com|youtube\.com|youtu\.be|instagram\.com|facebook\.com|fb\.watch)\//i;
+// `\b` only knows Latin letters, so the Cyrillic boundaries are spelled out.
+const UPLOADED_WORD = /(^|[^\p{L}])(качено|качен[аи]?|качих(ме)?|публикуван[оаи]?|публикувах(ме)?)(?!\p{L})/iu;
+
+/**
+ * The team's „it's published“ comment, which closes the issue instead of
+ * starting a new version: one that starts with „качено“ (any case, link or
+ * not), or any upload word plus the video's link on TikTok, YouTube,
+ * Instagram or Facebook („https://vm.tiktok.com/… Качих го“). „Качих нов
+ * клип“ (a file for the agent) has no platform link and stays feedback, as
+ * does a reference link on its own. Who wrote it is checked separately (only
+ * the team's comments get here).
+ */
+function isUploadedNote(body) {
+  const text = String(body || '').trim();
+  return /^[^\p{L}\p{N}]*качено(?!\p{L})/iu.test(text) || (UPLOADED_WORD.test(text) && PLATFORM_LINK.test(text));
+}
+
 // The agent's storyboard and recording scripts travel between workflow runs
 // inside the bot's comment, so feedback can build on them. Base64 keeps `-->`
 // or backticks in captions from breaking the HTML comment.
@@ -163,7 +181,7 @@ const OFF_LIMITS = [
   [/github|workflow|репозитори|repository|\bnpm\b|node_modules|\.git\b/i, 'не говорим за кода и как работи'],
   [/(^|[\s(`'"])\.?(src|scripts|tmp|\.claude|\.github)\/|\b[\w-]+\.(js|ts|json|ya?ml|md|env|sh)\b/i, 'без имена на файлове'],
   [/gh[pousr]_[A-Za-z0-9]{20,}|sk-ant-|-----BEGIN|[A-Za-z0-9+/]{40,}/, 'прилича на ключ'],
-  [/https?:\/\/|www\.|<[a-z!/]|\]\(|```/i, 'без линкове и код (добавят се автоматично)'],
+  [/https?:\/\/|www\.|<[a-z!/]|\]\(|```/i, 'без http линкове и код'],
   [/здравко|колев|zdravko|kolev|zdrawku|zdkolev|mariyajablqnova/i, 'без имена на екипа'],
 ];
 
@@ -216,7 +234,7 @@ function nextRoundState(spec, flows) {
       beats: (spec.beats || []).map((b) => pick(b, ['source', 'start', 'seconds', 'position', 'caption', 'highlight'])),
       endCard: pick(spec.endCard, ['line']),
       post: {
-        ...pick(post, ['link', 'pinnedComment']),
+        ...pick(post, ['pinnedComment']),
         tiktok: pick(post.tiktok, ['caption', 'hashtags']),
         youtube: pick(post.youtube, ['title', 'description', 'tags']),
       },
@@ -229,17 +247,17 @@ const HASHTAG = /^#[\p{L}\p{N}_]+$/u;
 
 /**
  * The upload copy (spec.post) — what goes under the video on each platform:
- *   { link: "/products/",
- *     tiktok: { caption, hashtags: [] },              also used for Instagram Reels
+ *   { tiktok: { caption, hashtags: [] },              also used for Instagram Reels
  *     youtube: { title, description, tags: [] },
  *     pinnedComment }
+ * No http links: a page of the site is written out as text
+ * („3dpechat.bg/contact“).
  * Returns a list of problems, empty when fine.
  */
 function validatePost(post) {
   if (!post || !post.tiktok || !post.youtube) return ['Липсва текстът за качване (post.tiktok и post.youtube).'];
   const problems = [];
   const { tiktok, youtube } = post;
-  if (!/^\/([a-z0-9-]+\/)*$/.test(post.link || '')) problems.push('post.link е път от сайта, напр. "/products/" (с / накрая).');
   const caption = String(tiktok.caption || '');
   if (caption.length < 20 || caption.length > 1000) problems.push('TikTok: текстът трябва да е 20–1000 знака.');
   if (caption.split('\n')[0].length > 100) problems.push('TikTok: първият ред (куката) трябва да е до 100 знака — толкова се вижда преди „още“.');
@@ -252,7 +270,9 @@ function validatePost(post) {
   if (title.length < 10 || title.length > 100) problems.push('YouTube: заглавието трябва да е 10–100 знака.');
   const description = String(youtube.description || '');
   if (description.length < 20 || description.length > 3000) problems.push('YouTube: описанието трябва да е 20–3000 знака.');
-  if (/https?:\/\//.test(description)) problems.push('YouTube: без линк в описанието — добавя се автоматично с проследяване.');
+  if ([caption, title, description, post.pinnedComment].some((t) => /https?:\/\/|www\./i.test(String(t || '')))) {
+    problems.push('Без http линкове в текста за качване — адресът се пише като текст: 3dpechat.bg/contact.');
+  }
   const ytTags = youtube.tags || [];
   if (ytTags.length < 5 || ytTags.length > 20 || ytTags.some((t) => !t || t.includes('#') || t.includes(','))) problems.push('YouTube: 5–20 тага, без # и без запетаи.');
   if (ytTags.join(',').length > 450) problems.push('YouTube: таговете са общо до 450 знака.');
@@ -326,35 +346,23 @@ function photoFilter(seconds, zoomIn = true) {
 }
 
 /**
- * The site link for a platform, tagged so GA4 shows which short brought the
- * visit (Acquisition → Traffic acquisition, session campaign).
+ * The copy to paste on each platform, finished: hashtags appended, and on
+ * YouTube the first three plus #shorts (they show above the title).
  */
-function trackedLink(post, source, campaign) {
-  const params = new URLSearchParams({ utm_source: source, utm_medium: 'shorts', utm_campaign: campaign });
-  return `https://3dpechat.bg${post.link}?${params}`;
-}
-
-/**
- * The copy to paste on each platform, finished: hashtags appended, the
- * tracked link and #shorts added to YouTube (its first three hashtags show
- * above the title).
- */
-function uploadCopy(spec, campaign) {
+function uploadCopy(spec) {
   const { tiktok, youtube, pinnedComment } = spec.post;
-  const hashtags = tiktok.hashtags.join(' ');
   return {
-    tiktok: `${tiktok.caption.trim()}\n\n${hashtags}`,
+    tiktok: `${tiktok.caption.trim()}\n\n${tiktok.hashtags.join(' ')}`,
     youtubeTitle: youtube.title.trim(),
-    youtubeDescription: `${youtube.description.trim()}\n\n👉 ${trackedLink(spec.post, 'youtube', campaign)}\n\n${[...tiktok.hashtags.slice(0, 3), '#shorts'].join(' ')}`,
+    youtubeDescription: `${youtube.description.trim()}\n\n${[...tiktok.hashtags.slice(0, 3), '#shorts'].join(' ')}`,
     youtubeTags: youtube.tags.join(', '),
     pinnedComment: pinnedComment.trim(),
-    siteLink: trackedLink(spec.post, 'tiktok', campaign),
   };
 }
 
 /** post.txt: everything to paste when uploading, in the order you need it. */
-function postText(spec, campaign) {
-  const c = uploadCopy(spec, campaign);
+function postText(spec) {
+  const c = uploadCopy(spec);
   return [
     '=== TikTok (и Instagram Reels) — описание ===',
     c.tiktok,
@@ -371,9 +379,6 @@ function postText(spec, campaign) {
     '',
     '=== Закачен коментар (напиши го първи и го закачи) ===',
     c.pinnedComment,
-    '',
-    '=== Линк за TikTok био или сторис (с проследяване) ===',
-    c.siteLink,
     '',
     'Съвети:',
     '- Видеото е без звук: при качване добави популярен звук от библиотеката на TikTok / YouTube — така видеото се показва и на хората, които следят този звук.',
@@ -404,10 +409,10 @@ function socialHandles(business) {
 module.exports = {
   ROOT, SIZE, FORM, END_CARD_SECONDS,
   readProducts, readBusiness,
-  parseIssueForm, clean, isAttachmentUrl, extractAttachmentUrls, findProduct, parseShortIssue,
+  parseIssueForm, clean, isAttachmentUrl, extractAttachmentUrls, findProduct, parseShortIssue, isUploadedNote,
   STATE_MARKER, embedState, extractState,
   numbersIn, factsCheck, specTexts, validateSpec, validatePost,
   offLimits, scopeCheck, publicMessage, nextRoundState, NEUTRAL_MESSAGE,
-  beatDuration, clipFilter, photoFilter, trackedLink, uploadCopy, postText,
+  beatDuration, clipFilter, photoFilter, uploadCopy, postText,
   pickProductFolder, socialHandles,
 };

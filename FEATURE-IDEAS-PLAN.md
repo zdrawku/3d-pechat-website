@@ -838,11 +838,13 @@ site on a phone screen for requests like „направи шорт видео �
 - **Upload copy for growth** (2026-10-24): the agent also writes the TikTok
   caption (hook line, one call to action, 3–8 hashtags, no #fyp spam), the
   YouTube title, description and tags (incl. transliterated spellings such as
-  „3d pechat“), and a pinned comment that invites replies. Code adds a
-  UTM-tagged link per platform (`utm_medium=shorts`, `utm_campaign=short-issue-<n>`),
+  „3d pechat“), and a pinned comment that invites replies. Code adds
   `#shorts` and the YouTube hashtags. The reply shows each field in its own
   code block (one tap to copy on a phone); the copy is facts-checked like the
-  video.
+  video. **2026-10-25, owner's call:** no http links in the copy — the call
+  to action writes the address as text („3dpechat.bg/contact“) and `check`
+  refuses `http(s)://`/`www.`. The UTM links are gone, so Analytics no longer
+  tells shorts apart. Lengths unchanged (YouTube title ≤ 100).
 - **Hardening** (2026-10-25, after a review of the live runs): the agent
   could read outside the repo (bare `Read` allow — incl. its own process
   environment with the subscription token), read the checkout token in
@@ -859,6 +861,21 @@ site on a phone screen for requests like „направи шорт видео �
   that fail the same check don't render or don't ride along in the state,
   and the agent sees „екипът“ instead of GitHub logins. Caps tightened to
   1.5 USD / 50 steps / 15 min (real runs: ≤ 0.33 USD, 24 steps, 85 s).
+- **„Качено“ closes the issue** (2026-10-25): once the short is on
+  TikTok/YouTube, Здравко or Мария comments „Качено“ (any case, with or
+  without the link), or another upload word („Качих го“…) plus the video's
+  TikTok/YouTube/Instagram/Facebook link. The gate classifies only comments
+  that passed the allowlist (commenter and issue author, by id) with
+  `lib.isUploadedNote`; no agent runs, the comment gets a 🎉 and the issue
+  closes as completed. Anyone else's „Качено“ does nothing. „Качих нов клип“
+  without a platform link is feedback.
+- **The scrub needs bubblewrap** (2026-10-25): on Linux,
+  `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1` runs every agent command through
+  `bwrap … --unshare-pid --unshare-user`; without bubblewrap Claude Code
+  refuses to start (the first run after the hardening failed this way). The
+  job installs it, lifts Ubuntu 24.04's AppArmor block on user namespaces,
+  and checks the sandbox before the agent starts. Chromium, ffmpeg and
+  /dev/shm work inside it (checked in an Ubuntu 24.04 Playwright container).
 
 **Owner setup (once):** the Claude Code token (`claude setup-token`) as
 `CLAUDE_CODE_OAUTH_TOKEN` in the **`claude` environment** (Settings →

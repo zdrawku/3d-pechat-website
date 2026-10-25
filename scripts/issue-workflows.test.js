@@ -89,6 +89,42 @@ test('every workflow states its token permissions, and none pushes to a branch i
   }
 });
 
+test('🎬 only the team\'s „Качено“ closes the issue, and it never starts the agent', { skip: !yaml && 'js-yaml not installed' }, () => {
+  const wf = load('make-short.yml');
+  const kind = steps(wf.jobs.gate).find((s) => s.id === 'kind');
+  assert.match(kind.run, /isUploadedNote\(process\.env\.BODY\)/);
+  assert.strictEqual(kind.env.BODY, '${{ github.event.comment.body }}');
+  // Classified only after the commenter AND the issue's author passed the allowlist.
+  assert.match(kind.if, /steps\.verify\.outputs\.allowed == 'true' && steps\.verify_issue\.outputs\.allowed == 'true'/);
+  assert.match(wf.jobs.published.if, /needs\.gate\.outputs\.allowed == 'true' && needs\.gate\.outputs\.uploaded == 'true'/);
+  assert.match(steps(wf.jobs.published)[0].run, /gh issue close "\$ISSUE" --repo "\$REPO" --reason completed/);
+  // A „Качено“ note never makes a version or a limit message.
+  assert.match(wf.jobs.agent.if, /needs\.gate\.outputs\.uploaded != 'true'/);
+  assert.match(steps(wf.jobs.gate).find((s) => s.id === 'limits').if, /steps\.kind\.outputs\.uploaded != 'true'/);
+});
+
+// Text anyone can write (titles, bodies, comments) must reach a script only
+// through `env:` — `${{ … }}` inside `run:` is pasted into the shell first.
+test('no workflow pastes issue or comment text into a shell script', { skip: !yaml && 'js-yaml not installed' }, () => {
+  for (const [file, wf] of allWorkflows()) {
+    for (const [name, job] of Object.entries(wf.jobs)) {
+      for (const s of steps(job)) {
+        assert.doesNotMatch(s.run || '', /\$\{\{[^}]*github\.event\.(comment|issue|pull_request|review)\.(body|title)/, `${file} → ${name} → ${s.name || s.uses}`);
+      }
+    }
+  }
+});
+
+test('the env scrub has its sandbox: bubblewrap is installed and checked before the agent starts', { skip: !yaml && 'js-yaml not installed' }, () => {
+  const job = load('make-short.yml').jobs.agent;
+  const all = steps(job);
+  const install = all.findIndex((s) => /apt-get install[^\n]*bubblewrap/.test(s.run || ''));
+  const agent = all.findIndex((s) => /claude -p/.test(s.run || ''));
+  assert.ok(install !== -1 && install < agent, 'bubblewrap is installed before the agent step');
+  assert.match(all[install].run, /apparmor_restrict_unprivileged_userns=0/);
+  assert.match(all[install].run, /bwrap .*--unshare-user/);
+});
+
 test('the shorts agent may only talk about the short', { skip: !yaml && 'js-yaml not installed' }, () => {
   const wf = load('make-short.yml');
   const agentStep = steps(wf.jobs.agent).find((s) => /claude -p/.test(s.run || ''));

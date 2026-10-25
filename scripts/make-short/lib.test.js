@@ -58,6 +58,26 @@ test('only GitHub attachment hosts are downloadable', () => {
   ]) assert.ok(!lib.isAttachmentUrl(bad), bad);
 });
 
+test('„Качено“ closes the issue, with or without the video link, in any case; feedback doesn\'t', () => {
+  const closes = [
+    'https://vm.tiktok.com/ZN8DBaCwU/\nКачих го, не ми отговаряй, само информативно е', // Мария, issue #55
+    'Качено https://www.tiktok.com/@3dpechat.bg/video/7430000000000000000',
+    '✅ Качено: https://youtube.com/shorts/abc123',
+    'качихме го и в YouTube https://youtu.be/abc123',
+    'Публикувано: https://www.instagram.com/reel/abc/',
+    'Качено', 'качено', 'КАЧЕНО', 'КаЧеНо!', '✅ качено, линкът идва после',
+  ];
+  for (const text of closes) assert.strictEqual(lib.isUploadedNote(text), true, text);
+  const feedback = [
+    'Качих нов клип, използвай него',
+    'Направи го като https://www.tiktok.com/@someone/video/1',
+    'Каченото видео е тъмно — направи го по-светло',
+    'По-кратко, и смени надписа на втория кадър',
+    '',
+  ];
+  for (const text of feedback) assert.strictEqual(lib.isUploadedNote(text), false, text);
+});
+
 test('the state survives a round trip through a comment, captions with --> included', () => {
   const state = { spec: { beats: [{ caption: 'стрелка --> и `код`' }] }, flows: { order: { steps: [] } } };
   const body = `Готово\n\n${lib.embedState(state)}\n`;
@@ -90,14 +110,13 @@ const goodSpec = () => ({
   ],
   endCard: { line: 'Отпечатан на 3D принтер в София' },
   post: {
-    link: '/products/',
     tiktok: {
       caption: 'Държиш ли още евромонетите в джоба? 👀\n\nТози държач събира 2 €, 1 € и 50 евроцента.\n\nКакво да отпечатаме следващо? Пиши ни на 3dpechat.bg 👇',
       hashtags: ['#3dпечат', '#3dprinting', '#софия', '#подарък'],
     },
     youtube: {
       title: 'Държач за евро монети, който се върти | 3D печат',
-      description: 'Отпечатан на 3D принтер в София.\nАбонирай се за още отпечатани идеи.',
+      description: 'Отпечатан на 3D принтер в София.\nАбонирай се за още отпечатани идеи. Оферта: 3dpechat.bg/contact',
       tags: ['3d печат', '3d printing', '3д печат', '3d pechat', 'подарък', 'софия'],
     },
     pinnedComment: 'За бюрото или за подарък? 👇',
@@ -120,13 +139,13 @@ test('validateSpec accepts a good storyboard and names each problem in a bad one
 
 test('upload copy: each rule names its problem', () => {
   const cases = [
-    [(p) => { p.link = '/products'; }, /post\.link/],
     [(p) => { p.tiktok.caption = `${'Много дълга кука '.repeat(8)}\n\nтекст`; }, /първият ред/],
     [(p) => { p.tiktok.caption += ' #3dпечат'; }, /не в текста/],
     [(p) => { p.tiktok.hashtags = ['#3dпечат', '#fyp', '#софия']; }, /fyp/],
     [(p) => { p.tiktok.hashtags = ['#3dпечат']; }, /3–8 хаштага/],
     [(p) => { p.youtube.title = 'Кратко'; }, /заглавието/],
-    [(p) => { p.youtube.description += '\nhttps://3dpechat.bg'; }, /без линк/],
+    [(p) => { p.youtube.description += '\nhttps://3dpechat.bg/contact/'; }, /Без http линкове/],
+    [(p) => { p.pinnedComment = 'Пиши ни на www.3dpechat.bg'; }, /Без http линкове/],
     [(p) => { p.youtube.tags = ['#3dпечат', 'a', 'b', 'c', 'd']; }, /без #/],
     [(p) => { p.youtube.tags = ['a', 'b']; }, /5–20 тага/],
     [(p) => { p.pinnedComment = ''; }, /Закаченият коментар/],
@@ -167,7 +186,7 @@ test('public texts: tools, accounts, code, files, keys, links, the team and e-ma
   ];
   for (const text of off) assert.ok(lib.offLimits(text, { email: business.email }).length, text);
   const fine = [
-    'Държач за евро монети', 'Пиши ни на 3dpechat.bg 👇', `Пиши ни на ${business.email}`, 'ivan@example.com',
+    'Държач за евро монети', 'Пиши ни на 3dpechat.bg 👇', 'За контакти с нас: 3dpechat.bg/contact', `Пиши ни на ${business.email}`, 'ivan@example.com',
     'Персонализирана табелка с име Мария', '1. Избери продукт', 'Абонирай се за още отпечатани идеи', '#3dпечат',
   ];
   for (const text of fine) assert.deepStrictEqual(lib.offLimits(text, { email: business.email }), [], text);
@@ -199,15 +218,14 @@ test('the state for the next round keeps only the fields the pipeline knows', ()
   assert.deepStrictEqual(state.spec.post, goodSpec().post);
 });
 
-test('the finished copy: hashtags appended, tracked links, #shorts on YouTube', () => {
-  const c = lib.uploadCopy(goodSpec(), 'short-issue-12');
+test('the finished copy: hashtags appended, #shorts on YouTube, the address as text, no http links', () => {
+  const c = lib.uploadCopy(goodSpec());
   assert.match(c.tiktok, /Пиши ни на 3dpechat\.bg 👇\n\n#3dпечат #3dprinting #софия #подарък$/);
-  assert.match(c.youtubeDescription, /👉 https:\/\/3dpechat\.bg\/products\/\?utm_source=youtube&utm_medium=shorts&utm_campaign=short-issue-12/);
-  assert.match(c.youtubeDescription, /#3dпечат #3dprinting #софия #shorts$/);
+  assert.match(c.youtubeDescription, /Оферта: 3dpechat\.bg\/contact\n\n#3dпечат #3dprinting #софия #shorts$/);
   assert.strictEqual(c.youtubeTags, '3d печат, 3d printing, 3д печат, 3d pechat, подарък, софия');
-  assert.match(c.siteLink, /utm_source=tiktok/);
-  const text = lib.postText(goodSpec(), 'short-issue-12');
+  const text = lib.postText(goodSpec());
   for (const heading of ['TikTok', 'YouTube Shorts', 'Заглавие:', 'Тагове', 'Закачен коментар']) assert.ok(text.includes(heading), heading);
+  assert.doesNotMatch(`${JSON.stringify(c)}\n${text}`, /https?:|www\.|utm_/);
 });
 
 test('beat timing: long enough to read the caption, or the wanted length for a recorded step', () => {
@@ -223,7 +241,7 @@ test('a spec carries no sound: no voice settings are needed or read', () => {
   const spec = goodSpec();
   assert.deepStrictEqual(lib.validateSpec(spec), []);
   assert.ok(!lib.specTexts(spec).some((t) => t === undefined), 'every text is a caption, end-card line or upload copy');
-  assert.match(lib.postText(spec, 'short-x'), /без звук/);
+  assert.match(lib.postText(spec), /без звук/);
 });
 
 test('clip filter: upright clips fill the frame, landscape ones get a blurred backdrop', () => {
