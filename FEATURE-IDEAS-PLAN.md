@@ -799,12 +799,13 @@ site on a phone screen for requests like „направи шорт видео �
   `from-issue.js prepare` (conversation → `request.md`, downloads every file
   from the issue and the team's comments, restores the previous version) →
   **Claude Code 2.1.296 headless** (repo secret, no API key) running `/make-short` with `--permission-mode
-  dontAsk`, tools limited to Read/Glob/Grep, Edit in `tmp/make-short/**` and
-  `Bash(npm run make-short:*)`, no web → `from-issue.js publish` (video +
+  dontAsk`, reads inside the repo only, Edit in its own work folder and
+  `Bash(npm run make-short -- *)`, no web, no MCP → `from-issue.js publish` (video +
   cover to the `shorts-drafts` pre-release, comment with the agent's
   `result.md`, post text and the saved spec/flows). Any later team comment =
-  feedback = a new version built on the saved one. Transcript kept 14 days as
-  an artifact.
+  feedback = a new version built on the saved one. The transcript is uploaded
+  only while the repo variable `SHORTS_DEBUG` is `true` (artifacts of a public
+  repo are public); the publish log always has a one-line summary.
 - **Website recordings** `record-flow.js`: a JSON step list (goto, mark,
   scroll, scrollTo, tap, type, wait) filmed at 360 × 640 × 3 = 1080 × 1920.
   Chrome's screencast only gives CSS-pixel frames, so each step is a full
@@ -842,6 +843,22 @@ site on a phone screen for requests like „направи шорт видео �
   `#shorts` and the YouTube hashtags. The reply shows each field in its own
   code block (one tap to copy on a phone); the copy is facts-checked like the
   video.
+- **Hardening** (2026-10-25, after a review of the live runs): the agent
+  could read outside the repo (bare `Read` allow — incl. its own process
+  environment with the subscription token), read the checkout token in
+  `.git/config`, run any code via `npm run make-short --node-options=…`, and
+  started the project's MCP server with the token in its env. Verified on
+  CLI 2.1.296 and closed: no bare Read, `persist-credentials: false`,
+  `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1` (the tool also refuses to run if a
+  credential reaches it), `--strict-mcp-config`, `-- *` Bash rule, Edit
+  anchored to the work folder, `.git`/`/proc` denied. **Scope:** the agent's
+  system prompt (`.claude/skills/make-short/ci-rules.md`) limits it to the
+  short — nothing about the team, the tools/subscription, the code or the
+  runner — and the code enforces it on everything public: an off-topic
+  `result.md` is replaced by a neutral line, captions/upload copy/typed text
+  that fail the same check don't render or don't ride along in the state,
+  and the agent sees „екипът“ instead of GitHub logins. Caps tightened to
+  1.5 USD / 50 steps / 15 min (real runs: ≤ 0.33 USD, 24 steps, 85 s).
 
 **Owner setup (once):** the Claude Code repo secret and the `new-short`
 label. Drive (below) stays
@@ -864,7 +881,14 @@ a repo secret, never in this public repo.
 7. Inside the folder: one subfolder per product, named by its `linkId` (or its
    catalog name).
 
-Without the two secrets the agent works with issue attachments, catalog
+**Not wired into CI yet (2026-10-25):** the agent's tools run with
+credentials scrubbed, so the key can't be handed to the agent. Locally
+`drive` works with the two values in your environment. For CI, the download
+has to move into `from-issue.js prepare` (outside the agent) — e.g. the
+Drive folders whose name appears in the request — before these secrets are
+added; until then don't add them.
+
+Without Drive the agent works with issue attachments, catalog
 photos and site recordings; `npm run make-short -- drive` just says Drive
 isn't connected. The other way past the 10 MB limit is GitHub Pro on the
 repo owner's account (videos up to 100 MB in issues) — but uploads over

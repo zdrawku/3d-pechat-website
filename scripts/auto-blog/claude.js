@@ -3,8 +3,9 @@
 // run locally, a repo secret in the auto-blog workflow. No API key needed.
 //
 // The prompt goes in on stdin (articles are long), the CLI runs in the temp
-// folder with no tools, so the repo's own instructions and files don't leak
-// into the writing, and `--output-format json` tells success from failure.
+// folder with no tools and no MCP servers, so the repo's own instructions and
+// files (and, locally, your connected accounts) stay out of the writing, and
+// `--output-format json` tells success from failure.
 
 const os = require('os');
 const { spawn } = require('child_process');
@@ -25,6 +26,7 @@ function cliArgs(model = MODEL) {
     '-p', 'Follow the instructions in the input exactly and reply with only the requested output.',
     '--output-format', 'json',
     '--tools', '',
+    '--strict-mcp-config',
     '--system-prompt', SYSTEM,
     '--max-turns', '1',
     '--max-budget-usd', String(MAX_BUDGET_USD),

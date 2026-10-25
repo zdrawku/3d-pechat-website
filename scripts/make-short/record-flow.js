@@ -25,7 +25,9 @@
  * Safety: consent is pre-answered „denied“ (no banner, no analytics), the
  * review snackbar is pre-dismissed, analytics and the contact form's endpoint
  * are blocked, so a recording never sends an enquiry or counts as a visit.
- * Only 3dpechat.bg or a localhost build can be recorded.
+ * Only 3dpechat.bg or a localhost build can be recorded — a tap on a link to
+ * another site goes nowhere — and typed text passes the same public-text
+ * check as the captions (it is on screen).
  *
  * Output: <name>.mp4 (1080×1920, 30 fps) and <name>.marks.json ({ mark: seconds }).
  */
@@ -33,6 +35,7 @@ const fs = require('fs');
 const path = require('path');
 const { chromium } = require('@playwright/test');
 const media = require('./media');
+const { offLimits } = require('./lib');
 
 const VIEWPORT = { width: 360, height: 640 }; // × 3 = 1080 × 1920, exactly 9:16
 const SCALE = 3;
@@ -75,6 +78,8 @@ function validateFlow(flow) {
     if (keys.length !== 1 || !KINDS.includes(keys[0])) problems.push(`step ${i + 1}: use exactly one of ${KINDS.join(', ')}`);
     else if (s.goto !== undefined && !String(s.goto).startsWith('/')) problems.push(`step ${i + 1}: goto takes a path starting with /`);
     else if (s.type && typeof s.type.text !== 'string') problems.push(`step ${i + 1}: type needs "text"`);
+    else if (s.type && s.type.text.length > 60) problems.push(`step ${i + 1}: type at most 60 characters (example data only)`);
+    else if (s.type) for (const why of offLimits(s.type.text)) problems.push(`step ${i + 1}: typed text — ${why}`);
   });
   if ((flow.steps || []).filter((s) => s && s.goto !== undefined).length === 0) problems.push('the first page needs a goto step');
   return problems;
@@ -170,7 +175,19 @@ async function recordFlow(flow, outDir, name = 'flow') {
     locale: 'bg-BG', colorScheme: flow.dark ? 'dark' : 'light',
     userAgent: 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36',
   });
-  await context.route('**/*', (route) => (BLOCKED.some((re) => re.test(route.request().url())) ? route.abort() : route.continue()));
+  // A popup's (target="_blank") first request comes before its frame exists.
+  const topLevel = (req) => {
+    try {
+      return !req.frame().parentFrame();
+    } catch {
+      return true;
+    }
+  };
+  await context.route('**/*', (route) => {
+    const req = route.request();
+    const offSite = req.isNavigationRequest() && topLevel(req) && !ALLOWED_HOSTS.test(new URL(req.url()).hostname);
+    return offSite || BLOCKED.some((re) => re.test(req.url())) ? route.abort() : route.continue();
+  });
   await context.addInitScript(INIT_SCRIPT);
 
   const page = await context.newPage();

@@ -63,16 +63,17 @@ function readable(text) {
 /**
  * The messages that matter, in order: the issue, the team's comments and the
  * bot's replies. Comments starting with `//` are notes between people and are
- * left out; so is anyone outside the allowlist.
+ * left out; so is anyone outside the allowlist. People appear as „екипът“ —
+ * the agent needs what was asked, not who asked it.
  */
 function conversation(issue, comments, authors) {
-  const messages = [{ who: issue.user.login, at: issue.created_at, body: issue.body, isRequest: true }];
+  const messages = [{ who: 'екипът', at: issue.created_at, body: issue.body, isRequest: true }];
   for (const c of comments) {
     const fromBot = c.user && c.user.login === BOT;
     const fromTeam = c.user && findAuthor(authors, c.user.id);
     if (!fromBot && !fromTeam) continue;
     if (!fromBot && c.body.trim().startsWith('//')) continue;
-    messages.push({ who: fromBot ? 'агентът' : c.user.login, at: c.created_at, body: c.body, fromBot });
+    messages.push({ who: fromBot ? 'агентът' : 'екипът', at: c.created_at, body: c.body, fromBot });
   }
   return messages;
 }
@@ -123,6 +124,8 @@ async function prepare() {
   fs.rmSync(WORK, { recursive: true, force: true });
   const uploads = path.join(WORK, 'uploads');
   fs.mkdirSync(uploads, { recursive: true });
+  // The agent writes here with its Write tool; it has no shell to mkdir.
+  fs.mkdirSync(path.join(WORK, 'flows'), { recursive: true });
 
   // Files from the request and from the team's comments (never the bot's).
   const files = [];
@@ -134,7 +137,7 @@ async function prepare() {
       n += 1;
       try {
         const file = await media.downloadAttachment(url, uploads, `${String(n).padStart(2, '0')}-${i === 0 ? 'zayavka' : `komentar${i}`}`);
-        files.push({ file, from: i === 0 ? 'от заявката' : `от коментара на ${m.who} (${m.at.slice(0, 10)})` });
+        files.push({ file, from: i === 0 ? 'от заявката' : `от коментар (${m.at.slice(0, 10)})` });
       } catch (err) {
         problems.push(`Не успях да изтегля файл ${n}: ${err.message}`);
       }
@@ -205,12 +208,31 @@ function currentState() {
   const flows = fs.existsSync(flowsDir)
     ? Object.fromEntries(fs.readdirSync(flowsDir).filter((f) => f.endsWith('.json')).map((f) => [path.basename(f, '.json'), JSON.parse(fs.readFileSync(path.join(flowsDir, f), 'utf8'))]))
     : {};
-  return fs.existsSync(specFile) ? { spec: JSON.parse(fs.readFileSync(specFile, 'utf8')), flows } : null;
+  return fs.existsSync(specFile) ? lib.nextRoundState(JSON.parse(fs.readFileSync(specFile, 'utf8')), flows) : null;
+}
+
+/**
+ * The state is carried to the next round only when everything in it could be
+ * public (it sits base64-encoded in a public comment): captions, upload copy
+ * and typed text all pass the same check as the video.
+ */
+function publishableState(state, email) {
+  if (!state) return null;
+  const typed = Object.values(state.flows).flatMap((f) => (f.steps || []).filter((s) => s && s.type).map((s) => s.type.text));
+  const problems = lib.scopeCheck([...lib.specTexts(state.spec), ...typed], { email });
+  if (problems.length) console.log(`State not saved for the next round (${problems.length} text(s) failed the public-text check).`);
+  return problems.length ? null : state;
 }
 
 async function publish() {
+  const { email } = lib.readBusiness();
   const resultFile = path.join(WORK, 'result.md');
-  const message = fs.existsSync(resultFile) ? fs.readFileSync(resultFile, 'utf8').trim() : '';
+  const raw = fs.existsSync(resultFile) ? fs.readFileSync(resultFile, 'utf8') : '';
+  const { text: message, withheld } = lib.publicMessage(raw, { email });
+  // The log is public too: name the reasons, never the text.
+  if (withheld.length) console.log(`result.md replaced by the neutral line (${withheld.join('; ')}).`);
+  const run = lastResult();
+  if (run) console.log(`Agent: ${run.subtype}, ${run.num_turns} turns, ${Math.round((run.duration_ms || 0) / 1000)} s.`);
   const out = path.join(WORK, 'out');
   const video = path.join(out, 'short.mp4');
   const started = Number(process.env.RUN_STARTED_MS || 0);
@@ -235,8 +257,8 @@ async function publish() {
     if (coverUrl) parts.push(`[![Корица](${coverUrl})](${videoUrl})`, '');
   }
   if (message) parts.push(message, '');
-  const state = currentState();
-  if (fresh && state && state.spec && state.spec.post && state.spec.post.tiktok) {
+  const state = publishableState(currentState(), email);
+  if (fresh && state && !lib.validatePost(state.spec.post).length) {
     parts.push(uploadSection(lib.uploadCopy(state.spec, `short-issue-${ISSUE_NUMBER}`)), '');
   }
   if (stoppedBy) {
@@ -247,23 +269,28 @@ async function publish() {
   await comment(parts.join('\n'));
 }
 
+/** The CLI's final `result` line from the transcript (TRANSCRIPT), or null. */
+function lastResult() {
+  const file = process.env.TRANSCRIPT;
+  if (!file || !fs.existsSync(file)) return null;
+  const lines = fs.readFileSync(file, 'utf8').trim().split('\n');
+  try {
+    const last = JSON.parse(lines[lines.length - 1]);
+    return last.type === 'result' ? last : null;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Which cap stopped the agent, in words, or '' when it finished normally.
- * Reads the CLI's final `result` line (TRANSCRIPT) and the `.stopped` file
- * the workflow writes when its `timeout` killed the agent.
+ * Reads the transcript's result and the `.stopped` file the workflow writes
+ * when its `timeout` killed the agent. Worded for the public issue: no
+ * accounts, money or tools.
  */
 function capReached() {
-  const file = process.env.TRANSCRIPT;
-  let subtype = '';
-  if (file && fs.existsSync(file)) {
-    const lines = fs.readFileSync(file, 'utf8').trim().split('\n');
-    try {
-      subtype = JSON.parse(lines[lines.length - 1]).subtype || '';
-    } catch {
-      subtype = '';
-    }
-  }
-  if (subtype === 'error_max_budget_usd') return 'изразходвах определения бюджет за една заявка';
+  const subtype = (lastResult() || {}).subtype || '';
+  if (subtype === 'error_max_budget_usd') return 'заявката стана твърде голяма за един път';
   if (subtype === 'error_max_turns') return 'стигнах максималния брой стъпки';
   if (fs.existsSync(path.join(WORK, '.stopped'))) return 'изтече времето за една заявка';
   return '';
@@ -286,4 +313,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { conversation, readable, requestMarkdown, uploadSection, capReached };
+module.exports = { conversation, readable, requestMarkdown, uploadSection, capReached, publishableState };

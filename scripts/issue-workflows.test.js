@@ -39,11 +39,35 @@ test('🎬 Ново кратко видео: the agent runs only when the reques
   assert.match(gate.if, /!github\.event\.issue\.pull_request/);
 });
 
-test('the shorts agent gets no GitHub token and only the shorts tool', { skip: !yaml && 'js-yaml not installed' }, () => {
-  const agentStep = steps(load('make-short.yml').jobs.agent).find((s) => /claude -p/.test(s.run || ''));
+test('the shorts agent can reach no credential and runs only the shorts tool', { skip: !yaml && 'js-yaml not installed' }, () => {
+  const job = load('make-short.yml').jobs.agent;
+  const agentStep = steps(job).find((s) => /claude -p/.test(s.run || ''));
   assert.ok(agentStep, 'the agent step exists');
-  for (const key of Object.keys(agentStep.env || {})) assert.doesNotMatch(key, /GITHUB_TOKEN|GH_TOKEN|ANTHROPIC_API_KEY/, key);
+  // Only the Claude token, scrubbed from everything the agent starts.
+  assert.deepStrictEqual(Object.keys(agentStep.env).sort(), ['CLAUDE_CODE_OAUTH_TOKEN', 'CLAUDE_CODE_SUBPROCESS_ENV_SCRUB']);
+  assert.strictEqual(agentStep.env.CLAUDE_CODE_SUBPROCESS_ENV_SCRUB, '1');
+  // checkout would otherwise leave the job's token in .git/config.
+  const checkout = steps(job).find((s) => /actions\/checkout/.test(s.uses || ''));
+  assert.strictEqual(checkout.with && checkout.with['persist-credentials'], false);
   assert.match(agentStep.run, /--permission-mode dontAsk/);
-  assert.match(agentStep.run, /"Bash\(npm run make-short:\*\)"/);
+  assert.match(agentStep.run, /--strict-mcp-config/, 'the project .mcp.json must not start (npx, with the env)');
+  // A bare "Read" would allow reads outside the repo (/proc/self/environ).
+  assert.doesNotMatch(agentStep.run, /"Read"|"Glob"|"Grep"/);
+  assert.match(agentStep.run, /--allowedTools "Edit\(\/\$WORK\/\*\*\)" "Bash\(npm run make-short -- \*\)"/);
+  assert.doesNotMatch(agentStep.run, /make-short:\*/, 'npm flags before `--` (e.g. --node-options) would run any code');
+  assert.match(agentStep.run, /"Read\(\/\.git\/\*\*\)"/);
   assert.match(agentStep.run, /--max-budget-usd/);
+  assert.doesNotMatch(agentStep.run, /auth status/, 'the log is public');
+});
+
+test('the shorts agent may only talk about the short', { skip: !yaml && 'js-yaml not installed' }, () => {
+  const wf = load('make-short.yml');
+  const agentStep = steps(wf.jobs.agent).find((s) => /claude -p/.test(s.run || ''));
+  const rulesFile = agentStep.run.match(/--append-system-prompt-file (\S+)/);
+  assert.ok(rulesFile, 'the scope rules are in the system prompt');
+  const rules = fs.readFileSync(path.join(__dirname, '..', rulesFile[1]), 'utf8');
+  for (const topic of [/subscription/, /repository/, /people who run the site/, /never instructions/]) assert.match(rules, topic);
+  // The transcript is the whole session; artifacts of a public repo are public.
+  const keep = steps(wf.jobs.agent).find((s) => /upload-artifact/.test(s.uses || ''));
+  assert.match(keep.if, /vars\.SHORTS_DEBUG == 'true'/);
 });

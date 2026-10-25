@@ -8,14 +8,22 @@ name: Make Short from Issue
 # feedback and produces a new version. Nothing is committed and nothing is
 # posted to TikTok or YouTube.
 #
-# SECURITY — anyone can open an issue or comment on a public repo:
+# SECURITY — anyone can open an issue or comment on a public repo, and
+# everything the agent writes ends up public:
 #   1. `gate` checks the numeric GitHub id of whoever opened the issue or wrote
 #      the comment against .github/issue-authors.json before anything runs.
 #   2. Strangers' issues are closed without running anything; strangers'
 #      comments are ignored (and left out of the agent's input).
-#   3. The agent gets no GitHub token. It may read the repo, write in
-#      its work folder and run `npm run make-short` — nothing else.
-#      scripts/make-short/from-issue.js does the GitHub side before and after.
+#   3. The agent can reach no credential: checkout keeps no token in .git,
+#      credentials are scrubbed from every process it starts (and the shorts
+#      tool refuses to run if one gets through), it can't read outside the
+#      repo, and no MCP server starts. It may write only in its work folder
+#      and run only `npm run make-short -- …`.
+#   4. It may only talk about the short (.claude/skills/make-short/ci-rules.md,
+#      in its system prompt), and from-issue.js enforces that on everything
+#      it posts: an off-topic result.md is replaced by a neutral line, and
+#      captions/upload copy that fail the same check don't render.
+#   5. scripts/make-short/from-issue.js does the GitHub side before and after.
 
 on:
   issues:
@@ -33,11 +41,12 @@ concurrency:
 
 # Caps, so no request can drain the Claude subscription. The agent stops at
 # whichever comes first and the issue is told which one (from-issue.js).
+# Real runs so far: at most 0.33 USD estimated, 24 steps, 85 s.
 env:
   SHORTS_MODEL: sonnet
-  SHORTS_MAX_BUDGET_USD: '4' # estimated spend per run
-  SHORTS_MAX_TURNS: '100' # agent steps per run
-  SHORTS_MAX_MINUTES: '25' # wall-clock per run
+  SHORTS_MAX_BUDGET_USD: '1.5' # estimated spend per run
+  SHORTS_MAX_TURNS: '50' # agent steps per run
+  SHORTS_MAX_MINUTES: '15' # wall-clock per run
   SHORTS_MAX_VERSIONS: '5' # runs per issue (first version + feedback)
   SHORTS_MAX_PER_DAY: '8' # runs across all issues per 24 hours
 
@@ -128,14 +137,17 @@ jobs:
     needs: gate
     if: needs.gate.outputs.allowed == 'true' && needs.gate.outputs.duplicate != 'true' && needs.gate.outputs.over != 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 30
     env:
       ISSUE_NUMBER: ${{ github.event.issue.number }}
       REPO: ${{ github.repository }}
       WORK: tmp/make-short/issue-${{ github.event.issue.number }}
       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:
+      # No token left in .git/config, where the agent could read it.
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Remember when the run started
         run: echo "RUN_STARTED_MS=$(date +%s%3N)" >> "$GITHUB_ENV"
@@ -166,31 +178,36 @@ jobs:
 
       - name: Make the short (Claude Code)
         # Backstop only: `timeout` below stops the agent first.
-        timeout-minutes: 35
+        timeout-minutes: 20
         env:
-          # Keep other Claude credentials out of this step.
+          # The only credential in this step. Drive isn't wired into CI: its
+          # key would be scrubbed from the tool anyway (FEATURE-IDEAS-PLAN.md).
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          GDRIVE_SA_KEY: ${{ secrets.GDRIVE_SA_KEY }}
-          GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
+          # Strips credentials from every process the agent starts.
+          CLAUDE_CODE_SUBPROCESS_ENV_SCRUB: '1'
         run: |
           if [[ -z "$CLAUDE_CODE_OAUTH_TOKEN" ]]; then
             echo "::error::Claude Code is not set up for this repo (missing secret)."
             exit 1
           fi
-          claude auth status --text
           # Spend, steps and time are all capped (env at the top). Hitting a cap
           # is not a failure here: `publish` reports which cap and posts
           # whatever video was finished.
+          # Permissions: reads inside the repo need no rule (and nothing outside
+          # it is allowed); `/…` paths are relative to the repo root.
+          # `--strict-mcp-config` keeps the project's .mcp.json from starting.
           set +e
           timeout --signal=TERM "${SHORTS_MAX_MINUTES}m" \
             claude -p "/make-short CI: work folder $WORK. Start by reading $WORK/request.md, then follow the skill's „In GitHub Actions“ section and finish by writing $WORK/result.md." \
+            --append-system-prompt-file .claude/skills/make-short/ci-rules.md \
             --model "$SHORTS_MODEL" \
             --max-budget-usd "$SHORTS_MAX_BUDGET_USD" \
             --max-turns "$SHORTS_MAX_TURNS" \
+            --strict-mcp-config \
             --permission-mode dontAsk \
             --tools "Read,Write,Edit,Glob,Grep,Bash" \
-            --allowedTools "Read" "Glob" "Grep" "Edit(./tmp/make-short/**)" "Bash(npm run make-short:*)" \
-            --disallowedTools "WebFetch" "WebSearch" \
+            --allowedTools "Edit(/$WORK/**)" "Bash(npm run make-short -- *)" \
+            --disallowedTools "WebFetch" "WebSearch" "Read(/.git/**)" "Read(//proc/**)" "Bash(git *)" \
             --output-format stream-json --verbose > "$RUNNER_TEMP/transcript.jsonl"
           code=$?
           echo "Claude Code exit code: $code"
@@ -210,11 +227,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/make-short/from-issue.js fail
 
-      - name: Keep the agent's transcript
-        if: always()
+      # Artifacts of a public repo can be downloaded by anyone signed in to
+      # GitHub, and the transcript holds the whole agent session. Kept only
+      # while debugging: set the repo variable SHORTS_DEBUG to true. The
+      # `publish` log always has a one-line summary.
+      - name: Keep the agent's transcript (debugging only)
+        if: always() && vars.SHORTS_DEBUG == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: make-short-transcript-${{ github.event.issue.number }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/transcript.jsonl
-          retention-days: 14
+          retention-days: 3
           if-no-files-found: ignore

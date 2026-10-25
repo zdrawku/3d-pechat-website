@@ -11,6 +11,7 @@ test('headless, text only: JSON output, no tools, one turn, own system prompt', 
   assert.strictEqual(value('--max-turns'), '1');
   assert.strictEqual(value('--model'), 'sonnet');
   assert.ok(args.includes('--system-prompt'));
+  assert.ok(args.includes('--strict-mcp-config'), 'no MCP servers start (project or your own)');
 });
 
 test('every call carries a spending cap', () => {

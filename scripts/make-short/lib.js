@@ -142,10 +142,87 @@ function specTexts(spec) {
     ...spec.beats.map((b) => b.caption),
     spec.endCard.line,
     post.tiktok && post.tiktok.caption,
+    ...((post.tiktok && post.tiktok.hashtags) || []),
     post.youtube && post.youtube.title,
     post.youtube && post.youtube.description,
+    ...((post.youtube && post.youtube.tags) || []),
     post.pinnedComment,
   ];
+}
+
+/**
+ * What the shorts never say in public — the repo, its issues and the drafts
+ * release are public. The agent is told the same (agent-rules.md); this is
+ * the backstop that holds even when it doesn't listen. Each entry is
+ * [pattern, why] and applies to captions, upload copy, typed text and the
+ * agent's message.
+ */
+const OFF_LIMITS = [
+  [/claude|anthropic|openai|chatgpt|\bgpt|\bllm\b|\bsonnet\b|\bopus\b|\bhaiku\b/i, 'не говорим за инструментите зад видеата'],
+  [/абонамент|subscription|api[ _-]?key|access[ _-]?token|oauth|парол[аи]|password|credential/i, 'не говорим за акаунти и ключове'],
+  [/github|workflow|репозитори|repository|\bnpm\b|node_modules|\.git\b/i, 'не говорим за кода и как работи'],
+  [/(^|[\s(`'"])\.?(src|scripts|tmp|\.claude|\.github)\/|\b[\w-]+\.(js|ts|json|ya?ml|md|env|sh)\b/i, 'без имена на файлове'],
+  [/gh[pousr]_[A-Za-z0-9]{20,}|sk-ant-|-----BEGIN|[A-Za-z0-9+/]{40,}/, 'прилича на ключ'],
+  [/https?:\/\/|www\.|<[a-z!/]|\]\(|```/i, 'без линкове и код (добавят се автоматично)'],
+  [/здравко|колев|zdravko|kolev|zdrawku|zdkolev|mariyajablqnova/i, 'без имена на екипа'],
+];
+
+/**
+ * Problems with one public text, empty when fine. E-mail addresses are
+ * refused except the business's own and example.com ones (typed into the
+ * contact form in recordings).
+ */
+function offLimits(text, { email = '' } = {}) {
+  const t = String(text || '');
+  const problems = OFF_LIMITS.filter(([re]) => re.test(t)).map(([, why]) => why);
+  const emails = t.match(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g) || [];
+  if (emails.some((e) => e.toLowerCase() !== email.toLowerCase() && !/@example\.(com|org)$/i.test(e))) problems.push('без имейл адреси');
+  return problems;
+}
+
+/** offLimits() over every public text of a spec, as `check` problems. */
+function scopeCheck(texts, opts) {
+  return texts.filter(Boolean).flatMap((text) => offLimits(text, opts).map((why) => `„${text}“: ${why}`));
+}
+
+/** What the reply says instead of an agent message that didn't pass. */
+const NEUTRAL_MESSAGE = 'Правя само кратки видеа за продуктите, услугите и сайта на 3dpechat.bg — опиши какво видео искаш.';
+
+/**
+ * The agent's message (result.md) as it may appear in the public reply:
+ * short, plain Bulgarian, nothing off limits, no mentions. Anything else is
+ * replaced by a neutral line — the reason is only returned, never posted.
+ */
+function publicMessage(message, opts) {
+  const text = String(message || '').trim();
+  if (!text) return { text: '', withheld: [] };
+  const withheld = offLimits(text, opts);
+  if (/(^|\s)@[\w-]/.test(text)) withheld.push('споменаване (@)');
+  if (text.length > 1500 || text.split('\n').length > 16) withheld.push('твърде дълго');
+  return withheld.length ? { text: NEUTRAL_MESSAGE, withheld } : { text, withheld };
+}
+
+/**
+ * The storyboard and recording scripts carried to the next round inside the
+ * bot's (public) comment — only the fields the pipeline knows, so nothing
+ * else the agent wrote into its files travels along.
+ */
+function nextRoundState(spec, flows) {
+  const pick = (o, keys) => Object.fromEntries(keys.filter((k) => o && o[k] !== undefined).map((k) => [k, o[k]]));
+  const post = spec.post || {};
+  return {
+    spec: {
+      ...pick(spec, ['product']),
+      beats: (spec.beats || []).map((b) => pick(b, ['source', 'start', 'seconds', 'position', 'caption', 'highlight'])),
+      endCard: pick(spec.endCard, ['line']),
+      post: {
+        ...pick(post, ['link', 'pinnedComment']),
+        tiktok: pick(post.tiktok, ['caption', 'hashtags']),
+        youtube: pick(post.youtube, ['title', 'description', 'tags']),
+      },
+    },
+    flows: Object.fromEntries(Object.entries(flows || {}).map(([name, flow]) => [name, pick(flow, ['baseUrl', 'dark', 'steps'])])),
+  };
 }
 
 const HASHTAG = /^#[\p{L}\p{N}_]+$/u;
@@ -330,6 +407,7 @@ module.exports = {
   parseIssueForm, clean, isAttachmentUrl, extractAttachmentUrls, findProduct, parseShortIssue,
   STATE_MARKER, embedState, extractState,
   numbersIn, factsCheck, specTexts, validateSpec, validatePost,
+  offLimits, scopeCheck, publicMessage, nextRoundState, NEUTRAL_MESSAGE,
   beatDuration, clipFilter, photoFilter, trackedLink, uploadCopy, postText,
   pickProductFolder, socialHandles,
 };
