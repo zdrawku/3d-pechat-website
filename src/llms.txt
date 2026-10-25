@@ -36,6 +36,7 @@ The main pages and a selection of blog articles are also available in English. E
 - [See How We Work: Custom 3D Printing in Sofia (Video)](https://3dpechat.bg/en/blog/custom-3d-printing-sofia-video/): Custom 3D printing in Sofia in a 60-second video: bookmarks, coin cards, prototypes and functional parts, plus how an order goes from idea to finished part.
 - [StandStrap: How I Designed a 3D Printed Snowboard Stopper](https://3dpechat.bg/en/blog/standstrap-3d-printed-snowboard-stopper/): StandStrap is a 3D printed snowboard stopper that clips onto your board's edge so you can strap in standing up. My design, print settings and how to get one.
 - [Bulgarian Euro Coin Card: Holds the Full Set from 1 Cent to 2 Euro](https://3dpechat.bg/en/blog/bulgarian-euro-coin-holder-card/): A 3D printed coin card for Bulgarian euro coins that holds the full set from 1 cent to 2 euro, in five designs. A keepsake of Bulgaria's first euro coins.
+- [3D Printed Replacement Parts: How to Order Custom Parts](https://3dpechat.bg/en/blog/3d-printed-replacement-parts-order-guide/): Learn how to order a 3D printed replacement part from a broken original, photo or dimensions. Practical guide to materials, lead times and pricing.
 
 ## Факти
 
@@ -94,3 +95,4 @@ The main pages and a selection of blog articles are also available in English. E
 - [StandStrap: как направих 3D принтиран стопер за сноуборд](https://3dpechat.bg/blog/standstrap-3d-printiran-stoper-za-snoubord/): Как проектирах и отпечатах StandStrap — щипка за ръба на сноуборда, която държи дъската на място, докато закопчаваш автоматите прав. Дизайн, настройки за печат и видео.
 - [Монетна карта за българските евромонети – пълен комплект от 1 цент до 2 евро](https://3dpechat.bg/blog/monetna-karta-bulgarski-evro-moneti/): Монетна карта за пълен комплект български евромонети – от 1 цент до 2 евро. 5 варианта от PLA, идеални за подарък и колекция.
 - [Вижте как работим: 3D печат по поръчка в София (видео)](https://3dpechat.bg/blog/3d-pechat-po-porachka-sofia-video/): Вижте в 60 секунди наши 3D отпечатани проекти: разделители за книги, монетник „България“ и функционални части. И как протича поръчката от идея до детайл.
+- [Резервна част с 3D печат: как да поръчате детайл](https://3dpechat.bg/blog/rezervna-chast-s-3d-pechat/): Научете как да поръчате резервна част с 3D печат по счупен образец, снимка или размери. Практично ръководство за материали, срокове и цени.

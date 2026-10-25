@@ -269,6 +269,15 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://3dpechat.bg/blog/rezervna-chast-s-3d-pechat/</loc>
+    <xhtml:link rel="alternate" hreflang="bg" href="https://3dpechat.bg/blog/rezervna-chast-s-3d-pechat/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://3dpechat.bg/en/blog/3d-printed-replacement-parts-order-guide/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://3dpechat.bg/blog/rezervna-chast-s-3d-pechat/"/>
+    <lastmod>2026-10-21T10:00:00+01:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 
   <!-- Blog Posts: English -->
   <url>
@@ -340,6 +349,15 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://3dpechat.bg/en/blog/custom-3d-printing-sofia-video/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://3dpechat.bg/blog/3d-pechat-po-porachka-sofia-video/"/>
     <lastmod>2026-10-19T10:00:00+01:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://3dpechat.bg/en/blog/3d-printed-replacement-parts-order-guide/</loc>
+    <xhtml:link rel="alternate" hreflang="bg" href="https://3dpechat.bg/blog/rezervna-chast-s-3d-pechat/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://3dpechat.bg/en/blog/3d-printed-replacement-parts-order-guide/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://3dpechat.bg/blog/rezervna-chast-s-3d-pechat/"/>
+    <lastmod>2026-10-21T10:00:00+01:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

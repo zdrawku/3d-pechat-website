@@ -230,5 +230,18 @@ export const BLOG_POSTS: BlogPost[] = [
     keywords: ['3D печат по поръчка', '3D печат София', '3D принтиране видео', '3D отпечатани проекти', 'разделители за книги', 'монетник България', 'прототипи', '3D Печат България'],
     dateModified: new Date('2026-10-14')
   },
+  {
+    id: '19',
+    title: 'Резервна част с 3D печат: как да поръчате детайл',
+    description: 'Научете как да поръчате резервна част с 3D печат по счупен образец, снимка или размери. Практично ръководство за материали, срокове и цени.',
+    slug: 'rezervna-chast-s-3d-pechat',
+    route: '/blog/rezervna-chast-s-3d-pechat',
+    date: new Date('2026-10-21'),
+    imageUrl: 'assets/blogs/images/rezervna-chast-s-3d-pechat-cover.webp',
+    tags: ['резервни части', '3D печат', 'FDM', 'PLA', 'моделиране', 'поръчка', 'ремонт', 'София'],
+    author: '3D Печат България',
+    keywords: ['резервна част с 3D печат', '3D печат на детайли', 'поръчка 3D печат', 'FDM печат', 'PLA материал', '3D моделиране', '3D принтиране България'],
+    dateModified: new Date('2026-10-21')
+  },
   // Add more blog posts here as you create them
 ];
