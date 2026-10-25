@@ -52,8 +52,13 @@ function parseCliResult(stdout) {
 }
 
 // npm installs `claude` as a .cmd shim on Windows, which only runs through a
-// shell; the arguments are fixed strings, so quoting them is enough.
-const quote = (a) => `"${String(a).replace(/"/g, '\\"')}"`;
+// shell; the arguments are fixed strings, so quoting them is enough. Anything
+// cmd.exe would still act on inside quotes is refused rather than escaped.
+const quote = (a) => {
+  const s = String(a);
+  if (/["\\%!\r\n]/.test(s)) throw new Error(`argument not safe for the Windows shell: ${s}`);
+  return `"${s}"`;
+};
 
 /** Sends `prompt` and resolves with Claude's text answer. */
 function askClaude(prompt, { label = 'claude', model = MODEL } = {}) {

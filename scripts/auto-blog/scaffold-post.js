@@ -118,7 +118,8 @@ function scaffoldTranslation({ locale = 'en', source, slug, copy, markdown }) {
 
 /** A registry entry's copy, read back by slug (for translating an existing post). */
 function readRegistryEntry(slug, src = fs.readFileSync(REGISTRY_FILE, 'utf8')) {
-  const block = [...src.matchAll(/\{\s*id:\s*'[^']*'[\s\S]*?\}/g)].map((m) => m[0]).find((b) => new RegExp(`slug:\\s*'${slug}'`).test(b));
+  const literal = slug.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const block = [...src.matchAll(/\{\s*id:\s*'[^']*'[\s\S]*?\}/g)].map((m) => m[0]).find((b) => new RegExp(`slug:\\s*'${literal}'`).test(b));
   if (!block) return null;
   const str = (key) => ((block.match(new RegExp(`\\b${key}:\\s*'((?:[^'\\\\]|\\\\.)*)'`)) || [])[1] || '').replace(/\\'/g, "'");
   const list = (key) => [...((block.match(new RegExp(`\\b${key}:\\s*\\[([^\\]]*)\\]`)) || [])[1] || '').matchAll(/'((?:[^'\\]|\\.)*)'/g)].map((m) => m[1].replace(/\\'/g, "'"));

@@ -25,12 +25,14 @@ export function fillMakerWorldSection(markdown: string, url: string): string {
   );
 }
 
-/** Markdown inline formatting → plain text: links keep their text, emphasis and code marks go. */
+/** Markdown inline formatting → plain text: links keep their text, emphasis, code marks and HTML tags go. */
 function plainText(markdown: string): string {
   return markdown
     .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
     .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
     .replace(/<[^>]+>/g, '')
+    // and any bracket a tag left behind, so the text can't carry markup into the schema
+    .replace(/[<>]/g, '')
     .replace(/(\*\*|__)(.+?)\1/g, '$2')
     .replace(/(^|[^\w*])\*(?!\s)([^*]+?)\*/g, '$1$2')
     .replace(/`([^`]+)`/g, '$1')
