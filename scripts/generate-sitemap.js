@@ -4,8 +4,10 @@ const { SITE, blogPostAlternates, blogPostPath, hreflangAlternates, localizedPat
 
 // Reads the blog registry (blog-posts.registry.ts) to list the blog posts,
 // src/i18n/locales.json for the languages, the pages that exist in each and the
-// translated posts, and src/i18n/<lang>/content/blog.json for those posts' dates.
+// translated posts, src/i18n/<lang>/content/blog.json for those posts' dates,
+// and src/data/products.json for the date the newest product was added.
 const registryPath = path.join(__dirname, '../src/app/services/blog-posts.registry.ts');
+const productsPath = path.join(__dirname, '../src/data/products.json');
 const sitemapPath = path.join(__dirname, '../src/sitemap.xml');
 const translationsFile = (code) => path.join(__dirname, `../src/i18n/${code}/content/blog.json`);
 
@@ -15,7 +17,10 @@ const translationsFile = (code) => path.join(__dirname, `../src/i18n/${code}/con
 // "today": the deploy checkout is shallow (every file would report the deploy
 // date) and a lastmod that changes on every build teaches Google to ignore the
 // field. Blog posts get theirs from `dateModified` in the registry, translated
-// posts from `dateModified` in their language's blog.json.
+// posts from `dateModified` in their language's blog.json. The products page in
+// every language also moves forward on its own to the newest product's
+// `dateAdded` (stamped by /add-product and the issue form), so a new product
+// reaches the sitemap and IndexNow without a hand bump here.
 const MAIN_PAGE_LASTMOD = {
   '/': '2026-10-18',          // hreflang → the English home page /en/, language switcher
   '/portfolio/': '2026-10-18', // hreflang → /en/portfolio/, language switcher
@@ -73,6 +78,11 @@ function readBlogPosts(registrySource) {
   return posts;
 }
 
+/** The catalog in src/data/products.json. */
+function readProducts() {
+  return JSON.parse(fs.readFileSync(productsPath, 'utf8'));
+}
+
 /** Every translated language's blog.json: { <code>: { <Bulgarian slug>: { dateModified, … } } }. */
 function readTranslations(locales) {
   return Object.fromEntries(
@@ -82,6 +92,18 @@ function readTranslations(locales) {
   );
 }
 
+/** `lastmod` with the products page in every language moved forward to the newest product's `dateAdded`. */
+function withProductDates(lastmod, products, locales) {
+  const newest = products.map((p) => p.dateAdded).filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d ?? '')).sort().at(-1);
+  if (!newest) return lastmod;
+  const dates = { ...lastmod };
+  for (const { code } of locales.locales) {
+    const loc = localizedPath('/products/', code, locales);
+    if (dates[loc] && newest > dates[loc]) dates[loc] = newest;
+  }
+  return dates;
+}
+
 /**
  * The sitemap XML. Every localized page is listed once per language, each with
  * the full set of xhtml:link hreflang alternates (Google reads them from the
@@ -89,16 +111,17 @@ function readTranslations(locales) {
  * blog post is listed in every language it is translated into, the versions
  * pointing at each other the same way; a Bulgarian-only post has no alternates.
  */
-function buildSitemap({ locales, posts, translations = readTranslations(locales), lastmod = MAIN_PAGE_LASTMOD }) {
+function buildSitemap({ locales, posts, translations = readTranslations(locales), lastmod: handLastmod = MAIN_PAGE_LASTMOD, products = readProducts() }) {
   const { defaultLocale, localizedPages } = locales;
 
   for (const page of localizedPages) {
     if (!PAGE_SETTINGS[page]) fail(`PAGE_SETTINGS has no entry for ${page} (scripts/generate-sitemap.js)`);
     for (const { code } of locales.locales) {
       const loc = localizedPath(page, code, locales);
-      if (!lastmod[loc]) fail(`MAIN_PAGE_LASTMOD has no entry for ${loc}`);
+      if (!handLastmod[loc]) fail(`MAIN_PAGE_LASTMOD has no entry for ${loc}`);
     }
   }
+  const lastmod = withProductDates(handLastmod, products, locales);
 
   const links = (alternates) => alternates
     .map(({ hreflang, href }) => `    <xhtml:link rel="alternate" hreflang="${hreflang}" href="${href}"/>`)

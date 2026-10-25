@@ -10,6 +10,7 @@
  * Text only: no voice and no music (the team adds a sound in the app).
  * `media` is filled in from manifest.json; the agent writes the rest.
  */
+const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
@@ -114,13 +115,29 @@ function isUploadedNote(body) {
 
 // The agent's storyboard and recording scripts travel between workflow runs
 // inside the bot's comment, so feedback can build on them. Base64 keeps `-->`
-// or backticks in captions from breaking the HTML comment.
+// or backticks in captions from breaking the HTML comment. The record is
+// signed with SHORTS_STATE_KEY (environment `claude`, main only): every
+// workflow in the repo comments as github-actions[bot], so the author alone
+// doesn't prove a comment came from this pipeline.
 const STATE_MARKER = 'make-short-state';
-const embedState = (state) => `<!-- ${STATE_MARKER}\n${Buffer.from(JSON.stringify(state), 'utf8').toString('base64')}\n-->`;
-function extractState(body) {
-  const m = String(body || '').match(new RegExp(`<!-- ${STATE_MARKER}\\n([A-Za-z0-9+/=]+)\\n-->`));
-  return m ? JSON.parse(Buffer.from(m[1], 'base64').toString('utf8')) : null;
+const stateSignature = (payload, key) => crypto.createHmac('sha256', key).update(payload).digest('hex');
+function embedState(record, key) {
+  if (!key) throw new Error('embedState needs the signing key');
+  const payload = Buffer.from(JSON.stringify(record), 'utf8').toString('base64');
+  return `<!-- ${STATE_MARKER}\n${payload}\n${stateSignature(payload, key)}\n-->`;
 }
+/** The record in a comment, or null when there is none, no key, or the signature doesn't match. */
+function extractState(body, key) {
+  if (!key) return null;
+  const m = String(body || '').match(new RegExp(`<!-- ${STATE_MARKER}\\n([A-Za-z0-9+/=]+)\\n([0-9a-f]{64})\\n-->`));
+  if (!m) return null;
+  const expected = Buffer.from(stateSignature(m[1], key), 'hex');
+  if (!crypto.timingSafeEqual(expected, Buffer.from(m[2], 'hex'))) return null;
+  return JSON.parse(Buffer.from(m[1], 'base64').toString('utf8'));
+}
+
+/** A flow name becomes a file name in the work folder, so only plain names pass. */
+const isFlowName = (name) => /^[A-Za-z0-9][A-Za-z0-9_-]{0,39}$/.test(String(name));
 
 const numbersIn = (text) => String(text || '').match(/\d+(?:[.,]\d+)?/g) || [];
 
@@ -239,7 +256,7 @@ function nextRoundState(spec, flows) {
         youtube: pick(post.youtube, ['title', 'description', 'tags']),
       },
     },
-    flows: Object.fromEntries(Object.entries(flows || {}).map(([name, flow]) => [name, pick(flow, ['baseUrl', 'dark', 'steps'])])),
+    flows: Object.fromEntries(Object.entries(flows || {}).filter(([name]) => isFlowName(name)).map(([name, flow]) => [name, pick(flow, ['baseUrl', 'dark', 'steps'])])),
   };
 }
 
@@ -410,7 +427,7 @@ module.exports = {
   ROOT, SIZE, FORM, END_CARD_SECONDS,
   readProducts, readBusiness,
   parseIssueForm, clean, isAttachmentUrl, extractAttachmentUrls, findProduct, parseShortIssue, isUploadedNote,
-  STATE_MARKER, embedState, extractState,
+  STATE_MARKER, embedState, extractState, isFlowName,
   numbersIn, factsCheck, specTexts, validateSpec, validatePost,
   offLimits, scopeCheck, publicMessage, nextRoundState, NEUTRAL_MESSAGE,
   beatDuration, clipFilter, photoFilter, uploadCopy, postText,

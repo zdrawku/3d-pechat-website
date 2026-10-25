@@ -125,7 +125,7 @@ describe('LanguageSwitcherComponent', () => {
     await openMenu();
     dropDown().selectItem(dropDown().items.find((item) => item.value === 'en')!);
 
-    expect(track).toHaveBeenCalledOnceWith('select_language', { language: 'en', previous_language: 'bg', cta_location: 'navbar' });
+    expect(track).toHaveBeenCalledOnceWith('select_language', { selected_language: 'en', previous_language: 'bg', cta_location: 'navbar' });
   });
 
   it('works from the keyboard on the pill: arrows move, Enter chooses, Escape closes', async () => {

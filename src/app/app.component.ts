@@ -65,7 +65,7 @@ export class AppComponent implements OnInit {
 
   /** A footer language link: the same `select_language` event as the navbar switcher's. */
   protected trackLanguageLink(locale: Locale): void {
-    this.analytics.track('select_language', { language: locale, previous_language: this.i18n.locale(), cta_location: 'footer' });
+    this.analytics.track('select_language', { selected_language: locale, previous_language: this.i18n.locale(), cta_location: 'footer' });
   }
 
   ngOnInit(): void {

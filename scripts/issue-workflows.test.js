@@ -111,6 +111,23 @@ test('only jobs in the main-only `claude` environment get the Claude token', { s
   assert.strictEqual(users, 2, 'make-short agent + auto-blog');
 });
 
+// The signing key is what makes the bot's saved state trustworthy: the agent
+// must never hold it (it could sign anything), and only the main-only
+// environment may serve it.
+test('🎬 the state-signing key reaches only the prepare and publish steps', { skip: !yaml && 'js-yaml not installed' }, () => {
+  const users = [];
+  for (const [file, wf] of allWorkflows()) {
+    for (const [name, job] of Object.entries(wf.jobs)) {
+      for (const s of steps(job)) if (JSON.stringify(s).includes('secrets.SHORTS_STATE_KEY')) users.push(`${file} → ${name} → ${s.run}`);
+    }
+  }
+  assert.deepStrictEqual(users, [
+    'make-short.yml → agent → node scripts/make-short/from-issue.js prepare',
+    'make-short.yml → agent → node scripts/make-short/from-issue.js publish',
+  ]);
+  assert.strictEqual(load('make-short.yml').jobs.agent.environment, 'claude');
+});
+
 // „Re-run“ repeats a job with the first attempt's event (and skips the
 // gate), started by whoever clicks it — anyone with write access.
 test('every job with the Claude token checks who started this attempt before using it', { skip: !yaml && 'js-yaml not installed' }, () => {

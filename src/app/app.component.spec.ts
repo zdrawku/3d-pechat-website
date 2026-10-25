@@ -130,7 +130,7 @@ describe('AppComponent', () => {
 
       (fixture.nativeElement as HTMLElement).querySelector<HTMLAnchorElement>('footer [data-testid="footer-language-en"]')!.click();
 
-      expect(track).toHaveBeenCalledWith('select_language', { language: 'en', previous_language: 'bg', cta_location: 'footer' });
+      expect(track).toHaveBeenCalledWith('select_language', { selected_language: 'en', previous_language: 'bg', cta_location: 'footer' });
     });
 
     it('renders the shell in English on English pages', async () => {

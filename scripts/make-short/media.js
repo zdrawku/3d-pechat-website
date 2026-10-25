@@ -39,10 +39,8 @@ function probe(file) {
 /** Downloads one file dropped into an issue. Refuses anything not hosted by GitHub. */
 async function downloadAttachment(url, dir, base) {
   if (!isAttachmentUrl(url)) throw new Error(`Not a GitHub attachment URL: ${url}`);
-  const headers = { 'User-Agent': '3dpechat-make-short' };
-  // Private-repo attachments need auth; public ones ignore the header.
-  if (process.env.GITHUB_TOKEN) headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
-  const res = await fetch(url, { headers });
+  // No token: attachments of a public repo download anonymously.
+  const res = await fetch(url, { headers: { 'User-Agent': '3dpechat-make-short' } });
   if (!res.ok) throw new Error(`HTTP ${res.status} downloading ${url}`);
   if (Number(res.headers.get('content-length') || 0) > MAX_BYTES) throw new Error(`${url} is larger than 500 MB`);
   const type = (res.headers.get('content-type') || '').split(';')[0].trim().toLowerCase();

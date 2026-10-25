@@ -69,11 +69,28 @@ test('refuses a translated post without a dateModified', () => {
   assert.throws(() => buildSitemap({ locales, posts, translations: { en: {} } }), /en\/content\/blog\.json has no dateModified for "/);
 });
 
+/** { <loc>: 'YYYY-MM-DD' } of a sitemap. */
+const lastmods = (sitemap) => Object.fromEntries(parseSitemap(sitemap).map((u) => [u.loc, u.lastmod.slice(0, 10)]));
+
 test('uses the hand-maintained lastmod of each URL, never the build date', () => {
-  const lastmod = Object.fromEntries(parseSitemap(xml).map((u) => [u.loc, u.lastmod.slice(0, 10)]));
+  const lastmod = lastmods(buildSitemap({ locales, posts, products: [] }));
   for (const [page, date] of Object.entries(MAIN_PAGE_LASTMOD)) {
     assert.equal(lastmod[`${SITE}${page}`], date, page);
   }
+});
+
+test('moves the products page in every language forward to the newest product, and nothing else', () => {
+  const lastmod = lastmods(buildSitemap({ locales, posts, products: [{ dateAdded: '2099-01-02' }, { dateAdded: '2099-01-01' }, {}] }));
+  for (const [page, date] of Object.entries(MAIN_PAGE_LASTMOD)) {
+    const expected = page === '/products/' || page === '/en/products/' ? '2099-01-02' : date;
+    assert.equal(lastmod[`${SITE}${page}`], expected, page);
+  }
+});
+
+test('keeps the hand-maintained products date when it is newer than every product', () => {
+  const lastmod = lastmods(buildSitemap({ locales, posts, products: [{ dateAdded: '2000-01-01' }] }));
+  assert.equal(lastmod[`${SITE}/products/`], MAIN_PAGE_LASTMOD['/products/']);
+  assert.equal(lastmod[`${SITE}/en/products/`], MAIN_PAGE_LASTMOD['/en/products/']);
 });
 
 test('refuses a localized page without a lastmod entry', () => {

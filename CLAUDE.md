@@ -122,7 +122,8 @@ source; never duplicate or hand-write it elsewhere. The full plan is
 3. **"Last updated" dates are hand-maintained, never the build date.** When a
    post's content changes substantively, bump its `dateModified` in the
    registry. When a main page changes, bump its entry in `MAIN_PAGE_LASTMOD` in
-   [`scripts/generate-sitemap.js`](scripts/generate-sitemap.js). These feed the
+   [`scripts/generate-sitemap.js`](scripts/generate-sitemap.js) (a new product
+   needs no bump: `/products/` follows the newest `dateAdded`). These feed the
    sitemap, the schema and IndexNow, so a fake date is a bug. After every deploy
    the workflow pings Bing via IndexNow (`scripts/indexnow.js`) for URLs whose
    `<lastmod>` changed. Keep exactly one `public/<32-hex>.txt` key file.

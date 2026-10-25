@@ -33,6 +33,12 @@ name: Make Short from Issue
 #      it posts: an off-topic result.md is replaced by a neutral line, and
 #      captions/upload copy that fail the same check don't render.
 #   5. scripts/make-short/from-issue.js does the GitHub side before and after.
+#      What one round hands the next (the agent's reply, its storyboard and
+#      recording scripts) rides in the bot's comment, signed with
+#      SHORTS_STATE_KEY from the `claude` environment: any workflow in the repo
+#      comments as github-actions[bot], so only a valid signature for this
+#      issue is trusted, and the comment's own text never reaches the agent.
+#      The key is in the prepare and publish steps only, never the agent's.
 
 on:
   issues:
@@ -243,6 +249,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TRIGGER_COMMENT_ID: ${{ github.event.comment.id }}
+          SHORTS_STATE_KEY: ${{ secrets.SHORTS_STATE_KEY }}
         run: node scripts/make-short/from-issue.js prepare
 
       - name: Make the short (Claude Code)
@@ -296,6 +303,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TRANSCRIPT: ${{ runner.temp }}/transcript.jsonl
+          SHORTS_STATE_KEY: ${{ secrets.SHORTS_STATE_KEY }}
         run: node scripts/make-short/from-issue.js publish
 
       # Not for a refused re-run: it says nothing and doesn't use up a version.

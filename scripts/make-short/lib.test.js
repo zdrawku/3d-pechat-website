@@ -78,11 +78,33 @@ test('„Качено“ closes the issue, with or without the video link, in an
   for (const text of feedback) assert.strictEqual(lib.isUploadedNote(text), false, text);
 });
 
+const KEY = 'test-signing-key';
+
 test('the state survives a round trip through a comment, captions with --> included', () => {
   const state = { spec: { beats: [{ caption: 'стрелка --> и `код`' }] }, flows: { order: { steps: [] } } };
-  const body = `Готово\n\n${lib.embedState(state)}\n`;
-  assert.deepStrictEqual(lib.extractState(body), state);
-  assert.strictEqual(lib.extractState('no state here'), null);
+  const body = `Готово\n\n${lib.embedState(state, KEY)}\n`;
+  assert.deepStrictEqual(lib.extractState(body, KEY), state);
+  assert.strictEqual(lib.extractState('no state here', KEY), null);
+});
+
+// Any workflow in the repo comments as github-actions[bot]; only the key
+// (environment `claude`) can make a record the next round believes.
+test('only a record signed with the key is read back', () => {
+  const body = lib.embedState({ issue: 1, state: { spec: {} } }, KEY);
+  assert.strictEqual(lib.extractState(body, 'another-key'), null, 'wrong key');
+  assert.strictEqual(lib.extractState(body, ''), null, 'no key');
+  const payload = body.match(/\n([A-Za-z0-9+/=]+)\n[0-9a-f]{64}\n/)[1];
+  const forged = Buffer.from(JSON.stringify({ issue: 1, state: { flows: { '../../../package': {} } } })).toString('base64');
+  assert.strictEqual(lib.extractState(body.replace(payload, forged), KEY), null, 'payload swapped, signature kept');
+  assert.strictEqual(lib.extractState(`<!-- ${lib.STATE_MARKER}\n${payload}\n-->`, KEY), null, 'the old unsigned format');
+  assert.throws(() => lib.embedState({}, ''), /signing key/);
+});
+
+test('flow names are plain file names, and only those are carried over', () => {
+  for (const ok of ['blog', 'order-flow', 'step_2', 'A1']) assert.ok(lib.isFlowName(ok), ok);
+  for (const bad of ['../package', '..', 'a/b', 'a\\b', '', '.hidden', '-x', 'поръчка', 'a.json', 'x'.repeat(41)]) assert.ok(!lib.isFlowName(bad), bad);
+  const state = lib.nextRoundState({ beats: [] }, { blog: { steps: [] }, '../../package': { steps: [] } });
+  assert.deepStrictEqual(Object.keys(state.flows), ['blog']);
 });
 
 test('facts check: product and request numbers pass, invented numbers and never-claims fail', () => {

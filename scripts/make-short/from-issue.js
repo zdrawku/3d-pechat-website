@@ -17,7 +17,9 @@
  *   round.
  *
  * Env: ISSUE_NUMBER, REPO (owner/name), GITHUB_TOKEN, RUN_URL (optional),
- *      TRIGGER_COMMENT_ID (when a comment started the run)
+ *      TRIGGER_COMMENT_ID (when a comment started the run),
+ *      SHORTS_STATE_KEY (signs and checks the record a version comment
+ *      carries to the next round; without it every round starts afresh)
  */
 const fs = require('fs');
 const path = require('path');
@@ -103,22 +105,62 @@ function trustedComments(comments, authors, edits) {
 }
 
 /**
+ * The signed records in the bot's comments for this issue, by comment id.
+ * Any workflow in the repo can comment as the bot, and a record can be copied
+ * from another issue — only a valid signature over this issue's number counts.
+ */
+function signedRecords(comments, key, issueNumber) {
+  const records = new Map();
+  for (const c of comments) {
+    if (!c.user || c.user.login !== BOT) continue;
+    let record = null;
+    try {
+      record = lib.extractState(c.body, key);
+    } catch {
+      record = null; // signed but unreadable: treat as absent
+    }
+    if (record && record.issue === Number(issueNumber)) records.set(c.id, record);
+  }
+  return records;
+}
+
+/**
  * The messages that matter, in order: the issue, the team's comments and the
  * bot's replies. Comments starting with `//` are notes between people and are
  * left out, and so are „Качено“ notes (a reopened issue goes on without
  * them) and anyone outside the allowlist. People appear as „екипът“ — the
- * agent needs what was asked, not who asked it.
+ * agent needs what was asked, not who asked it. A bot reply is the message
+ * from its signed record, never the comment's text; without a record it is
+ * left out.
  */
-function conversation(issue, comments, authors) {
+function conversation(issue, comments, authors, records = new Map()) {
   const messages = [{ who: 'екипът', at: issue.created_at, body: issue.body, isRequest: true }];
   for (const c of comments) {
-    const fromBot = c.user && c.user.login === BOT;
-    const fromTeam = c.user && findAuthor(authors, c.user.id);
-    if (!fromBot && !fromTeam) continue;
-    if (!fromBot && (c.body.trim().startsWith('//') || lib.isUploadedNote(c.body))) continue;
-    messages.push({ who: fromBot ? 'агентът' : 'екипът', at: c.created_at, body: c.body, fromBot });
+    if (c.user && c.user.login === BOT) {
+      const record = records.get(c.id);
+      if (record) messages.push({ who: 'агентът', at: c.created_at, body: record.message || (record.video ? '(видео без текст)' : ''), fromBot: true });
+      continue;
+    }
+    if (!c.user || !findAuthor(authors, c.user.id)) continue;
+    if (c.body.trim().startsWith('//') || lib.isUploadedNote(c.body)) continue;
+    messages.push({ who: 'екипът', at: c.created_at, body: c.body, fromBot: false });
   }
   return messages;
+}
+
+/** The last version's spec and flows, for the agent to change; a flow with an unusable name is skipped. */
+function writePrevious(dir, state) {
+  const flowsDir = path.resolve(dir, 'flows');
+  fs.mkdirSync(flowsDir, { recursive: true });
+  if (state.spec) fs.writeFileSync(path.join(dir, 'spec.json'), JSON.stringify(state.spec, null, 2));
+  for (const [name, flow] of Object.entries(state.flows || {})) {
+    const file = path.resolve(flowsDir, `${name}.json`);
+    if (!lib.isFlowName(name) || path.dirname(file) !== flowsDir) {
+      console.log('Skipped a saved flow whose name is not a plain file name.');
+      continue;
+    }
+    fs.writeFileSync(file, JSON.stringify(flow, null, 2));
+  }
 }
 
 /** request.md: what the agent reads first. */
@@ -166,7 +208,10 @@ async function prepare() {
     throw new Error(`Issue #${ISSUE_NUMBER} was edited by someone outside .github/issue-authors.json — refusing to run.`);
   }
   const comments = trustedComments(await github(`/issues/${ISSUE_NUMBER}/comments?per_page=100`), authors, history.comments);
-  const messages = conversation(issue, comments, authors);
+  const key = process.env.SHORTS_STATE_KEY || '';
+  if (!key) console.log('::warning::SHORTS_STATE_KEY is not set — earlier versions and replies are left out; this round starts afresh.');
+  const records = signedRecords(comments, key, ISSUE_NUMBER);
+  const messages = conversation(issue, comments, authors, records);
   const { request } = lib.parseShortIssue(issue.body);
 
   fs.rmSync(WORK, { recursive: true, force: true });
@@ -193,14 +238,9 @@ async function prepare() {
   }
 
   // The last version, so feedback changes it instead of starting over.
-  const lastBot = [...comments].reverse().find((c) => c.user && c.user.login === BOT && lib.extractState(c.body));
-  const previous = lastBot ? lib.extractState(lastBot.body) : null;
-  if (previous) {
-    const dir = path.join(WORK, 'previous');
-    fs.mkdirSync(path.join(dir, 'flows'), { recursive: true });
-    if (previous.spec) fs.writeFileSync(path.join(dir, 'spec.json'), JSON.stringify(previous.spec, null, 2));
-    for (const [name, flow] of Object.entries(previous.flows || {})) fs.writeFileSync(path.join(dir, 'flows', `${name}.json`), JSON.stringify(flow, null, 2));
-  }
+  const last = [...comments].reverse().map((c) => records.get(c.id)).find((r) => r && r.state);
+  const previous = last ? last.state : null;
+  if (previous) writePrevious(path.join(WORK, 'previous'), previous);
 
   fs.writeFileSync(path.join(WORK, 'request.md'), requestMarkdown({ request, messages, files, previous }) + (problems.length ? `\n## Проблеми при изтеглянето\n\n${problems.map((p) => `- ${p}`).join('\n')}\n` : ''));
   console.log(fs.readFileSync(path.join(WORK, 'request.md'), 'utf8'));
@@ -311,7 +351,11 @@ async function publish() {
     parts.push(`⏹️ **Спрях по лимит: ${stoppedBy}.** ${fresh ? 'Видеото по-горе е последното, което успях да направя.' : 'Не стигнах до готово видео.'} Опрости заявката (по-малко кадри, по-кратък запис) или напиши коментар, за да продължа.`, '');
   }
   parts.push('_За промени просто напиши коментар (започва ли с `//`, е бележка без нова версия). Когато го качиш, напиши „Качено“ и линка — затварям issue-то._', RUN_MARKER);
-  if (state) parts.push('', lib.embedState(state));
+  // What the next round may trust: this reply's message and, when it could be
+  // public, the version's state — signed, so no other comment can pose as it.
+  const key = process.env.SHORTS_STATE_KEY || '';
+  if (key) parts.push('', lib.embedState({ issue: Number(ISSUE_NUMBER), message, video: fresh, state }, key));
+  else console.log('::warning::SHORTS_STATE_KEY is not set — the next round will start afresh.');
   await comment(parts.join('\n'));
 }
 
@@ -359,4 +403,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { editHistory, conversation, trustedComments, editedByTeamOnly, readable, requestMarkdown, uploadSection, capReached, publishableState };
+module.exports = { editHistory, conversation, signedRecords, writePrevious, trustedComments, editedByTeamOnly, readable, requestMarkdown, uploadSection, capReached, publishableState };

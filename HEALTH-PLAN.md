@@ -8,9 +8,10 @@
 > **Status (2026-10-25):** the GitHub settings in §0 are ✅ done and verified
 > through the API, apart from the items still listed there. `SECURITY.md`,
 > `dependabot.yml`, §1.5 (Angular 21.2.25) and §1.6 (CodeQL) are merged
-> (`21cecc5`, live; Node.js CI and Deploy green). §1.3 and the last CodeQL
-> fix are done in the working tree, uncommitted. Everything else in §1–§3 is
-> ⬜ open.
+> (`21cecc5`, live; Node.js CI, E2E and Deploy green); §1.3 and the last
+> CodeQL fix are merged (`555344b`). §1.2 is done in the working tree,
+> uncommitted, and needs the `SHORTS_STATE_KEY` secret (see §1.2).
+> Everything else in §1–§3 is ⬜ open.
 >
 > **Baseline at audit time (`d58e952`):** `npm run build` ✅ (44 routes),
 > `npm run lint` ✅, `npm run test:scripts` ✅ 142/142, `npm test` ❌ 348/350,
@@ -115,7 +116,22 @@ every merge with the owner.
   - „можете да дойдете в офиса“ — check against `business.json` facts.
 
   This is the post AI assistants would quote for „резервна част 3D печат“.
-- [ ] **1.2 🔒 make-short: trust only verified saved state** (`scripts/make-short/from-issue.js:96-103`, `:196-203`).
+- [x] **1.2 🔒 make-short: trust only verified saved state** (`scripts/make-short/from-issue.js:96-103`, `:196-203`).
+  Done in the working tree 2026-10-25, as described below:
+  - The record (issue number, the agent's message, video yes/no, state) is
+    HMAC-signed with `SHORTS_STATE_KEY`. Only the prepare and publish steps
+    get the key, never the agent's.
+  - The agent sees the bot's replies only through the signed message.
+  - Flow names are plain file names (`[A-Za-z0-9][A-Za-z0-9_-]{0,39}`) and
+    every write stays inside `previous/flows`.
+  - make-short downloads attachments without a token too.
+  - **Owner:** add the secret `SHORTS_STATE_KEY` (64 hex chars) to the
+    `claude` environment. Without it the pipeline still works, but every
+    round starts afresh. Issues opened before this change also start afresh
+    once, because their old state is unsigned.
+  - Guards: `lib.test.js`, `from-issue.test.js`, `issue-workflows.test.js`.
+
+  The plan as first written:
   - Accept flow names only if they match `^[a-z0-9-]{1,40}$`, and check that
     every resolved write path stays inside `$WORK/previous`.
   - Sign the state with an HMAC key kept in the `claude` environment: sign

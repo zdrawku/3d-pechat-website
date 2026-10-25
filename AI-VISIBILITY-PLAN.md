@@ -542,8 +542,11 @@ posts and products into Bing (and Yandex, Seznam, Naver) within hours instead
 of weeks. Google doesn't use IndexNow, and that's fine.
 
 **Owner (no code, ~30 min), can be done any time:**
-- [ ] Bing Webmaster Tools → **Import from Google Search Console**. This
+- [x] Bing Webmaster Tools → **Import from Google Search Console**. This
   verifies the site with no code. Then submit `https://3dpechat.bg/sitemap.xml`.
+  *Done 2026-10-25* (the import brought no sitemap; it was submitted by hand).
+  The site wasn't verified until then, so the IndexNow report had nothing to
+  show; an `indexnow_all` run the same day sent all 40 URLs (HTTP 200).
 - [ ] Bing Places for Business → **import from Google Business Profile**, then
   check that name, address, phone and hours match `business.json`.
 - [ ] Apple Business Connect → claim the place (Apple Maps, Siri).

@@ -127,7 +127,7 @@ export class LanguageMenuComponent implements AfterViewInit, LanguageMenuHandle 
     if (!isLocale(target) || target === this.i18n.locale()) {
       return;
     }
-    this.analytics.track('select_language', { language: target, previous_language: this.i18n.locale(), cta_location: 'navbar' });
+    this.analytics.track('select_language', { selected_language: target, previous_language: this.i18n.locale(), cta_location: 'navbar' });
     void this.router.navigateByUrl(switchLocaleUrl(this.router.url, target));
   }
 }

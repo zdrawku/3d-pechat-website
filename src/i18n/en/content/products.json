@@ -108,5 +108,15 @@
       "items": ["Separate slots for €2, €1 and 50 cents — up to about €24.50 in coins in total", "Spins like a fidget spinner — fun and calming on the desk", "Version with a roller bearing printed ready inside the body — no metal parts", "Compact — about 7.5 cm in diameter", "Colour of your choice"]
     },
     "links": ["View the model on MakerWorld"]
+  },
+  "kola-dodge-charger-2018": {
+    "name": "Car — Dodge Charger 2018",
+    "description": "A personalised scale model as a birthday gift — Dodge Charger 2018, 28 cm.",
+    "tags": ["gift", "car", "toy", "personal", "personalised", "birthday"]
+  },
+  "statuetka-kral-i-kralitsa-3d-printirana-dekoratsiya-sas-sart": {
+    "name": "“King and Queen” figurine — 3D printed decoration with a heart and crowns",
+    "description": "A striking 3D printed heart-shaped figurine with a crowned lion and lioness — a symbol of strong love and the bond between two people. Size: 15 × 20 cm — an original gift for a loved one or a stylish decoration for the home.",
+    "tags": ["gift", "figurine"]
   }
 }

@@ -27,8 +27,12 @@ export interface AnalyticsEvents {
   order_click: { product_id: string; product_name: string };
   /** The contact form was sent (Web3Forms accepted it). GA4 recommended event. */
   generate_lead: { lead_source: LeadSource };
-  /** The visitor switched the page's language. */
-  select_language: { language: Locale; previous_language: Locale; cta_location: string };
+  /**
+   * The visitor switched the page's language. Not `language`: gtag takes that
+   * name as its own browser-language field (`ul`), so it never reaches GA as a
+   * parameter — the same goes for page_location, page_title, page_referrer…
+   */
+  select_language: { selected_language: Locale; previous_language: Locale; cta_location: string };
   /** A blog search, sent once the visitor stops typing, or a tag click. GA4 recommended event. */
   search: { search_term: string; search_type: SearchType; result_count: number };
 }

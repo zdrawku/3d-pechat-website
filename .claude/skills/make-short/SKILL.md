@@ -40,6 +40,8 @@ public.
   whether there is a previous version in `W/previous/` (spec.json, flows/).
 - Render with the default `--out` (`W/out/`). Keep your spec at `W/spec.json`
   and flows at `W/flows/<name>.json` — they are saved for the next round.
+  Name flows with Latin letters, digits and `-` only (`order`, `blog`); any
+  other name is not carried over.
 - **Finish by writing `W/result.md`**, in Bulgarian, 3–8 short lines: what the
   video shows beat by beat, which footage it used in words („клипът от
   заявката“, „снимката от каталога“, „записът на сайта“), any assumption or
