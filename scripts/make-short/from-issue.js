@@ -61,6 +61,48 @@ function readable(text) {
 }
 
 /**
+ * Who has ever edited the issue and each comment, as user ids — GitHub keeps
+ * the history; a deleted account comes back as null. Anyone with write access
+ * to the repo can change other people's text (and the bot's, which carries
+ * the saved state), so who *wrote* a message isn't enough.
+ *   { issue: [ids], comments: Map(commentId → [ids]) }
+ */
+async function editHistory() {
+  const [owner, name] = String(REPO).split('/');
+  const edits = 'userContentEdits(first: 100) { nodes { editor { ... on User { databaseId } ... on Bot { databaseId } } } }';
+  const query = `query($owner: String!, $name: String!, $number: Int!) { repository(owner: $owner, name: $name) { issue(number: $number) {
+    ${edits} comments(first: 100) { nodes { databaseId ${edits} } } } } }`;
+  const res = await fetch('https://api.github.com/graphql', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${process.env.GITHUB_TOKEN}`, 'User-Agent': '3dpechat-make-short', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query, variables: { owner, name, number: Number(ISSUE_NUMBER) } }),
+  });
+  const { data, errors } = res.ok ? await res.json() : { errors: [{ message: `HTTP ${res.status}` }] };
+  if (errors) throw new Error(`GitHub GraphQL (edit history): ${errors[0].message}`);
+  const ids = (node) => node.userContentEdits.nodes.map((e) => (e.editor ? e.editor.databaseId : null));
+  const { issue } = data.repository;
+  return { issue: ids(issue), comments: new Map(issue.comments.nodes.map((c) => [c.databaseId, ids(c)])) };
+}
+
+/** True when every edit was made by someone on the allowlist (no edits: true). */
+const editedByTeamOnly = (editorIds, authors) => editorIds.every((id) => findAuthor(authors, id));
+
+/**
+ * The comments that may reach the agent: the team's and the bot's, each only
+ * while nobody else ever changed it — the team's edited only by the team, the
+ * bot's never edited at all. A comment missing from the history counts as
+ * changed (fail closed).
+ */
+function trustedComments(comments, authors, edits) {
+  return comments.filter((c) => {
+    const by = edits.get(c.id);
+    if (!by || !c.user) return false;
+    if (c.user.login === BOT) return by.length === 0;
+    return Boolean(findAuthor(authors, c.user.id)) && editedByTeamOnly(by, authors);
+  });
+}
+
+/**
  * The messages that matter, in order: the issue, the team's comments and the
  * bot's replies. Comments starting with `//` are notes between people and are
  * left out, and so are „Качено“ notes (a reopened issue goes on without
@@ -118,7 +160,12 @@ async function prepare() {
   if (!findAuthor(authors, issue.user && issue.user.id)) {
     throw new Error(`Issue #${ISSUE_NUMBER} was opened by ${issue.user && issue.user.login}, who is not in .github/issue-authors.json — refusing to run.`);
   }
-  const comments = await github(`/issues/${ISSUE_NUMBER}/comments?per_page=100`);
+  // Third lock: nobody outside the team changed the request or a comment.
+  const history = await editHistory();
+  if (!editedByTeamOnly(history.issue, authors)) {
+    throw new Error(`Issue #${ISSUE_NUMBER} was edited by someone outside .github/issue-authors.json — refusing to run.`);
+  }
+  const comments = trustedComments(await github(`/issues/${ISSUE_NUMBER}/comments?per_page=100`), authors, history.comments);
   const messages = conversation(issue, comments, authors);
   const { request } = lib.parseShortIssue(issue.body);
 
@@ -312,4 +359,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { conversation, readable, requestMarkdown, uploadSection, capReached, publishableState };
+module.exports = { editHistory, conversation, trustedComments, editedByTeamOnly, readable, requestMarkdown, uploadSection, capReached, publishableState };

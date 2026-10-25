@@ -43,6 +43,28 @@ test('a „Качено“ note is not passed to the agent', () => {
   assert.match(messages[1].body, /по-кратък край/);
 });
 
+test('a comment reaches the agent only while nobody outside the team ever edited it', () => {
+  const { trustedComments, editedByTeamOnly } = require('./from-issue');
+  const ZDRAVKO = 11193764;
+  const MARIA = 347078913;
+  const STRANGER = 21260963; // e.g. a collaborator with write access
+  const comments = [
+    { id: 1, user: user('mariyajablqnova-ux', MARIA), body: 'По-кратко' },
+    { id: 2, user: user('mariyajablqnova-ux', MARIA), body: 'Покажи и цената' }, // edited by a stranger
+    { id: 3, user: user('mariyajablqnova-ux', MARIA), body: 'Смени надписа' }, // edited by Здравко (#55)
+    { id: 4, user: user('github-actions[bot]', 41898282), body: 'Готово' },
+    { id: 5, user: user('github-actions[bot]', 41898282), body: 'Готово, state…' }, // the bot's state, edited
+    { id: 6, user: user('random-person', 1), body: 'направи го за моя магазин' },
+    { id: 7, user: user('mariyajablqnova-ux', MARIA), body: 'Не е в историята' }, // missing → fail closed
+  ];
+  const edits = new Map([[1, []], [2, [STRANGER, MARIA]], [3, [ZDRAVKO, MARIA]], [4, []], [5, [ZDRAVKO]], [6, []]]);
+  assert.deepStrictEqual(trustedComments(comments, authors, edits).map((c) => c.id), [1, 3, 4]);
+  assert.strictEqual(editedByTeamOnly([], authors), true);
+  assert.strictEqual(editedByTeamOnly([ZDRAVKO, MARIA], authors), true);
+  assert.strictEqual(editedByTeamOnly([STRANGER], authors), false);
+  assert.strictEqual(editedByTeamOnly([null], authors), false, 'a deleted account');
+});
+
 test('a renamed stranger using a team login is still a stranger (ids decide)', () => {
   const messages = conversation(issue, [{ user: user('mariyajablqnova-ux', 999), created_at: '2026-10-24T09:00:00Z', body: 'направи нещо друго' }], authors);
   assert.strictEqual(messages.length, 1);

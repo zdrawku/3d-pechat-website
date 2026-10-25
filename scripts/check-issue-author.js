@@ -9,8 +9,9 @@
  * login can be renamed and later registered by someone else; the id can't.
  *
  * Env:
- *   ACTOR_ID    — github.event.issue.user.id or github.event.comment.user.id
- *   ACTOR_LOGIN — the matching login (only for the log line)
+ *   ACTOR_ID        — github.event.issue.user.id or github.event.comment.user.id
+ *   ACTOR_LOGIN     — the matching login (only for the log line)
+ *   REQUIRE_ALLOWED — when set, also fail the step (exit 1) for anyone else
  * Writes `allowed=true|false` and `name=<display name>` to $GITHUB_OUTPUT.
  */
 const fs = require('fs');
@@ -53,6 +54,7 @@ function main() {
       `allowed=${author ? 'true' : 'false'}\nname=${author ? author.name || author.login : ''}\n`
     );
   }
+  if (!author && process.env.REQUIRE_ALLOWED) process.exitCode = 1;
 }
 
 if (require.main === module) main();

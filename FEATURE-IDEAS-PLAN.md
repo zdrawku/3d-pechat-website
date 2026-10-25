@@ -878,13 +878,35 @@ site on a phone screen for requests like „направи шорт видео �
   `lib.isUploadedNote`; no agent runs, the comment gets a 🎉 and the issue
   closes as completed. Anyone else's „Качено“ does nothing. „Качих нов клип“
   without a platform link is feedback.
+- **Who can reach the agent — closed gaps** (2026-10-25): besides the
+  author allowlist and the form check, (1) the edit history counts: anyone
+  with write access can edit other people's issues and comments (and the
+  bot's, which carry the saved state), so `from-issue.js prepare` drops any
+  comment edited by someone outside the team, any edited bot comment, and
+  refuses an issue edited so (GraphQL `userContentEdits`); (2) „Re-run“
+  skips the gate and its limits, so the agent job and the auto-blog job
+  first check `github.triggering_actor` against the allowlist; (3) the
+  per-issue queue sits on the agent job, so a stranger's comment can't
+  cancel a team request that is waiting.
 - **The scrub needs bubblewrap** (2026-10-25): on Linux,
   `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1` runs every agent command through
   `bwrap … --unshare-pid --unshare-user`; without bubblewrap Claude Code
   refuses to start (the first run after the hardening failed this way). The
   job installs it, lifts Ubuntu 24.04's AppArmor block on user namespaces,
   and checks the sandbox before the agent starts. Chromium, ffmpeg and
-  /dev/shm work inside it (checked in an Ubuntu 24.04 Playwright container).
+  /dev/shm work inside a bare `bwrap --unshare-pid --unshare-user` (checked
+  in an Ubuntu 24.04 Playwright container) — **but not inside the real
+  one**: Claude Code's scrub sandbox also makes the filesystem read-only
+  outside /home, /tmp, /var, /opt, /run, /mnt, masks paths and adds a
+  seccomp filter, and the shorts tool failed in it (issue #66: "the tool
+  didn't start", 5 steps). So since 2026-10-25 the sandbox is **off by
+  default** and switched by the repo variable `SHORTS_SANDBOX=true`; the
+  shorts tool itself drops credentials from its environment before starting
+  ffmpeg/Chromium, and the other layers (no token in .git, no reads outside
+  the repo or /proc, only the shorts tool, edit-history and re-run checks)
+  stay. **Next:** one run with `SHORTS_SANDBOX=true` and `SHORTS_DEBUG=true`
+  (transcript artifact) on a test issue shows the failing command; fix that
+  and switch the sandbox back on.
 
 **Owner setup (once):** the Claude Code token (`claude setup-token`) as
 `CLAUDE_CODE_OAUTH_TOKEN` in the **`claude` environment** (Settings →

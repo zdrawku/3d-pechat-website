@@ -34,6 +34,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # A manual run or a „Re-run“ spends the Claude subscription too: only
+      # the people in .github/issue-authors.json may start one (anyone with
+      # write access could otherwise). The schedule's own run needs no check.
+      - name: Verify who started this run
+        if: github.event_name != 'schedule' || github.run_attempt != '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LOGIN: ${{ github.triggering_actor }}
+        run: ACTOR_ID="$(gh api "users/$LOGIN" --jq .id)" ACTOR_LOGIN="$LOGIN" REQUIRE_ALLOWED=1 node scripts/check-issue-author.js
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:

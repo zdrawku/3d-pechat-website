@@ -44,9 +44,10 @@ test('the shorts agent can reach no credential and runs only the shorts tool', {
   const job = load('make-short.yml').jobs.agent;
   const agentStep = steps(job).find((s) => /claude -p/.test(s.run || ''));
   assert.ok(agentStep, 'the agent step exists');
-  // Only the Claude token, scrubbed from everything the agent starts.
+  // Only the Claude token (the shorts tool drops it before starting anything).
   assert.deepStrictEqual(Object.keys(agentStep.env).sort(), ['CLAUDE_CODE_OAUTH_TOKEN', 'CLAUDE_CODE_SUBPROCESS_ENV_SCRUB']);
-  assert.strictEqual(agentStep.env.CLAUDE_CODE_SUBPROCESS_ENV_SCRUB, '1');
+  // The sandbox is a switch, and explicitly off unless switched on.
+  assert.strictEqual(agentStep.env.CLAUDE_CODE_SUBPROCESS_ENV_SCRUB, "${{ vars.SHORTS_SANDBOX == 'true' && '1' || '0' }}");
   // checkout would otherwise leave the job's token in .git/config.
   const checkout = steps(job).find((s) => /actions\/checkout/.test(s.uses || ''));
   assert.strictEqual(checkout.with && checkout.with['persist-credentials'], false);
@@ -96,6 +97,32 @@ test('only jobs in the main-only `claude` environment get the Claude token', { s
   assert.strictEqual(users, 2, 'make-short agent + auto-blog');
 });
 
+// „Re-run“ repeats a job with the first attempt's event (and skips the
+// gate), started by whoever clicks it — anyone with write access.
+test('every job with the Claude token checks who started this attempt before using it', { skip: !yaml && 'js-yaml not installed' }, () => {
+  let checked = 0;
+  for (const [file, wf] of allWorkflows()) {
+    for (const [name, job] of Object.entries(wf.jobs)) {
+      if (job.environment !== 'claude') continue;
+      const all = steps(job);
+      const who = all.findIndex((s) => /github\.triggering_actor/.test(JSON.stringify(s.env || {})) && /REQUIRE_ALLOWED=1 node scripts\/check-issue-author\.js/.test(s.run || ''));
+      const usesToken = all.findIndex((s) => JSON.stringify(s).includes('secrets.CLAUDE_CODE_OAUTH_TOKEN'));
+      assert.ok(who !== -1 && who < usesToken, `${file} → ${name}: verify github.triggering_actor before the Claude step`);
+      checked += 1;
+    }
+  }
+  assert.strictEqual(checked, 2);
+});
+
+test('🎬 a stranger can\'t bump a waiting request, and a refused re-run posts nothing', { skip: !yaml && 'js-yaml not installed' }, () => {
+  const wf = load('make-short.yml');
+  assert.strictEqual(wf.concurrency, undefined, 'no workflow-level queue: every comment\'s run would share it');
+  assert.match(wf.jobs.agent.concurrency.group, /make-short-\$\{\{ github\.event\.issue\.number \}\}/);
+  assert.strictEqual(wf.jobs.agent.concurrency['cancel-in-progress'], false);
+  const fail = steps(wf.jobs.agent).find((s) => /from-issue\.js fail/.test(s.run || ''));
+  assert.match(fail.if, /steps\.who\.outcome == 'success'/);
+});
+
 test('every workflow states its token permissions, and none pushes to a branch itself', { skip: !yaml && 'js-yaml not installed' }, () => {
   for (const [file, wf] of allWorkflows()) {
     const jobs = Object.entries(wf.jobs);
@@ -132,14 +159,20 @@ test('no workflow pastes issue or comment text into a shell script', { skip: !ya
   }
 });
 
-test('the env scrub has its sandbox: bubblewrap is installed and checked before the agent starts', { skip: !yaml && 'js-yaml not installed' }, () => {
+test('when the sandbox is switched on, bubblewrap is installed and checked before the agent starts', { skip: !yaml && 'js-yaml not installed' }, () => {
   const job = load('make-short.yml').jobs.agent;
   const all = steps(job);
   const install = all.findIndex((s) => /apt-get install[^\n]*bubblewrap/.test(s.run || ''));
   const agent = all.findIndex((s) => /claude -p/.test(s.run || ''));
   assert.ok(install !== -1 && install < agent, 'bubblewrap is installed before the agent step');
+  assert.strictEqual(all[install].if, "vars.SHORTS_SANDBOX == 'true'", 'same switch as CLAUDE_CODE_SUBPROCESS_ENV_SCRUB');
   assert.match(all[install].run, /apparmor_restrict_unprivileged_userns=0/);
   assert.match(all[install].run, /bwrap .*--unshare-user/);
+});
+
+test('the shorts tool itself drops credentials before it starts anything', () => {
+  const src = fs.readFileSync(path.join(__dirname, 'make-short', 'make-short.js'), 'utf8');
+  assert.match(src, /async function main\(\) \{\n\s+dropCredentials\(\);/, 'first thing main() does');
 });
 
 test('the shorts agent may only talk about the short', { skip: !yaml && 'js-yaml not installed' }, () => {

@@ -86,19 +86,20 @@ function check(work) {
   ];
 }
 
+/** Credentials this tool never needs (Drive's key is read only by `drive`). */
+const CREDENTIALS = ['CLAUDE_CODE_OAUTH_TOKEN', 'ANTHROPIC_API_KEY', 'ANTHROPIC_AUTH_TOKEN', 'GITHUB_TOKEN', 'GH_TOKEN'];
+
 /**
- * In CI the agent runs this tool with credentials scrubbed from its
- * environment (CLAUDE_CODE_SUBPROCESS_ENV_SCRUB in make-short.yml). If one
- * ever shows up here, stop rather than run with it.
+ * In CI the agent starts this tool from a step that holds the Claude token.
+ * Drop every credential from the environment first, so nothing the tool
+ * starts — ffmpeg, Chromium — inherits one.
  */
-function refuseCredentials(env = process.env) {
-  if (!env.GITHUB_ACTIONS) return;
-  const leaked = ['CLAUDE_CODE_OAUTH_TOKEN', 'ANTHROPIC_API_KEY', 'GITHUB_TOKEN', 'GH_TOKEN'].filter((k) => env[k]);
-  if (leaked.length) throw new Error(`Refusing to run: ${leaked.join(', ')} reached the shorts tool. Set CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1 on the agent step.`);
+function dropCredentials(env = process.env) {
+  for (const key of CREDENTIALS) delete env[key];
 }
 
 async function main() {
-  refuseCredentials();
+  dropCredentials();
   const { cmd, opts } = parseArgs(process.argv.slice(2));
   const work = path.resolve(opts.work || path.join(lib.ROOT, 'tmp', 'make-short', 'local'));
   fs.mkdirSync(work, { recursive: true });
@@ -173,4 +174,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { parseArgs, localExtras, check, refuseCredentials };
+module.exports = { parseArgs, localExtras, check, dropCredentials };

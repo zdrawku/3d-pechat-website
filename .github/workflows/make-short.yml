@@ -15,12 +15,19 @@ name: Make Short from Issue
 #      the comment against .github/issue-authors.json, and that the issue
 #      comes from the `🎬 Ново кратко видео` form, before anything runs.
 #   2. Strangers' issues are closed without running anything; strangers'
-#      comments are ignored (and left out of the agent's input).
-#   3. The agent can reach no credential: checkout keeps no token in .git,
-#      credentials are scrubbed from every process it starts (and the shorts
-#      tool refuses to run if one gets through), it can't read outside the
-#      repo, and no MCP server starts. It may write only in its work folder
-#      and run only `npm run make-short -- …`.
+#      comments are ignored (and left out of the agent's input). Anyone with
+#      write access can edit other people's text, so from-issue.js also
+#      checks the edit history: a comment edited by someone outside the team
+#      (or a bot comment edited at all) is dropped, and an issue edited so is
+#      refused. A „Re-run“ is checked against the allowlist too (the agent
+#      job's first step), since it skips the gate and its limits.
+#   3. The agent can reach no credential: checkout keeps no token in .git, it
+#      can't read outside the repo (/proc included) or run its own code, no
+#      MCP server starts, and the shorts tool drops credentials from its
+#      environment before starting ffmpeg or Chromium. It may write only in
+#      its work folder and run only `npm run make-short -- …`. Claude Code's
+#      subprocess sandbox (credential scrub + bubblewrap) is an extra layer,
+#      off until ffmpeg/Chromium run inside it: repo variable SHORTS_SANDBOX.
 #   4. It may only talk about the short (.claude/skills/make-short/ci-rules.md,
 #      in its system prompt), and from-issue.js enforces that on everything
 #      it posts: an off-topic result.md is replaced by a neutral line, and
@@ -36,10 +43,6 @@ on:
 permissions:
   contents: write # create the shorts-drafts pre-release and upload to it
   issues: write
-
-concurrency:
-  group: make-short-${{ github.event.issue.number }}
-  cancel-in-progress: false
 
 # Caps, so no request can drain the Claude subscription. The agent stops at
 # whichever comes first and the issue is told which one (from-issue.js).
@@ -171,6 +174,12 @@ jobs:
     # The Claude token lives in this environment, which only `main` may use —
     # a workflow pushed on any other branch can't read it.
     environment: claude
+    # One version at a time per issue. Here, not on the whole workflow, so a
+    # stranger's comment (whose run stops at the gate) can't take the place
+    # of a team request that is waiting.
+    concurrency:
+      group: make-short-${{ github.event.issue.number }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -184,6 +193,16 @@ jobs:
         with:
           persist-credentials: false
 
+      # „Re-run“ starts this job again with the first attempt's comment and
+      # gate (limits included), so whoever started *this* attempt must be on
+      # the allowlist too. On a first run that's the commenter.
+      - name: Verify who started this attempt
+        id: who
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LOGIN: ${{ github.triggering_actor }}
+        run: ACTOR_ID="$(gh api "users/$LOGIN" --jq .id)" ACTOR_LOGIN="$LOGIN" REQUIRE_ALLOWED=1 node scripts/check-issue-author.js
+
       - name: Remember when the run started
         run: echo "RUN_STARTED_MS=$(date +%s%3N)" >> "$GITHUB_ENV"
 
@@ -194,13 +213,18 @@ jobs:
 
       - run: npm ci
 
-      # ffmpeg renders. bubblewrap is what CLAUDE_CODE_SUBPROCESS_ENV_SCRUB runs
-      # every agent command in (own PID namespace, credentials removed) —
-      # without it Claude Code won't start. Ubuntu 24.04 blocks the user
-      # namespace bubblewrap needs unless this sysctl is 0 (throwaway VM).
-      - name: Install ffmpeg and the agent's sandbox (bubblewrap)
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
+
+      # Only with SHORTS_SANDBOX: bubblewrap is what CLAUDE_CODE_SUBPROCESS_ENV_SCRUB
+      # runs every agent command in — without it Claude Code won't start.
+      # Ubuntu 24.04 blocks the user namespace it needs unless this sysctl is
+      # 0 (throwaway VM). Off by default: inside it the shorts tool didn't run
+      # (2026-10-25, issue #66); turn it on with SHORTS_DEBUG to see why.
+      - name: Install the agent's sandbox (bubblewrap)
+        if: vars.SHORTS_SANDBOX == 'true'
         run: |
-          sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg bubblewrap
+          sudo apt-get install -y --no-install-recommends bubblewrap
           if sysctl -n kernel.apparmor_restrict_unprivileged_userns >/dev/null 2>&1; then
             sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
           fi
@@ -225,11 +249,13 @@ jobs:
         # Backstop only: `timeout` below stops the agent first.
         timeout-minutes: 20
         env:
-          # The only credential in this step. Drive isn't wired into CI: its
-          # key would be scrubbed from the tool anyway (FEATURE-IDEAS-PLAN.md).
+          # The only credential in this step (Drive isn't wired into CI —
+          # FEATURE-IDEAS-PLAN.md). The shorts tool drops it from its own
+          # environment before starting anything.
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          # Strips credentials from every process the agent starts.
-          CLAUDE_CODE_SUBPROCESS_ENV_SCRUB: '1'
+          # Claude Code's subprocess sandbox: off unless SHORTS_SANDBOX is true
+          # (see the bubblewrap step). Explicit, so no default turns it on.
+          CLAUDE_CODE_SUBPROCESS_ENV_SCRUB: ${{ vars.SHORTS_SANDBOX == 'true' && '1' || '0' }}
         run: |
           if [[ -z "$CLAUDE_CODE_OAUTH_TOKEN" ]]; then
             echo "::error::Claude Code is not set up for this repo (missing secret)."
@@ -272,8 +298,9 @@ jobs:
           TRANSCRIPT: ${{ runner.temp }}/transcript.jsonl
         run: node scripts/make-short/from-issue.js publish
 
+      # Not for a refused re-run: it says nothing and doesn't use up a version.
       - name: Tell the issue it failed
-        if: failure()
+        if: failure() && steps.who.outcome == 'success'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/make-short/from-issue.js fail
