@@ -74,7 +74,7 @@ jobs:
     steps:
       # Only the allowlist, the form, their checkers and the plain helpers —
       # nothing from the issue runs here.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           sparse-checkout: |
             .github/issue-authors.json
@@ -189,7 +189,7 @@ jobs:
       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:
       # No token left in .git/config, where the agent could read it.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
 
@@ -206,7 +206,7 @@ jobs:
       - name: Remember when the run started
         run: echo "RUN_STARTED_MS=$(date +%s%3N)" >> "$GITHUB_ENV"
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -311,7 +311,7 @@ jobs:
       # `publish` log always has a one-line summary.
       - name: Keep the agent's transcript (debugging only)
         if: always() && vars.SHORTS_DEBUG == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: make-short-transcript-${{ github.event.issue.number }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/transcript.jsonl
