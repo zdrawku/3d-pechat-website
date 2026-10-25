@@ -51,7 +51,7 @@ async function github(pathname, { method = 'GET', body } = {}) {
 async function main() {
   const issue = process.env.ISSUE_NUMBER;
   const maxVersions = Number(process.env.SHORTS_MAX_VERSIONS || 5);
-  const maxPerDay = Number(process.env.SHORTS_MAX_PER_DAY || 8);
+  const maxPerDay = Number(process.env.SHORTS_MAX_PER_DAY || 15);
   const since = new Date(Date.now() - DAY_MS).toISOString();
   const issueComments = await github(`/issues/${issue}/comments?per_page=100`);
   const recentComments = await github(`/issues/comments?since=${since}&per_page=100`);

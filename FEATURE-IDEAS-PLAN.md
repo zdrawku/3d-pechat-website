@@ -839,8 +839,8 @@ site on a phone screen for requests like „направи шорт видео �
   if any of these checks is removed.
 - **Usage caps** (2026-10-24), so no request can drain the subscription:
   shorts run on Sonnet with an estimated-spend cap, a step cap and a
-  wall-clock cap per run, plus at most 5 versions per issue and 8 runs per
-  24 hours (`scripts/make-short/limits.js`, checked before anything
+  wall-clock cap per run, plus at most 5 versions per issue and 15 runs per
+  24 hours (8 until 2026-10-25) (`scripts/make-short/limits.js`, checked before anything
   expensive starts); the issue is told which cap stopped a run. The
   auto-blog caps each of its two Claude calls (spend + time) and the job at
   30 minutes. The numbers live in the `env:` blocks of both workflows.

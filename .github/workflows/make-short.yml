@@ -50,7 +50,7 @@ env:
   SHORTS_MAX_TURNS: '50' # agent steps per run
   SHORTS_MAX_MINUTES: '15' # wall-clock per run
   SHORTS_MAX_VERSIONS: '5' # runs per issue (first version + feedback)
-  SHORTS_MAX_PER_DAY: '8' # runs across all issues per 24 hours
+  SHORTS_MAX_PER_DAY: '15' # runs across all issues per 24 hours
 
 jobs:
   gate:
