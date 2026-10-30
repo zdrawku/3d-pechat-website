@@ -1,0 +1,59 @@
+@use "igniteui-angular/theming" as *;
+@use '../../button-tones' as *;
+
+:host {
+  display: block;
+}
+
+.studio {
+  max-width: rem(1100px);
+  margin: 0 auto;
+  padding: rem(24px) rem(32px) rem(64px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+
+  @media (max-width: 768px) {
+    padding: rem(20px) rem(16px) rem(48px);
+  }
+}
+
+.studio-gate {
+  max-width: rem(440px);
+  margin: rem(48px) auto 0;
+  width: 100%;
+}
+
+igx-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.studio-intro {
+  margin: 0;
+  color: var(--ig-gray-800);
+}
+
+.studio-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+
+  button {
+    align-self: flex-start;
+    @include primary-contained-button;
+  }
+}
+
+.studio-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.studio-title {
+  margin: 0;
+}

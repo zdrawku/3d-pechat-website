@@ -26,6 +26,12 @@
     "description": "Get in touch today and we'll help you choose the perfect design for your collection!",
     "button": "Contact us"
   },
+  "bookmarksPromo": {
+    "title": "Bookmarks made to your design",
+    "text": "Upload a picture or choose a pattern, pick a shape and colours, and see the bookmark live. Then order it in one tap.",
+    "button": "Design your bookmark",
+    "imageAlt": "Bookmarks with a dragon picture lying on an open book"
+  },
   "orderMessage": "Hello, I would like to order \"{name}\". {description}",
   "grid": {
     "front": "{name} – front",

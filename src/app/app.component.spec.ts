@@ -6,7 +6,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { IGX_NAVBAR_DIRECTIVES, IgxIconComponent, IgxButtonDirective, IgxIconButtonDirective, IGX_NAVIGATION_DRAWER_DIRECTIVES } from 'igniteui-angular';
 import { AppComponent } from './app.component';
 import { BUSINESS } from '../data/business';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
+import { Subject } from 'rxjs';
 import { I18nService } from './i18n/i18n.service';
 import { AnalyticsService } from './services/analytics.service';
 import { CONSENT_STORAGE_KEY, ConsentService } from './services/consent.service';
@@ -104,6 +105,66 @@ describe('AppComponent', () => {
     const navLink = host.querySelector('[data-testid="youtube-nav-link"]');
     expect(navLink?.hasAttribute('igxIconButton')).withContext('navbar link styled via igxIconButton').toBeTrue();
     expect(host.querySelector('footer [data-testid="youtube-footer-link"]')).withContext('footer link').not.toBeNull();
+  });
+
+  describe('Products menu group (approved design A)', () => {
+    const host = (): HTMLElement => fixture.nativeElement;
+    const testid = (id: string): HTMLElement | null => host().querySelector(`[data-testid="${id}"]`);
+
+    it('starts expanded, with All products and Bookmarks under Products', () => {
+      expect(component.productsOpen()).toBeTrue();
+      expect(testid('drawer-products-toggle')!.getAttribute('aria-expanded')).toBe('true');
+      expect(testid('drawer-products-all')!.getAttribute('href')).toBe('/products');
+      expect(testid('drawer-bookmarks')!.getAttribute('href')).toBe('/products/bookmarks');
+      expect(testid('drawer-bookmarks')!.textContent).toContain('Разделители');
+      expect(testid('drawer-bookmarks')!.getAttribute('aria-label')).withContext('the short title keeps its full name for screen readers').toBe('Разделители за книги');
+    });
+
+    it('gives every drawer chip a title over a one-line subtitle, so they are all the same height', () => {
+      const chips = Array.from(host().querySelectorAll('a.drawer_chip'));
+      expect(chips.length).toBeGreaterThanOrEqual(8);
+      for (const chip of chips) {
+        expect(chip.querySelectorAll('.drawer_chip_txt b').length).withContext(chip.textContent ?? '').toBe(1);
+        expect(chip.querySelectorAll('.drawer_chip_txt span').length).withContext(chip.textContent ?? '').toBe(1);
+      }
+    });
+
+    it('builds the group from Ignite UI: an icon-button caret and igx-icons, no plain-HTML stand-ins', () => {
+      const toggle = testid('drawer-products-toggle')!;
+      expect(toggle.hasAttribute('igxIconButton')).toBeTrue();
+      expect(toggle.querySelector('igx-icon')).not.toBeNull();
+      expect(testid('drawer-bookmarks')!.querySelector('igx-icon')).not.toBeNull();
+    });
+
+    it('collapses and expands with the caret', () => {
+      testid('drawer-products-toggle')!.click();
+      fixture.detectChanges();
+      expect(testid('drawer-products-toggle')!.getAttribute('aria-expanded')).toBe('false');
+      expect(testid('drawer-bookmarks')).toBeNull();
+
+      testid('drawer-products-toggle')!.click();
+      fixture.detectChanges();
+      expect(testid('drawer-bookmarks')).not.toBeNull();
+    });
+
+    it('opens again when a products page is visited', () => {
+      component.productsOpen.set(false);
+      const events = TestBed.inject(Router).events as unknown as Subject<unknown>;
+      events.next(new NavigationEnd(1, '/products/bookmarks/', '/products/bookmarks/'));
+      expect(component.productsOpen()).toBeTrue();
+
+      component.productsOpen.set(false);
+      events.next(new NavigationEnd(2, '/en/products/', '/en/products/'));
+      expect(component.productsOpen()).toBeTrue();
+
+      component.productsOpen.set(false);
+      events.next(new NavigationEnd(3, '/prices/', '/prices/'));
+      expect(component.productsOpen()).withContext('other pages leave it as the visitor set it').toBeFalse();
+    });
+  });
+
+  it('links the bookmark creator from the footer', () => {
+    expect((fixture.nativeElement as HTMLElement).querySelector('footer a[href="/products/bookmarks"]')).not.toBeNull();
   });
 
   describe('languages', () => {

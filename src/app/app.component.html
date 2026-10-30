@@ -94,16 +94,51 @@
             <span>{{ 'shell.drawer.portfolio.subtitle' | t }}</span>
           </span>
         </a>
-        <a class="drawer_chip" [routerLink]="'/products' | localizePath" routerLinkActive="active"
-           (click)="closeDrawerOnMobile()">
-          <span class="drawer_chip_tile">
-            <igx-icon>inventory_2</igx-icon>
-          </span>
-          <span class="drawer_chip_txt">
-            <b>{{ 'shell.drawer.products.title' | t }}</b>
-            <span>{{ 'shell.drawer.products.subtitle' | t }}</span>
-          </span>
-        </a>
+        <!-- Products is a group (approved design A): its sub-menu starts expanded,
+             the caret collapses it. The chip itself still goes to All products. -->
+        <div class="drawer_chip_group" data-testid="drawer-products-group">
+          <div class="drawer_chip_row">
+            <a class="drawer_chip" [routerLink]="'/products' | localizePath" routerLinkActive="active"
+               (click)="closeDrawerOnMobile()">
+              <span class="drawer_chip_tile">
+                <igx-icon>inventory_2</igx-icon>
+              </span>
+              <span class="drawer_chip_txt">
+                <b>{{ 'shell.drawer.products.title' | t }}</b>
+                <span>{{ 'shell.drawer.products.subtitle' | t }}</span>
+              </span>
+            </a>
+            <button type="button" igxIconButton="flat" class="drawer_chip_toggle" aria-controls="drawer-products-sub"
+                    [attr.aria-expanded]="productsOpen()" [attr.aria-label]="'shell.drawer.productsToggle' | t"
+                    (click)="productsOpen.set(!productsOpen())" data-testid="drawer-products-toggle">
+              <igx-icon>{{ productsOpen() ? 'expand_less' : 'expand_more' }}</igx-icon>
+            </button>
+          </div>
+          @if (productsOpen()) {
+            <div class="drawer_sub_list" id="drawer-products-sub">
+              <a class="drawer_chip drawer_chip--sub" [routerLink]="'/products' | localizePath" routerLinkActive="active"
+                 [routerLinkActiveOptions]="{ exact: true }" (click)="closeDrawerOnMobile()" data-testid="drawer-products-all">
+                <span class="drawer_chip_tile">
+                  <igx-icon>grid_view</igx-icon>
+                </span>
+                <span class="drawer_chip_txt">
+                  <b>{{ 'shell.drawer.productsAll.title' | t }}</b>
+                  <span>{{ 'shell.drawer.productsAll.subtitle' | t }}</span>
+                </span>
+              </a>
+              <a class="drawer_chip drawer_chip--sub" [routerLink]="'/products/bookmarks' | localizePath" routerLinkActive="active"
+                 [attr.aria-label]="'shell.footer.bookmarks' | t" (click)="closeDrawerOnMobile()" data-testid="drawer-bookmarks">
+                <span class="drawer_chip_tile">
+                  <igx-icon>bookmark</igx-icon>
+                </span>
+                <span class="drawer_chip_txt">
+                  <b>{{ 'shell.drawer.bookmarks.title' | t }}</b>
+                  <span>{{ 'shell.drawer.bookmarks.subtitle' | t }}</span>
+                </span>
+              </a>
+            </div>
+          }
+        </div>
         <a class="drawer_chip" [routerLink]="'/prices' | localizePath" routerLinkActive="active"
            (click)="closeDrawerOnMobile()">
           <span class="drawer_chip_tile">
@@ -225,6 +260,9 @@
             </p>
             <a [routerLink]="'/products' | localizePath" class="ig-typography__body-2 footer_link">
               {{ 'shell.footer.products' | t }}
+            </a>
+            <a [routerLink]="'/products/bookmarks' | localizePath" class="ig-typography__body-2 footer_link">
+              {{ 'shell.footer.bookmarks' | t }}
             </a>
             <a [routerLink]="'/prices' | localizePath" class="ig-typography__body-2 footer_link">
               {{ 'shell.footer.priceList' | t }}

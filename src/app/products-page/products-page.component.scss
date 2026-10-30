@@ -1,4 +1,5 @@
 @use "igniteui-angular/theming" as *;
+@use '../button-tones' as *;
 :host {
   display: block;
   // Transparent — the dotted texture is painted once on <body> (see styles.scss).
@@ -338,4 +339,49 @@
     }
   }
 
+}
+
+// Bookmark creator card — a real photo on the left, the pitch and the button on
+// the right; stacks on phones. igx-card-content restyles its direct children, so
+// the copy is spaced by the body's gap and nothing here sets a child margin.
+.bookmarks-promo {
+  display: grid;
+  grid-template-columns: minmax(rem(140px), 30%) minmax(0, 1fr);
+  width: 100%;
+  max-width: none;
+  margin: 0 0 var(--space-5);
+  overflow: hidden;
+
+  @media (max-width: 600px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.bookmarks-promo__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: rem(240px);
+  object-fit: cover;
+
+  @media (max-width: 600px) {
+    max-height: rem(180px);
+  }
+}
+
+.bookmarks-promo__body a[igxButton] {
+  @include primary-contained-button;
+  align-self: flex-start;
+}
+
+.bookmarks-promo__body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-2);
+  min-width: 0;
+
+  p {
+    margin: 0;
+  }
 }

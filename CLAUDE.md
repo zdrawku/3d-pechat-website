@@ -22,6 +22,14 @@ Never hand-roll a plain-HTML equivalent when an `igx-*` component exists.
 | Transient message | `igx-snackbar` | custom toast div |
 | Tooltip | `igxTooltip` + `igxTooltipTarget` | `title` attribute |
 
+**One exception: the colour picker.** Ignite UI for Angular has none, so the
+bookmark creator uses **`igc-color-picker` from Ignite UI Web Components**
+(`igniteui-webcomponents`). Only that component is registered, only in the
+browser and only from the bookmark page's lazy chunk
+([`bookmark-colour-picker.component.ts`](src/app/bookmarks/colour-picker/bookmark-colour-picker.component.ts)).
+Never load the package's theme stylesheet: its `:root` palette uses the same
+`--ig-*` names as the site's and would overwrite them.
+
 Plain HTML is correct **only** for semantics/layout with no component
 counterpart: `<section>`, `<ul>/<li>` wrappers, `<p>`, `<h1>`–`<h6>`.
 
@@ -30,7 +38,7 @@ counterpart: `<section>`, `<ul>/<li>` wrappers, `<p>`, `<h1>`–`<h6>`.
 1. **`$exclude-components` in [`src/styles.scss`](src/styles.scss).** A component
    in that list gets **no CSS emitted** and renders unstyled. Currently excluded
    (do not use without removing from the list first): `igx-chip`, `igx-divider`,
-   `igx-dialog`, `igx-badge`, `igx-banner`, `igx-list`, `igx-tabs`, `igx-switch`,
+   `igx-dialog`, `igx-badge`, `igx-banner`, `igx-list`, `igx-switch`,
    `igx-checkbox`, `igx-radio`, `igx-expansion-panel`, `igx-stepper`,
    `igx-slider`, `igx-toast`, `igx-tree`, `igx-grid*`, and others — check the
    list before reaching for one.

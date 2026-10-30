@@ -1,6 +1,8 @@
-import { Component, ElementRef, HostListener, OnInit, PLATFORM_ID, ViewChild, computed, inject } from '@angular/core';
+import { Component, DestroyRef, ElementRef, HostListener, OnInit, PLATFORM_ID, ViewChild, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { isPlatformBrowser } from '@angular/common';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs';
 import { IGX_NAVBAR_DIRECTIVES, IGX_NAVIGATION_DRAWER_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxIconComponent, IgxIconService, IgxNavigationDrawerComponent, IgxToggleActionDirective, IgxTooltipDirective, IgxTooltipTargetDirective } from 'igniteui-angular';
 import { instagram, tiktok, youtube } from '@igniteui/material-icons-extended';
 import { GOOGLE_REVIEW_URL, YOUTUBE_CHANNEL_URL } from '../data/site-links';
@@ -30,6 +32,12 @@ export class AppComponent implements OnInit {
    */
   public drawerOpen = true;
   public isDarkTheme = false;
+  /**
+   * The drawer's Products group (All products + Bookmarks). Expanded by default
+   * (approved design A), so the prerendered drawer shows the sub-menu; the caret
+   * collapses it, and visiting a products page opens it again.
+   */
+  public readonly productsOpen = signal(true);
   /** Direct Google write-review link, shared by every review CTA (see site-links). */
   public readonly googleReviewUrl = GOOGLE_REVIEW_URL;
   /** YouTube channel — navbar + footer icon links (see site-links). */
@@ -48,6 +56,13 @@ export class AppComponent implements OnInit {
     this.iconService.addSvgIconFromText(instagram.name, instagram.value, 'imx-icons');
     this.iconService.addSvgIconFromText(tiktok.name, tiktok.value, 'imx-icons');
     this.iconService.addSvgIconFromText(youtube.name, youtube.value, 'imx-icons');
+    this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd), takeUntilDestroyed(inject(DestroyRef)))
+      .subscribe(({ urlAfterRedirects }) => {
+        if (/^(\/[a-z]{2})?\/products(\/|$|\?|#)/.test(urlAfterRedirects)) {
+          this.productsOpen.set(true);
+        }
+      });
   }
 
   private readonly platformId = inject(PLATFORM_ID);

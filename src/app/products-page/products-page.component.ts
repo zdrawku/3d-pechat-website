@@ -1,7 +1,7 @@
 import { Component, DestroyRef, OnInit, PLATFORM_ID, ViewChild, computed, inject } from '@angular/core';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IgxButtonDirective, IgxIconModule, IgxInputGroupModule, IGX_CARD_DIRECTIVES } from 'igniteui-angular';
 
@@ -12,14 +12,14 @@ import { AnalyticsService } from '../services/analytics.service';
 import { Product, ProductVariant } from '../models/product.model';
 import productsData from '../../data/products.json';
 import { I18nService } from '../i18n/i18n.service';
-import { TranslatePipe } from '../i18n/translate.pipe';
+import { LocalizePathPipe, TranslatePipe } from '../i18n/translate.pipe';
 import { localizeProduct } from '../i18n/localized-content';
 import type { TranslationKey } from '../i18n/i18n.types';
 import productsMessages from '../../i18n/bg/products.json';
 
 @Component({
   selector: 'app-products-page',
-  imports: [FormsModule, IgxButtonDirective, ProductGridComponent, HappyCustomersComponent, IgxIconModule, IgxInputGroupModule, IGX_CARD_DIRECTIVES, TranslatePipe],
+  imports: [FormsModule, IgxButtonDirective, ProductGridComponent, HappyCustomersComponent, IgxIconModule, IgxInputGroupModule, IGX_CARD_DIRECTIVES, RouterLink, TranslatePipe, LocalizePathPipe],
   templateUrl: './products-page.component.html',
   styleUrls: ['./products-page.component.scss']
 })

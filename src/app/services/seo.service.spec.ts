@@ -33,6 +33,13 @@ describe('SeoService', () => {
     expect(meta.getTag('name="twitter:description"')?.content).toBe('My description');
   });
 
+  it('emits noindex only for a page that asks for it, and clears it on the next page', () => {
+    service.updateSeo({ title: 'Hidden', description: 'D', noindex: true });
+    expect(meta.getTag('name="robots"')?.content).toBe('noindex, nofollow');
+    service.updateSeo({ title: 'Public', description: 'D' });
+    expect(meta.getTag('name="robots"')).toBeNull();
+  });
+
   it('falls back to the default OG image when none is provided', () => {
     service.updateSeo({ title: 'T', description: 'D' });
     expect(meta.getTag('property="og:image"')?.content).toContain('og-image.png');

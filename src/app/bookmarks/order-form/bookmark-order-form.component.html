@@ -1,0 +1,98 @@
+<igx-card class="order-card" data-testid="bookmark-order" data-analytics-area="bookmark_order">
+  <igx-card-header>
+    <h3 igxCardHeaderTitle>{{ 'bookmarks.order.heading' | t }}</h3>
+  </igx-card-header>
+  <igx-card-content>
+    <form class="order-form" #orderForm="ngForm" (focusin)="onFormInteraction()" (ngSubmit)="submit()">
+      <div class="order-grid">
+        <igx-input-group type="border">
+          <input type="text" name="name" [(ngModel)]="name" required igxInput autocomplete="name"
+                 [placeholder]="'bookmarks.order.namePlaceholder' | t" #nameInput="ngModel" />
+          <label igxLabel>{{ 'bookmarks.order.name' | t }}</label>
+          @if (nameInput.invalid && nameInput.touched) {
+            <igx-hint>{{ 'bookmarks.order.required' | t }}</igx-hint>
+          }
+        </igx-input-group>
+
+        <igx-input-group type="border">
+          <input type="email" name="email" [(ngModel)]="email" required igxInput autocomplete="email"
+                 [placeholder]="'bookmarks.order.emailPlaceholder' | t" #emailInput="ngModel" />
+          <label igxLabel>{{ 'bookmarks.order.email' | t }}</label>
+          @if (emailInput.invalid && emailInput.touched) {
+            <igx-hint>{{ 'bookmarks.order.required' | t }}</igx-hint>
+          }
+        </igx-input-group>
+
+        <igx-input-group type="border">
+          <input type="tel" name="phone" [(ngModel)]="phone" required igxInput autocomplete="tel"
+                 [placeholder]="'bookmarks.order.phonePlaceholder' | t" #phoneInput="ngModel" />
+          <label igxLabel>{{ 'bookmarks.order.phone' | t }}</label>
+          @if (phoneInput.invalid && phoneInput.touched) {
+            <igx-hint>{{ 'bookmarks.order.required' | t }}</igx-hint>
+          }
+        </igx-input-group>
+
+        <igx-input-group type="border">
+          <input type="number" name="quantity" [(ngModel)]="quantity" required min="1" step="1" igxInput
+                 #quantityInput="ngModel" />
+          <label igxLabel>{{ 'bookmarks.order.quantity' | t }}</label>
+          @if (quantityInput.invalid && quantityInput.touched) {
+            <igx-hint>{{ 'bookmarks.order.required' | t }}</igx-hint>
+          }
+        </igx-input-group>
+
+        <igx-input-group type="border" class="order-wide">
+          <label igxLabel>{{ 'bookmarks.order.notes' | t }}</label>
+          <textarea name="notes" [(ngModel)]="notes" igxInput
+                    [placeholder]="'bookmarks.order.notesPlaceholder' | t"></textarea>
+        </igx-input-group>
+      </div>
+
+      <p class="order-note" data-testid="bookmark-order-price-note">
+        <igx-icon>mail</igx-icon>
+        {{ 'bookmarks.order.priceNote' | t }}
+      </p>
+      <p class="order-note" data-testid="bookmark-order-time-note">
+        <igx-icon>schedule</igx-icon>
+        {{ 'bookmarks.order.timeNote' | t: { days: leadDays } }}
+      </p>
+
+      <div #captcha class="order-captcha"></div>
+
+      <button igxButton="contained" type="submit" class="order-submit" [disabled]="submitting()"
+              data-testid="bookmark-order-submit">
+        {{ (submitting() ? 'bookmarks.order.submitting' : 'bookmarks.order.submit') | t }}
+        @if (!submitting()) {
+          <igx-icon>arrow_forward</igx-icon>
+        }
+      </button>
+
+      <p class="order-privacy">
+        {{ 'bookmarks.order.privacyBefore' | t }}<a [routerLink]="'/privacy' | localizePath">{{ 'bookmarks.order.privacyLink' | t }}</a>{{ 'bookmarks.order.privacyAfter' | t }}
+      </p>
+
+      <div aria-live="polite" data-testid="bookmark-order-status">
+        @switch (status()) {
+          @case ('success') {
+            <p class="order-status order-status--success">{{ 'bookmarks.order.success' | t: { hours: replyHours } }}</p>
+          }
+          @case ('error') {
+            <p class="order-status order-status--error">{{ 'bookmarks.order.error' | t: { email: businessEmail } }}</p>
+          }
+          @case ('too-big') {
+            <p class="order-status order-status--error">{{ 'bookmarks.order.tooBig' | t: { email: businessEmail } }}</p>
+          }
+          @case ('missing-fields') {
+            <p class="order-status order-status--error">{{ 'bookmarks.order.missingFields' | t }}</p>
+          }
+          @case ('missing-captcha') {
+            <p class="order-status order-status--error">{{ 'bookmarks.order.missingCaptcha' | t }}</p>
+          }
+          @case ('need-picture') {
+            <p class="order-status order-status--error">{{ 'bookmarks.order.needPicture' | t }}</p>
+          }
+        }
+      </div>
+    </form>
+  </igx-card-content>
+</igx-card>

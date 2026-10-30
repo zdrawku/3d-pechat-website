@@ -8,7 +8,7 @@
  * from it too, so a typo in a key is a compile error (strictTemplates).
  *
  * Loading (bundle size): the core namespaces below are used on every page and
- * ship in the main bundle. Each page namespace (home, portfolio, products,
+ * ship in the main bundle. Each page namespace (home, portfolio, products, bookmarks,
  * prices, contact, blog, privacy, terms) is imported by its own page component, which registers it
  * with I18nService — so a page's Bulgarian text stays in that page's lazy chunk,
  * as it was before localization. Other languages are one lazy chunk each
@@ -23,6 +23,7 @@ import misc from './misc.json';
 import type home from './home.json';
 import type portfolio from './portfolio.json';
 import type products from './products.json';
+import type bookmarks from './bookmarks.json';
 import type prices from './prices.json';
 import type contact from './contact.json';
 import type blog from './blog.json';
@@ -39,6 +40,7 @@ export interface PageMessages {
   home: typeof home;
   portfolio: typeof portfolio;
   products: typeof products;
+  bookmarks: typeof bookmarks;
   prices: typeof prices;
   contact: typeof contact;
   blog: typeof blog;

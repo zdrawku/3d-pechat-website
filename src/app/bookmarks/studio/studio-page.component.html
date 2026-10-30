@@ -1,0 +1,52 @@
+<div class="studio" data-testid="studio">
+  @if (!gate.unlocked()) {
+    <igx-card class="studio-gate" data-testid="studio-gate">
+      <igx-card-header>
+        <h1 igxCardHeaderTitle>{{ 'bookmarks.studio.title' | t }}</h1>
+      </igx-card-header>
+      <igx-card-content>
+        <p class="studio-intro">{{ 'bookmarks.studio.gateIntro' | t }}</p>
+        <form class="studio-form" (ngSubmit)="unlock()">
+          <igx-input-group type="border">
+            <input igxInput type="password" name="passphrase" autocomplete="current-password"
+                   [(ngModel)]="passphrase" data-testid="studio-passphrase" />
+            <label igxLabel>{{ 'bookmarks.studio.passphrase' | t }}</label>
+            @if (wrong()) {
+              <igx-hint>{{ 'bookmarks.studio.wrong' | t }}</igx-hint>
+            }
+          </igx-input-group>
+          <button igxButton="contained" type="submit" [disabled]="checking()" data-testid="studio-unlock">
+            <igx-icon>lock_open</igx-icon>
+            {{ 'bookmarks.studio.unlock' | t }}
+          </button>
+        </form>
+      </igx-card-content>
+    </igx-card>
+  } @else {
+    <div class="studio-bar">
+      <h1 class="studio-title">{{ 'bookmarks.studio.title' | t }}</h1>
+      <button igxButton="outlined" type="button" (click)="gate.lock()" data-testid="studio-lock">
+        <igx-icon>lock</igx-icon>
+        {{ 'bookmarks.studio.lock' | t }}
+      </button>
+    </div>
+
+    <!-- Header-only tabs: Ignite's header selects on click only when its tab has a content panel, so the click is handled here. -->
+    <igx-tabs [selectedIndex]="tab()" (selectedIndexChange)="tab.set($event)">
+      <igx-tab-item>
+        <igx-tab-header data-testid="studio-tab-editor" (click)="tab.set(0)"><span igxTabHeaderLabel>{{ 'bookmarks.studio.tabEditor' | t }}</span></igx-tab-header>
+      </igx-tab-item>
+      <igx-tab-item>
+        <igx-tab-header data-testid="studio-tab-orders" (click)="tab.set(1)"><span igxTabHeaderLabel>{{ 'bookmarks.studio.tabOrders' | t }}</span></igx-tab-header>
+      </igx-tab-item>
+    </igx-tabs>
+
+    <!-- Both stay mounted so a design isn't lost when looking at an order. -->
+    <div [hidden]="tab() !== 0">
+      <app-bookmarks-page [admin]="true" />
+    </div>
+    <div [hidden]="tab() !== 1">
+      <app-studio-orders />
+    </div>
+  }
+</div>

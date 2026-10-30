@@ -11,6 +11,7 @@ import seo from './seo.json';
 import home from './home.json';
 import portfolio from './portfolio.json';
 import productsUi from './products.json';
+import bookmarks from './bookmarks.json';
 import prices from './prices.json';
 import faqUi from './faq.json';
 import contact from './contact.json';
@@ -26,7 +27,7 @@ import products from './content/products.json';
 import videos from './content/videos.json';
 
 const english = {
-  messages: { common, shell, seo, home, portfolio, products: productsUi, prices, faq: faqUi, contact, blog: blogUi, privacy, terms, reviews, misc },
+  messages: { common, shell, seo, home, portfolio, products: productsUi, bookmarks, prices, faq: faqUi, contact, blog: blogUi, privacy, terms, reviews, misc },
   blog,
   faq,
   gallery,

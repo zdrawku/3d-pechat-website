@@ -1,0 +1,103 @@
+@use "igniteui-angular/theming" as *;
+@use '../../button-tones' as *;
+
+:host {
+  display: block;
+}
+
+.order-card {
+  width: 100%;
+  max-width: none;
+}
+
+// igx-card-content restyles its direct children (body type, margin: 0), so the
+// content is spaced with a gap on the content itself — not with margins.
+igx-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.order-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.order-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+
+  @media (max-width: 600px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.order-wide {
+  grid-column: 1 / -1;
+}
+
+.order-note {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: rem(14px);
+  color: var(--ig-gray-800);
+
+  igx-icon {
+    --ig-icon-size: #{rem(18px)};
+    color: var(--ig-primary-500);
+    flex-shrink: 0;
+  }
+}
+
+.order-captcha:empty {
+  display: none;
+}
+
+.order-submit {
+  align-self: flex-start;
+  @include primary-contained-button;
+}
+
+.order-privacy {
+  margin: 0;
+  font-size: rem(12.5px);
+  color: var(--ig-gray-700);
+
+  a {
+    color: var(--accent-on-tint);
+    text-underline-offset: 0.2em;
+  }
+}
+
+.order-status {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  font-size: rem(14px);
+
+  &--success {
+    color: #1b5e20;
+    background-color: rgba(76, 175, 80, 0.15);
+  }
+
+  &--error {
+    color: #b71c1c;
+    background-color: rgba(244, 67, 54, 0.12);
+  }
+}
+
+:host-context(.dark-theme) {
+  .order-status--success {
+    color: #a5d6a7;
+    background-color: rgba(76, 175, 80, 0.2);
+  }
+
+  .order-status--error {
+    color: #ef9a9a;
+    background-color: rgba(244, 67, 54, 0.2);
+  }
+}

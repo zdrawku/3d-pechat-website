@@ -147,6 +147,76 @@
   }
 }
 
+// Products group (approved design A): the chip, a caret that collapses its
+// sub-menu, and the sub-chips. The sub-list uses the SAME 4px gap as the main
+// list — the chips sit as tightly under Products as the parents sit to each other.
+.drawer_chip_group {
+  display: flex;
+  flex-direction: column;
+  gap: rem(4px);
+}
+
+.drawer_chip_row {
+  position: relative;
+  display: flex;
+
+  .drawer_chip {
+    flex: 1;
+    min-width: 0;
+    padding-inline-end: rem(44px); // room for the caret
+  }
+}
+
+.drawer_chip_toggle {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: rem(4px);
+  margin-block: auto;
+  --ig-icon-color: var(--ig-gray-700);
+}
+
+// On the orange (active) parent the caret takes the contrast colour like its text.
+.drawer_chip_row:has(> .drawer_chip.active) .drawer_chip_toggle {
+  --ig-icon-color: var(--ig-primary-500-contrast);
+  color: var(--ig-primary-500-contrast);
+}
+
+.drawer_sub_list {
+  display: flex;
+  flex-direction: column;
+  gap: rem(4px);
+  margin-inline-start: rem(12px);
+
+  // Every chip is one title line over one subtitle line, so they all have the
+  // same height: a sub-chip's text never wraps, it is cut with an ellipsis.
+  .drawer_chip_txt b,
+  .drawer_chip_txt span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+// The page you are on, inside the (orange) group: a quiet outline, not a second orange pill.
+.drawer_chip.drawer_chip--sub.active {
+  background: var(--bg-alt);
+  border-color: var(--ig-primary-500);
+
+  .drawer_chip_tile {
+    background: var(--bg-card);
+    color: var(--ig-gray-700);
+    --ig-icon-color: var(--ig-gray-700);
+  }
+
+  .drawer_chip_txt b {
+    color: var(--ig-gray-900);
+  }
+
+  .drawer_chip_txt span {
+    color: var(--ig-gray-700);
+  }
+}
+
 // Icon tile — the glyph colour and size come from Ignite's own icon tokens
 // (--ig-icon-color / --ig-icon-size), which the igx-icon inside reads. gray-700
 // clears 4.5:1 on the tile; no !important or igx-icon override needed.

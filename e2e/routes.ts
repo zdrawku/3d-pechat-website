@@ -22,6 +22,7 @@ export const CORE_ROUTES: RouteSpec[] = [
   { path: '/', title: '3D Печат' },
   { path: '/portfolio', title: 'Портфолио' },
   { path: '/products', title: 'Продукти' },
+  { path: '/products/bookmarks', heading: 'Разделители за книги', title: 'Разделители за книги' },
   { path: '/prices', title: 'Цени' },
   { path: '/contact', heading: 'Свържете се', title: 'Контакти' },
   { path: '/blog', title: 'Блог' },
@@ -40,6 +41,7 @@ export const CORE_ROUTES: RouteSpec[] = [
 export const ENGLISH_ROUTES: RouteSpec[] = [
   { path: '/en/portfolio', heading: 'Products and projects modelled for 3D printing', title: 'Portfolio' },
   { path: '/en/products', heading: '3D printed products', title: 'Products' },
+  { path: '/en/products/bookmarks', heading: 'Bookmarks', title: 'Bookmarks' },
   { path: '/en/prices', heading: '3D printing prices', title: 'Prices' },
   { path: '/en/contact', heading: 'Get in touch', title: 'Contact' },
   { path: '/en/blog', heading: '3D Printing Blog', title: 'Blog' },

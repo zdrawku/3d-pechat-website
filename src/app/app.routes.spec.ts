@@ -18,14 +18,19 @@ describe('app routes', () => {
     for (const { code } of TRANSLATED_LOCALES) {
       const group = routes.find((r) => r.path === code);
       expect(isIn(group, code)).withContext(`/${code}/ guard + data`).toBeTrue();
-      expect(childPaths(group)).withContext(`/${code}/ pages`).toEqual([...pagePaths, '**']);
+      expect(childPaths(group)).withContext(`/${code}/ pages`).toEqual([...pagePaths, 'studio', '**']);
     }
+  });
+
+  it('keeps the Studio out of the localized pages, so no hreflang, sitemap or llms.txt entry', () => {
+    expect(LOCALIZED_PAGES.some((page) => page.includes('studio'))).toBeFalse();
+    expect(LOCALIZED_PAGES).toContain('/products/bookmarks/');
   });
 
   it('serves the same pages at the root in Bulgarian, the blog in its own block', () => {
     const root = routes.find((r) => r.path === '' && r.children);
     expect(isIn(root, DEFAULT_LOCALE)).toBeTrue();
-    expect(childPaths(root)).toEqual([...pagePaths.filter((p) => p !== 'blog'), 'error']);
+    expect(childPaths(root)).toEqual([...pagePaths.filter((p) => p !== 'blog'), 'studio', 'error']);
   });
 
   it('serves the Bulgarian blog: its index, the old URLs, then one route for every post', () => {
