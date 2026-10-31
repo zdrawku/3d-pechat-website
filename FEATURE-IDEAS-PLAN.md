@@ -1,5 +1,8 @@
 # Feature Ideas Plan — Gift Box, Gallery Ordering, Product Workflow, Google Reviews
 
+> **What to build next, in priority order, is in [`ROADMAP.md`](ROADMAP.md)**
+> (also shown in the Studio's „Пътна карта“ tab). This file keeps the detail.
+
 > Drafted 2026-07-12, extended 2026-07-13 (Ideas 4–5) by Claude (Fable).
 > Status: **✅ variants approved by Zdravko on 2026-07-13.** Approved choices are
 > marked `✅ APPROVED`; the original autonomous decisions remain tagged

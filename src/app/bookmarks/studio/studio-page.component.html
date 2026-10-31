@@ -39,6 +39,9 @@
       <igx-tab-item>
         <igx-tab-header data-testid="studio-tab-orders" (click)="tab.set(1)"><span igxTabHeaderLabel>{{ 'bookmarks.studio.tabOrders' | t }}</span></igx-tab-header>
       </igx-tab-item>
+      <igx-tab-item>
+        <igx-tab-header data-testid="studio-tab-roadmap" (click)="tab.set(2)"><span igxTabHeaderLabel>{{ 'bookmarks.studio.tabRoadmap' | t }}</span></igx-tab-header>
+      </igx-tab-item>
     </igx-tabs>
 
     <!-- Both stay mounted so a design isn't lost when looking at an order. -->
@@ -48,5 +51,11 @@
     <div [hidden]="tab() !== 1">
       <app-studio-orders />
     </div>
+    <!-- The roadmap's text is fetched only the first time its tab is opened. -->
+    @defer (when tab() === 2) {
+      <div [hidden]="tab() !== 2">
+        <app-studio-roadmap />
+      </div>
+    }
   }
 </div>

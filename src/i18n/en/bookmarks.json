@@ -221,7 +221,15 @@
     "orderCustomer": "Customer",
     "orderId": "Order number",
     "expertReset": "Back to defaults",
-    "nozzle": "Nozzle"
+    "nozzle": "Nozzle",
+    "tabRoadmap": "Roadmap",
+    "roadmapIntro": "What to build next, by priority. Source: ROADMAP.md in the repo – edit it there.",
+    "roadmapArea": "Area",
+    "roadmapAll": "All",
+    "roadmapCount": "Items: {count}",
+    "roadmapImpact": "Impact",
+    "roadmapEffort": "Effort",
+    "roadmapStatus": "Status"
   },
   "framer": {
     "label": "Position of the picture in the bookmark (arrow keys: move, + and −: zoom)",

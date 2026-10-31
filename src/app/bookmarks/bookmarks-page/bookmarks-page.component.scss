@@ -1,9 +1,11 @@
 @use "igniteui-angular/theming" as *;
 @use '../../fluid' as *;
 @use '../../button-tones' as *;
+@use '../../rounded-controls' as *;
 
 :host {
   display: block;
+  @include rounded-controls;
   // Transparent — the dotted texture is painted once on <body> (see styles.scss).
 }
 
@@ -24,9 +26,14 @@
   }
 }
 
+// „Всички продукти“ — a secondary action, so the same teal outlined pill as the
+// blog's „Назад към статиите“.
 .back-link {
+  @include teal-outlined-button;
   align-self: flex-start;
-  color: var(--accent-on-tint);
+  display: inline-flex;
+  align-items: center;
+  gap: rem(8px);
 }
 
 // Ignite's tabs and button group, coloured only through their theme variables:
@@ -294,6 +301,7 @@ igx-card-content {
 }
 
 .shape {
+  --ig-outlined-button-border-radius: var(--radius-md); // a tile, not a pill
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -360,6 +368,7 @@ igx-card-content {
 }
 
 .look.igx-button--outlined {
+  --ig-outlined-button-border-radius: var(--radius-md); // a tile, not a pill
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -9,20 +9,21 @@ import bookmarksMessages from '../../../i18n/bg/bookmarks.json';
 import { BookmarksPageComponent } from '../bookmarks-page/bookmarks-page.component';
 import { StudioOrdersComponent } from './studio-orders.component';
 import { StudioGateService } from './studio-gate.service';
+import { StudioRoadmapComponent } from './roadmap/studio-roadmap.component';
 
 /**
  * The bookmark Studio for the shop owners (hidden route /studio/).
  *
  * Not in any menu, sitemap or llms.txt, and `noindex`. Prerendered as the
  * passphrase gate only. Unlocked, it is the same page component as the
- * customer's, with the admin flag, plus an Orders tab (see studio-gate.service
+ * customer's, with the admin flag, plus an Orders tab and a Roadmap tab (see studio-gate.service
  * for what the gate is and is not).
  */
 @Component({
   selector: 'app-studio-page',
   imports: [
     IGX_CARD_DIRECTIVES, IGX_INPUT_GROUP_DIRECTIVES, IGX_TABS_DIRECTIVES, IgxButtonDirective, IgxIconComponent,
-    FormsModule, TranslatePipe, BookmarksPageComponent, StudioOrdersComponent
+    FormsModule, TranslatePipe, BookmarksPageComponent, StudioOrdersComponent, StudioRoadmapComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './studio-page.component.html',

@@ -1,0 +1,18 @@
+// The site's rounded shapes for Ignite components. The theme is built with
+// `$roundness: 0` (styles.scss), so every Ignite card, button and field is square
+// unless a page sets its radius token. The tokens inherit, so including this once
+// on a page's :host rounds every Ignite component inside it, child components too.
+//
+// Usage: `@use "../rounded-controls" as *;` then `:host { @include rounded-controls; }`
+
+@mixin rounded-controls {
+  --ig-card-border-radius: var(--radius-lg);
+  --ig-contained-button-border-radius: var(--radius-pill);
+  --ig-outlined-button-border-radius: var(--radius-pill);
+  --ig-flat-button-border-radius: var(--radius-pill);
+  --ig-flat-icon-button-border-radius: var(--radius-pill);
+  --ig-outlined-icon-button-border-radius: var(--radius-pill);
+  --ig-button-group-border-radius: var(--radius-pill);
+  --ig-input-group-border-border-radius: var(--radius-sm);
+  --ig-input-group-box-border-radius: var(--radius-sm);
+}

@@ -345,6 +345,8 @@
 // the right; stacks on phones. igx-card-content restyles its direct children, so
 // the copy is spaced by the body's gap and nothing here sets a child margin.
 .bookmarks-promo {
+  // Rounded like the rest of the site (the theme's $roundness is 0).
+  --ig-card-border-radius: var(--radius-lg);
   display: grid;
   grid-template-columns: minmax(rem(140px), 30%) minmax(0, 1fr);
   width: 100%;
@@ -371,6 +373,7 @@
 
 .bookmarks-promo__body a[igxButton] {
   @include primary-contained-button;
+  --ig-contained-button-border-radius: var(--radius-pill);
   align-self: flex-start;
 }
 

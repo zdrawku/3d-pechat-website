@@ -1,8 +1,10 @@
 @use "igniteui-angular/theming" as *;
 @use '../../button-tones' as *;
+@use '../../rounded-controls' as *;
 
 :host {
   display: block;
+  @include rounded-controls;
 }
 
 .studio {

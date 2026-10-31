@@ -18,8 +18,8 @@
 
 <div class="bookmarks-page" [class.bookmarks-page--admin]="admin()" data-testid="bookmarks-page">
   @if (!admin()) {
-    <a igxButton="flat" class="back-link" [routerLink]="'/products' | localizePath">
-      <igx-icon>arrow_back</igx-icon>
+    <a igxButton="outlined" class="back-link" [routerLink]="'/products' | localizePath" data-testid="bookmarks-back">
+      <igx-icon aria-hidden="true">arrow_back</igx-icon>
       {{ 'shell.drawer.productsAll.title' | t }}
     </a>
   }

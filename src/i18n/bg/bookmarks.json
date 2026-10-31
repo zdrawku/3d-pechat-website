@@ -221,7 +221,15 @@
     "orderCustomer": "Клиент",
     "orderId": "Номер на поръчката",
     "expertReset": "Върни по подразбиране",
-    "nozzle": "Дюза"
+    "nozzle": "Дюза",
+    "tabRoadmap": "Пътна карта",
+    "roadmapIntro": "Какво да изградим по-нататък, подредено по приоритет. Източник: ROADMAP.md в репото – там се редактира.",
+    "roadmapArea": "Област",
+    "roadmapAll": "Всички",
+    "roadmapCount": "Идеи: {count}",
+    "roadmapImpact": "Ефект",
+    "roadmapEffort": "Труд",
+    "roadmapStatus": "Статус"
   },
   "framer": {
     "label": "Позиция на снимката в разделителя (стрелки: местене, + и −: мащаб)",
