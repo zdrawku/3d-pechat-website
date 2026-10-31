@@ -1,0 +1,274 @@
+{
+  "title": "Bookmarks",
+  "subtitle": "Design your own bookmark from your picture, from a pattern, or as a whole set. You see it straight away, and we 3D print it.",
+  "modes": {
+    "label": "What kind of bookmark",
+    "picture": "Your picture",
+    "pattern": "Pattern",
+    "set": "Set"
+  },
+  "design": {
+    "heading": "Settings",
+    "previewHeading": "Live preview",
+    "previewAlt": "Preview of your bookmark",
+    "previewWaiting": "The preview appears here.",
+    "previewLoading": "Preparing the preview…",
+    "engineLoading": "Loading the designer…",
+    "engineError": "The designer could not load. Reload the page or write to us.",
+    "previewError": "The preview failed. Try another picture or setting."
+  },
+  "picture": {
+    "heading": "Picture",
+    "choose": "Upload a picture",
+    "change": "Change the picture",
+    "remove": "Remove the picture",
+    "hint": "JPG, PNG or WebP, up to {maxMb} MB. The picture stays in your browser and is not uploaded anywhere.",
+    "tooLarge": "The picture is over {maxMb} MB. Choose a smaller one.",
+    "wrongType": "That file is not a JPG, PNG or WebP.",
+    "needed": "Upload a picture to see your bookmark.",
+    "slotN": "Picture {n}",
+    "add": "Add another picture"
+  },
+  "pattern": {
+    "heading": "Pattern",
+    "styleHeading": "Style",
+    "slotsLabel": "Bookmarks in the set",
+    "slotN": "Bookmark {n}",
+    "addSlot": "Add a bookmark",
+    "removeSlot": "Remove bookmark {n}",
+    "autoBack": "A name needs a solid back, so the pattern is now “With a back”. Remove the name for a see-through pattern."
+  },
+  "shape": {
+    "heading": "Shape",
+    "cardHeading": "Shape and size"
+  },
+  "size": {
+    "heading": "Size",
+    "custom": "Custom size",
+    "width": "Width",
+    "height": "Length",
+    "range": "Width {wMin} to {wMax} mm, length {hMin} to {hMax} mm.",
+    "outOfRange": "That size can’t be made: width {wMin} to {wMax} mm, length {hMin} to {hMax} mm."
+  },
+  "colours": {
+    "heading": "Colours",
+    "colour": "Colour {n}",
+    "suggest": "Suggest again",
+    "suggesting": "Picking colours…",
+    "hintPicture": "Picked from your picture. Change any of them freely.",
+    "hintPattern": "How many colours you need depends on the pattern style.",
+    "roles": {
+      "back": "Back",
+      "pattern": "Pattern",
+      "border": "Frame"
+    }
+  },
+  "name": {
+    "heading": "Name",
+    "optional": "optional",
+    "placeholder": "e.g. Maria",
+    "placeHeading": "Where the name goes",
+    "none": "None",
+    "top": "Top",
+    "middle": "Middle",
+    "bottom": "Bottom",
+    "fontHeading": "Font",
+    "letterHeading": "Letter size",
+    "auto": "Auto",
+    "letterHint": "Auto = the largest letters that fit. By hand: {min} to {max}."
+  },
+  "hole": {
+    "heading": "Hanging hole",
+    "top": "Top",
+    "bottom": "Bottom",
+    "none": "No hole"
+  },
+  "set": {
+    "heading": "Set",
+    "kindLabel": "Kind of set",
+    "kindSplit": "Split picture",
+    "kindNames": "Different names",
+    "splitHint": "The picture is split across the bookmarks, so together they make one big picture.",
+    "countLabel": "Number of bookmarks",
+    "baseLabel": "The design comes from",
+    "basePicture": "A picture",
+    "basePattern": "A pattern",
+    "namesHeading": "Names",
+    "nameN": "Name for bookmark {n}",
+    "addName": "Add a name",
+    "removeName": "Remove the name",
+    "kindPictures": "Different pictures",
+    "picturesHint": "Up to {max} bookmarks, each with its own picture. Add the pictures one by one: all of them show in the preview.",
+    "namesHint": "The same design for all, with a different name on each bookmark.",
+    "kindPatterns": "Different patterns",
+    "patternsHint": "Up to {max} bookmarks, each with its own pattern. The style and colours are shared by the set."
+  },
+  "privacy": {
+    "heading": "Your picture stays with you",
+    "text": "The picture is processed in your browser, never uploaded or stored, and disappears when you close the page. The order only sends your settings and a simplified few-colour version of the picture, together with your contact details."
+  },
+  "order": {
+    "open": "Order",
+    "heading": "Order a bookmark",
+    "priceNote": "We'll confirm the price by email.",
+    "timeNote": "Production and delivery: {days} working days, depending on the load and priority.",
+    "name": "Name",
+    "namePlaceholder": "Your name",
+    "email": "Email",
+    "emailPlaceholder": "jane@example.com",
+    "phone": "Phone",
+    "phonePlaceholder": "0888 123 456",
+    "quantity": "Quantity",
+    "notes": "Notes",
+    "notesPlaceholder": "Anything we should know about the order (optional)",
+    "required": "Required field",
+    "submit": "Send the order",
+    "submitting": "Sending…",
+    "success": "Your order is sent. We'll write to you within {hours} hours with the price and the time.",
+    "error": "The order was not sent. Try again or write to us at {email}.",
+    "missingFields": "Fill in your name, email, phone and quantity.",
+    "missingCaptcha": "Please confirm you are not a robot.",
+    "needPicture": "Upload a picture first.",
+    "tooBig": "The order is too large to send. Try a smaller picture or write to us at {email}.",
+    "privacyBefore": "We only send what you see here. More in the ",
+    "privacyLink": "privacy policy",
+    "privacyAfter": ".",
+    "fromName": "3dpechat.bg bookmark order (English)",
+    "subject": "Bookmark order {id}"
+  },
+  "labels": {
+    "shapes": {
+      "rectangle": "Rectangle",
+      "rounded": "Rounded",
+      "pennant": "Pennant",
+      "lace": "Lace point",
+      "crystal": "Crystal",
+      "octagon": "Octagon",
+      "arch": "Arch",
+      "swallowtail": "Swallowtail",
+      "ticket": "Ticket",
+      "ogee": "Dome"
+    },
+    "patterns": {
+      "iso_cubes": "Isometric cubes",
+      "hatched_cubes": "Hatched cubes",
+      "truchet": "Truchet arcs",
+      "seigaiha": "Seigaiha",
+      "waves": "Waves",
+      "diamonds": "Diamond lattice",
+      "asanoha": "Asanoha",
+      "tri_y": "Y weave",
+      "spirals": "Spirals"
+    },
+    "patternLooks": {
+      "cut": "See-through",
+      "cut-back": "With a back",
+      "relief": "Raised"
+    },
+    "patternLookHints": {
+      "cut": "Open pattern: the page shows through",
+      "cut-back": "The pattern sits on a thin solid back",
+      "relief": "The pattern is raised on a thick base"
+    },
+    "quality": {
+      "economy": "Economical",
+      "balanced": "Balanced",
+      "quality": "Quality",
+      "best": "Best"
+    }
+  },
+  "warnings": {
+    "onBookmark": "Bookmark {n}: {text}",
+    "NAME_DOES_NOT_FIT": "The name does not fit. Make it shorter, or choose a narrower font or a wider bookmark.",
+    "NAME_FONT_MISSING_LETTERS": "The font is missing some letters of the name. Choose another font.",
+    "NAME_NO_CONTRAST": "The name will be hard to read: the colours are too close. Choose a lighter or darker colour.",
+    "NAME_BOOKMARK_NARROW": "Only very short names fit on a bookmark this narrow.",
+    "DETAIL_SIMPLIFIED": "Some detail was too fine to print and has been simplified.",
+    "BRIDGES_ADDED": "Thin bridges were added to hold loose parts in place.",
+    "NOTHING_TO_PRINT": "Nothing is left to print: the picture is too faint or too fine for these colours.",
+    "HOLE_NO_ROOM": "There is no room for the hanging hole in this shape and size, so the bookmark has none.",
+    "SIZE_NARROW": "A very narrow bookmark: names must be short and fine picture detail is lost.",
+    "SIZE_SHORT": "A very short bookmark: there is little room for the picture and the name.",
+    "PICTURE_COLOURS_IGNORED": "The set uses the same colours for every picture."
+  },
+  "errors": {
+    "namesNeedBack": "A name on a see-through pattern has nothing to sit on. Choose “With a back” or “Raised”, or remove the name.",
+    "PICTURE_UNREADABLE": "The picture cannot be read. Try a JPG, PNG or WebP.",
+    "PICTURE_TOO_LARGE": "The picture is too large. Try a smaller one.",
+    "SIZE_OUT_OF_RANGE": "That size cannot be made. Choose another."
+  },
+  "studio": {
+    "title": "Bookmark Studio",
+    "gateIntro": "For the shop owners only. Enter the passphrase.",
+    "passphrase": "Passphrase",
+    "unlock": "Unlock",
+    "wrong": "Wrong passphrase.",
+    "lock": "Lock",
+    "tabEditor": "Designer",
+    "tabOrders": "Orders",
+    "expertHeading": "Every designer option",
+    "expertNote": "The engine’s expert settings. Changes apply to the preview, the order and the print files.",
+    "downloadHeading": "Print files",
+    "downloadNote": "3MF, STL and zip. Works once the designer is connected.",
+    "download": "Build and download",
+    "building": "Building the 3MF, STL and zip…",
+    "downloadError": "The files could not be built: {message}",
+    "ordersEmpty": "Paste the text of the order_json field from the order email (or open a saved bookmark-order-….json file) to see the order and build it.",
+    "pasteOrder": "order_json from the email",
+    "openPasted": "Open the pasted order",
+    "openOrder": "Open a file",
+    "orderError": "The order could not be opened: {message}",
+    "orderCustomer": "Customer",
+    "orderId": "Order number",
+    "expertReset": "Back to defaults",
+    "nozzle": "Nozzle",
+    "tabRoadmap": "Roadmap",
+    "roadmapIntro": "What to build next, by priority. Source: ROADMAP.md in the repo – edit it there.",
+    "roadmapArea": "Area",
+    "roadmapAll": "All",
+    "roadmapCount": "Items: {count}",
+    "roadmapImpact": "Impact",
+    "roadmapEffort": "Effort",
+    "roadmapStatus": "Status"
+  },
+  "framer": {
+    "label": "Position of the picture in the bookmark (arrow keys: move, + and −: zoom)",
+    "hint": "Drag the picture to centre it. The wheel zooms.",
+    "reset": "Centre",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out"
+  },
+  "thickness": {
+    "heading": "Thickness, mm"
+  },
+  "frame": {
+    "heading": "Frame",
+    "none": "No frame"
+  },
+  "quality": {
+    "heading": "Finish",
+    "hint": "Higher quality means more colour changes during printing.",
+    "facts": "{swaps} colour changes · {grams} g of filament for the changes · {plan}"
+  },
+  "fonts": {
+    "groups": {
+      "viking": "Viking and gothic",
+      "storybook": "Old-world and storybook",
+      "bold": "Bold, easiest to print",
+      "narrow": "Narrow, for long names",
+      "serif": "Book serifs",
+      "playful": "Playful"
+    },
+    "short": "for short names",
+    "latinOnly": "Latin letters only",
+    "sample": "Maria"
+  },
+  "stepper": {
+    "decrease": "Decrease: {what}",
+    "increase": "Increase: {what}"
+  },
+  "units": {
+    "mm": "{n} mm",
+    "mmShort": "mm"
+  }
+}

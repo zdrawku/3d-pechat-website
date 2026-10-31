@@ -62,13 +62,16 @@ export const LOCALIZED_PAGES: readonly string[] = registry.localizedPages;
  */
 export const TRANSLATED_POSTS = registry.translatedPosts as Partial<Record<Locale, Readonly<Record<string, string>>>>;
 
+/** Namespaces whose page isn't at `/<namespace>/`: the home page, and the bookmarks page below Products. */
+const PAGE_PATHS: Partial<Record<PageNamespace, string>> = { home: '/', bookmarks: '/products/bookmarks/' };
+
 /**
- * A page namespace's Bulgarian path: 'home' → '/', 'prices' → '/prices/'.
- * locales.spec.ts checks that the namespaces in seo.json map to exactly
- * LOCALIZED_PAGES.
+ * A page namespace's Bulgarian path: 'home' → '/', 'prices' → '/prices/',
+ * 'bookmarks' → '/products/bookmarks/'. locales.spec.ts checks that the
+ * namespaces in seo.json map to exactly LOCALIZED_PAGES.
  */
 export function pagePath(page: PageNamespace): string {
-  return page === 'home' ? '/' : `/${page}/`;
+  return PAGE_PATHS[page] ?? `/${page}/`;
 }
 
 export function isLocale(value: unknown): value is Locale {

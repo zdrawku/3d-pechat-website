@@ -1,0 +1,143 @@
+@use "igniteui-angular/theming" as *;
+@use '../../../info-card' as info-card;
+@use '../../../button-tones' as *;
+
+:host {
+  display: block;
+}
+
+.roadmap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.roadmap-intro,
+.tier-description {
+  margin: 0;
+  color: var(--ig-gray-800);
+}
+
+.roadmap-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.area-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+
+  .igx-button--contained {
+    @include primary-contained-button;
+  }
+
+  .igx-button--outlined {
+    @include teal-outlined-button;
+  }
+}
+
+.roadmap-count {
+  font-size: rem(13px);
+  color: var(--ig-gray-700);
+}
+
+.tier {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.tier-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: rem(20px);
+
+  igx-icon {
+    color: var(--ig-primary-500);
+  }
+}
+
+.tier-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(rem(300px), 1fr));
+  gap: var(--space-4);
+
+  li {
+    display: flex;
+  }
+}
+
+// High impact gets the brand colour down its edge, medium the teal, low none.
+.item {
+  width: 100%;
+  background: var(--bg-card);
+  border-left: 4px solid transparent;
+
+  &[data-impact='High'] {
+    border-left-color: var(--ig-primary-500);
+  }
+
+  &[data-impact='Medium'] {
+    border-left-color: var(--ig-secondary-500);
+  }
+
+  igx-card-header {
+    @include info-card.head;
+  }
+
+  [igxCardHeaderTitle] {
+    @include info-card.title;
+  }
+
+  igx-card-content {
+    @include info-card.body(rem(12px));
+  }
+
+  // A link label is a doc and its section („HEALTH-PLAN.md § 2. Next“): let it wrap.
+  igx-card-actions a[igxButton] {
+    height: auto;
+    min-height: rem(36px);
+    white-space: normal;
+    text-align: start;
+    text-transform: none;
+  }
+}
+
+.facts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: rem(13px);
+
+  div {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  dt {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    flex: 0 0 rem(96px);
+    font-weight: 600;
+    color: var(--ig-gray-800);
+
+    igx-icon {
+      --size: #{rem(16px)};
+      color: var(--ig-gray-700);
+    }
+  }
+
+  dd {
+    margin: 0;
+    color: var(--ig-gray-900);
+  }
+}

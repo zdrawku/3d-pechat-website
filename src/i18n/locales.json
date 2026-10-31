@@ -4,7 +4,7 @@
     { "code": "bg", "label": "Български", "englishName": "Bulgarian", "ogLocale": "bg_BG", "intl": "bg-BG" },
     { "code": "en", "label": "English", "englishName": "English", "ogLocale": "en_US", "intl": "en-US" }
   ],
-  "localizedPages": ["/", "/portfolio/", "/products/", "/prices/", "/contact/", "/privacy/", "/terms/", "/blog/"],
+  "localizedPages": ["/", "/portfolio/", "/products/", "/products/bookmarks/", "/prices/", "/contact/", "/privacy/", "/terms/", "/blog/"],
   "translatedPosts": {
     "en": {
       "pla-pla-pla-pro-i-pln-razliki-i-izbor": "pla-vs-pla-plus-vs-pla-pro-vs-pln",

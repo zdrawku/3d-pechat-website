@@ -2,6 +2,7 @@ import { coreMessages } from './bg';
 import home from './bg/home.json';
 import portfolio from './bg/portfolio.json';
 import products from './bg/products.json';
+import bookmarks from './bg/bookmarks.json';
 import prices from './bg/prices.json';
 import contact from './bg/contact.json';
 import blog from './bg/blog.json';
@@ -28,7 +29,7 @@ import { TRANSLATED_BLOG_CONTENT } from '../app/services/blog-content.translatio
 const BUNDLES: Record<string, LocaleBundle> = { en: english };
 
 /** All Bulgarian messages: the core namespaces plus every page's own file. */
-const bulgarian = { ...coreMessages, home, portfolio, products, prices, contact, blog, privacy, terms };
+const bulgarian = { ...coreMessages, home, portfolio, products, bookmarks, prices, contact, blog, privacy, terms };
 
 const placeholders = (text: string): string[] => [...text.matchAll(/\{(\w+)\}/g)].map(m => m[1]).sort();
 

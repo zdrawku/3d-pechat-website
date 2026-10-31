@@ -1,0 +1,564 @@
+@use "igniteui-angular/theming" as *;
+@use '../../fluid' as *;
+@use '../../button-tones' as *;
+@use '../../rounded-controls' as *;
+
+:host {
+  display: block;
+  @include rounded-controls;
+  // Transparent — the dotted texture is painted once on <body> (see styles.scss).
+}
+
+.bookmarks-page {
+  max-width: rem(1100px);
+  margin: 0 auto;
+  padding: rem(24px) rem(32px) rem(64px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+
+  @media (max-width: 768px) {
+    padding: rem(20px) rem(16px) rem(96px); // room for the sticky order bar
+  }
+
+  &--admin {
+    padding-inline: 0;
+  }
+}
+
+// „Всички продукти“ — a secondary action, so the same teal outlined pill as the
+// blog's „Назад към статиите“.
+.back-link {
+  @include teal-outlined-button;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: rem(8px);
+}
+
+// Ignite's tabs and button group, coloured only through their theme variables:
+// the site's orange for the selected state, readable text on the card in both themes.
+igx-tabs {
+  --ig-tabs-item-text-color: var(--ig-gray-700);
+  --ig-tabs-item-hover-color: var(--ig-gray-900);
+  --ig-tabs-item-active-color: var(--ig-primary-500);
+  --ig-tabs-item-active-hover-color: var(--ig-primary-500);
+  --ig-tabs-indicator-color: var(--ig-primary-500);
+}
+
+igx-buttongroup {
+  --ig-button-group-item-background: var(--bg-card);
+  --ig-button-group-item-text-color: var(--ig-gray-900);
+  --ig-button-group-item-icon-color: var(--ig-gray-900);
+  --ig-button-group-item-border-color: var(--ig-gray-400);
+  --ig-button-group-item-hover-background: color-mix(in srgb, var(--ig-primary-500) 10%, var(--bg-card));
+  --ig-button-group-item-hover-text-color: var(--ig-gray-900);
+  --ig-button-group-item-hover-icon-color: var(--ig-gray-900);
+  --ig-button-group-item-hover-border-color: var(--ig-gray-400);
+  --ig-button-group-item-focused-background: color-mix(in srgb, var(--ig-primary-500) 10%, var(--bg-card));
+  --ig-button-group-item-focused-text-color: var(--ig-gray-900);
+  --ig-button-group-item-focused-border-color: var(--ig-primary-500);
+  --ig-button-group-item-focused-hover-background: color-mix(in srgb, var(--ig-primary-500) 14%, var(--bg-card));
+  --ig-button-group-item-focused-hover-text-color: var(--ig-gray-900);
+  --ig-button-group-item-focused-hover-border-color: var(--ig-primary-500);
+  --ig-button-group-item-active-background: color-mix(in srgb, var(--ig-primary-500) 16%, var(--bg-card));
+  --ig-button-group-item-active-border-color: var(--ig-gray-400);
+  --ig-button-group-item-selected-background: var(--ig-primary-500);
+  --ig-button-group-item-selected-text-color: var(--ig-primary-500-contrast);
+  --ig-button-group-item-selected-icon-color: var(--ig-primary-500-contrast);
+  --ig-button-group-item-selected-border-color: var(--ig-primary-500);
+  --ig-button-group-item-selected-hover-background: var(--ig-primary-500);
+  --ig-button-group-item-selected-hover-text-color: var(--ig-primary-500-contrast);
+  --ig-button-group-item-selected-hover-icon-color: var(--ig-primary-500-contrast);
+  --ig-button-group-item-selected-hover-border-color: var(--ig-primary-500);
+  --ig-button-group-item-selected-focus-background: var(--ig-primary-500);
+  --ig-button-group-item-selected-focus-hover-background: var(--ig-primary-500);
+  --ig-button-group-item-selected-active-background: var(--ig-primary-500);
+  --ig-button-group-item-selected-active-border-color: var(--ig-primary-500);
+
+  // A long label wraps to a second line instead of being clipped (three or four choices
+  // don't fit a phone's width on one line); a short one keeps its single-line height.
+  button[igxButton] {
+    white-space: normal;
+    text-align: center;
+    line-height: 1.25;
+    height: auto;
+    min-height: 30px;
+    padding-block: 5px;
+
+    // A single long word ("В средата") can't wrap: give it the room the padding takes.
+    @media (max-width: 480px) {
+      padding-inline: 6px;
+      letter-spacing: 0.25px;
+    }
+  }
+}
+
+// Four quality levels or four kinds of set: single long words („Балансирано“, „Различни“)
+// that can't wrap. Where a row of four doesn't fit (a phone, a narrow laptop) they go two
+// rows of two; the quality labels are also smaller, tighter capitals.
+.two-rows {
+  display: block;
+  container-type: inline-size;
+
+  @container (max-width: 400px) {
+    ::ng-deep .igx-button-group {
+      flex-wrap: wrap;
+    }
+
+    button[igxButton] {
+      flex: 1 1 50%;
+    }
+  }
+}
+
+igx-buttongroup[data-testid='bookmark-quality'] button[igxButton] {
+  font-size: 0.6875rem;
+  letter-spacing: 0;
+  padding-inline: 4px;
+}
+
+// The site's AA-safe teal for outline buttons; the shape and pattern pickers
+// below swap it for a neutral outline that turns orange when chosen.
+.igx-button--outlined {
+  @include teal-outlined-button;
+}
+
+.order-button,
+.order-bar button {
+  @include primary-contained-button;
+}
+
+// ---- the layout: controls on the left, a sticky live preview on the right ----
+.designer {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: var(--space-5);
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.designer-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+
+  @media (max-width: 900px) {
+    order: 2; // the preview comes first on a phone
+  }
+}
+
+.designer-preview {
+  position: sticky;
+  top: var(--space-4);
+  min-width: 0;
+
+  @media (max-width: 900px) {
+    order: 1;
+    position: static;
+  }
+}
+
+.control-card,
+.preview-card,
+.privacy-card {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+// igx-card-content restyles its direct children (body type, margin: 0), so the
+// content is spaced with a gap on the content itself — never with child margins.
+igx-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.field-label {
+  font-size: rem(13px);
+  font-weight: 600;
+  color: var(--ig-gray-800);
+}
+
+.hint {
+  margin: 0;
+  font-size: rem(13px);
+  color: var(--ig-gray-700);
+}
+
+.problem {
+  margin: 0;
+  font-size: rem(13.5px);
+  color: #b71c1c;
+}
+
+.warning {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: rem(13px);
+  background: color-mix(in srgb, var(--ig-warn-500) 22%, transparent);
+}
+
+.optional {
+  font-weight: 400;
+  font-size: rem(13px);
+  color: var(--ig-gray-700);
+}
+
+.designer-status {
+  text-align: center;
+  padding: var(--space-8) 0;
+}
+
+// ---- the picture ----
+.picture-slots {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  // Several pictures: one card each, side by side as far as the width allows.
+  &--several {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(rem(200px), 1fr));
+    gap: var(--space-3);
+  }
+}
+
+.picture-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-width: 0;
+
+  .picture-slots--several & {
+    padding: var(--space-3);
+    border: rem(1px) solid var(--ig-gray-300);
+    border-radius: var(--radius-md);
+  }
+}
+
+.picture-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.picture-name {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  font-size: rem(13.5px);
+  overflow-wrap: anywhere;
+
+  igx-icon {
+    --ig-icon-size: #{rem(18px)};
+    flex-shrink: 0;
+  }
+}
+
+// ---- patterns and shapes: radio-style buttons ----
+.choice-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.shape-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(rem(112px), 1fr));
+  gap: var(--space-2);
+}
+
+.choice.igx-button--outlined,
+.shape.igx-button--outlined {
+  --ig-outlined-button-foreground: var(--ig-gray-900);
+  --ig-outlined-button-hover-foreground: var(--ig-gray-900);
+  --ig-outlined-button-focus-foreground: var(--ig-gray-900);
+  --ig-outlined-button-focus-hover-foreground: var(--ig-gray-900);
+  --ig-outlined-button-focus-visible-foreground: var(--ig-gray-900);
+  --ig-outlined-button-active-foreground: var(--ig-gray-900);
+  --ig-outlined-button-border-color: var(--ig-gray-400);
+  --ig-outlined-button-hover-border-color: var(--ig-primary-500);
+  --ig-outlined-button-focus-border-color: var(--ig-primary-500);
+  --ig-outlined-button-focus-visible-border-color: var(--ig-primary-500);
+  --ig-outlined-button-active-border-color: var(--ig-primary-500);
+}
+
+.choice.is-selected,
+.shape.is-selected {
+  border-color: var(--ig-primary-500);
+  box-shadow: 0 0 0 rem(1px) var(--ig-primary-500);
+  background: color-mix(in srgb, var(--ig-primary-500) 10%, transparent);
+}
+
+.shape {
+  --ig-outlined-button-border-radius: var(--radius-md); // a tile, not a pill
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  height: auto;
+  padding: var(--space-2);
+  white-space: normal;
+  text-transform: none;
+}
+
+.shape-thumb {
+  display: block;
+  height: rem(64px);
+  color: var(--ig-gray-800);
+
+  ::ng-deep svg {
+    height: 100%;
+    width: auto;
+  }
+}
+
+.shape-name {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-size: rem(11px);
+  line-height: 1.2;
+  text-align: center;
+}
+
+// ---- one small setting per row: its label on the left, the control on the right (stacked on phones) ----
+.setting-row {
+  display: grid;
+  grid-template-columns: rem(132px) minmax(0, 1fr);
+  gap: var(--space-2) var(--space-3);
+  align-items: center;
+
+  &--top {
+    align-items: start;
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.setting-control {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.custom-size {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+// ---- pattern looks: picture tiles drawn in the chosen colours (variant 2A) ----
+.look-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(rem(104px), 1fr));
+  gap: var(--space-2);
+}
+
+.look.igx-button--outlined {
+  --ig-outlined-button-border-radius: var(--radius-md); // a tile, not a pill
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  height: auto;
+  padding: var(--space-2);
+  white-space: normal;
+  text-transform: none;
+  letter-spacing: normal;
+  --ig-outlined-button-foreground: var(--ig-gray-900);
+  --ig-outlined-button-hover-foreground: var(--ig-gray-900);
+  --ig-outlined-button-focus-foreground: var(--ig-gray-900);
+  --ig-outlined-button-focus-visible-foreground: var(--ig-gray-900);
+  --ig-outlined-button-active-foreground: var(--ig-gray-900);
+  --ig-outlined-button-border-color: var(--ig-gray-400);
+  --ig-outlined-button-hover-border-color: var(--ig-primary-500);
+  --ig-outlined-button-focus-border-color: var(--ig-primary-500);
+}
+
+.look.is-selected {
+  border-color: var(--ig-primary-500);
+  box-shadow: 0 0 0 rem(1px) var(--ig-primary-500);
+  background: color-mix(in srgb, var(--ig-primary-500) 10%, transparent);
+}
+
+// A tiny bookmark: the pattern's lines over see-through (a checkerboard), a solid back, or a raised relief.
+.look-drawing {
+  position: relative;
+  width: rem(34px);
+  aspect-ratio: 1 / 3.4;
+  overflow: hidden;
+  border: rem(3px) solid var(--look-border);
+  border-radius: rem(4px);
+  background: repeating-conic-gradient(var(--ig-gray-300) 0 25%, var(--bg-card) 0 50%);
+  background-size: rem(8px) rem(8px);
+
+  &--back,
+  &--relief {
+    background: var(--look-back);
+  }
+}
+
+.look-lines {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(60deg, var(--look-pattern) 0 2px, transparent 2px 10px),
+    repeating-linear-gradient(-60deg, var(--look-pattern) 0 2px, transparent 2px 10px),
+    repeating-linear-gradient(0deg, var(--look-pattern) 0 2px, transparent 2px 10px);
+
+  .look-drawing--relief & {
+    filter: drop-shadow(1px 1px 0 rgb(0 0 0 / 0.35));
+  }
+}
+
+.look-name {
+  font-size: rem(13px);
+  font-weight: 600;
+}
+
+.look-hint {
+  font-size: rem(11px);
+  line-height: 1.25;
+  color: var(--ig-gray-700);
+  text-align: center;
+}
+
+// ---- a set of different patterns: one slot per bookmark ----
+.pattern-slots {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.pattern-slot {
+  display: inline-flex;
+  align-items: center;
+}
+
+// ---- colours ----
+.colour-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(rem(120px), 1fr));
+  gap: var(--space-3);
+}
+
+.suggest-button {
+  align-self: flex-start;
+}
+
+// ---- names ----
+.name-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.name-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.add-name {
+  align-self: flex-start;
+}
+
+// ---- the preview ----
+.preview-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: rem(260px);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--bg-alt);
+  text-align: center;
+  transition: opacity 0.2s ease;
+
+  &.is-busy {
+    opacity: 0.6;
+  }
+}
+
+.preview-image {
+  display: block;
+  max-height: rem(420px);
+  max-width: 100%;
+  width: auto;
+  height: auto;
+}
+
+.order-button {
+  width: 100%;
+}
+
+// The Studio adds „Построй и изтегли“ under Order, full width like it, rather than clipped beside it.
+// (Ignite puts the buttons in its own `.igx-card-actions__start` row, which doesn't wrap by itself.)
+.preview-card igx-card-actions ::ng-deep .igx-card-actions__start {
+  flex-wrap: wrap;
+  width: 100%;
+  gap: var(--space-2);
+}
+
+.build-button {
+  width: 100%;
+}
+
+.order-anchor {
+  scroll-margin-top: rem(16px);
+}
+
+// ---- phones: the Order button sticks to the bottom ----
+.order-bar {
+  display: none;
+
+  @media (max-width: 900px) {
+    display: flex;
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 5;
+    padding: var(--space-3) var(--space-4) calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+    background: var(--bg-card);
+    border-top: rem(1px) solid var(--ig-gray-300);
+
+    button {
+      flex: 1;
+    }
+  }
+}
+
+// On phones the card's own Order button is replaced by the sticky bar.
+@media (max-width: 900px) {
+  .order-button {
+    display: none;
+  }
+}
+
+.privacy-card igx-icon {
+  --ig-icon-size: #{rem(20px)};
+  vertical-align: middle;
+  color: var(--ig-primary-500);
+}
+
+.privacy-card p {
+  margin: 0;
+}
+
+:host-context(.dark-theme) {
+  .problem {
+    color: #ef9a9a;
+  }
+}

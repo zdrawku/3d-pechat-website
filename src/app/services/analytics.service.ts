@@ -5,7 +5,7 @@ import { Locale, splitLocalePath } from '../i18n/locales';
 import { ConsentService } from './consent.service';
 
 export type ContactMethod = 'phone' | 'viber' | 'email';
-export type LeadSource = 'contact_form' | 'product_order' | 'price_calculator';
+export type LeadSource = 'contact_form' | 'product_order' | 'price_calculator' | 'bookmark_order';
 export type SearchType = 'blog' | 'blog_tag';
 
 /**

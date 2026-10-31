@@ -1,0 +1,459 @@
+<!-- One option group as an igx-buttongroup: a row of mutually exclusive buttons. -->
+<ng-template #segmented let-label="label" let-choices="choices" let-value="value" let-pick="pick" let-testid="testid" let-twoRows="twoRows">
+  <igx-buttongroup selectionMode="singleRequired" [attr.aria-label]="label" [attr.data-testid]="testid" [class.two-rows]="twoRows">
+    @for (choice of choices; track choice.id) {
+      <button igxButton type="button" [selected]="choice.id === value" (click)="pick(choice.id)">{{ choice.label }}</button>
+    }
+  </igx-buttongroup>
+</ng-template>
+
+@if (!admin()) {
+  <header class="page-banner">
+    <div class="page-banner__titles">
+      <h1 class="page-banner__title">{{ 'bookmarks.title' | t }}</h1>
+      <p class="page-banner__subtitle">{{ 'bookmarks.subtitle' | t }}</p>
+    </div>
+  </header>
+}
+
+<div class="bookmarks-page" [class.bookmarks-page--admin]="admin()" data-testid="bookmarks-page">
+  @if (!admin()) {
+    <a igxButton="outlined" class="back-link" [routerLink]="'/products' | localizePath" data-testid="bookmarks-back">
+      <igx-icon aria-hidden="true">arrow_back</igx-icon>
+      {{ 'shell.drawer.productsAll.title' | t }}
+    </a>
+  }
+
+  <!-- The three modes. Header-only tabs: all three share one set of controls
+       (same order in each), so switching keeps shape, size, name and hole. -->
+  <igx-tabs class="mode-tabs" [selectedIndex]="modes.indexOf(mode())" (selectedIndexChange)="setMode($event)"
+            [attr.aria-label]="'bookmarks.modes.label' | t" data-testid="bookmark-modes">
+    <!-- The tabs have no content panels, and Ignite's header only selects on click when its tab has one: select on click here (the keyboard works as is). -->
+    @for (m of modes; track m; let i = $index) {
+      <igx-tab-item>
+        <igx-tab-header [attr.data-testid]="'bookmark-mode-' + m" (click)="setMode(i)">
+          <span igxTabHeaderLabel>{{ modeLabel(m) | t }}</span>
+        </igx-tab-header>
+      </igx-tab-item>
+    }
+  </igx-tabs>
+
+  @if (options(); as opts) {
+    <div class="designer">
+      <div class="designer-controls">
+
+        <!-- Mode 3: what kind of set -->
+        @if (mode() === 'set') {
+          <igx-card class="control-card" data-testid="bookmark-set">
+            <igx-card-header>
+              <h2 igxCardHeaderTitle>{{ 'bookmarks.set.heading' | t }}</h2>
+            </igx-card-header>
+            <igx-card-content>
+              <ng-container *ngTemplateOutlet="segmented; context: {
+                label: ('bookmarks.set.kindLabel' | t),
+                choices: [{ id: 'split', label: ('bookmarks.set.kindSplit' | t) }, { id: 'pictures', label: ('bookmarks.set.kindPictures' | t) },
+                          { id: 'names', label: ('bookmarks.set.kindNames' | t) }, { id: 'patterns', label: ('bookmarks.set.kindPatterns' | t) }],
+                value: setKind(), pick: pickSetKind, testid: 'bookmark-set-kind', twoRows: true }"></ng-container>
+              @if (setKind() === 'split') {
+                <p class="hint">{{ 'bookmarks.set.splitHint' | t }}</p>
+                <span class="field-label">{{ 'bookmarks.set.countLabel' | t }}</span>
+                <ng-container *ngTemplateOutlet="segmented; context: {
+                  label: ('bookmarks.set.countLabel' | t), choices: countChoices(), value: '' + splitCount(), pick: pickSplitCount, testid: 'bookmark-split-count' }"></ng-container>
+              } @else if (setKind() === 'pictures') {
+                <p class="hint">{{ 'bookmarks.set.picturesHint' | t: { max: maxPictures() } }}</p>
+              } @else if (setKind() === 'patterns') {
+                <p class="hint">{{ 'bookmarks.set.patternsHint' | t: { max: maxPictures() } }}</p>
+              } @else {
+                <p class="hint">{{ 'bookmarks.set.namesHint' | t }}</p>
+                <span class="field-label">{{ 'bookmarks.set.baseLabel' | t }}</span>
+                <ng-container *ngTemplateOutlet="segmented; context: {
+                  label: ('bookmarks.set.baseLabel' | t),
+                  choices: [{ id: 'picture', label: ('bookmarks.set.basePicture' | t) }, { id: 'pattern', label: ('bookmarks.set.basePattern' | t) }],
+                  value: setBase(), pick: pickSetBase, testid: 'bookmark-set-base' }"></ng-container>
+              }
+            </igx-card-content>
+          </igx-card>
+        }
+
+        <!-- The design itself: a picture, or a pattern and its look -->
+        @if (source() === 'picture') {
+          <igx-card class="control-card" data-testid="bookmark-picture">
+            <igx-card-header>
+              <h2 igxCardHeaderTitle>{{ 'bookmarks.picture.heading' | t }}</h2>
+            </igx-card-header>
+            <igx-card-content>
+              <input #file type="file" hidden [accept]="uploadAccept()" (change)="onPicture($event)" data-testid="bookmark-picture-input" />
+              <div class="picture-slots" [class.picture-slots--several]="pictureRows().length > 1">
+              @for (row of pictureRows(); track row) {
+                <div class="picture-slot" [attr.data-testid]="'bookmark-picture-slot-' + row">
+                  @if (pictureRows().length > 1) {
+                    <span class="field-label">{{ 'bookmarks.picture.slotN' | t: { n: row + 1 } }}</span>
+                  }
+                  <div class="picture-row">
+                    <button igxButton="outlined" type="button" (click)="chooseFor(row, file)"
+                            [attr.data-testid]="row === 0 ? 'bookmark-picture-button' : 'bookmark-picture-button-' + row">
+                      <igx-icon>{{ slots()[row] ? 'upload' : 'add_photo_alternate' }}</igx-icon>
+                      {{ (slots()[row] ? 'bookmarks.picture.change' : (row === 0 ? 'bookmarks.picture.choose' : 'bookmarks.picture.add')) | t }}
+                    </button>
+                    @if (slots()[row]; as chosen) {
+                      <span class="picture-name" data-testid="bookmark-picture-name">
+                        <igx-icon>image</igx-icon>{{ chosen.file.name }}
+                      </span>
+                      <button igxButton="flat" type="button" (click)="removePicture(row)">{{ 'bookmarks.picture.remove' | t }}</button>
+                    }
+                  </div>
+                  @if (slots()[row]?.thumb; as thumb) {
+                    <app-bookmark-framer [thumb]="thumb" [frameAspect]="frameAspect()" [outlineSvg]="frameOutline()"
+                                         [framing]="slots()[row].framing" (framingChange)="setFraming(row, $event)" />
+                  }
+                </div>
+              }
+              </div>
+              <p class="hint">{{ 'bookmarks.picture.hint' | t: { maxMb: uploadMaxMb() } }}</p>
+              @if (pictureError(); as problem) {
+                <p class="problem" role="alert" data-testid="bookmark-picture-error">
+                  {{ (problem === 'tooLarge' ? 'bookmarks.picture.tooLarge' : 'bookmarks.picture.wrongType') | t: { maxMb: uploadMaxMb() } }}
+                </p>
+              }
+            </igx-card-content>
+          </igx-card>
+        } @else {
+          <igx-card class="control-card" data-testid="bookmark-pattern">
+            <igx-card-header>
+              <h2 igxCardHeaderTitle>{{ 'bookmarks.pattern.heading' | t }}</h2>
+            </igx-card-header>
+            <igx-card-content>
+              <!-- A set of different patterns: one slot per bookmark; the list below sets the active slot's pattern -->
+              @if (mode() === 'set' && setKind() === 'patterns') {
+                <div class="pattern-slots" role="group" [attr.aria-label]="'bookmarks.pattern.slotsLabel' | t" data-testid="bookmark-pattern-slots">
+                  @for (id of patternIds(); track $index; let i = $index) {
+                    <div class="pattern-slot">
+                      <button igxButton="outlined" type="button" class="choice" [class.is-selected]="activePatternSlot() === i"
+                              [attr.aria-pressed]="activePatternSlot() === i" (click)="activePatternSlot.set(i)"
+                              [attr.data-testid]="'bookmark-pattern-slot-' + i">
+                        {{ 'bookmarks.pattern.slotN' | t: { n: i + 1 } }} · {{ label('patterns', id, id) }}
+                      </button>
+                      @if (patternIds().length > opts.set.min) {
+                        <button igxIconButton="flat" type="button" (click)="removePatternSlot(i)"
+                                [attr.aria-label]="'bookmarks.pattern.removeSlot' | t: { n: i + 1 }">
+                          <igx-icon>close</igx-icon>
+                        </button>
+                      }
+                    </div>
+                  }
+                  @if (patternIds().length < opts.set.max) {
+                    <button igxButton="outlined" type="button" (click)="addPatternSlot()" data-testid="bookmark-pattern-add">
+                      <igx-icon>add</igx-icon>
+                      {{ 'bookmarks.pattern.addSlot' | t }}
+                    </button>
+                  }
+                </div>
+              }
+              <div class="choice-grid" role="group" [attr.aria-label]="'bookmarks.pattern.heading' | t">
+                @for (pattern of opts.patterns; track pattern.id) {
+                  <button igxButton="outlined" type="button" class="choice"
+                          [class.is-selected]="shownPattern() === pattern.id" [attr.aria-pressed]="shownPattern() === pattern.id"
+                          (click)="pickPattern(pattern.id)" [attr.data-testid]="'bookmark-pattern-' + pattern.id">
+                    {{ label('patterns', pattern.id, pattern.label) }}
+                  </button>
+                }
+              </div>
+              <span class="field-label">{{ 'bookmarks.pattern.styleHeading' | t }}</span>
+              <!-- The look as picture tiles (variant 2A), drawn in the chosen colours -->
+              <div class="look-grid" role="group" [attr.aria-label]="'bookmarks.pattern.styleHeading' | t" data-testid="bookmark-pattern-style"
+                   [style.--look-back]="patternColours().back" [style.--look-pattern]="patternColours().pattern" [style.--look-border]="patternColours().border">
+                @for (item of looks(); track item.id) {
+                  <button igxButton="outlined" type="button" class="look" [class.is-selected]="look()?.id === item.id"
+                          [attr.aria-pressed]="look()?.id === item.id" (click)="pickLook(item.id)" [attr.data-testid]="'bookmark-look-' + item.id">
+                    <span class="look-drawing" [class.look-drawing--back]="item.back" [class.look-drawing--relief]="!item.back && item.roles.includes('back')"
+                          aria-hidden="true"><span class="look-lines"></span></span>
+                    <span class="look-name">{{ label('patternLooks', item.id, item.id) }}</span>
+                    <span class="look-hint">{{ label('patternLookHints', item.id, '') }}</span>
+                  </button>
+                }
+              </div>
+              @if (autoBack()) {
+                <p class="hint" data-testid="bookmark-auto-back">{{ 'bookmarks.pattern.autoBack' | t }}</p>
+              }
+            </igx-card-content>
+          </igx-card>
+        }
+
+        <!-- The object: shape, size, thickness, frame and hole -->
+        <igx-card class="control-card" data-testid="bookmark-shape">
+          <igx-card-header>
+            <h2 igxCardHeaderTitle>{{ 'bookmarks.shape.cardHeading' | t }}</h2>
+          </igx-card-header>
+          <igx-card-content>
+            <div class="shape-grid" role="group" [attr.aria-label]="'bookmarks.shape.heading' | t">
+              @for (item of opts.shapes; track item.id) {
+                <button igxButton="outlined" type="button" class="shape"
+                        [class.is-selected]="shape() === item.id" [attr.aria-pressed]="shape() === item.id"
+                        [attr.aria-label]="label('shapes', item.id, item.label)" (click)="shape.set(item.id)"
+                        [attr.data-testid]="'bookmark-shape-' + item.id">
+                  <span class="shape-thumb" [innerHTML]="shapeThumbs().get(item.id)"></span>
+                  <span class="shape-name">{{ label('shapes', item.id, item.label) }}</span>
+                </button>
+              }
+            </div>
+            <div class="setting-row">
+              <span class="field-label">{{ 'bookmarks.size.heading' | t }}</span>
+              <div class="setting-control">
+                <ng-container *ngTemplateOutlet="segmented; context: {
+                  label: ('bookmarks.size.heading' | t), choices: sizeChoices(), value: sizeChoice(), pick: pickSize, testid: 'bookmark-size' }"></ng-container>
+                @if (sizeChoice() === customSize) {
+                  <div class="custom-size" data-testid="bookmark-custom-size">
+                    <igx-input-group type="border">
+                      <input igxInput type="number" inputmode="decimal" [min]="opts.customSize.widthMm.min" [max]="opts.customSize.widthMm.max"
+                             [step]="opts.customSize.widthMm.step" [value]="customWidth()" (input)="setCustomSize('width', $event)"
+                             data-testid="bookmark-custom-width" />
+                      <label igxLabel>{{ 'bookmarks.size.width' | t }}</label>
+                      <span igxSuffix>{{ 'bookmarks.units.mmShort' | t }}</span>
+                    </igx-input-group>
+                    <igx-input-group type="border">
+                      <input igxInput type="number" inputmode="decimal" [min]="opts.customSize.heightMm.min" [max]="opts.customSize.heightMm.max"
+                             [step]="opts.customSize.heightMm.step" [value]="customHeight()" (input)="setCustomSize('height', $event)"
+                             data-testid="bookmark-custom-height" />
+                      <label igxLabel>{{ 'bookmarks.size.height' | t }}</label>
+                      <span igxSuffix>{{ 'bookmarks.units.mmShort' | t }}</span>
+                    </igx-input-group>
+                  </div>
+                  <p [class]="customSizeValid() ? 'hint' : 'problem'" data-testid="bookmark-custom-size-hint">
+                    {{ (customSizeValid() ? 'bookmarks.size.range' : 'bookmarks.size.outOfRange') | t: {
+                      wMin: opts.customSize.widthMm.min, wMax: opts.customSize.widthMm.max,
+                      hMin: opts.customSize.heightMm.min, hMax: opts.customSize.heightMm.max } }}
+                  </p>
+                }
+              </div>
+            </div>
+            <div class="setting-row">
+              <span class="field-label">{{ 'bookmarks.thickness.heading' | t }}</span>
+              <div class="setting-control">
+                <ng-container *ngTemplateOutlet="segmented; context: {
+                  label: ('bookmarks.thickness.heading' | t), choices: thicknessChoices(), value: '' + thickness(), pick: pickThickness, testid: 'bookmark-thickness' }"></ng-container>
+              </div>
+            </div>
+            <div class="setting-row">
+              <span class="field-label">{{ 'bookmarks.frame.heading' | t }}</span>
+              <app-bookmark-stepper class="setting-control" [value]="borderMm()" [min]="opts.border.widthMm.min" [max]="opts.border.widthMm.max"
+                                    [step]="opts.border.widthMm.step" [label]="'bookmarks.frame.heading' | t" [zeroLabel]="'bookmarks.frame.none' | t"
+                                    testid="bookmark-frame" (valueChange)="borderMm.set($event ?? opts.border.widthMm.default)" />
+            </div>
+            <div class="setting-row">
+              <span class="field-label">{{ 'bookmarks.hole.heading' | t }}</span>
+              <div class="setting-control">
+                <ng-container *ngTemplateOutlet="segmented; context: {
+                  label: ('bookmarks.hole.heading' | t),
+                  choices: [{ id: 'top', label: ('bookmarks.hole.top' | t) }, { id: 'bottom', label: ('bookmarks.hole.bottom' | t) }, { id: 'none', label: ('bookmarks.hole.none' | t) }],
+                  value: hole(), pick: pickHole, testid: 'bookmark-hole' }"></ng-container>
+              </div>
+            </div>
+          </igx-card-content>
+        </igx-card>
+
+        <!-- Colours (four for a picture, suggested from it; one per role for a pattern) and the quality they are printed at -->
+        <igx-card class="control-card" data-testid="bookmark-colours">
+          <igx-card-header>
+            <h2 igxCardHeaderTitle>{{ 'bookmarks.colours.heading' | t }}</h2>
+          </igx-card-header>
+          <igx-card-content>
+            <div class="colour-row">
+              @for (field of colourFields(); track field.id) {
+                <app-bookmark-colour-picker [label]="field.label" [value]="field.value" (valueChange)="setColour(field.id, $event)" />
+              }
+            </div>
+            <p class="hint">{{ (source() === 'picture' ? 'bookmarks.colours.hintPicture' : 'bookmarks.colours.hintPattern') | t }}</p>
+            @if (source() === 'picture') {
+              <button igxButton="outlined" type="button" class="suggest-button" [disabled]="!picture() || suggesting()"
+                      (click)="suggestColours()" data-testid="bookmark-suggest">
+                <igx-icon>auto_fix_high</igx-icon>
+                {{ (suggesting() ? 'bookmarks.colours.suggesting' : 'bookmarks.colours.suggest') | t }}
+              </button>
+            }
+            @if (qualityChoices().length > 1) {
+              <div class="setting-row">
+                <span class="field-label">{{ 'bookmarks.quality.heading' | t }}</span>
+                <div class="setting-control">
+                  <ng-container *ngTemplateOutlet="segmented; context: {
+                    label: ('bookmarks.quality.heading' | t), choices: qualityChoices(), value: '' + (chosenStop()?.value ?? ''), pick: pickQuality, testid: 'bookmark-quality', twoRows: true }"></ng-container>
+                  <p class="hint">{{ 'bookmarks.quality.hint' | t }}</p>
+                </div>
+              </div>
+            }
+            <!-- The Studio sees what the chosen quality costs, even when there is nothing to choose -->
+            @if (admin() && chosenStop(); as stop) {
+              <p class="hint" data-testid="bookmark-quality-facts">{{ 'bookmarks.quality.facts' | t: { swaps: stop.swaps, grams: number(stop.purgeGrams), plan: stop.plan } }}</p>
+            }
+          </igx-card-content>
+        </igx-card>
+
+        <!-- Name(s): where they go, the text, the font and the letter size -->
+        <igx-card class="control-card" data-testid="bookmark-name">
+          <igx-card-header>
+            <h2 igxCardHeaderTitle>{{ 'bookmarks.name.heading' | t }} <span class="optional">({{ 'bookmarks.name.optional' | t }})</span></h2>
+          </igx-card-header>
+          <igx-card-content>
+            <!-- The name is optional: „Без“ means none; a place turns the field(s) on. A set of
+                 several names needs them, so it has no „Без“. -->
+            <div class="setting-row">
+              <span class="field-label">{{ 'bookmarks.name.placeHeading' | t }}</span>
+              <div class="setting-control">
+                <ng-container *ngTemplateOutlet="segmented; context: {
+                  label: ('bookmarks.name.placeHeading' | t),
+                  choices: namesRequired()
+                    ? [{ id: 'top', label: ('bookmarks.name.top' | t) }, { id: 'middle', label: ('bookmarks.name.middle' | t) }, { id: 'bottom', label: ('bookmarks.name.bottom' | t) }]
+                    : [{ id: 'none', label: ('bookmarks.name.none' | t) }, { id: 'top', label: ('bookmarks.name.top' | t) }, { id: 'middle', label: ('bookmarks.name.middle' | t) }, { id: 'bottom', label: ('bookmarks.name.bottom' | t) }],
+                  value: effectivePlace(), pick: pickPlace, testid: 'bookmark-name-place' }"></ng-container>
+              </div>
+            </div>
+            @if (effectivePlace() !== 'none') {
+              @if (mode() === 'set') {
+                @for (slot of setSlots(); track slot) {
+                  <div class="name-row">
+                    <igx-input-group type="border" class="name-field">
+                      <input igxInput type="text" [value]="setNames()[slot]" [attr.maxlength]="opts.limits.nameMaxLength"
+                             (input)="setNameAt(slot, $event)" [placeholder]="'bookmarks.name.placeholder' | t"
+                             [attr.data-testid]="'bookmark-set-name-' + slot" />
+                      <label igxLabel>{{ 'bookmarks.set.nameN' | t: { n: slot + 1 } }}</label>
+                    </igx-input-group>
+                    @if (setKind() === 'names' && nameCount() > opts.set.min) {
+                      <button igxIconButton="flat" type="button" (click)="removeName(slot)"
+                              [attr.aria-label]="'bookmarks.set.removeName' | t">
+                        <igx-icon>close</igx-icon>
+                      </button>
+                    }
+                  </div>
+                }
+                @if (setKind() === 'names' && nameCount() < opts.set.max) {
+                  <button igxButton="outlined" type="button" class="add-name" (click)="addName()" data-testid="bookmark-add-name">
+                    <igx-icon>add</igx-icon>
+                    {{ 'bookmarks.set.addName' | t }}
+                  </button>
+                }
+              } @else {
+                <igx-input-group type="border" class="name-field">
+                  <input igxInput type="text" [value]="name()" [attr.maxlength]="opts.limits.nameMaxLength"
+                         (input)="setName($event)" [placeholder]="'bookmarks.name.placeholder' | t" data-testid="bookmark-name-input" />
+                  <label igxLabel>{{ 'bookmarks.name.heading' | t }}</label>
+                </igx-input-group>
+              }
+              <div class="setting-row setting-row--top">
+                <span class="field-label">{{ 'bookmarks.name.fontHeading' | t }}</span>
+                <app-bookmark-font-picker class="setting-control" [fonts]="opts.fonts" [value]="font()" [text]="fontSample()"
+                                          [label]="'bookmarks.name.fontHeading' | t" (valueChange)="font.set($event)" />
+              </div>
+              <div class="setting-row">
+                <span class="field-label">{{ 'bookmarks.name.letterHeading' | t }}</span>
+                <div class="setting-control">
+                  <app-bookmark-stepper [value]="letterMm()" [min]="letterRange().min" [max]="letterRange().max" [step]="letterRange().step"
+                                        [label]="'bookmarks.name.letterHeading' | t" [autoLabel]="'bookmarks.name.auto' | t"
+                                        testid="bookmark-letter-size" (valueChange)="letterMm.set($event)" />
+                  <p class="hint">{{ 'bookmarks.name.letterHint' | t: { min: mm(letterRange().min), max: mm(letterRange().max) } }}</p>
+                </div>
+              </div>
+            }
+          </igx-card-content>
+        </igx-card>
+
+        @if (admin()) {
+          <igx-card class="control-card" data-testid="bookmark-expert">
+            <igx-card-header>
+              <h2 igxCardHeaderTitle>{{ 'bookmarks.studio.expertHeading' | t }}</h2>
+            </igx-card-header>
+            <igx-card-content>
+              <p class="hint">{{ 'bookmarks.studio.expertNote' | t }}</p>
+              <app-bookmark-expert-form [options]="opts.expert" [values]="expert()" (valuesChange)="expert.set($event)" />
+            </igx-card-content>
+          </igx-card>
+        }
+      </div>
+
+      <!-- Live preview: stays in view while the controls scroll -->
+      <aside class="designer-preview">
+        <igx-card class="preview-card" data-testid="bookmark-preview-card">
+          <igx-card-header>
+            <h2 igxCardHeaderTitle>{{ 'bookmarks.design.previewHeading' | t }}</h2>
+          </igx-card-header>
+          <igx-card-content>
+            <div class="preview-stage" aria-live="polite" [class.is-busy]="previewBusy()">
+              @if (previewUrl(); as url) {
+                <img [src]="url" [alt]="'bookmarks.design.previewAlt' | t" class="preview-image" data-testid="bookmark-preview" />
+              } @else if (source() === 'picture' && !picture()) {
+                <p class="hint">{{ 'bookmarks.picture.needed' | t }}</p>
+              } @else if (previewProblem(); as problem) {
+                <p class="problem" data-testid="bookmark-preview-problem">{{ problem }}</p>
+              } @else {
+                <p class="hint">{{ 'bookmarks.design.previewLoading' | t }}</p>
+              }
+            </div>
+            @if (previewUrl() && previewProblem(); as problem) {
+              <p class="problem" data-testid="bookmark-preview-problem">{{ problem }}</p>
+            }
+            @for (warning of warnings(); track $index) {
+              <p class="warning" data-testid="bookmark-warning">{{ warningText(warning) }}</p>
+            }
+          </igx-card-content>
+          <igx-card-actions>
+            <button igxButton="contained" type="button" class="order-button" [disabled]="!request()"
+                    (click)="openOrder()" data-testid="bookmark-order-open">
+              {{ 'bookmarks.order.open' | t }}
+              <igx-icon>arrow_forward</igx-icon>
+            </button>
+            @if (admin()) {
+              <button igxButton="outlined" type="button" class="build-button" [disabled]="!request() || building()" (click)="buildFiles()"
+                      data-testid="bookmark-build">
+                <igx-icon>download</igx-icon>
+                {{ 'bookmarks.studio.download' | t }}
+              </button>
+            }
+          </igx-card-actions>
+          @if (admin()) {
+            <igx-card-content>
+              @if (building()) {
+                <igx-linear-bar [indeterminate]="true" [textVisibility]="false" data-testid="bookmark-building" />
+                <p class="hint" role="status">{{ 'bookmarks.studio.building' | t }}</p>
+              } @else {
+                <p class="hint">{{ 'bookmarks.studio.downloadNote' | t }}</p>
+              }
+              @if (buildError(); as message) {
+                <p class="problem" role="alert">{{ 'bookmarks.studio.downloadError' | t: { message: message } }}</p>
+              }
+              @for (file of builtFiles(); track file.name) {
+                <a igxButton="flat" [href]="file.url" [attr.download]="file.name">{{ file.name }}</a>
+              }
+            </igx-card-content>
+          }
+        </igx-card>
+      </aside>
+    </div>
+
+    <!-- The order form opens under the preview -->
+    <div #orderAnchor class="order-anchor">
+      @if (orderOpen()) {
+        <app-bookmark-order-form [request]="request()" [engine]="engine()" [orderMaxBytes]="opts.limits.orderMaxBytes" />
+      }
+    </div>
+
+    <!-- Phones: the Order button sticks to the bottom -->
+    <div class="order-bar">
+      <button igxButton="contained" type="button" [disabled]="!request()" (click)="openOrder()" data-testid="bookmark-order-open-mobile">
+        {{ 'bookmarks.order.open' | t }}
+        <igx-icon>arrow_forward</igx-icon>
+      </button>
+    </div>
+  } @else if (engineFailed()) {
+    <p class="problem designer-status" role="alert" data-testid="bookmark-engine-error">{{ 'bookmarks.design.engineError' | t }}</p>
+  } @else {
+    <p class="hint designer-status" data-testid="bookmark-engine-loading">{{ 'bookmarks.design.engineLoading' | t }}</p>
+  }
+
+  <!-- Said once, plainly, in the prerendered page too -->
+  <igx-card class="privacy-card" data-testid="bookmark-privacy">
+    <igx-card-header>
+      <h2 igxCardHeaderTitle><igx-icon>lock</igx-icon> {{ 'bookmarks.privacy.heading' | t }}</h2>
+    </igx-card-header>
+    <igx-card-content>
+      <p>{{ 'bookmarks.privacy.text' | t }}</p>
+    </igx-card-content>
+  </igx-card>
+</div>

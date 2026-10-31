@@ -48,6 +48,8 @@ export interface SeoConfig {
      * omitted = none, as for a post that exists only in Bulgarian. Every navigation replaces them.
      */
     alternates?: LanguageAlternate[];
+    /** A page that must stay out of search results (the hidden Studio): emits `robots: noindex, nofollow`. */
+    noindex?: boolean;
 }
 
 @Injectable({
@@ -116,6 +118,13 @@ export class SeoService {
             .filter((code): code is Locale => isLocale(code) && code !== this.i18n.locale())
             .map(code => localeDefinition(code).ogLocale));
         this.setLanguageAlternates(alternates);
+
+        // 8c. Robots: set on every navigation, so leaving a noindex page clears it.
+        if (config.noindex) {
+            this.updateTag('name', 'robots', 'noindex, nofollow');
+        } else {
+            this.document.head.querySelector('meta[name="robots"]')?.remove();
+        }
 
         // 9. Article specific tags
         if (config.publishedDate) {

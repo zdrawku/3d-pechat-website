@@ -40,6 +40,10 @@ const localizedPages = (): Routes => [
     loadComponent: () => import('./products-page/products-page.component').then(m => m.ProductsPageComponent)
   },
   {
+    path: 'products/bookmarks',
+    loadComponent: () => import('./bookmarks/bookmarks-page/bookmarks-page.component').then(m => m.BookmarksPageComponent)
+  },
+  {
     path: 'prices',
     loadComponent: () => import('./prices-page/prices-page.component').then(m => m.PricesPageComponent)
   },
@@ -62,6 +66,16 @@ const localizedPages = (): Routes => [
     data: { doc }
   }))
 ];
+
+/**
+ * The bookmark Studio for the shop owners: NOT in locales.json (so no hreflang,
+ * sitemap or llms.txt entry), in no menu, `noindex`, and prerendered as the
+ * passphrase gate only. Same in every language.
+ */
+const studioPage: Route = {
+  path: 'studio',
+  loadComponent: () => import('./bookmarks/studio/studio-page.component').then(m => m.StudioPageComponent)
+};
 
 const blogIndex: Route = {
   path: '',
@@ -102,13 +116,14 @@ export const routes: Routes = [
   ...TRANSLATED_LOCALES.map((l): Route => ({
     ...inLocale(l.code),
     path: l.code,
-    children: [...localizedPages(), { path: 'blog', children: [blogIndex, articleRoute(l.code)] }, notFound]
+    children: [...localizedPages(), { path: 'blog', children: [blogIndex, articleRoute(l.code)] }, studioPage, notFound]
   })),
   {
     ...inLocale(DEFAULT_LOCALE),
     path: '',
     children: [
       ...localizedPages(),
+      studioPage,
       {
         path: 'error',
         loadComponent: () => import('./error-routing/error/uncaught-error.component').then(m => m.UncaughtErrorComponent)

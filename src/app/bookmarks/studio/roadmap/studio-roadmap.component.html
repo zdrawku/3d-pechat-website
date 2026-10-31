@@ -1,0 +1,55 @@
+<section class="roadmap" data-testid="studio-roadmap">
+  <p class="roadmap-intro">{{ 'bookmarks.studio.roadmapIntro' | t }}</p>
+
+  <div class="roadmap-filter">
+    <!-- Separate buttons rather than a button group: ten areas wrap, and a wrapped group looks broken. -->
+    <div class="area-buttons" role="group" [attr.aria-label]="'bookmarks.studio.roadmapArea' | t" data-testid="roadmap-area">
+      <button [igxButton]="area() === all ? 'contained' : 'outlined'" type="button" [attr.aria-pressed]="area() === all" (click)="area.set(all)">{{ 'bookmarks.studio.roadmapAll' | t }}</button>
+      @for (name of areas; track name) {
+        <button [igxButton]="area() === name ? 'contained' : 'outlined'" type="button" [attr.aria-pressed]="area() === name" (click)="area.set(name)">{{ name }}</button>
+      }
+    </div>
+    <span class="roadmap-count" data-testid="roadmap-count">{{ 'bookmarks.studio.roadmapCount' | t: { count: count() } }}</span>
+  </div>
+
+  @for (tier of shown(); track tier.key) {
+    <section class="tier" [attr.data-tier]="tier.key" [attr.data-testid]="'roadmap-tier-' + tier.key">
+      <h2 class="tier-title"><igx-icon>{{ icon(tier) }}</igx-icon>{{ tier.title }}</h2>
+      @if (tier.description) {
+        <p class="tier-description">{{ tier.description }}</p>
+      }
+      <ul class="tier-items">
+        @for (item of tier.items; track item.title) {
+          <li>
+            <igx-card class="item" [attr.data-impact]="item.impact" data-testid="roadmap-item">
+              <igx-card-header>
+                <h3 igxCardHeaderTitle>{{ item.title }}</h3>
+                <span igxCardHeaderSubtitle>{{ item.area }}</span>
+              </igx-card-header>
+              <igx-card-content>
+                <p>{{ item.description }}</p>
+                <dl class="facts">
+                  <div><dt><igx-icon>bolt</igx-icon>{{ 'bookmarks.studio.roadmapImpact' | t }}</dt><dd>{{ item.impact }}</dd></div>
+                  @if (item.effort) {
+                    <div><dt><igx-icon>timer</igx-icon>{{ 'bookmarks.studio.roadmapEffort' | t }}</dt><dd>{{ item.effort }}</dd></div>
+                  }
+                  @if (item.status) {
+                    <div><dt><igx-icon>info</igx-icon>{{ 'bookmarks.studio.roadmapStatus' | t }}</dt><dd>{{ item.status }}</dd></div>
+                  }
+                </dl>
+              </igx-card-content>
+              @if (item.details) {
+                <igx-card-actions>
+                  <a igxButton="flat" [href]="link(item.details.href)" target="_blank" rel="noopener">
+                    <igx-icon>open_in_new</igx-icon>
+                    {{ item.details.label }}
+                  </a>
+                </igx-card-actions>
+              }
+            </igx-card>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+</section>

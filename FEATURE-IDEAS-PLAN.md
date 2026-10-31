@@ -1,5 +1,8 @@
 # Feature Ideas Plan — Gift Box, Gallery Ordering, Product Workflow, Google Reviews
 
+> **What to build next, in priority order, is in [`ROADMAP.md`](ROADMAP.md)**
+> (also shown in the Studio's „Пътна карта“ tab). This file keeps the detail.
+
 > Drafted 2026-07-12, extended 2026-07-13 (Ideas 4–5) by Claude (Fable).
 > Status: **✅ variants approved by Zdravko on 2026-07-13.** Approved choices are
 > marked `✅ APPROVED`; the original autonomous decisions remain tagged
@@ -1007,6 +1010,7 @@ variant. All five were produced and **approved by Zdravko on 2026-07-13**:
 | Cookie consent (GA4 + Consent Mode v2) | [🍪 Cookie Consent Variants](https://claude.ai/artifact/LkW9j6L1ZpAqANj1hTKWLP) | A bottom bar · B floating card · C dialog (not recommended) · D card + settings layer; shared rules, BG/EN copy, Consent Mode snippet | **B — floating card, Consent Mode v2 in basic mode** (`gtag.js` loads only after „Приемам“). ✅ Approved by Zdravko 2026-10-20; implemented the same day (uncommitted). Still missing: the privacy page and the card's „Повече за данните“ link (build item 22) |
 | Privacy Policy + Terms of Use | [⚖️ Legal Pages Layout](https://claude.ai/artifact/GWYULPeXsb6CdQtBUKFisy) | A article · B summary + contents · C section cards (not recommended); footer / contact form / consent card links; outline of both documents | **B**, with Zdravko's own first summary point („Сайтът 3dpechat.bg се поддържа от Здравко Колев, физическо лице в София“); legal links together in the footer's bottom row. ✅ Approved 2026-10-20; implemented the same day (uncommitted). Text needs Zdravko's read (and ideally a lawyer's) before going live |
 | Card hover effect | [🖨️ Hero анимация — 3D печат ефекти](https://claude.ai/code/artifact/c107c8e6-da1d-4b48-a233-d86443f30e9c) (hover section) | full SLA sweep → subtler → no transform, unified across elements | **Faint violet beam sweeps bottom-up once per hover-enter + soft shadow deepen; no movement. Identical on `prop_card`, `process_step`, `.masonry-item`, `.tier-card` via `src/app/_sla-hover.scss` mixin (tier-card uses inner `.sla-sweep` layer so the featured badge isn't clipped)** ✅ implemented 2026-07-14 |
+| 9 · Bookmark creator ([plan](BOOKMARKS-PLAN.md)) | [🔖 Bookmark Creator Designs](https://claude.ai/artifact/2CVHvcG1Vf3LigxkjpAkxP) | Menu: A expandable Products group · B always-visible sub-items · C own top-level entry — Page: A tabs + sticky live preview · B step by step · C mode cards, then one page | **Menu A, but expanded by default and with the same 4 px gap as the other chips; page A.** ✅ Approved by Zdravko 2026-10-29; built the same day (uncommitted), on the stub engine |
 | 8 · `/make-short` vertical shorts | [🎬 Shorts Format Variants](https://claude.ai/artifact/DemQiy5xiNbuVfMxPFe9o5) | Part 1: A product reveal · B site walkthrough · C owner's clips; caption style; end card — Part 2: 1 issue only · 2 Drive folders + issue form · 3 Drive folders + request sheet | **A** ✅ approved 2026-10-23 (word-pop + paper end card assumed; C's clips folded into A) · Part 2 ✅ **1 + 2 combined** (issue attachments + Drive folder; Мария allowed in both issue forms) — built 2026-10-23, uncommitted |
 
 To iterate on any of them, ask Claude to update the artifact — same link is kept.

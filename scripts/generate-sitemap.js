@@ -24,13 +24,15 @@ const translationsFile = (code) => path.join(__dirname, `../src/i18n/${code}/con
 const MAIN_PAGE_LASTMOD = {
   '/': '2026-10-18',          // hreflang → the English home page /en/, language switcher
   '/portfolio/': '2026-10-18', // hreflang → /en/portfolio/, language switcher
-  '/products/': '2026-10-18',  // hreflang → /en/products/, language switcher
+  '/products/': '2026-10-29',  // bookmark creator card (hreflang → /en/products/, language switcher)
+  '/products/bookmarks/': '2026-10-29', // bookmark creator page created
   '/prices/': '2026-10-18',    // hreflang → /en/prices/, language switcher
   '/contact/': '2026-10-18',   // hreflang → /en/contact/, language switcher
   '/blog/': '2026-10-19',      // hreflang → the English blog /en/blog/
   '/en/': '2026-10-19',        // now the translated home page (was a separate English landing); English gallery alt text
   '/en/portfolio/': '2026-10-19', // English version created; English gallery alt text
-  '/en/products/': '2026-10-18',  // English version created
+  '/en/products/': '2026-10-29',  // bookmark creator card (English version created 2026-10-18)
+  '/en/products/bookmarks/': '2026-10-29', // bookmark creator page created
   '/en/prices/': '2026-10-18',    // English version created
   '/en/contact/': '2026-10-18',   // English version created
   '/en/blog/': '2026-10-19',      // English blog created (8 translated posts)
@@ -45,6 +47,7 @@ const PAGE_SETTINGS = {
   '/': { changefreq: 'weekly', priority: '1.0' },
   '/portfolio/': { changefreq: 'daily', priority: '1' },
   '/products/': { changefreq: 'weekly', priority: '0.8' },
+  '/products/bookmarks/': { changefreq: 'monthly', priority: '0.7' },
   '/prices/': { changefreq: 'monthly', priority: '0.7' },
   '/contact/': { changefreq: 'monthly', priority: '0.6' },
   '/blog/': { changefreq: 'weekly', priority: '0.9' },

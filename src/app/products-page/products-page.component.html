@@ -35,6 +35,28 @@
            above the order CTAs, where the purchase decision happens. -->
       <app-happy-customers variant="bar" class="products-trust-bar"></app-happy-customers>
 
+      <!-- Bookmark creator: the products menu's second page (a real photo of our bookmarks). -->
+      @if (!searchText) {
+        <igx-card class="bookmarks-promo" data-testid="bookmarks-promo" data-analytics-area="bookmarks_promo">
+          <img class="bookmarks-promo__image" src="assets/real-images/razdeliteli-za-knigi.webp" width="501" height="598"
+               loading="lazy" decoding="async" [alt]="'products.bookmarksPromo.imageAlt' | t" />
+          <div class="bookmarks-promo__body">
+            <igx-card-header>
+              <h2 igxCardHeaderTitle>{{ 'products.bookmarksPromo.title' | t }}</h2>
+            </igx-card-header>
+            <igx-card-content>
+              <p>{{ 'products.bookmarksPromo.text' | t }}</p>
+            </igx-card-content>
+            <igx-card-actions>
+              <a igxButton="contained" [routerLink]="'/products/bookmarks' | localizePath" data-testid="bookmarks-promo-link">
+                {{ 'products.bookmarksPromo.button' | t }}
+                <igx-icon>arrow_forward</igx-icon>
+              </a>
+            </igx-card-actions>
+          </div>
+        </igx-card>
+      }
+
       <!-- Sort + result count sit directly above the grid (moved out of the
            page-banner header, which now carries only the search field). -->
       <div class="products-toolbar">

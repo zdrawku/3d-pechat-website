@@ -53,6 +53,25 @@ describe('ProductsPageComponent', () => {
     });
   });
 
+  describe('bookmark creator card', () => {
+    const card = (): HTMLElement | null => (fixture.nativeElement as HTMLElement).querySelector('[data-testid="bookmarks-promo"]');
+
+    it('is an Ignite card with a real photo and a button to the bookmarks page', () => {
+      expect(card()!.tagName.toLowerCase()).toBe('igx-card');
+      expect(card()!.querySelector('img')!.getAttribute('src')).toBe('assets/real-images/razdeliteli-za-knigi.webp');
+      expect(card()!.querySelector('img')!.getAttribute('alt')).toBeTruthy();
+      const link = card()!.querySelector('[data-testid="bookmarks-promo-link"]')!;
+      expect(link.hasAttribute('igxButton')).toBeTrue();
+      expect(link.getAttribute('href')).toBe('/products/bookmarks');
+    });
+
+    it('steps aside while the visitor is searching', () => {
+      component.searchText = 'монетна';
+      fixture.detectChanges();
+      expect(card()).toBeNull();
+    });
+  });
+
   it('sorts A-Я with Bulgarian collation regardless of browser locale', () => {
     const names = (order: string) => {
       component.setSortOrder(order);

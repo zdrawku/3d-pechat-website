@@ -24,9 +24,18 @@
     <xhtml:link rel="alternate" hreflang="bg" href="https://3dpechat.bg/products/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://3dpechat.bg/en/products/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://3dpechat.bg/products/"/>
-    <lastmod>2026-10-25T10:00:00+01:00</lastmod>
+    <lastmod>2026-10-29T10:00:00+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://3dpechat.bg/products/bookmarks/</loc>
+    <xhtml:link rel="alternate" hreflang="bg" href="https://3dpechat.bg/products/bookmarks/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://3dpechat.bg/en/products/bookmarks/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://3dpechat.bg/products/bookmarks/"/>
+    <lastmod>2026-10-29T10:00:00+01:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://3dpechat.bg/prices/</loc>
@@ -98,9 +107,18 @@
     <xhtml:link rel="alternate" hreflang="bg" href="https://3dpechat.bg/products/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://3dpechat.bg/en/products/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://3dpechat.bg/products/"/>
-    <lastmod>2026-10-25T10:00:00+01:00</lastmod>
+    <lastmod>2026-10-29T10:00:00+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://3dpechat.bg/en/products/bookmarks/</loc>
+    <xhtml:link rel="alternate" hreflang="bg" href="https://3dpechat.bg/products/bookmarks/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://3dpechat.bg/en/products/bookmarks/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://3dpechat.bg/products/bookmarks/"/>
+    <lastmod>2026-10-29T10:00:00+01:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://3dpechat.bg/en/prices/</loc>
