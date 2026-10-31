@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, OnInit, PLA
 import { NgTemplateOutlet, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
-import { IGX_BUTTON_GROUP_DIRECTIVES, IGX_CARD_DIRECTIVES, IGX_INPUT_GROUP_DIRECTIVES, IGX_TABS_DIRECTIVES, IgxButtonDirective, IgxIconComponent } from 'igniteui-angular';
+import { IGX_BUTTON_GROUP_DIRECTIVES, IGX_CARD_DIRECTIVES, IGX_INPUT_GROUP_DIRECTIVES, IGX_TABS_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxIconComponent } from 'igniteui-angular';
 
 import { SeoService } from '../../services/seo.service';
 import { I18nService } from '../../i18n/i18n.service';
@@ -10,12 +10,15 @@ import { LocalizePathPipe, TranslatePipe } from '../../i18n/translate.pipe';
 import type { TranslationKey } from '../../i18n/i18n.types';
 import bookmarksMessages from '../../../i18n/bg/bookmarks.json';
 import { BOOKMARK_ENGINE, BOOKMARK_PRINT } from '../engine/engine.token';
-import type { BookmarkEngine, BookmarkRequest, EngineErrorInfo, EngineOptions, Framing, Hex, Hole, PatternStyleId, Place, PreviewWarning } from '../engine/engine.types';
+import type { BookmarkEngine, BookmarkRequest, ColourRole, EngineErrorInfo, EngineOptions, Framing, Hex, Hole, PatternStyleId, Place, PreviewWarning, QualityStop } from '../engine/engine.types';
 import { DEFAULT_FRAMING } from '../framing';
 import { PictureThumb, pictureThumbnail } from '../picture-thumbnail';
 import { BookmarkFramerComponent } from '../framer/bookmark-framer.component';
 import { BookmarkColourPickerComponent } from '../colour-picker/bookmark-colour-picker.component';
 import { BookmarkOrderFormComponent } from '../order-form/bookmark-order-form.component';
+import { BookmarkFontPickerComponent } from '../font-picker/bookmark-font-picker.component';
+import { BookmarkStepperComponent } from '../stepper/bookmark-stepper.component';
+import { BookmarkExpertFormComponent, ExpertValues } from '../studio/bookmark-expert-form.component';
 
 /** The three modes, in tab order. */
 type Mode = 'picture' | 'pattern' | 'set';
@@ -24,8 +27,17 @@ const MODES: readonly Mode[] = ['picture', 'pattern', 'set'];
 /** How long the controls must rest before the preview is asked for again. */
 const PREVIEW_DEBOUNCE_MS = 250;
 
-/** Colours the pickers start with, before a picture suggests its own. */
+/** Colours the picture pickers start with, before a picture suggests its own. */
 const STARTING_COLOURS: Hex[] = ['#c13a0b', '#f0a46b', '#2c6fb5', '#222222'];
+
+/** A pattern's starting colours, by what each colour does: a calm sage pattern and frame on a warm sand back. */
+const PATTERN_COLOURS: Record<ColourRole, Hex> = { back: '#eadfc8', pattern: '#4f7f72', border: '#4f7f72' };
+
+/** The font a name gets when none is chosen (the engine's documented default for `nameFont`). */
+const ENGINE_DEFAULT_FONT = 'montserrat';
+
+/** The size choice that shows the width and height fields. */
+const CUSTOM_SIZE = 'custom';
 
 interface Choice<T extends string = string> {
   id: T;
@@ -39,7 +51,26 @@ interface PictureSlot {
   thumb: PictureThumb | null;
 }
 
-type SetKind = 'split' | 'pictures' | 'names';
+/**
+ * One of the pattern looks the page offers (variant 2A): each engine style as is, plus,
+ * for a style without a back of its own, the same style on a solid back (`pattern.back`).
+ */
+interface PatternLook {
+  id: string;
+  style: PatternStyleId;
+  back: boolean;
+  /** colour roles in the order the request's `colours` lists them */
+  roles: ColourRole[];
+}
+
+/** One colour picker: a picture's n-th colour, or a pattern colour by its role. */
+interface ColourField {
+  id: string;
+  label: string;
+  value: Hex;
+}
+
+type SetKind = 'split' | 'pictures' | 'names' | 'patterns';
 
 interface BuiltFile {
   name: string;
@@ -47,13 +78,15 @@ interface BuiltFile {
 }
 
 /**
- * The bookmark creator page (variant A: tabs + sticky live preview).
+ * The bookmark creator page (variant A: tabs + sticky live preview; every engine
+ * option shown, grouped by what it changes — variant 1D of the options design).
  *
  * It holds NO bookmark logic: it collects choices, builds a `BookmarkRequest`,
  * shows what `engine.preview()` returns and hands the order to the order form.
- * Every list (shapes, sizes, patterns, limits) comes from `engine.options()`;
- * only their translated labels live in src/i18n/<lang>/bookmarks.json, keyed by
- * id, with the engine's own label as the fallback.
+ * Every list and limit (shapes, sizes, patterns, styles, fonts, thickness, frame,
+ * letter sizes, quality stops) comes from `engine.options()` or the preview; only
+ * their translated labels live in src/i18n/<lang>/bookmarks.json, keyed by id,
+ * with the engine's own label as the fallback.
  *
  * The engine runs in the browser only (it never runs during prerender, which
  * produces the shell), so everything below the tabs waits for it. Pictures stay
@@ -65,8 +98,9 @@ interface BuiltFile {
 @Component({
   selector: 'app-bookmarks-page',
   imports: [
-    IGX_BUTTON_GROUP_DIRECTIVES, IGX_CARD_DIRECTIVES, IGX_INPUT_GROUP_DIRECTIVES, IGX_TABS_DIRECTIVES, IgxButtonDirective, IgxIconComponent,
-    NgTemplateOutlet, RouterLink, TranslatePipe, LocalizePathPipe, BookmarkColourPickerComponent, BookmarkFramerComponent, BookmarkOrderFormComponent
+    IGX_BUTTON_GROUP_DIRECTIVES, IGX_CARD_DIRECTIVES, IGX_INPUT_GROUP_DIRECTIVES, IGX_TABS_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxIconComponent,
+    NgTemplateOutlet, RouterLink, TranslatePipe, LocalizePathPipe, BookmarkColourPickerComponent, BookmarkFramerComponent, BookmarkOrderFormComponent,
+    BookmarkFontPickerComponent, BookmarkStepperComponent, BookmarkExpertFormComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './bookmarks-page.component.html',
@@ -86,6 +120,7 @@ export class BookmarksPageComponent implements OnInit {
 
   private readonly orderAnchor = viewChild<ElementRef<HTMLElement>>('orderAnchor');
   protected readonly modes = MODES;
+  protected readonly customSize = CUSTOM_SIZE;
 
   // ---- engine ----------------------------------------------------------
   protected readonly engine = signal<BookmarkEngine | null>(null);
@@ -109,16 +144,33 @@ export class BookmarksPageComponent implements OnInit {
   private targetSlot = 0;
   protected readonly pictureError = signal<'tooLarge' | 'wrongType' | null>(null);
   protected readonly shape = signal('');
-  protected readonly size = signal('');
+  /** A preset size id, or `custom` for the width and height fields. */
+  protected readonly sizeChoice = signal('');
+  protected readonly customWidth = signal(0);
+  protected readonly customHeight = signal(0);
+  protected readonly thickness = signal(0);
+  protected readonly borderMm = signal(0);
   protected readonly patternId = signal('');
-  protected readonly patternStyle = signal<PatternStyleId>('cut');
+  /** The chosen look's id (see `looks`). */
+  protected readonly patternLook = signal('');
+  /** A set of different patterns: one pattern id per bookmark, and the one the pattern list edits. */
+  protected readonly patternIds = signal<string[]>([]);
+  protected readonly activePatternSlot = signal(0);
+  /** The picture's colours, base first. */
   protected readonly colours = signal<Hex[]>([...STARTING_COLOURS]);
+  /** A pattern's colours, by role: switching the look keeps each role's colour. */
+  protected readonly patternColours = signal<Record<ColourRole, Hex>>({ ...PATTERN_COLOURS });
+  /** Quality ↔ filament, 0–1; null = the engine's default. */
+  protected readonly quality = signal<number | null>(null);
   protected readonly suggesting = signal(false);
   protected readonly hole = signal<Hole>('top');
   /** Where the name goes, or 'none' (the default): the name is optional. */
   protected readonly namePlace = signal<'none' | Place>('none');
   /** The name of a single bookmark (modes 1 and 2). */
   protected readonly name = signal('');
+  protected readonly font = signal(ENGINE_DEFAULT_FONT);
+  /** Capital-letter height in mm; null = the largest that fits (the engine's default). */
+  protected readonly letterMm = signal<number | null>(null);
   protected readonly setKind = signal<SetKind>('split');
   protected readonly setBase = signal<'picture' | 'pattern'>('picture');
   protected readonly splitCount = signal(3);
@@ -126,6 +178,8 @@ export class BookmarksPageComponent implements OnInit {
   protected readonly setNames = signal<string[]>(['', '', '', '', '']);
   /** How many bookmarks the several-names kind makes (one per name). */
   protected readonly nameCount = signal(2);
+  /** Set when the page moved a named pattern onto a solid back by itself. */
+  protected readonly autoBack = signal(false);
 
   // ---- preview and order -----------------------------------------------
   protected readonly previewUrl = signal<string | null>(null);
@@ -133,37 +187,87 @@ export class BookmarksPageComponent implements OnInit {
   /** Why the last preview failed (translated), or null. */
   protected readonly previewProblem = signal<string | null>(null);
   protected readonly warnings = signal<PreviewWarning[]>([]);
+  /** The quality slider's stops for the last preview, and the one it shows. */
+  protected readonly qualityStops = signal<QualityStop[]>([]);
+  protected readonly qualityChosen = signal(-1);
   protected readonly orderOpen = signal(false);
   private previewRun = 0;
 
   // ---- admin -----------------------------------------------------------
+  protected readonly expert = signal<ExpertValues>({});
   protected readonly builtFiles = signal<BuiltFile[]>([]);
   protected readonly buildError = signal('');
   protected readonly building = signal(false);
 
-  /** Where the design comes from: the mode, or for a set, its base. */
+  /** Where the design comes from: the mode, or for a set, its kind (and for names, its base). */
   protected readonly source = computed<'picture' | 'pattern'>(() => {
     const mode = this.mode();
     if (mode === 'set') {
-      return this.setKind() === 'names' ? this.setBase() : 'picture';
+      switch (this.setKind()) {
+        case 'names': return this.setBase();
+        case 'patterns': return 'pattern';
+        default: return 'picture';
+      }
     }
     return mode;
   });
+  private readonly patternSet = computed(() => this.mode() === 'set' && this.setKind() === 'patterns');
 
-  /** How many colour pickers: the engine's count for a picture, one per colour role for a pattern style. */
-  protected readonly colourCount = computed(() => {
+  /** The pattern looks: every engine style, and a style without its own back again on a solid back. */
+  protected readonly looks = computed<PatternLook[]>(() => {
     const options = this.options();
-    const most = options?.pictureColourCount ?? STARTING_COLOURS.length;
-    if (this.source() === 'picture') {
-      return most;
+    const looks: PatternLook[] = [];
+    for (const style of options?.patternStyles ?? []) {
+      looks.push({ id: style.id, style: style.id, back: false, roles: style.roles });
+      if (options?.patternBack && !style.roles.includes('back')) {
+        looks.push({ id: `${style.id}-back`, style: style.id, back: true, roles: ['back', ...style.roles] });
+      }
     }
-    const style = options?.patternStyles.find((s) => s.id === this.patternStyle());
-    return Math.min(style?.roles.length ?? most, most);
+    return looks;
+  });
+  protected readonly look = computed(() => this.looks().find((l) => l.id === this.patternLook()) ?? this.looks()[0] ?? null);
+
+  /** The colour pickers: the engine's count for a picture, one per colour role of the pattern look. */
+  protected readonly colourFields = computed<ColourField[]>(() => {
+    if (this.source() === 'picture') {
+      const count = this.options()?.pictureColourCount ?? STARTING_COLOURS.length;
+      return this.colours().slice(0, count).map((value, i) => ({ id: String(i), label: this.i18n.t('bookmarks.colours.colour', { n: i + 1 }), value }));
+    }
+    const colours = this.patternColours();
+    return (this.look()?.roles ?? []).map((role) => ({ id: role, label: this.roleLabel(role), value: colours[role] }));
   });
 
-  protected readonly colourSlots = computed(() => Array.from({ length: this.colourCount() }, (_, index) => index));
+  /** The size the engine gets: a preset id, or `<width>x<height>` when the typed size is within the engine's limits. */
+  protected readonly customSizeValid = computed(() => {
+    const limits = this.options()?.customSize;
+    const w = this.customWidth();
+    const h = this.customHeight();
+    return !!limits && w >= limits.widthMm.min && w <= limits.widthMm.max && h >= limits.heightMm.min && h <= limits.heightMm.max;
+  });
+  protected readonly size = computed(() => {
+    const choice = this.sizeChoice();
+    if (choice !== CUSTOM_SIZE) {
+      return choice;
+    }
+    return this.customSizeValid() ? `${this.customWidth()}x${this.customHeight()}` : '';
+  });
+  /** The bookmark's width and height in mm (the preset's, or the typed ones). */
+  private readonly sizeMm = computed(() => {
+    if (this.sizeChoice() === CUSTOM_SIZE) {
+      return { w: this.customWidth(), h: this.customHeight() };
+    }
+    const preset = this.options()?.sizes.find((s) => s.id === this.sizeChoice());
+    return preset ? { w: preset.widthMm, h: preset.heightMm } : { w: 40, h: 160 };
+  });
 
-  /** The request for the engine, or null while it can't be previewed or ordered (the engine isn't up, or a picture is missing). */
+  /** The typed names, one per bookmark ('' = unnamed); [] = no name at all. */
+  private readonly requestNames = computed(() => {
+    const set = this.mode() === 'set';
+    const typed = (set ? this.setNames().slice(0, this.setSize()) : [this.name()]).map((n) => n.trim());
+    return this.effectivePlace() !== 'none' && typed.some((n) => n) ? typed : [];
+  });
+
+  /** The request for the engine, or null while it can't be previewed or ordered (the engine isn't up, a picture is missing, the size is invalid). */
   protected readonly request = computed<BookmarkRequest | null>(() => {
     const options = this.options();
     if (!options || !this.shape() || !this.size()) {
@@ -177,20 +281,29 @@ export class BookmarksPageComponent implements OnInit {
     const mode = this.mode();
     const set = mode === 'set';
     const splitting = set && this.setKind() === 'split';
-    const typed = (set ? this.setNames().slice(0, this.setSize()) : [this.name()]).map((n) => n.trim());
-    // [] = no name at all; otherwise one entry per bookmark.
     const place = this.effectivePlace();
-    const names = place !== 'none' && typed.some((n) => n) ? (set ? typed : typed.slice(0, 1)) : [];
+    const names = this.requestNames();
 
     const request: BookmarkRequest = {
       mode: source,
       shape: this.shape(),
       size: this.size(),
-      colours: this.colours().slice(0, this.colourCount()),
+      colours: this.colourFields().map((field) => field.value),
       hole: this.hole(),
       names,
-      namePlace: place === 'none' ? 'middle' : place
+      namePlace: place === 'none' ? 'middle' : place,
+      thicknessMm: this.thickness(),
+      border: { widthMm: this.borderMm() }
     };
+    if (names.length) {
+      request.nameFont = this.font();
+      if (this.letterMm() !== null) {
+        request.nameSizeMm = this.letterMm()!;
+      }
+    }
+    if (this.quality() !== null) {
+      request.quality = this.quality()!;
+    }
     if (source === 'picture' && set && this.setKind() === 'pictures') {
       request.pictures = slots.map((slot) => slot.file);
       request.framing = slots.map((slot) => slot.framing);
@@ -198,19 +311,28 @@ export class BookmarksPageComponent implements OnInit {
       request.picture = slots[0].file;
       request.framing = [slots[0].framing];
     } else {
-      request.pattern = { id: this.patternId(), style: this.patternStyle() };
+      const look = this.look();
+      request.pattern = {
+        id: this.patternSet() ? this.patternIds() : this.patternId(),
+        style: look?.style ?? 'cut',
+        ...(look?.back ? { back: true } : {})
+      };
     }
     if (splitting) {
       request.split = this.splitCount();
     }
+    if (this.admin() && Object.keys(this.expert()).length) {
+      request.expert = this.expert();
+    }
     return request;
   });
 
-  /** How many bookmarks a set has: the split count, one per picture, or one per name. */
+  /** How many bookmarks a set has: the split count, one per picture, per name or per pattern. */
   protected readonly setSize = computed(() => {
     switch (this.setKind()) {
       case 'split': return this.splitCount();
       case 'pictures': return Math.max(1, this.slots().length);
+      case 'patterns': return this.patternIds().length;
       default: return this.nameCount();
     }
   });
@@ -220,6 +342,10 @@ export class BookmarksPageComponent implements OnInit {
   protected readonly namesRequired = computed(() => this.mode() === 'set' && this.setKind() === 'names');
   protected readonly effectivePlace = computed<'none' | Place>(() =>
     this.namePlace() === 'none' && this.namesRequired() ? 'middle' : this.namePlace());
+
+  /** The text the font list draws each font with: the first typed name. */
+  protected readonly fontSample = computed(() =>
+    (this.mode() === 'set' ? this.setNames().slice(0, this.setSize()) : [this.name()]).find((n) => n.trim()) ?? '');
 
   /** The most pictures a set takes (its size limit, from the engine). */
   protected readonly maxPictures = computed(() => this.options()?.set.max ?? 1);
@@ -233,8 +359,8 @@ export class BookmarksPageComponent implements OnInit {
   });
   /** The proportions of the framing editor: a bookmark's, or for a split the whole set's. */
   protected readonly frameAspect = computed(() => {
-    const size = this.options()?.sizes.find((s) => s.id === this.size());
-    const one = size ? size.widthMm / size.heightMm : 0.25;
+    const { w, h } = this.sizeMm();
+    const one = w > 0 && h > 0 ? w / h : 0.25;
     return this.mode() === 'set' && this.setKind() === 'split' ? one * this.splitCount() : one;
   });
   /** The shape's outline for the editor (not for a split: its frame is the whole set). */
@@ -249,7 +375,14 @@ export class BookmarksPageComponent implements OnInit {
   protected readonly shapeThumbs = computed(() =>
     new Map((this.options()?.shapes ?? []).map((s) => [s.id, this.sanitizer.bypassSecurityTrustHtml(s.thumbnailSvg)])));
 
-  protected readonly expertJson = computed(() => JSON.stringify(this.options()?.expert ?? {}, null, 2));
+  /** The smallest letters for the nozzle in use (0.4 mm unless the Studio changed it). */
+  protected readonly letterRange = computed(() => {
+    const names = this.options()?.names;
+    const nozzle = Number(this.expert()['nozzle'] ?? 0.4);
+    const min = names?.minLetterMm.find((n) => n.nozzle === nozzle)?.mm ?? names?.minLetterMm[0]?.mm ?? 5.5;
+    return { min, max: names?.maxLetterMm ?? 12, step: names?.stepMm ?? 0.5 };
+  });
+
   protected readonly uploadAccept = computed(() => (this.options()?.limits.uploadTypes ?? []).join(','));
   protected readonly uploadMaxMb = computed(() => Math.round(((this.options()?.limits.uploadMaxBytes ?? 0) / (1024 * 1024)) * 10) / 10);
 
@@ -261,14 +394,43 @@ export class BookmarksPageComponent implements OnInit {
       this.startEngine()
         .then(async (engine) => {
           const options = await engine.options();
+          const firstSize = options.sizes[0];
           this.shape.set(options.shapes[0]?.id ?? '');
-          this.size.set(options.sizes[0]?.id ?? '');
+          this.sizeChoice.set(firstSize?.id ?? '');
+          this.customWidth.set(firstSize?.widthMm ?? options.customSize.widthMm.min);
+          this.customHeight.set(firstSize?.heightMm ?? options.customSize.heightMm.min);
+          this.thickness.set(options.thickness.default);
+          this.borderMm.set(options.border.widthMm.default);
           this.patternId.set(options.patterns[0]?.id ?? '');
-          this.patternStyle.set(options.patternStyles[0]?.id ?? 'cut');
+          this.patternIds.set(options.patterns.slice(0, 2).map((p) => p.id));
+          this.patternLook.set(options.patternStyles[0]?.id ?? 'cut');
+          if (!options.fonts.some((f) => f.id === ENGINE_DEFAULT_FONT)) {
+            this.font.set(options.fonts.find((f) => f.cyrillic)?.id ?? options.fonts[0]?.id ?? '');
+          }
           this.engine.set(engine);
           this.options.set(options);
         })
         .catch(() => this.engineFailed.set(true));
+    });
+
+    // A name on a pattern needs a solid back (`names.patternNeedsBack`): put a named
+    // pattern without one on the same style with a back, and say so.
+    effect(() => {
+      const named = this.source() === 'pattern' && this.requestNames().length > 0;
+      const look = this.look();
+      untracked(() => {
+        if (!named) {
+          this.autoBack.set(false);
+          return;
+        }
+        if (look && !look.roles.includes('back') && this.options()?.names.patternNeedsBack) {
+          const backed = this.looks().find((l) => l.style === look.style && l.roles.includes('back'));
+          if (backed) {
+            this.patternLook.set(backed.id);
+            this.autoBack.set(true);
+          }
+        }
+      });
     });
 
     // Ask for a fresh preview once the choices have rested for a moment.
@@ -301,11 +463,13 @@ export class BookmarksPageComponent implements OnInit {
     const run = ++this.previewRun;
     this.previewBusy.set(true);
     try {
-      const { png, warnings } = await engine.preview(request);
+      const { png, warnings, quality } = await engine.preview(request);
       const url = await readAsDataUrl(png);
       if (run === this.previewRun) {
         this.previewUrl.set(url);
         this.warnings.set(warnings);
+        this.qualityStops.set(quality?.stops ?? []);
+        this.qualityChosen.set(quality?.chosen ?? -1);
         this.previewProblem.set(null);
       }
     } catch (error) {
@@ -322,10 +486,27 @@ export class BookmarksPageComponent implements OnInit {
   // ---- labels ----------------------------------------------------------
 
   /** The translated label of an engine item, falling back to the engine's own (English) label. */
-  protected label(group: 'shapes' | 'patterns' | 'patternStyles', id: string, fallback: string): string {
+  protected label(group: 'shapes' | 'patterns' | 'patternLooks' | 'patternLookHints' | 'quality', id: string, fallback: string): string {
     const key = `bookmarks.labels.${group}.${id}`;
     const text = this.i18n.t(key as TranslationKey);
     return text === key ? fallback : text;
+  }
+
+  /** What a pattern colour does („Гръб“, „Шарка“, „Рамка“). */
+  private roleLabel(role: ColourRole): string {
+    const key = `bookmarks.colours.roles.${role}`;
+    const text = this.i18n.t(key as TranslationKey);
+    return text === key ? role : text;
+  }
+
+  /** A number in the page's language: 1.1 → „1,1“. */
+  protected number(value: number): string {
+    return this.i18n.formatNumber(value);
+  }
+
+  /** Millimetres in the page's language: 1.6 → „1,6 мм“. */
+  protected mm(value: number): string {
+    return this.i18n.t('bookmarks.units.mm', { n: this.i18n.formatNumber(value) });
   }
 
   /** A warning's translated text by its stable code, falling back to the engine's message. */
@@ -354,15 +535,24 @@ export class BookmarksPageComponent implements OnInit {
 
   protected readonly modeLabel = (mode: Mode): TranslationKey => `bookmarks.modes.${mode}`;
 
-  protected sizeChoices = computed<Choice[]>(() => (this.options()?.sizes ?? []).map((s) => ({ id: s.id, label: s.label })));
-  protected styleChoices = computed<Choice[]>(() =>
-    (this.options()?.patternStyles ?? []).map((s) => ({ id: s.id, label: this.label('patternStyles', s.id, s.label) })));
+  protected sizeChoices = computed<Choice[]>(() => [
+    ...(this.options()?.sizes ?? []).map((s) => ({ id: s.id, label: s.label })),
+    { id: CUSTOM_SIZE, label: this.i18n.t('bookmarks.size.custom') }
+  ]);
+  protected thicknessChoices = computed<Choice[]>(() =>
+    (this.options()?.thickness.values ?? []).map((v) => ({ id: String(v), label: this.i18n.formatNumber(v) })));
+  protected qualityChoices = computed<Choice[]>(() =>
+    this.qualityStops().map((stop) => ({ id: String(stop.value), label: this.label('quality', stop.id, stop.id) })));
+  protected readonly chosenStop = computed(() => this.qualityStops()[this.qualityChosen()] ?? null);
   protected countChoices = computed<Choice[]>(() =>
     (this.options()?.set.splitCounts ?? []).map((n) => ({ id: String(n), label: String(n) })));
+  /** The pattern the pattern list shows as chosen: the single one, or the active slot's in a set of patterns. */
+  protected readonly shownPattern = computed(() => (this.patternSet() ? this.patternIds()[this.activePatternSlot()] : this.patternId()));
 
   // ---- setters used by the template ------------------------------------
-  protected readonly pickSize = (id: string) => this.size.set(id);
-  protected readonly pickStyle = (id: string) => this.patternStyle.set(id as PatternStyleId);
+  protected readonly pickSize = (id: string) => this.sizeChoice.set(id);
+  protected readonly pickThickness = (id: string) => this.thickness.set(Number(id));
+  protected readonly pickQuality = (id: string) => this.quality.set(Number(id));
   protected readonly pickHole = (id: string) => this.hole.set(id as Hole);
   protected readonly pickPlace = (id: string) => this.namePlace.set(id as 'none' | Place);
   protected readonly pickSetKind = (id: string) => this.setKind.set(id as SetKind);
@@ -373,8 +563,50 @@ export class BookmarksPageComponent implements OnInit {
     this.mode.set(MODES[index] ?? 'picture');
   }
 
-  protected setColour(slot: number, value: Hex): void {
-    this.colours.update((colours) => colours.map((c, i) => (i === slot ? value : c)));
+  protected pickLook(id: string): void {
+    this.patternLook.set(id);
+  }
+
+  protected pickPattern(id: string): void {
+    if (this.patternSet()) {
+      const slot = this.activePatternSlot();
+      this.patternIds.update((ids) => ids.map((p, i) => (i === slot ? id : p)));
+    } else {
+      this.patternId.set(id);
+    }
+  }
+
+  protected addPatternSlot(): void {
+    const options = this.options();
+    if (!options || this.patternIds().length >= options.set.max) {
+      return;
+    }
+    // The next pattern not in the set yet, so a new bookmark looks different straight away.
+    const unused = options.patterns.find((p) => !this.patternIds().includes(p.id)) ?? options.patterns[0];
+    this.patternIds.update((ids) => [...ids, unused.id]);
+    this.activePatternSlot.set(this.patternIds().length - 1);
+  }
+
+  protected removePatternSlot(index: number): void {
+    if (this.patternIds().length <= (this.options()?.set.min ?? 1)) {
+      return;
+    }
+    this.patternIds.update((ids) => ids.filter((_, i) => i !== index));
+    this.activePatternSlot.update((active) => Math.min(active, this.patternIds().length - 1));
+  }
+
+  protected setColour(id: string, value: Hex): void {
+    if (this.source() === 'picture') {
+      const slot = Number(id);
+      this.colours.update((colours) => colours.map((c, i) => (i === slot ? value : c)));
+    } else {
+      this.patternColours.update((colours) => ({ ...colours, [id as ColourRole]: value }));
+    }
+  }
+
+  protected setCustomSize(side: 'width' | 'height', event: Event): void {
+    const value = Number((event.target as HTMLInputElement).value);
+    (side === 'width' ? this.customWidth : this.customHeight).set(Number.isFinite(value) ? value : 0);
   }
 
   protected setName(event: Event): void {
@@ -485,7 +717,8 @@ export class BookmarksPageComponent implements OnInit {
     this.revokeBuiltFiles();
     try {
       const print = await this.startPrint();
-      const built = await print.build(request);
+      const nozzle = this.expert()['nozzle'] === 0.2 ? 0.2 : 0.4;
+      const built = await print.build(request, { nozzle });
       const files = [
         { name: built.threeMfName, file: built.threeMf },
         ...built.stls,

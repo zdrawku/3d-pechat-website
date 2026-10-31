@@ -17,7 +17,7 @@ sends the order.
 |---|---|---|
 | **W1** | Menu group, page with the three modes, order form, localisation, tests — all on a **stub** engine | ✅ built 2026-10-29, uncommitted |
 | **W1 open item** | **Real Web3Forms test: does a `.json` attachment arrive on the free plan?** | ⬜ **not verified** — see below |
-| **W2** | Wire the real engine: first from a local `.tgz` (`npm pack`, no symlink), then from npm — see "W2" below | 🟡 wired 2026-10-30 on rc.2; switched 2026-10-31 to `@printkit/bookmark-creator@^0.1.0` from npm (saved in `package.json`), uncommitted; the page does not offer every engine option yet (see "Engine options the page does not offer yet") |
+| **W2** | Wire the real engine: first from a local `.tgz` (`npm pack`, no symlink), then from npm — see "W2" below | 🟡 wired 2026-10-30 on rc.2; switched 2026-10-31 to `@printkit/bookmark-creator@^0.1.0` from npm (saved in `package.json`), uncommitted; every engine option on the page since 2026-10-31 (see "Every engine option on the page"); per-picture palettes wait for the engine |
 
 ## What W1 contains
 
@@ -193,24 +193,38 @@ Still open from the trial:
   starts there, no WebAssembly). CLS 0.60 on the Bulgarian page vs 0.07 on the English one —
   look into it. CI's Lighthouse workflow on the PR is the real comparison.
 
-### Engine options the page does not offer yet
+### Every engine option on the page (built 2026-10-31, uncommitted)
 
-The engine's `BookmarkRequest` / `options()` has more than the page sends (it sends mode,
-picture(s) + framing, pattern id + style, shape, preset size, colours, hole, names, place,
-split). Not offered yet — user-facing, so each needs a design first (Rule 2). Design
-variants (2026-10-31, awaiting a pick): [🔖 Bookmark Options Designs](https://claude.ai/artifact/39VUjUNmYyZfFLzojyLTYs).
-- **`pattern.back`** — a solid back under a cut-through pattern (one more colour, `back` first
-  in the roles), vs see-through. Also what lets a name sit on a cut-through pattern.
-- **A set of different patterns** — `pattern.id` as a list, one bookmark each (1 to `set.max`).
-- **Custom size** — any `WxH` within `customSize` (25–57 × 80–200 mm), besides the presets.
-- **Font** — `nameFont` from `options().fonts` (20; the four without Cyrillic must be hidden or
-  marked on the Bulgarian page); **letter size** — `nameSizeMm` (min per nozzle to 12 mm).
-- **Thickness** — `thicknessMm`, exactly `thickness.values` (1–2 mm, default 1.6).
-- **Frame width** — `border.widthMm` (0–6 mm, step 0.5, default 2).
-- **Quality ↔ filament slider** — `quality` (0–1); each preview returns its stops with colour
-  swaps and purge grams.
-- **Studio only:** `expert` (20 keys, today shown as JSON only) and the nozzle (0.4 / 0.2) for
-  `build`. `pictureColours` is not supported by the engine yet (`PICTURE_COLOURS_IGNORED`).
+Design: [🔖 Bookmark Options Designs](https://claude.ai/artifact/39VUjUNmYyZfFLzojyLTYs) —
+Zdravko picked **1D** (every option shown, grouped by what it changes, one row per small
+setting: label left, control right), **2A, 3A, 4, 5A (inside 1D), 6A, 7**. Built:
+- **Pattern looks** (2A): picture tiles „Ажурна / С гръб / С релеф“ — each engine style, plus
+  a style without its own back again with `pattern.back`. Colours are kept per role (back,
+  pattern, frame), so switching the look keeps them; defaults are a calm sage on sand. A name
+  on „Ажурна“ moves the pattern to „С гръб“ by itself, with a note (`names.patternNeedsBack`).
+- **Font** (3A): `app-bookmark-font-picker`, the engine's 20 fonts in its groups, each drawn
+  with the typed name. Latin-only fonts are disabled while the name has Cyrillic; `print:
+  'check'` fonts are tagged „за кратки имена“. The samples use self-hosted web-font subsets of
+  each font's `family` + `weight` (`scripts/fetch-bookmark-fonts.mjs` →
+  `src/assets/fonts/bookmarks/`, 728 KB, fetched only when drawn; OFL licences copied from the
+  package by `angular.json`). The package's own fonts are whole TTFs in JS (~7.7 MB), meant for
+  printing. **Letter size**: ± stepper from „Авто“, nozzle minimum to 12 mm.
+- **Size** (4): presets + „Свой размер“ (two mm fields, limits from `customSize`; outside
+  them the page says so and nothing can be ordered). **Thickness** (button row of the
+  engine's values), **frame** (± stepper, 0 = „Без рамка“), the hole, all in „Форма и размер“.
+- **Quality** („Изработка“): the stops the preview returns, shown when there are two or more;
+  the Studio also sees swaps, grams and plan.
+- **Set of different patterns** (6A): a fourth kind of set, one slot per bookmark (up to
+  `set.max`); the pattern list edits the active slot. Style and colours are shared.
+- **Studio** (7): `app-bookmark-expert-form`, generated from `options().expert` (numbers with
+  units and limits, lists as buttons); only changed values go into `request.expert`. The
+  nozzle (expert) is also passed to `print.build`; the Orders tab has its own nozzle choice.
+
+Waiting for the engine (requests in `BOOKMARKS-ENGINE-CONTRACT.md`):
+- **§1.10 a palette per picture** (Zdravko wants it): 0.1.0 ignores `pictureColours`. When it
+  lands, each picture in „Различни снимки“ gets its own pickers, by the plate rule the engine sets.
+- **§1.11 preview depth:** „С гръб“ and „С релеф“ preview byte-identical today.
+- Optional: the web-font subsets could ship in the package instead of being fetched here.
 
 1. Everything in "The switch" above; delete the stub's demo preview and the draft types.
 2. Send the page's new fields to the engine: `pictures`, `framing` (already sent today) and,

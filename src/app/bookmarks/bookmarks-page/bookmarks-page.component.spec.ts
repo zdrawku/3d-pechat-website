@@ -13,14 +13,23 @@ interface Internals {
   request(): BookmarkRequest | null;
   mode(): string;
   setMode(index: number): void;
-  setKind: { set(kind: 'split' | 'pictures' | 'names'): void };
+  setKind: { set(kind: 'split' | 'pictures' | 'names' | 'patterns'): void };
   chooseFor(index: number, input: HTMLInputElement): void;
   setFraming(index: number, framing: { x: number; y: number; zoom: number }): void;
   removePicture(index: number): void;
   splitCount: { set(count: number): void };
   nameCount: { set(count: number): void };
   setNames: { set(names: string[]): void };
-  patternStyle: { set(style: 'cut' | 'relief'): void };
+  patternLook: { set(id: string): void; (): string };
+  sizeChoice: { set(id: string): void };
+  customWidth: { set(mm: number): void };
+  customHeight: { set(mm: number): void };
+  letterMm: { set(mm: number | null): void };
+  font: { set(id: string): void };
+  expert: { set(values: Record<string, number | string>): void };
+  activePatternSlot: { set(index: number): void };
+  pickPattern(id: string): void;
+  addPatternSlot(): void;
   name: { set(name: string): void };
   namePlace: { set(place: string): void };
   effectivePlace(): string;
@@ -100,7 +109,8 @@ describe('BookmarksPageComponent', () => {
   it('takes the lists from engine.options(), never from the page', async () => {
     const options = await engine.options();
     expect(host().querySelectorAll('[data-testid^="bookmark-shape-"]').length).toBe(options.shapes.length);
-    expect(testid('bookmark-size')!.querySelectorAll('button').length).toBe(options.sizes.length);
+    expect(testid('bookmark-size')!.querySelectorAll('button').length).withContext('presets + custom').toBe(options.sizes.length + 1);
+    expect(testid('bookmark-thickness')!.querySelectorAll('button').length).toBe(options.thickness.values.length);
     expect(host().querySelector('input[type="file"]')!.getAttribute('accept')).toBe(options.limits.uploadTypes.join(','));
   });
 
@@ -242,7 +252,7 @@ describe('BookmarksPageComponent', () => {
       fixture.detectChanges();
       await sleep(PREVIEW_WAIT_MS);
       await settle();
-      expect(testid('bookmark-preview-problem')!.textContent).toContain('„С релеф“');
+      expect(testid('bookmark-preview-problem')!.textContent).toContain('„С гръб“');
     });
 
     it('needs no picture, and uses as many colours as the pattern style says', async () => {
@@ -253,10 +263,42 @@ describe('BookmarksPageComponent', () => {
       expect(request.colours.length).toBe(2);
       expect(host().querySelectorAll('igc-color-picker').length).toBe(2);
 
-      internals().patternStyle.set('relief');
+      internals().patternLook.set('relief');
       fixture.detectChanges();
       expect(internals().request()!.colours.length).toBe(3);
       expect(host().querySelectorAll('igc-color-picker').length).toBe(3);
+    });
+
+    it('offers each style plus a cut-through pattern on a solid back, as picture tiles', () => {
+      const tiles = host().querySelectorAll('[data-testid="bookmark-pattern-style"] button[igxButton]');
+      expect(Array.from(tiles).map((t) => t.getAttribute('data-testid'))).toEqual(['bookmark-look-cut', 'bookmark-look-cut-back', 'bookmark-look-relief']);
+      expect(tiles[0].textContent).toContain('Ажурна');
+
+      (testid('bookmark-look-cut-back') as HTMLButtonElement).click();
+      fixture.detectChanges();
+      const request = internals().request()!;
+      expect(request.pattern).toEqual(jasmine.objectContaining({ style: 'cut', back: true }));
+      expect(request.colours.length).withContext('back, pattern, frame').toBe(3);
+      const labels = Array.from(host().querySelectorAll('app-bookmark-colour-picker igc-color-picker')).map((p) => p.getAttribute('label'));
+      expect(labels).toEqual(['Гръб', 'Шарка', 'Рамка']);
+    });
+
+    it('keeps each colour with its role when the look changes', () => {
+      internals().patternLook.set('cut');
+      const cut = internals().request()!.colours;
+      internals().patternLook.set('cut-back');
+      const backed = internals().request()!.colours;
+      expect(backed.slice(1)).withContext('pattern and frame keep their colours').toEqual(cut);
+    });
+
+    it('puts a named cut-through pattern on a solid back by itself, and says so', async () => {
+      internals().namePlace.set('middle');
+      internals().name.set('Ели');
+      fixture.detectChanges();
+      await settle();
+      expect(internals().patternLook()).toBe('cut-back');
+      expect(internals().request()!.pattern).toEqual(jasmine.objectContaining({ back: true }));
+      expect(testid('bookmark-auto-back')).not.toBeNull();
     });
 
     it('keeps shape, size and name when switching modes', async () => {
@@ -266,6 +308,81 @@ describe('BookmarksPageComponent', () => {
       await settle();
       expect(testid('bookmark-name-input')).not.toBeNull();
       expect((testid('bookmark-name-input') as HTMLInputElement).value).toBe('Ана');
+    });
+  });
+
+  describe('size, thickness, frame and the name’s font', () => {
+    beforeEach(async () => {
+      internals().setMode(1);
+      fixture.detectChanges();
+      await settle();
+    });
+
+    it('sends the engine’s default thickness and frame, and the chosen ones', async () => {
+      const { thickness, border } = await engine.options();
+      expect(internals().request()).toEqual(jasmine.objectContaining({ thicknessMm: thickness.default, border: { widthMm: border.widthMm.default } }));
+
+      (Array.from(testid('bookmark-thickness')!.querySelectorAll('button')).at(-1) as HTMLButtonElement).click();
+      (testid('bookmark-frame')!.querySelector('[data-testid="stepper-increase"]') as HTMLButtonElement).click();
+      fixture.detectChanges();
+      expect(internals().request()).toEqual(jasmine.objectContaining({
+        thicknessMm: thickness.values.at(-1), border: { widthMm: border.widthMm.default + border.widthMm.step }
+      }));
+    });
+
+    it('takes a custom size within the engine’s limits, and refuses one outside them', async () => {
+      const { customSize } = await engine.options();
+      internals().sizeChoice.set('custom');
+      internals().customWidth.set(45);
+      internals().customHeight.set(180);
+      fixture.detectChanges();
+      expect(testid('bookmark-custom-size')!.querySelectorAll('igx-input-group').length).toBe(2);
+      expect(internals().request()!.size).toBe('45x180');
+
+      internals().customWidth.set(customSize.widthMm.max + 1);
+      fixture.detectChanges();
+      expect(internals().request()).withContext('nothing to preview or order').toBeNull();
+      expect(testid('bookmark-custom-size-hint')!.classList).toContain('problem');
+    });
+
+    it('sends the font and the letter size only with a name', () => {
+      expect(internals().request()!.nameFont).toBeUndefined();
+      internals().namePlace.set('top');
+      internals().name.set('Ели');
+      internals().font.set('oswald');
+      fixture.detectChanges();
+      expect(internals().request()!.nameFont).toBe('oswald');
+      expect(internals().request()!.nameSizeMm).withContext('„Авто“').toBeUndefined();
+      internals().letterMm.set(8);
+      expect(internals().request()!.nameSizeMm).toBe(8);
+      expect(host().querySelector('app-bookmark-font-picker')).not.toBeNull();
+    });
+  });
+
+  describe('a set of different patterns', () => {
+    beforeEach(async () => {
+      internals().setMode(2);
+      internals().setKind.set('patterns');
+      fixture.detectChanges();
+      await settle();
+    });
+
+    it('sends one pattern per bookmark, with a shared style, up to the engine’s limit', async () => {
+      const { patterns, set } = await engine.options();
+      expect(internals().request()!.pattern!.id).toEqual([patterns[0].id, patterns[1].id]);
+
+      internals().activePatternSlot.set(1);
+      internals().pickPattern(patterns[4].id);
+      internals().addPatternSlot();
+      fixture.detectChanges();
+      expect(internals().request()!.pattern!.id).toEqual([patterns[0].id, patterns[4].id, patterns[1].id]);
+
+      for (let i = 0; i < set.max; i++) {
+        internals().addPatternSlot();
+      }
+      fixture.detectChanges();
+      expect((internals().request()!.pattern!.id as string[]).length).toBe(set.max);
+      expect(testid('bookmark-pattern-add')).withContext('no add button at the maximum').toBeNull();
     });
   });
 
@@ -408,6 +525,16 @@ describe('BookmarksPageComponent', () => {
       await settle();
       expect(testid('bookmark-expert')).not.toBeNull();
       expect(testid('bookmark-build')).not.toBeNull();
+      const { expert } = await engine.options();
+      expect(testid('bookmark-expert-form')!.querySelectorAll('[data-testid^="expert-"]').length).toBe(expert.length);
+    });
+
+    it('sends the Studio’s changed expert settings, and none from customers', () => {
+      internals().setMode(1);
+      internals().expert.set({ smooth: 1 });
+      expect(internals().request()!.expert).withContext('customer page').toBeUndefined();
+      fixture.componentRef.setInput('admin', true);
+      expect(internals().request()!.expert).toEqual({ smooth: 1 });
     });
   });
 

@@ -160,6 +160,61 @@ test.describe('bookmark creator: preview, positioning and sets of pictures', () 
     await expect.poll(width, { timeout: 20_000 }).toBeGreaterThan(3 * one);
   });
 
+  test('a pattern: see-through, on a solid back or raised, and a name moves it onto a back', async ({ page }) => {
+    await page.getByTestId('bookmark-mode-pattern').click();
+    await expect(page.getByTestId('bookmark-pattern-style').locator('button')).toHaveCount(3);
+    await expect(page.locator('igc-color-picker')).toHaveCount(2); // pattern, frame
+
+    await page.getByTestId('bookmark-look-cut-back').click();
+    await expect(page.locator('igc-color-picker')).toHaveCount(3); // back, pattern, frame
+    await expect(page.getByTestId('bookmark-preview')).toBeVisible();
+
+    await page.getByTestId('bookmark-look-cut').click();
+    await page.getByTestId('bookmark-name-place').locator('button', { hasText: 'В средата' }).click();
+    await page.getByTestId('bookmark-name-input').fill('Ели');
+    await expect(page.getByTestId('bookmark-auto-back')).toBeVisible();
+    await expect(page.getByTestId('bookmark-look-cut-back')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.getByTestId('bookmark-preview-problem')).toHaveCount(0);
+  });
+
+  test('the name’s font list draws the name in each font, and the preview follows the font', async ({ page }) => {
+    await page.getByTestId('bookmark-mode-pattern').click();
+    await page.getByTestId('bookmark-name-place').locator('button', { hasText: 'Горе' }).click();
+    await page.getByTestId('bookmark-name-input').fill('Мария');
+    await expect(page.getByTestId('bookmark-font-rubik')).toContainText('Мария');
+    await expect(page.getByTestId('bookmark-font-germania')).toBeDisabled(); // no Cyrillic
+    const preview = page.getByTestId('bookmark-preview');
+    await expect(preview).toBeVisible();
+    const before = await preview.getAttribute('src');
+    await page.getByTestId('bookmark-font-oswald').click();
+    await expect.poll(() => preview.getAttribute('src'), { timeout: 20_000 }).not.toBe(before);
+  });
+
+  test('a custom size within the limits previews; one outside them cannot be ordered', async ({ page }) => {
+    await page.getByTestId('bookmark-mode-pattern').click();
+    await page.getByTestId('bookmark-size').locator('button', { hasText: 'Свой размер' }).click();
+    await page.getByTestId('bookmark-custom-width').fill('70');
+    await expect(page.getByTestId('bookmark-order-open')).toBeDisabled();
+    await page.getByTestId('bookmark-custom-width').fill('45');
+    await page.getByTestId('bookmark-custom-height').fill('180');
+    await expect(page.getByTestId('bookmark-order-open')).toBeEnabled();
+    await expect(page.getByTestId('bookmark-preview')).toBeVisible();
+  });
+
+  test('a set of different patterns: one bookmark per pattern, all in the preview', async ({ page }) => {
+    await page.getByTestId('bookmark-mode-set').click();
+    await page.getByTestId('bookmark-set-kind').locator('button', { hasText: 'Различни шарки' }).click();
+    const preview = page.getByTestId('bookmark-preview');
+    await expect(preview).toBeVisible();
+    const width = () => preview.evaluate((img: HTMLImageElement) => img.complete ? img.naturalWidth : 0);
+    await expect.poll(width, { timeout: 20_000 }).toBeGreaterThan(0);
+    const two = await width();
+    await page.getByTestId('bookmark-pattern-add').click();
+    await page.getByTestId('bookmark-pattern-add').click();
+    await expect(page.locator('[data-testid^="bookmark-pattern-slot-"]')).toHaveCount(4);
+    await expect.poll(width, { timeout: 20_000 }).toBeGreaterThan(two * 1.5);
+  });
+
   test('no choice label is clipped on a phone', async ({ page }) => {
     // Resize first and load again: the side menu is open or closed from the width at load time.
     await page.setViewportSize({ width: 390, height: 844 });

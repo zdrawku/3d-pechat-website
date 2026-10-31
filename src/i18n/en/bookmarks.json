@@ -31,13 +31,24 @@
   },
   "pattern": {
     "heading": "Pattern",
-    "styleHeading": "Style"
+    "styleHeading": "Style",
+    "slotsLabel": "Bookmarks in the set",
+    "slotN": "Bookmark {n}",
+    "addSlot": "Add a bookmark",
+    "removeSlot": "Remove bookmark {n}",
+    "autoBack": "A name needs a solid back, so the pattern is now “With a back”. Remove the name for a see-through pattern."
   },
   "shape": {
-    "heading": "Shape"
+    "heading": "Shape",
+    "cardHeading": "Shape and size"
   },
   "size": {
-    "heading": "Size"
+    "heading": "Size",
+    "custom": "Custom size",
+    "width": "Width",
+    "height": "Length",
+    "range": "Width {wMin} to {wMax} mm, length {hMin} to {hMax} mm.",
+    "outOfRange": "That size can’t be made: width {wMin} to {wMax} mm, length {hMin} to {hMax} mm."
   },
   "colours": {
     "heading": "Colours",
@@ -45,7 +56,12 @@
     "suggest": "Suggest again",
     "suggesting": "Picking colours…",
     "hintPicture": "Picked from your picture. Change any of them freely.",
-    "hintPattern": "How many colours you need depends on the pattern style."
+    "hintPattern": "How many colours you need depends on the pattern style.",
+    "roles": {
+      "back": "Back",
+      "pattern": "Pattern",
+      "border": "Frame"
+    }
   },
   "name": {
     "heading": "Name",
@@ -55,7 +71,11 @@
     "none": "None",
     "top": "Top",
     "middle": "Middle",
-    "bottom": "Bottom"
+    "bottom": "Bottom",
+    "fontHeading": "Font",
+    "letterHeading": "Letter size",
+    "auto": "Auto",
+    "letterHint": "Auto = the largest letters that fit. By hand: {min} to {max}."
   },
   "hole": {
     "heading": "Hanging hole",
@@ -79,7 +99,9 @@
     "removeName": "Remove the name",
     "kindPictures": "Different pictures",
     "picturesHint": "Up to {max} bookmarks, each with its own picture. Add the pictures one by one: all of them show in the preview.",
-    "namesHint": "The same design for all, with a different name on each bookmark."
+    "namesHint": "The same design for all, with a different name on each bookmark.",
+    "kindPatterns": "Different patterns",
+    "patternsHint": "Up to {max} bookmarks, each with its own pattern. The style and colours are shared by the set."
   },
   "privacy": {
     "heading": "Your picture stays with you",
@@ -138,9 +160,21 @@
       "tri_y": "Y weave",
       "spirals": "Spirals"
     },
-    "patternStyles": {
-      "cut": "Cut-through",
+    "patternLooks": {
+      "cut": "See-through",
+      "cut-back": "With a back",
       "relief": "Raised"
+    },
+    "patternLookHints": {
+      "cut": "Open pattern: the page shows through",
+      "cut-back": "The pattern sits on a thin solid back",
+      "relief": "The pattern is raised on a thick base"
+    },
+    "quality": {
+      "economy": "Economical",
+      "balanced": "Balanced",
+      "quality": "Quality",
+      "best": "Best"
     }
   },
   "warnings": {
@@ -158,7 +192,7 @@
     "PICTURE_COLOURS_IGNORED": "The set uses the same colours for every picture."
   },
   "errors": {
-    "namesNeedBack": "A name on a cut-through pattern has nothing to sit on. Choose the “Raised” style or remove the name.",
+    "namesNeedBack": "A name on a see-through pattern has nothing to sit on. Choose “With a back” or “Raised”, or remove the name.",
     "PICTURE_UNREADABLE": "The picture cannot be read. Try a JPG, PNG or WebP.",
     "PICTURE_TOO_LARGE": "The picture is too large. Try a smaller one.",
     "SIZE_OUT_OF_RANGE": "That size cannot be made. Choose another."
@@ -173,7 +207,7 @@
     "tabEditor": "Designer",
     "tabOrders": "Orders",
     "expertHeading": "Every designer option",
-    "expertNote": "Shown as the designer returns them.",
+    "expertNote": "The engine’s expert settings. Changes apply to the preview, the order and the print files.",
     "downloadHeading": "Print files",
     "downloadNote": "3MF, STL and zip. Works once the designer is connected.",
     "download": "Build and download",
@@ -182,7 +216,9 @@
     "openOrder": "Open an order",
     "orderError": "The order could not be opened: {message}",
     "orderCustomer": "Customer",
-    "orderId": "Order number"
+    "orderId": "Order number",
+    "expertReset": "Back to defaults",
+    "nozzle": "Nozzle"
   },
   "framer": {
     "label": "Position of the picture in the bookmark (arrow keys: move, + and −: zoom)",
@@ -190,5 +226,38 @@
     "reset": "Centre",
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out"
+  },
+  "thickness": {
+    "heading": "Thickness, mm"
+  },
+  "frame": {
+    "heading": "Frame",
+    "none": "No frame"
+  },
+  "quality": {
+    "heading": "Finish",
+    "hint": "Higher quality means more colour changes during printing.",
+    "facts": "{swaps} colour changes · {grams} g of filament for the changes · {plan}"
+  },
+  "fonts": {
+    "groups": {
+      "viking": "Viking and gothic",
+      "storybook": "Old-world and storybook",
+      "bold": "Bold, easiest to print",
+      "narrow": "Narrow, for long names",
+      "serif": "Book serifs",
+      "playful": "Playful"
+    },
+    "short": "for short names",
+    "latinOnly": "Latin letters only",
+    "sample": "Maria"
+  },
+  "stepper": {
+    "decrease": "Decrease: {what}",
+    "increase": "Increase: {what}"
+  },
+  "units": {
+    "mm": "{n} mm",
+    "mmShort": "mm"
   }
 }

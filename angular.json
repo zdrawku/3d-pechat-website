@@ -48,6 +48,11 @@
                 "output": "assets/bookmarks"
               },
               {
+                "glob": "OFL_*.txt",
+                "input": "node_modules/@printkit/bookmark-creator/fonts",
+                "output": "assets/fonts/bookmarks"
+              },
+              {
                 "glob": "CNAME",
                 "input": "public",
                 "output": "/"

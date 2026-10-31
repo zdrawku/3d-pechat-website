@@ -193,6 +193,42 @@ interface EngineOptions {
 - The preview PNG keeps the **true proportions** of the chosen size (the page sizes its frame from
   the numbers in the request), and `createOrder`'s `summary` states the size in mm.
 
+### 1.10 MUST (2026-10-31) — colours per picture, for real
+
+Supersedes 1.3. In 0.1.0, `pictureColours` is accepted but ignored (`PICTURE_COLOURS_IGNORED`): every
+bookmark in a set of different pictures gets the same palette. Zdravko decided the site offers
+**a palette per picture** (a sunset and a forest each get their own colours), so the engine has to
+honour it. Additive to the 0.1.0 API:
+
+1. **`preview`, `createOrder`, `readOrder` and `print.build` honour `pictureColours[i]`** for
+   `pictures[i]` (a missing entry still means `colours`). Each bookmark in the preview is drawn in
+   its own palette, the order file keeps them, `readOrder` gives them back, and the 3MF assigns
+   them. `PICTURE_COLOURS_IGNORED` is no longer raised when they are honoured.
+2. **The plate limit is yours to define.** A set prints on one A1 plate with 4 AMS slots, so the
+   palettes together may need more colours than one plate holds. Whatever rule you choose (the set's
+   distinct colours stay within 4; or more plates; or something else), **state it in `options()`**
+   (for example `set.plateColours: 4` and how a set over it is handled) so the page can show it and
+   count colours, and **refuse or warn with a stable code** (`ErrorCode` / `WarningCode`, `field:
+   'pictureColours'`) when a request breaks it. The page adapts to the rule; it does not invent one.
+3. **`suggestColours(picture, count)`** stays per picture (the page calls it once per picture). If
+   the plate rule needs the set's palettes chosen together, add a call for that (for example
+   `suggestSetColours(pictures, count)`) and the page uses it.
+4. Golden tests: two pictures with two different palettes preview, round-trip through
+   `createOrder` → `readOrder` unchanged, and build a 3MF whose slots match the rule above.
+
+Deliver it as a new tarball (§3), as before. Until then the site keeps one palette per set.
+
+### 1.11 SHOULD (2026-10-31) — the preview shows „back“ and „relief“ apart
+
+The page now offers three pattern looks: see-through (\`style: 'cut'\`), on a solid back
+(\`style: 'cut', back: true\`) and raised (\`style: 'relief'\`). In 0.1.0 the last two return a
+**byte-identical** \`preview().png\` for the same request (checked 2026-10-31 on iso_cubes, 40 × 160,
+default colours), so a customer can't see what they are choosing between. Physically they differ:
+a 0.4 mm floor with 1.2 mm walls and deep cells vs. a 1 mm base with 0.6 mm raised lines.
+
+Ask: draw the depth in the preview (for example light shading on the raised lines and their side
+walls, or a slight angle), so the two looks are visibly different. The page needs no change for it.
+
 ## 2. Behaviour the page depends on
 
 ### 2.1 MUST — preview is fast, repeatable and cheap to repeat

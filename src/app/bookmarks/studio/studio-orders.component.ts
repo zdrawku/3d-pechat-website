@@ -1,9 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { IGX_CARD_DIRECTIVES, IgxButtonDirective, IgxIconComponent } from 'igniteui-angular';
+import { IGX_BUTTON_GROUP_DIRECTIVES, IGX_CARD_DIRECTIVES, IgxButtonDirective, IgxIconComponent } from 'igniteui-angular';
 
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { BOOKMARK_ENGINE, BOOKMARK_PRINT } from '../engine/engine.token';
-import type { BookmarkRequest, Customer } from '../engine/engine.types';
+import type { BookmarkRequest, BuildOptions, Customer } from '../engine/engine.types';
+
+/** The nozzles `print.build` takes (`BuildOptions.nozzle`). */
+const NOZZLES: readonly NonNullable<BuildOptions['nozzle']>[] = [0.4, 0.2];
 
 interface OpenedOrder {
   id: string;
@@ -21,7 +24,7 @@ interface OpenedOrder {
  */
 @Component({
   selector: 'app-studio-orders',
-  imports: [IGX_CARD_DIRECTIVES, IgxButtonDirective, IgxIconComponent, TranslatePipe],
+  imports: [IGX_BUTTON_GROUP_DIRECTIVES, IGX_CARD_DIRECTIVES, IgxButtonDirective, IgxIconComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <igx-card class="orders-card" data-testid="studio-orders">
@@ -46,6 +49,12 @@ interface OpenedOrder {
             <p>{{ opened.customer.notes }}</p>
           }
           <img [src]="opened.previewUrl" [alt]="'bookmarks.design.previewAlt' | t" class="orders-preview" />
+          <span class="orders-label">{{ 'bookmarks.studio.nozzle' | t }}</span>
+          <igx-buttongroup selectionMode="singleRequired" [attr.aria-label]="'bookmarks.studio.nozzle' | t" data-testid="studio-nozzle">
+            @for (option of nozzles; track option) {
+              <button igxButton type="button" [selected]="nozzle() === option" (click)="nozzle.set(option)">{{ option }} mm</button>
+            }
+          </igx-buttongroup>
           <button igxButton="outlined" type="button" (click)="build()" [disabled]="building()">
             <igx-icon>download</igx-icon>
             {{ 'bookmarks.studio.download' | t }}
@@ -68,6 +77,8 @@ interface OpenedOrder {
     .orders-facts { display: grid; grid-template-columns: max-content 1fr; gap: var(--space-1) var(--space-3); }
     .orders-facts dd { margin: 0; overflow-wrap: anywhere; }
     .orders-problem { color: #b71c1c; }
+    .orders-label { font-size: 0.8125rem; font-weight: 600; }
+    igx-buttongroup { align-self: flex-start; }
     .orders-preview { max-height: 320px; width: auto; max-width: 100%; align-self: flex-start; }
   `]
 })
@@ -78,6 +89,8 @@ export class StudioOrdersComponent {
   protected readonly order = signal<OpenedOrder | null>(null);
   protected readonly error = signal('');
   protected readonly building = signal(false);
+  protected readonly nozzles = NOZZLES;
+  protected readonly nozzle = signal<NonNullable<BuildOptions['nozzle']>>(0.4);
 
   protected async open(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
@@ -114,7 +127,7 @@ export class StudioOrdersComponent {
     this.error.set('');
     try {
       const print = await this.startPrint();
-      const built = await print.build(opened.request);
+      const built = await print.build(opened.request, { nozzle: this.nozzle() });
       const files = [{ name: built.threeMfName, file: built.threeMf }, ...built.stls, { name: 'bookmark.zip', file: built.zip }];
       this.order.set({ ...opened, files: files.map(({ name, file }) => ({ name, url: URL.createObjectURL(file) })) });
     } catch (e) {
