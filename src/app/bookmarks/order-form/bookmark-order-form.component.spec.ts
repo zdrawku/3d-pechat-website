@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
-import { BookmarkOrderFormComponent } from './bookmark-order-form.component';
+import { BookmarkOrderFormComponent, ORDER_JSON_FIELD } from './bookmark-order-form.component';
 import { createBookmarkEngine } from '../engine/testing/fake-engine';
 import type { BookmarkEngine, BookmarkRequest } from '../engine/engine.types';
 import { BUSINESS } from '../../../data/business';
@@ -109,7 +109,7 @@ describe('BookmarkOrderFormComponent', () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
-  it('sends the order file as the only attachment and its summary as the email body', async () => {
+  it('sends the order recipe as minified JSON text (no attachment) and its summary as the email body', async () => {
     const created = await engine.createOrder(REQUEST, { name: '', email: '', phone: '', quantity: 1, notes: '', locale: 'bg' });
     spyOn(engine, 'createOrder').and.resolveTo(created);
     const track = spyOn(TestBed.inject(AnalyticsService), 'track');
@@ -125,9 +125,11 @@ describe('BookmarkOrderFormComponent', () => {
     const body = init.body as FormData;
     expect(body.get('message')).toBe(created.summary);
     expect(body.get('h-captcha-response')).toBe('captcha-ok');
-    const attachments = body.getAll('attachment');
-    expect(attachments.length).withContext('exactly one attachment').toBe(1);
-    expect((attachments[0] as File).name).toBe(created.fileName);
+    expect(body.get('attachment')).withContext('file uploads are a Web3Forms Pro feature').toBeNull();
+    expect([...body.values()].some((value) => value instanceof File)).withContext('no file of any name').toBeFalse();
+    const sent = body.get(ORDER_JSON_FIELD) as string;
+    expect(JSON.parse(sent)).toEqual(JSON.parse(await created.file.text()));
+    expect(sent).withContext('minified').toBe(JSON.stringify(JSON.parse(sent)));
     expect(track).toHaveBeenCalledWith('generate_lead', { lead_source: 'bookmark_order' });
     expect(status()).toContain('Поръчката е изпратена');
     expect(form().name).withContext('form is cleared').toBe('');

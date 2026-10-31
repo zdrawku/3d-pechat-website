@@ -27,6 +27,7 @@ interface Internals {
   letterMm: { set(mm: number | null): void };
   font: { set(id: string): void };
   expert: { set(values: Record<string, number | string>): void };
+  building: { set(building: boolean): void };
   activePatternSlot: { set(index: number): void };
   pickPattern(id: string): void;
   addPatternSlot(): void;
@@ -527,6 +528,23 @@ describe('BookmarksPageComponent', () => {
       expect(testid('bookmark-build')).not.toBeNull();
       const { expert } = await engine.options();
       expect(testid('bookmark-expert-form')!.querySelectorAll('[data-testid^="expert-"]').length).toBe(expert.length);
+    });
+
+    it('shows an Ignite linear bar while the print files build', async () => {
+      fixture.componentRef.setInput('admin', true);
+      fixture.detectChanges();
+      await settle();
+      expect(testid('bookmark-building')).toBeNull();
+
+      internals().building.set(true);
+      fixture.detectChanges();
+      const bar = testid('bookmark-building');
+      expect(bar?.tagName.toLowerCase()).toBe('igx-linear-bar');
+      expect(host().querySelector('p[role="status"]')).not.toBeNull();
+
+      internals().building.set(false);
+      fixture.detectChanges();
+      expect(testid('bookmark-building')).toBeNull();
     });
 
     it('sends the Studio’s changed expert settings, and none from customers', () => {

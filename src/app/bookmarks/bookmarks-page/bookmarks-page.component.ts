@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, OnInit, PLA
 import { NgTemplateOutlet, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
-import { IGX_BUTTON_GROUP_DIRECTIVES, IGX_CARD_DIRECTIVES, IGX_INPUT_GROUP_DIRECTIVES, IGX_TABS_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxIconComponent } from 'igniteui-angular';
+import { IGX_BUTTON_GROUP_DIRECTIVES, IGX_CARD_DIRECTIVES, IGX_INPUT_GROUP_DIRECTIVES, IGX_TABS_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxIconComponent, IgxLinearProgressBarComponent } from 'igniteui-angular';
 
 import { SeoService } from '../../services/seo.service';
 import { I18nService } from '../../i18n/i18n.service';
@@ -98,7 +98,7 @@ interface BuiltFile {
 @Component({
   selector: 'app-bookmarks-page',
   imports: [
-    IGX_BUTTON_GROUP_DIRECTIVES, IGX_CARD_DIRECTIVES, IGX_INPUT_GROUP_DIRECTIVES, IGX_TABS_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxIconComponent,
+    IGX_BUTTON_GROUP_DIRECTIVES, IGX_CARD_DIRECTIVES, IGX_INPUT_GROUP_DIRECTIVES, IGX_TABS_DIRECTIVES, IgxButtonDirective, IgxIconButtonDirective, IgxIconComponent, IgxLinearProgressBarComponent,
     NgTemplateOutlet, RouterLink, TranslatePipe, LocalizePathPipe, BookmarkColourPickerComponent, BookmarkFramerComponent, BookmarkOrderFormComponent,
     BookmarkFontPickerComponent, BookmarkStepperComponent, BookmarkExpertFormComponent
   ],

@@ -1,6 +1,6 @@
 <!-- One option group as an igx-buttongroup: a row of mutually exclusive buttons. -->
-<ng-template #segmented let-label="label" let-choices="choices" let-value="value" let-pick="pick" let-testid="testid">
-  <igx-buttongroup selectionMode="singleRequired" [attr.aria-label]="label" [attr.data-testid]="testid">
+<ng-template #segmented let-label="label" let-choices="choices" let-value="value" let-pick="pick" let-testid="testid" let-twoRows="twoRows">
+  <igx-buttongroup selectionMode="singleRequired" [attr.aria-label]="label" [attr.data-testid]="testid" [class.two-rows]="twoRows">
     @for (choice of choices; track choice.id) {
       <button igxButton type="button" [selected]="choice.id === value" (click)="pick(choice.id)">{{ choice.label }}</button>
     }
@@ -53,7 +53,7 @@
                 label: ('bookmarks.set.kindLabel' | t),
                 choices: [{ id: 'split', label: ('bookmarks.set.kindSplit' | t) }, { id: 'pictures', label: ('bookmarks.set.kindPictures' | t) },
                           { id: 'names', label: ('bookmarks.set.kindNames' | t) }, { id: 'patterns', label: ('bookmarks.set.kindPatterns' | t) }],
-                value: setKind(), pick: pickSetKind, testid: 'bookmark-set-kind' }"></ng-container>
+                value: setKind(), pick: pickSetKind, testid: 'bookmark-set-kind', twoRows: true }"></ng-container>
               @if (setKind() === 'split') {
                 <p class="hint">{{ 'bookmarks.set.splitHint' | t }}</p>
                 <span class="field-label">{{ 'bookmarks.set.countLabel' | t }}</span>
@@ -275,7 +275,7 @@
                 <span class="field-label">{{ 'bookmarks.quality.heading' | t }}</span>
                 <div class="setting-control">
                   <ng-container *ngTemplateOutlet="segmented; context: {
-                    label: ('bookmarks.quality.heading' | t), choices: qualityChoices(), value: '' + (chosenStop()?.value ?? ''), pick: pickQuality, testid: 'bookmark-quality' }"></ng-container>
+                    label: ('bookmarks.quality.heading' | t), choices: qualityChoices(), value: '' + (chosenStop()?.value ?? ''), pick: pickQuality, testid: 'bookmark-quality', twoRows: true }"></ng-container>
                   <p class="hint">{{ 'bookmarks.quality.hint' | t }}</p>
                 </div>
               </div>
@@ -409,7 +409,12 @@
           </igx-card-actions>
           @if (admin()) {
             <igx-card-content>
-              <p class="hint">{{ 'bookmarks.studio.downloadNote' | t }}</p>
+              @if (building()) {
+                <igx-linear-bar [indeterminate]="true" [textVisibility]="false" data-testid="bookmark-building" />
+                <p class="hint" role="status">{{ 'bookmarks.studio.building' | t }}</p>
+              } @else {
+                <p class="hint">{{ 'bookmarks.studio.downloadNote' | t }}</p>
+              }
               @if (buildError(); as message) {
                 <p class="problem" role="alert">{{ 'bookmarks.studio.downloadError' | t: { message: message } }}</p>
               }

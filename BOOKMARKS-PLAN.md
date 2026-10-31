@@ -16,7 +16,7 @@ sends the order.
 | Phase | What | State |
 |---|---|---|
 | **W1** | Menu group, page with the three modes, order form, localisation, tests — all on a **stub** engine | ✅ built 2026-10-29, uncommitted |
-| **W1 open item** | **Real Web3Forms test: does a `.json` attachment arrive on the free plan?** | ⬜ **not verified** — see below |
+| **W1 open item** | **Real Web3Forms test: does a `.json` attachment arrive on the free plan?** | ❌ attachments refused (Pro-only) 2026-10-31 → the order JSON now goes as text in the field `order_json`, pasted into the Studio; ⬜ a real picture order still to send — see below |
 | **W2** | Wire the real engine: first from a local `.tgz` (`npm pack`, no symlink), then from npm — see "W2" below | 🟡 wired 2026-10-30 on rc.2; switched 2026-10-31 to `@printkit/bookmark-creator@^0.1.0` from npm (saved in `package.json`), uncommitted; every engine option on the page since 2026-10-31 (see "Every engine option on the page"); per-picture palettes wait for the engine |
 
 ## What W1 contains
@@ -45,8 +45,9 @@ sends the order.
   bookmark looks), and `engine.token.ts` the injection tokens. The engine starts only in the browser after the first render
   (the route prerenders a shell); every list comes from `options()`.
 - **Order form:** the contact form's fields and hCaptcha plus quantity and notes. The
-  email body is the engine's `summary`; the only attachment is its order file, sent
-  only if it is within `limits.orderMaxBytes`. `generate_lead` fires with the new
+  email body is the engine's `summary`; the order file's JSON goes minified in the
+  field `order_json` (no attachment — see the Web3Forms section), only if it is within
+  `limits.orderMaxBytes`. `generate_lead` fires with the new
   `bookmark_order` lead source.
 - **Pictures stay in memory** — no upload, no web storage (a unit and an e2e test
   guard it). The preview comes back as a Blob and is shown as a `data:` URL, because
@@ -67,36 +68,39 @@ sends the order.
 - **Lead time text** comes from `business.json` (`leadTimeWorkingDays.largeOrSeries`,
   „3–7 работни дни“), as Rule 5 requires, not from a typed number.
 
-## ⚠ Web3Forms attachment — not verified yet
+## Web3Forms: the order travels as text, not as a file
 
-The handoff says the free plan delivers one attachment of up to 1 MB. The contact
-form's code (and `FEATURE-IDEAS-PLAN.md`) say the opposite: file upload is a **Pro**
-feature, which is why the contact form's attachment is commented out. Only a real
-test settles it.
-
-**Why it was not run from the agent's session:** Web3Forms sits behind a Cloudflare
-challenge — a plain request from Node gets `403 Just a moment…`, and a headless
-browser's request fails the same way (no email was sent). The form also needs a
-solved hCaptcha. It has to be done by hand in a real browser:
-
-1. `npx ng serve`, open <http://localhost:4200/products/bookmarks/> and choose the
-   **Шарка** tab (a pattern needs no picture).
-2. **Поръчай** → fill in the form with your own email in „Бележки“ for easy finding →
-   solve the captcha → **Изпрати поръчката**.
-3. Open `3dpechat.bg@gmail.com`: the mail „Поръчка на разделител stub-order“ should
-   carry **`bookmark-order-stub-order.json`** (a few dozen bytes) and the stub's summary.
-4. Record the result here:
+File uploads are a Web3Forms **Pro** feature — tested 2026-10-31 by hand (Web3Forms sits
+behind Cloudflare and needs a solved hCaptcha, so an agent can't run it):
 
 | Date | Attachment | Result |
 |---|---|---|
-| | `.json` | ⬜ arrived / ⬜ mail without the file / ⬜ refused (note Web3Forms' message — it is logged to the console as „Web3Forms refused the bookmark order“) |
-| | `.zip` (set `ORDER_CONTAINER = 'zip'` in `bookmark-order-form.component.ts`) | ⬜ |
+| 2026-10-31 | `.json` | ❌ refused — HTTP 400, „You are trying to use a Pro feature, Please upgrade to use file uploads.“ No mail. |
+| — | `.zip` | not tried: the refusal is for file uploads as such, not for the file type |
 
-If **neither** arrives, the free plan cannot carry the order and the options are the
-Pro plan, or sending the order file another way (for example inline in the message
-body — a ≤ 1 MB file is too large for that without compressing it, so decide with the
-engine author). Do not go live with the order form before this is settled: **a
-success answer from Web3Forms does not prove the file arrived.**
+**Decided 2026-10-31: no file.** The order form sends `engine.createOrder()`'s JSON
+(`container: 'json'`), minified, in its own form field **`order_json`**; `summary` stays the
+email body. Measured with the real engine (`^0.1.0`): a pattern order ≈ 0.5 KB, one picture
+≈ 59 KB, four pictures ≈ 79 KB (the colour maps are base64 PNGs inside the JSON). The
+engine's 1 MB `orderMaxBytes` check stays. The Studio's Orders tab has a box to paste the
+`order_json` text into (a saved `.json`/`.zip` file still opens too); pasted minified JSON was
+checked to round-trip through `readOrder`.
+
+**⬜ Still to verify by hand (before going live)** — a real picture order, not a pattern:
+
+1. `npx ng serve`, <http://localhost:4200/products/bookmarks/>, upload a photo (a set of 4
+   is the worst case), **Поръчай** → fill in, captcha → **Изпрати поръчката**.
+2. In `3dpechat.bg@gmail.com`: the mail arrives (Web3Forms accepts a ~80 KB field) and
+   shows an `order_json` field. Gmail clips mails over ~102 KB — use „View entire message“.
+3. Copy the whole `order_json` value → `/studio/` → Поръчки → paste → **Отвори поставената
+   поръчка**: the preview matches what was ordered.
+
+| Date | Order | Mail arrived | Field complete | Studio opened it |
+|---|---|---|---|---|
+| | | ⬜ | ⬜ | ⬜ |
+
+If Web3Forms truncates or refuses a field that long, the fallback is Pro, or asking the
+engine author for smaller colour maps.
 
 ## Contract with the engine package
 
@@ -236,6 +240,6 @@ Waiting for the engine (requests in `BOOKMARKS-ENGINE-CONTRACT.md`):
    print code (Lighthouse budgets, `LIGHTHOUSE-IMPROVEMENT-PLAN.md`).
 6. Check the real preview on the light and the dark surface (transparent background) and in the
    editor's outline overlay (`thumbnailSvg` stretched to the frame).
-7. Send a real order end to end (this also settles the Web3Forms attachment question above).
+7. Send a real picture order end to end and open it in the Studio by pasting `order_json` (see „Web3Forms: the order travels as text“).
 8. Add a structured-data decision (a `Product` page needs a real price, which the site does not
    state — see `business.json` `neverClaim`).

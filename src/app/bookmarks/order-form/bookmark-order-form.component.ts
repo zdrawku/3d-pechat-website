@@ -13,12 +13,11 @@ import { HcaptchaApi, loadHcaptcha } from '../../shared/hcaptcha/hcaptcha-loader
 import type { BookmarkEngine, BookmarkRequest } from '../engine/engine.types';
 
 /**
- * What the one attachment is. Web3Forms' free plan is believed to take one file of
- * up to 1 MB, but the contact form's code says attachments are a Pro feature: the
- * test order (BOOKMARKS-PLAN.md § Web3Forms) decides. If `.json` is refused, set
- * this to 'zip' — nothing else changes (the engine builds the same file as a zip).
+ * The Web3Forms field that carries the order recipe as minified JSON text. File
+ * uploads are a Pro feature (refused on the free plan, 2026-10-31), so the recipe
+ * travels in the email itself; the Studio's Orders tab takes it pasted back.
  */
-const ORDER_CONTAINER: 'json' | 'zip' = 'json';
+export const ORDER_JSON_FIELD = 'order_json';
 
 type OrderStatus = 'idle' | 'success' | 'error' | 'missing-fields' | 'missing-captcha' | 'need-picture' | 'too-big';
 
@@ -26,15 +25,11 @@ type OrderStatus = 'idle' | 'success' | 'error' | 'missing-fields' | 'missing-ca
  * The order form under the preview: the contact form's fields, validation and
  * hCaptcha, plus quantity and notes, sent through Web3Forms.
  *
- * The only attachment is the order recipe from `engine.createOrder()`
- * (`bookmark-order-<id>.json`, ≤ 1 MB), and its plain-text summary is the email
- * body, so the order reads without opening the file. The site never assembles
- * either. No print files are ever offered here (customers don't get them).
- *
- * UNVERIFIED (W1 checklist): the contact form's code says Web3Forms file
- * attachments are a Pro-plan feature, while the bookmark brief says the free
- * plan delivers one ≤ 1 MB attachment. Send a real test order and record what
- * arrives before relying on this — see BOOKMARKS-PLAN.md.
+ * No attachment: the order recipe from `engine.createOrder()` goes into the email
+ * as minified JSON text (field `order_json`; ~0.5 KB for a pattern, ~60–80 KB with
+ * pictures), and its plain-text summary is the email body, so the order reads
+ * without the recipe. The site never assembles either. No print files are ever
+ * offered here (customers don't get them).
  */
 @Component({
   selector: 'app-bookmark-order-form',
@@ -47,7 +42,7 @@ export class BookmarkOrderFormComponent implements OnDestroy {
   /** What the visitor designed, or null while it can't be ordered yet (a picture is still missing). */
   readonly request = input.required<BookmarkRequest | null>();
   readonly engine = input.required<BookmarkEngine | null>();
-  /** `options().limits.orderMaxBytes` — the free Web3Forms plan takes 1 MB. */
+  /** `options().limits.orderMaxBytes` — the engine's 1 MB cap on the order recipe. */
   readonly orderMaxBytes = input.required<number>();
 
   protected name = '';
@@ -136,8 +131,8 @@ export class BookmarkOrderFormComponent implements OnDestroy {
         quantity,
         notes: this.notes.trim(),
         locale: this.i18n.locale()
-      }, { container: ORDER_CONTAINER });
-      // The free Web3Forms plan delivers one attachment of at most 1 MB.
+      }, { container: 'json' });
+      // The engine's own limit; the recipe is sent as text, never as a file.
       if (order.bytes > this.orderMaxBytes()) {
         this.status.set('too-big');
         return;
@@ -152,7 +147,7 @@ export class BookmarkOrderFormComponent implements OnDestroy {
       formData.append('message', order.summary);
       formData.append('from_name', this.i18n.t('bookmarks.order.fromName'));
       formData.append('h-captcha-response', this.captchaToken);
-      formData.append('attachment', order.file, order.fileName);
+      formData.append(ORDER_JSON_FIELD, JSON.stringify(JSON.parse(await order.file.text())));
 
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
@@ -166,7 +161,7 @@ export class BookmarkOrderFormComponent implements OnDestroy {
         this.name = this.email = this.phone = this.notes = '';
         this.quantity = 1;
       } else {
-        // Web3Forms says why (a refused attachment included): keep it for whoever debugs the order.
+        // Web3Forms says why (a refused field included): keep it for whoever debugs the order.
         console.error('Web3Forms refused the bookmark order:', result.message);
         this.status.set('error');
       }

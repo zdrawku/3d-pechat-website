@@ -87,16 +87,28 @@ igx-buttongroup {
   }
 }
 
-// Four kinds of set don't fit a phone's width on one row, and their single long words
-// („Различни“) can't wrap: two rows of two instead.
-@media (max-width: 480px) {
-  igx-buttongroup[data-testid='bookmark-set-kind'] ::ng-deep .igx-button-group {
-    flex-wrap: wrap;
-  }
+// Four quality levels or four kinds of set: single long words („Балансирано“, „Различни“)
+// that can't wrap. Where a row of four doesn't fit (a phone, a narrow laptop) they go two
+// rows of two; the quality labels are also smaller, tighter capitals.
+.two-rows {
+  display: block;
+  container-type: inline-size;
 
-  igx-buttongroup[data-testid='bookmark-set-kind'] button[igxButton] {
-    flex: 1 1 50%;
+  @container (max-width: 400px) {
+    ::ng-deep .igx-button-group {
+      flex-wrap: wrap;
+    }
+
+    button[igxButton] {
+      flex: 1 1 50%;
+    }
   }
+}
+
+igx-buttongroup[data-testid='bookmark-quality'] button[igxButton] {
+  font-size: 0.6875rem;
+  letter-spacing: 0;
+  padding-inline: 4px;
 }
 
 // The site's AA-safe teal for outline buttons; the shape and pattern pickers

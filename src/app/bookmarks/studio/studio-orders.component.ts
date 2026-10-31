@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { IGX_BUTTON_GROUP_DIRECTIVES, IGX_CARD_DIRECTIVES, IgxButtonDirective, IgxIconComponent } from 'igniteui-angular';
+import { IGX_BUTTON_GROUP_DIRECTIVES, IGX_CARD_DIRECTIVES, IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, IgxIconComponent } from 'igniteui-angular';
 
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { BOOKMARK_ENGINE, BOOKMARK_PRINT } from '../engine/engine.token';
@@ -17,23 +17,34 @@ interface OpenedOrder {
 }
 
 /**
- * The Studio's Orders tab: open a `bookmark-order-<id>.json` (or `.zip`) from the
- * email, see the customer, the settings and the preview redrawn from the recipe,
+ * The Studio's Orders tab: paste the order JSON from the email (the order form
+ * sends it as text — Web3Forms' free plan takes no files) or open a saved
+ * `bookmark-order-<id>.json` / `.zip`, see the customer, the settings and the preview redrawn from the recipe,
  * then Build and download. Everything comes from the engine — the site only
  * shows it. With the stub engine (W1) opening fails with the engine's own message.
  */
 @Component({
   selector: 'app-studio-orders',
-  imports: [IGX_BUTTON_GROUP_DIRECTIVES, IGX_CARD_DIRECTIVES, IgxButtonDirective, IgxIconComponent, TranslatePipe],
+  imports: [IGX_BUTTON_GROUP_DIRECTIVES, IGX_CARD_DIRECTIVES, IGX_INPUT_GROUP_DIRECTIVES, IgxButtonDirective, IgxIconComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <igx-card class="orders-card" data-testid="studio-orders">
       <igx-card-content>
-        <input #file type="file" hidden accept=".json,.zip,application/json,application/zip" (change)="open($event)" />
-        <button igxButton="contained" type="button" class="orders-open" (click)="file.click()" data-testid="studio-open-order">
-          <igx-icon>folder_open</igx-icon>
-          {{ 'bookmarks.studio.openOrder' | t }}
-        </button>
+        <igx-input-group type="border">
+          <label igxLabel for="studio-order-json">{{ 'bookmarks.studio.pasteOrder' | t }}</label>
+          <textarea igxInput #pasted id="studio-order-json" rows="4" spellcheck="false" data-testid="studio-order-json"></textarea>
+        </igx-input-group>
+        <div class="orders-actions">
+          <button igxButton="contained" type="button" (click)="openPasted(pasted)" data-testid="studio-open-pasted">
+            <igx-icon>assignment</igx-icon>
+            {{ 'bookmarks.studio.openPasted' | t }}
+          </button>
+          <input #file type="file" hidden accept=".json,.zip,application/json,application/zip" (change)="openFile($event)" />
+          <button igxButton="outlined" type="button" (click)="file.click()" data-testid="studio-open-order">
+            <igx-icon>folder_open</igx-icon>
+            {{ 'bookmarks.studio.openOrder' | t }}
+          </button>
+        </div>
 
         @if (error(); as message) {
           <p class="orders-problem" role="alert">{{ 'bookmarks.studio.orderError' | t: { message: message } }}</p>
@@ -72,7 +83,7 @@ interface OpenedOrder {
     :host { display: block; }
     .orders-card { width: 100%; max-width: none; margin: 0; }
     igx-card-content { display: flex; flex-direction: column; gap: var(--space-3); }
-    .orders-open { align-self: flex-start; }
+    .orders-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
     .orders-empty, .orders-facts, p { margin: 0; }
     .orders-facts { display: grid; grid-template-columns: max-content 1fr; gap: var(--space-1) var(--space-3); }
     .orders-facts dd { margin: 0; overflow-wrap: anywhere; }
@@ -92,13 +103,24 @@ export class StudioOrdersComponent {
   protected readonly nozzles = NOZZLES;
   protected readonly nozzle = signal<NonNullable<BuildOptions['nozzle']>>(0.4);
 
-  protected async open(event: Event): Promise<void> {
+  protected openFile(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     input.value = '';
-    if (!file) {
-      return;
+    if (file) {
+      void this.open(file);
     }
+  }
+
+  /** The `order_json` text copied from the order email, read as the same recipe file. */
+  protected openPasted(textarea: HTMLTextAreaElement): void {
+    const text = textarea.value.trim();
+    if (text) {
+      void this.open(new Blob([text], { type: 'application/json' }));
+    }
+  }
+
+  private async open(file: Blob): Promise<void> {
     this.error.set('');
     this.revoke();
     try {

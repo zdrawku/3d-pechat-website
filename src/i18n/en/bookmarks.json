@@ -105,7 +105,7 @@
   },
   "privacy": {
     "heading": "Your picture stays with you",
-    "text": "The picture is processed in your browser, never uploaded or stored, and disappears when you close the page. The order only sends a file with your settings and a simplified few-colour version of the picture, together with your contact details."
+    "text": "The picture is processed in your browser, never uploaded or stored, and disappears when you close the page. The order only sends your settings and a simplified few-colour version of the picture, together with your contact details."
   },
   "order": {
     "open": "Order",
@@ -211,9 +211,12 @@
     "downloadHeading": "Print files",
     "downloadNote": "3MF, STL and zip. Works once the designer is connected.",
     "download": "Build and download",
+    "building": "Building the 3MF, STL and zip…",
     "downloadError": "The files could not be built: {message}",
-    "ordersEmpty": "Open the bookmark-order-….json file from the email to see the order and build it.",
-    "openOrder": "Open an order",
+    "ordersEmpty": "Paste the text of the order_json field from the order email (or open a saved bookmark-order-….json file) to see the order and build it.",
+    "pasteOrder": "order_json from the email",
+    "openPasted": "Open the pasted order",
+    "openOrder": "Open a file",
     "orderError": "The order could not be opened: {message}",
     "orderCustomer": "Customer",
     "orderId": "Order number",

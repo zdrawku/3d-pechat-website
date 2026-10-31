@@ -19,7 +19,8 @@ The customer page (`/products/bookmarks/`, three modes) and the hidden Studio (`
 call `createBookmarkEngine()` lazily in the browser, read every list from `options()`, call
 `preview(request)` on each change (debounced 250 ms, latest wins), `suggestColours(picture)`
 after an upload, and on checkout `createOrder(request, customer)` whose `file` (≤ `orderMaxBytes`)
-is the **only** attachment of a Web3Forms email and whose `summary` is the email body. The
+travels as minified JSON text in a Web3Forms field (`order_json`; file uploads are a Web3Forms Pro
+feature) and whose `summary` is the email body. The
 Studio additionally calls `readOrder(file)` and, lazily after unlocking, `/print`'s `build()`.
 The site contains **no bookmark logic**; it can't compensate for anything the engine doesn't do.
 
@@ -128,15 +129,17 @@ interface EngineOptions {
 
 ### 1.6 MUST — the order file fits `orderMaxBytes`, always
 
-`createOrder` returns `{ id, fileName, file, bytes, summary }`. The email carries a **single
-attachment of at most 1 MB**.
+`createOrder` returns `{ id, fileName, file, bytes, summary }`. The email carries the JSON as
+**text** (the field `order_json`, minified; Web3Forms' free plan refuses file uploads — tested
+2026-10-31), at most 1 MB. Smaller is better: Gmail clips a mail over ~102 KB (measured on `0.1.0`:
+one picture ≈ 59 KB, four ≈ 79 KB).
 
 - The embedded colour maps must be **budgeted by the engine**: with four different pictures the whole
   file still has to fit. Shrink map resolution / use palette-indexed PNG so `bytes ≤ limits.orderMaxBytes`
   instead of returning a file that is too large (the page refuses to send above the limit and the visitor
   is stuck).
-- `container: 'json' | 'zip'`: keep both. Whether Web3Forms' free plan accepts `.json` is still being
-  tested (see `BOOKMARKS-PLAN.md`); the page switches with one constant.
+- `container: 'json' | 'zip'`: the page sends `'json'` (as text). `readOrder` must keep accepting a
+  `Blob` of that minified JSON text with no file name — the Studio wraps pasted text in one.
 - `summary` is plain text for the email body: what was ordered (mode, shape, size, colours, names,
   hole, quantity), contact details, order id. **OPEN — language:** the shop reads it, so Bulgarian
   is suggested (the customer's `locale` is passed in `customer.locale`, but the recipient is always
