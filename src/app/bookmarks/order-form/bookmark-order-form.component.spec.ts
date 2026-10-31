@@ -3,7 +3,7 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
 import { BookmarkOrderFormComponent } from './bookmark-order-form.component';
-import { createBookmarkEngine } from '../engine/stub-engine';
+import { createBookmarkEngine } from '../engine/testing/fake-engine';
 import type { BookmarkEngine, BookmarkRequest } from '../engine/engine.types';
 import { BUSINESS } from '../../../data/business';
 import { AnalyticsService } from '../../services/analytics.service';

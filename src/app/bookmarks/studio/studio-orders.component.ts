@@ -115,7 +115,7 @@ export class StudioOrdersComponent {
     try {
       const print = await this.startPrint();
       const built = await print.build(opened.request);
-      const files = [{ name: 'bookmark.3mf', file: built.threeMf }, ...built.stls, { name: 'bookmark.zip', file: built.zip }];
+      const files = [{ name: built.threeMfName, file: built.threeMf }, ...built.stls, { name: 'bookmark.zip', file: built.zip }];
       this.order.set({ ...opened, files: files.map(({ name, file }) => ({ name, url: URL.createObjectURL(file) })) });
     } catch (e) {
       this.error.set(e instanceof Error ? e.message : String(e));

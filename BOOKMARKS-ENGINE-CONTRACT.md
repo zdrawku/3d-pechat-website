@@ -55,7 +55,11 @@ Meaning (CSS-equivalent, and the page's editor and demo preview already use exac
 [`src/app/bookmarks/framing.ts`](src/app/bookmarks/framing.ts)):
 
 1. The **frame** is the bookmark's bounding box (width × height of the chosen size; for a
-   `split`, the whole set's width × the height, the slices cut from it).
+   `split`, `N × width + (N − 1) × set.splitGapMm` wide × the height, the slices cut from it and
+   the strips under the gaps not printed). **DECIDED 2026-10-30: `splitGapMm` is 0** — the
+   picture is cut into N contiguous strips, so the editor's frame (N × width) is exactly what is
+   printed. The site reads `splitGapMm` from `options()` and will frame a non-zero gap the same
+   way, so changing it later is an engine-only decision.
 2. The picture is scaled to **cover** the frame (`background-size: cover`) and then multiplied by `zoom`.
 3. `x`, `y` are `background-position` fractions: `0` = the picture's left/top edge touches the
    frame's, `1` = its right/bottom edge does, `0.5` = centred. So with picture box `W × H` in a
@@ -88,8 +92,10 @@ interface BookmarkRequest { colours: Hex[]; pictureColours?: Hex[][] }   // pict
 ```ts
 interface EngineOptions {
   // … as in the draft, plus:
-  pictureColours: number;   // NEW — how many colours a picture uses (the page has the constant 4 today)
-  set: { min: number; max: number; splitCounts: number[] };   // see OPEN below
+  pictureColourCount: number;   // NEW — the MOST colours ONE picture is reduced to (4): the number of colour
+                                // pickers in mode 1. Not the number of pictures (that is set.max). The page has the constant 4 today.
+                                // (Named pictureColourCount so it is not confused with the request's pictureColours: Hex[][], §1.3.)
+  set: { min: number; max: number; splitCounts: number[]; splitGapMm: number };   // splitGapMm NEW (0), see 1.2
 }
 ```
 

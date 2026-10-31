@@ -43,6 +43,11 @@
               "src/sitemap.xml",
               "src/404.html",
               {
+                "glob": "manifold.wasm",
+                "input": "node_modules/@printkit/bookmark-creator/dist/print/vendor",
+                "output": "assets/bookmarks"
+              },
+              {
                 "glob": "CNAME",
                 "input": "public",
                 "output": "/"

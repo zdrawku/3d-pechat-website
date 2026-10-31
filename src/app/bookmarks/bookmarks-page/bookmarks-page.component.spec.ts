@@ -4,7 +4,7 @@ import { provideRouter } from '@angular/router';
 
 import { BookmarksPageComponent } from './bookmarks-page.component';
 import { BOOKMARK_ENGINE } from '../engine/engine.token';
-import { createBookmarkEngine, STUB_COLOURS } from '../engine/stub-engine';
+import { createBookmarkEngine, FAKE_COLOURS } from '../engine/testing/fake-engine';
 import type { BookmarkEngine, BookmarkRequest } from '../engine/engine.types';
 import { SeoService } from '../../services/seo.service';
 
@@ -104,6 +104,19 @@ describe('BookmarksPageComponent', () => {
     expect(host().querySelector('input[type="file"]')!.getAttribute('accept')).toBe(options.limits.uploadTypes.join(','));
   });
 
+  it('keeps each shape thumbnail across change detection, so a click on it is not lost', async () => {
+    const svg = () => testid('bookmark-shape-rounded')!.querySelector('svg');
+    const before = svg();
+    expect(before).not.toBeNull();
+    internals().name.set('Мария');
+    fixture.detectChanges();
+    expect(svg()).withContext('the same SVG element').toBe(before);
+
+    (testid('bookmark-shape-rounded') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    expect(testid('bookmark-shape-rounded')!.getAttribute('aria-pressed')).toBe('true');
+  });
+
   it('needs a picture before there is anything to preview or order', async () => {
     expect(internals().request()).toBeNull();
     expect((testid('bookmark-order-open') as HTMLButtonElement).disabled).toBeTrue();
@@ -118,7 +131,7 @@ describe('BookmarksPageComponent', () => {
     const picture = pictureFile();
     await choosePicture(picture);
     expect(engine.suggestColours).toHaveBeenCalledWith(picture, 4);
-    expect(internals().colours()).toEqual(STUB_COLOURS);
+    expect(internals().colours()).toEqual(FAKE_COLOURS);
 
     (testid('bookmark-suggest') as HTMLButtonElement).click();
     await settle();
@@ -222,10 +235,21 @@ describe('BookmarksPageComponent', () => {
       await settle();
     });
 
+    it('says why when the engine refuses a name on a cut-through pattern', async () => {
+      (engine.preview as jasmine.Spy).and.callFake(() => Promise.reject(Object.assign(new Error('names: needs a solid back'), { code: 'REQUEST_INVALID', field: 'names' })));
+      internals().namePlace.set('middle');
+      internals().name.set('Ели');
+      fixture.detectChanges();
+      await sleep(PREVIEW_WAIT_MS);
+      await settle();
+      expect(testid('bookmark-preview-problem')!.textContent).toContain('„С релеф“');
+    });
+
     it('needs no picture, and uses as many colours as the pattern style says', async () => {
+      const { patterns } = await engine.options();
       const request = internals().request()!;
       expect(request.mode).toBe('pattern');
-      expect(request.pattern).toEqual({ id: 'isometric-cubes', style: 'cut' });
+      expect(request.pattern).toEqual({ id: patterns[0].id, style: 'cut' });
       expect(request.colours.length).toBe(2);
       expect(host().querySelectorAll('igc-color-picker').length).toBe(2);
 

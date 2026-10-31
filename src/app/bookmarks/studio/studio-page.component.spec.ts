@@ -6,7 +6,7 @@ import { provideRouter } from '@angular/router';
 import { StudioPageComponent } from './studio-page.component';
 import { STUDIO_PASSPHRASE_HASH, hashPassphrase } from './studio-gate.service';
 import { BOOKMARK_ENGINE } from '../engine/engine.token';
-import { createBookmarkEngine } from '../engine/stub-engine';
+import { createBookmarkEngine } from '../engine/testing/fake-engine';
 
 const STORAGE_KEY = 'bookmark-studio-unlock';
 const TEST_PASSPHRASE = 'spec-only passphrase';

@@ -4,10 +4,9 @@ import { test, expect } from '@playwright/test';
 /**
  * The bookmark creator (/products/bookmarks) and the hidden Studio (/studio).
  *
- * Runs with the stub engine (src/app/bookmarks/engine/stub-engine.ts): the
- * preview is a fixed placeholder, so these tests cover the flow, not the look of
- * a real bookmark. The order is never sent: web3forms and hCaptcha are not
- * touched (that path is covered by the component's unit spec).
+ * Runs the real engine (`@printkit/bookmark-creator`, in its Web Worker), so a
+ * preview takes about a second or two. The order is never sent: web3forms and
+ * hCaptcha are not touched (that path is covered by the component's unit spec).
  */
 const PICTURE = path.resolve(process.cwd(), 'src/assets/real-images/razdeliteli-za-knigi.webp');
 
@@ -103,7 +102,7 @@ test.describe('bookmark creator: preview, positioning and sets of pictures', () 
     await page.getByTestId('bookmark-picture-input').setInputFiles(PICTURES[0]);
     await expect(page.getByTestId('bookmark-preview')).toBeVisible();
     const before = await previewSrc(page);
-    await page.getByTestId('bookmark-shape-oval').click();
+    await page.getByTestId('bookmark-shape-ogee').click();
     await expect.poll(() => previewSrc(page)).not.toBe(before);
   });
 
@@ -142,17 +141,23 @@ test.describe('bookmark creator: preview, positioning and sets of pictures', () 
   test('a set of different pictures: up to four, all shown in the preview', async ({ page }) => {
     await page.getByTestId('bookmark-mode-set').click();
     await page.getByTestId('bookmark-set-kind').locator('button', { hasText: 'Различни снимки' }).click();
+    const width = () => page.getByTestId('bookmark-preview').evaluate((img: HTMLImageElement) => img.naturalWidth);
 
+    let one = 0;
     for (let i = 0; i < 4; i++) {
       const button = page.getByTestId(i === 0 ? 'bookmark-picture-button' : `bookmark-picture-button-${i}`);
       const [chooser] = await Promise.all([page.waitForEvent('filechooser'), button.click()]);
       await chooser.setFiles(PICTURES[i]);
       await expect(page.getByTestId(`bookmark-picture-slot-${i}`).getByTestId('bookmark-framer')).toBeVisible();
+      if (i === 0) {
+        await expect(page.getByTestId('bookmark-preview')).toBeVisible();
+        one = await width();
+      }
     }
     await expect(page.locator('[data-testid^="bookmark-picture-slot-"]')).toHaveCount(4); // no fifth row
 
-    // The preview is one image of four bookmarks side by side: 4 × 120 px plus gaps, 480 px tall.
-    await expect.poll(async () => page.getByTestId('bookmark-preview').evaluate((img: HTMLImageElement) => img.naturalWidth)).toBe(4 * 120 + 3 * 16);
+    // The preview is one image of the four bookmarks side by side: more than three times as wide as one.
+    await expect.poll(width, { timeout: 20_000 }).toBeGreaterThan(3 * one);
   });
 
   test('no choice label is clipped on a phone', async ({ page }) => {

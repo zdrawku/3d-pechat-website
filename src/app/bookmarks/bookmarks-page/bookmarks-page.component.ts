@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, OnInit, PLATFORM_ID, afterNextRender, computed, effect, inject, input, signal, untracked, viewChild } from '@angular/core';
 import { NgTemplateOutlet, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import { IGX_BUTTON_GROUP_DIRECTIVES, IGX_CARD_DIRECTIVES, IGX_INPUT_GROUP_DIRECTIVES, IGX_TABS_DIRECTIVES, IgxButtonDirective, IgxIconComponent } from 'igniteui-angular';
 
 import { SeoService } from '../../services/seo.service';
@@ -10,7 +10,7 @@ import { LocalizePathPipe, TranslatePipe } from '../../i18n/translate.pipe';
 import type { TranslationKey } from '../../i18n/i18n.types';
 import bookmarksMessages from '../../../i18n/bg/bookmarks.json';
 import { BOOKMARK_ENGINE, BOOKMARK_PRINT } from '../engine/engine.token';
-import type { BookmarkEngine, BookmarkRequest, EngineOptions, Framing, Hex, Hole, PatternStyleId, Place, PreviewWarning } from '../engine/engine.types';
+import type { BookmarkEngine, BookmarkRequest, EngineErrorInfo, EngineOptions, Framing, Hex, Hole, PatternStyleId, Place, PreviewWarning } from '../engine/engine.types';
 import { DEFAULT_FRAMING } from '../framing';
 import { PictureThumb, pictureThumbnail } from '../picture-thumbnail';
 import { BookmarkFramerComponent } from '../framer/bookmark-framer.component';
@@ -20,9 +20,6 @@ import { BookmarkOrderFormComponent } from '../order-form/bookmark-order-form.co
 /** The three modes, in tab order. */
 type Mode = 'picture' | 'pattern' | 'set';
 const MODES: readonly Mode[] = ['picture', 'pattern', 'set'];
-
-/** Mode 1 has four colour pickers (the brief), filled from the picture. A pattern style says how many of them it uses. */
-const PICTURE_COLOURS = 4;
 
 /** How long the controls must rest before the preview is asked for again. */
 const PREVIEW_DEBOUNCE_MS = 250;
@@ -133,7 +130,8 @@ export class BookmarksPageComponent implements OnInit {
   // ---- preview and order -----------------------------------------------
   protected readonly previewUrl = signal<string | null>(null);
   protected readonly previewBusy = signal(false);
-  protected readonly previewFailed = signal(false);
+  /** Why the last preview failed (translated), or null. */
+  protected readonly previewProblem = signal<string | null>(null);
   protected readonly warnings = signal<PreviewWarning[]>([]);
   protected readonly orderOpen = signal(false);
   private previewRun = 0;
@@ -152,13 +150,15 @@ export class BookmarksPageComponent implements OnInit {
     return mode;
   });
 
-  /** How many colour pickers: four for a picture, the pattern style's own count for a pattern. */
+  /** How many colour pickers: the engine's count for a picture, one per colour role for a pattern style. */
   protected readonly colourCount = computed(() => {
+    const options = this.options();
+    const most = options?.pictureColourCount ?? STARTING_COLOURS.length;
     if (this.source() === 'picture') {
-      return PICTURE_COLOURS;
+      return most;
     }
-    const style = this.options()?.patternStyles.find((s) => s.id === this.patternStyle());
-    return Math.min(style?.colours ?? PICTURE_COLOURS, PICTURE_COLOURS);
+    const style = options?.patternStyles.find((s) => s.id === this.patternStyle());
+    return Math.min(style?.roles.length ?? most, most);
   });
 
   protected readonly colourSlots = computed(() => Array.from({ length: this.colourCount() }, (_, index) => index));
@@ -241,6 +241,14 @@ export class BookmarksPageComponent implements OnInit {
   protected readonly frameOutline = computed(() =>
     this.mode() === 'set' && this.setKind() === 'split' ? null : (this.options()?.shapes.find((s) => s.id === this.shape())?.thumbnailSvg ?? null));
 
+  /**
+   * The shapes' thumbnails, trusted once per options. Made in the template, a new
+   * SafeHtml on every change detection would replace the SVG under the pointer
+   * between mousedown and mouseup, and the browser would drop the click.
+   */
+  protected readonly shapeThumbs = computed(() =>
+    new Map((this.options()?.shapes ?? []).map((s) => [s.id, this.sanitizer.bypassSecurityTrustHtml(s.thumbnailSvg)])));
+
   protected readonly expertJson = computed(() => JSON.stringify(this.options()?.expert ?? {}, null, 2));
   protected readonly uploadAccept = computed(() => (this.options()?.limits.uploadTypes ?? []).join(','));
   protected readonly uploadMaxMb = computed(() => Math.round(((this.options()?.limits.uploadMaxBytes ?? 0) / (1024 * 1024)) * 10) / 10);
@@ -298,11 +306,11 @@ export class BookmarksPageComponent implements OnInit {
       if (run === this.previewRun) {
         this.previewUrl.set(url);
         this.warnings.set(warnings);
-        this.previewFailed.set(false);
+        this.previewProblem.set(null);
       }
-    } catch {
+    } catch (error) {
       if (run === this.previewRun) {
-        this.previewFailed.set(true);
+        this.previewProblem.set(this.errorText(error, request));
       }
     } finally {
       if (run === this.previewRun) {
@@ -324,12 +332,24 @@ export class BookmarksPageComponent implements OnInit {
   protected warningText(warning: PreviewWarning): string {
     const key = `bookmarks.warnings.${warning.code}`;
     const text = this.i18n.t(key as TranslationKey);
-    return text === key ? warning.message : text;
+    if (text === key) {
+      return warning.message;
+    }
+    return warning.bookmark ? this.i18n.t('bookmarks.warnings.onBookmark', { n: warning.bookmark, text }) : text;
   }
 
-  /** The engine's thumbnail SVG (its own package content, not user input). */
-  protected thumbnail(svg: string): SafeHtml {
-    return this.sanitizer.bypassSecurityTrustHtml(svg);
+  /**
+   * Why the engine refused a preview, translated by its code. A name on a pattern
+   * without a solid back gets its own advice; an unknown code the general message.
+   */
+  private errorText(error: unknown, request: BookmarkRequest): string {
+    const { code, field } = (error ?? {}) as Partial<EngineErrorInfo>;
+    if (code === 'REQUEST_INVALID' && field === 'names' && request.mode === 'pattern') {
+      return this.i18n.t('bookmarks.errors.namesNeedBack');
+    }
+    const key = `bookmarks.errors.${code}`;
+    const text = this.i18n.t(key as TranslationKey);
+    return text === key ? this.i18n.t('bookmarks.design.previewError') : text;
   }
 
   protected readonly modeLabel = (mode: Mode): TranslationKey => `bookmarks.modes.${mode}`;
@@ -434,7 +454,7 @@ export class BookmarksPageComponent implements OnInit {
     }
     this.suggesting.set(true);
     try {
-      const suggested = await engine.suggestColours(picture, PICTURE_COLOURS);
+      const suggested = await engine.suggestColours(picture, this.options()?.pictureColourCount);
       this.colours.update((current) => current.map((colour, i) => suggested[i] ?? colour));
     } catch {
       // Keep the colours the visitor already has.
@@ -467,7 +487,7 @@ export class BookmarksPageComponent implements OnInit {
       const print = await this.startPrint();
       const built = await print.build(request);
       const files = [
-        { name: 'bookmark.3mf', file: built.threeMf },
+        { name: built.threeMfName, file: built.threeMf },
         ...built.stls,
         { name: 'bookmark.zip', file: built.zip }
       ];

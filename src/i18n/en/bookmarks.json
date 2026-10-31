@@ -118,24 +118,50 @@
     "shapes": {
       "rectangle": "Rectangle",
       "rounded": "Rounded",
+      "pennant": "Pennant",
+      "lace": "Lace point",
+      "crystal": "Crystal",
+      "octagon": "Octagon",
       "arch": "Arch",
-      "point": "Pointed",
-      "tab": "Tab",
-      "wave": "Wave",
-      "tapered": "Tapered",
-      "notched": "Notched",
-      "round-ends": "Round ends",
-      "oval": "Oval"
+      "swallowtail": "Swallowtail",
+      "ticket": "Ticket",
+      "ogee": "Dome"
     },
     "patterns": {
-      "isometric-cubes": "Isometric cubes",
+      "iso_cubes": "Isometric cubes",
+      "hatched_cubes": "Hatched cubes",
+      "truchet": "Truchet arcs",
+      "seigaiha": "Seigaiha",
       "waves": "Waves",
-      "seigaiha": "Seigaiha"
+      "diamonds": "Diamond lattice",
+      "asanoha": "Asanoha",
+      "tri_y": "Y weave",
+      "spirals": "Spirals"
     },
     "patternStyles": {
       "cut": "Cut-through",
       "relief": "Raised"
     }
+  },
+  "warnings": {
+    "onBookmark": "Bookmark {n}: {text}",
+    "NAME_DOES_NOT_FIT": "The name does not fit. Make it shorter, or choose a narrower font or a wider bookmark.",
+    "NAME_FONT_MISSING_LETTERS": "The font is missing some letters of the name. Choose another font.",
+    "NAME_NO_CONTRAST": "The name will be hard to read: the colours are too close. Choose a lighter or darker colour.",
+    "NAME_BOOKMARK_NARROW": "Only very short names fit on a bookmark this narrow.",
+    "DETAIL_SIMPLIFIED": "Some detail was too fine to print and has been simplified.",
+    "BRIDGES_ADDED": "Thin bridges were added to hold loose parts in place.",
+    "NOTHING_TO_PRINT": "Nothing is left to print: the picture is too faint or too fine for these colours.",
+    "HOLE_NO_ROOM": "There is no room for the hanging hole in this shape and size, so the bookmark has none.",
+    "SIZE_NARROW": "A very narrow bookmark: names must be short and fine picture detail is lost.",
+    "SIZE_SHORT": "A very short bookmark: there is little room for the picture and the name.",
+    "PICTURE_COLOURS_IGNORED": "The set uses the same colours for every picture."
+  },
+  "errors": {
+    "namesNeedBack": "A name on a cut-through pattern has nothing to sit on. Choose the “Raised” style or remove the name.",
+    "PICTURE_UNREADABLE": "The picture cannot be read. Try a JPG, PNG or WebP.",
+    "PICTURE_TOO_LARGE": "The picture is too large. Try a smaller one.",
+    "SIZE_OUT_OF_RANGE": "That size cannot be made. Choose another."
   },
   "studio": {
     "title": "Bookmark Studio",

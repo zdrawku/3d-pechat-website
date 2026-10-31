@@ -148,7 +148,7 @@
                         [class.is-selected]="shape() === item.id" [attr.aria-pressed]="shape() === item.id"
                         [attr.aria-label]="label('shapes', item.id, item.label)" (click)="shape.set(item.id)"
                         [attr.data-testid]="'bookmark-shape-' + item.id">
-                  <span class="shape-thumb" [innerHTML]="thumbnail(item.thumbnailSvg)"></span>
+                  <span class="shape-thumb" [innerHTML]="shapeThumbs().get(item.id)"></span>
                   <span class="shape-name">{{ label('shapes', item.id, item.label) }}</span>
                 </button>
               }
@@ -262,16 +262,16 @@
                 <img [src]="url" [alt]="'bookmarks.design.previewAlt' | t" class="preview-image" data-testid="bookmark-preview" />
               } @else if (source() === 'picture' && !picture()) {
                 <p class="hint">{{ 'bookmarks.picture.needed' | t }}</p>
-              } @else if (previewFailed()) {
-                <p class="problem">{{ 'bookmarks.design.previewError' | t }}</p>
+              } @else if (previewProblem(); as problem) {
+                <p class="problem" data-testid="bookmark-preview-problem">{{ problem }}</p>
               } @else {
                 <p class="hint">{{ 'bookmarks.design.previewLoading' | t }}</p>
               }
             </div>
-            @if (previewUrl() && previewFailed()) {
-              <p class="problem">{{ 'bookmarks.design.previewError' | t }}</p>
+            @if (previewUrl() && previewProblem(); as problem) {
+              <p class="problem" data-testid="bookmark-preview-problem">{{ problem }}</p>
             }
-            @for (warning of warnings(); track warning.code) {
+            @for (warning of warnings(); track $index) {
               <p class="warning" data-testid="bookmark-warning">{{ warningText(warning) }}</p>
             }
           </igx-card-content>
