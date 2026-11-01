@@ -291,6 +291,6 @@ Remember that the quality of the final piece depends not only on post-processing
 
 If you'd rather not deal with printing yourself, or you need a specific project printed well, the **3dpechat.bg** team can help. We're a 3D printing service in Sofia and print with FDM technology. PLA is our main material and the one we keep in stock; other materials, such as PETG or TPU, are possible on request, and we buy them specially for your order.
 
-You can start from a ready 3D model, a sketch, a photo or just an idea. Send your files (STL, 3MF, OBJ or STEP) by email or Viber. The first quote and the consultation are free, and we usually reply within 24 hours. [Get in touch](/en/contact/) through the enquiry form, Viber or email, or work out a rough price first with our [price calculator](/en/prices/).
+You can start from a ready 3D model, a sketch, a photo or just an idea. Send your files (STL, 3MF, OBJ or STEP) by email. The first quote and the consultation are free, and we usually reply within 24 hours. [Get in touch](/en/contact/) through the enquiry form or email, or work out a rough price first with our [price calculator](/en/prices/).
 
 **Get in touch today and let's turn your 3D idea into a finished print.**

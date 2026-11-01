@@ -92,15 +92,14 @@ test.describe('external links', () => {
 
     // Footer contact links.
     await expect(page.locator('a[href="mailto:3dpechat.bg@gmail.com"]').first()).toBeVisible();
-    await expect(page.locator('a[href^="viber:"]').first()).toBeVisible();
+    await expect(page.locator('a[href^="tel:"], a[href^="viber:"]')).toHaveCount(0);
   });
 
-  test('contact page exposes email and viber actions', async ({ page }) => {
+  test('contact page offers email and social media, no phone or Viber', async ({ page }) => {
     await page.goto('/contact');
     await expect(page.locator('a[href="mailto:3dpechat.bg@gmail.com"]').first()).toBeVisible();
-    // Viber/Instagram/TikTok are opened via JS handlers (buttons), so assert
-    // the buttons are present rather than href navigation.
-    await expect(page.getByRole('button', { name: /Viber/i })).toBeVisible();
+    await expect(page.locator('a[href^="tel:"], a[href^="viber:"]')).toHaveCount(0);
+    await expect(page.locator('main')).not.toContainText(/viber|whatsapp/i);
     await expect(page.getByTestId('youtube-contact-button')).toBeVisible();
   });
 });

@@ -1,13 +1,10 @@
 {
   "title": "Contact – custom 3D printing in Sofia",
-  "subtitle": "Phone, Viber, email or the enquiry form",
-  "intro": "Looking for custom 3D printing? We make prototypes, functional parts, gifts and small batches – from a ready 3D model or just an idea. The quickest way to reach us is by phone or Viber, but you can also email us or use the form below. We answer enquiries in English and Bulgarian.",
+  "subtitle": "Email, the enquiry form or social media",
+  "intro": "Looking for custom 3D printing? We make prototypes, functional parts, gifts and small batches – from a ready 3D model or just an idea. Email us or use the form below. We answer enquiries in English and Bulgarian.",
   "info": {
     "heading": "Get in touch",
     "lead": "We reply quickly — choose whichever way suits you best.",
-    "phone": "Phone",
-    "viber": "Open in Viber",
-    "viberTooltip": "Click for a direct chat on Viber",
     "email": "Email",
     "address": "Address",
     "hours": "Opening hours",
@@ -28,7 +25,6 @@
     "messagePlaceholder": "Your message...",
     "required": "This field is required",
     "fileNoteBefore": "Have a 3D model ({formats}), a sketch or a photo? The form doesn't accept attachments – send them to",
-    "fileNoteAfter": "or via Viber.",
     "submit": "Send message",
     "submitting": "Sending...",
     "privacyBefore": "We use the form's data only to reply to you. More in our",
@@ -49,7 +45,7 @@
     "heading": "Good to know",
     "delivery": {
       "title": "Delivery",
-      "text": "In Sofia we hand over finished orders in person or by city courier – arranged by phone or message. Anywhere else in Bulgaria we ship with Econt or Speedy. Delivery is free anywhere in Bulgaria for orders over €{freeOver}."
+      "text": "In Sofia we hand over finished orders in person or by city courier – arranged by email or message. Anywhere else in Bulgaria we ship with Econt or Speedy. Delivery is free anywhere in Bulgaria for orders over €{freeOver}."
     },
     "quote": {
       "title": "A quote with our first reply",

@@ -83,7 +83,7 @@ test.describe('SEO metadata', () => {
     expect(org['@type']).toBe('LocalBusiness');
     expect(org['@id']).toBe('https://3dpechat.bg/#organization');
     expect(org.name).toBe(business.name);
-    expect(org.telephone).toBe(business.telephone);
+    expect(org.telephone).toBeUndefined(); // no phone on the site: email, the form and social media
     expect(org.address.postalCode).toBe('1700');
     expect(org.address.streetAddress).toBe(business.address.streetAddress);
     expect(org.geo).toEqual(expect.objectContaining({ latitude: business.geo.latitude, longitude: business.geo.longitude }));

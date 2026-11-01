@@ -12,16 +12,15 @@ The controller of your personal data is **{operator}**, a private individual who
 - Permanent address: {operatorAddress}
 - Business address: {address}
 - Email: {email}
-- Phone and Viber: {phone}
 
 We are not required to have a data protection officer and don't have one. For any question, write to {email}.
 
 ## What data we receive {#data}
 
-**When you contact us** through the contact form, by email, on Viber, by phone or on social media:
+**When you contact us** through the contact form, by email or on social media:
 
 - your name;
-- your email or phone number;
+- your email or social media profile;
 - the content of your message;
 - the files, sketches and photos you send us.
 
@@ -33,7 +32,7 @@ We are not required to have a data protection officer and don't have one. For an
 
 We don't ask for sensitive data (health, religion, political views and the like); please don't send it to us.
 
-You don't have to give us any data, but without an email or phone number we can't reply, and without a delivery address we can't send your order.
+You don't have to give us any data, but without an email or another way to reach you we can't reply, and without a delivery address we can't send your order.
 
 ## Why we use it, and on what basis {#purposes}
 
@@ -50,7 +49,7 @@ We don't make automated decisions about you and don't profile you.
 
 ## How long we keep it {#retention}
 
-- **Messages, contact details, addresses and files**: deleted within **7 days** of the order being completed (delivered and paid), or within 7 days of the conversation ending if no order follows. This includes the copies in the contact form service (Web3Forms), our email and Viber.
+- **Messages, contact details, addresses and files**: deleted within **7 days** of the order being completed (delivered and paid), or within 7 days of the conversation ending if no order follows. This includes the copies in the contact form service (Web3Forms), our email and social media.
 - **Complaints**: until the complaint is resolved, and for as long as the law requires.
 - **Payments**: if tax law requires a record of a payment received, we keep only the minimum (date, amount, payment method) for the period it sets. Revolut and the couriers keep their own records under their own rules.
 - **Your answer in the cookie card**: 182 days in your browser, after which we ask again.
@@ -67,7 +66,6 @@ We don't sell data or use it for advertising. It passes through these services:
   - Google Analytics, only with your consent;
   - YouTube, only when you play a video.
 - **GitHub** (GitHub, Inc., USA) hosts the site and logs visitors' IP addresses for security.
-- **Viber** (Viber Media S.à r.l., Luxembourg), if you message us on Viber.
 - **Revolut** (Revolut Bank UAB, Lithuania), if you pay by bank transfer.
 - **Econt Express AD** and **Speedy AD** deliver your parcel.
 - **Instagram and TikTok**, if you message us there.

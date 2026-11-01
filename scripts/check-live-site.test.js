@@ -42,7 +42,6 @@ test('compares the live schema with business.json', () => {
   const live = {
     '@type': 'LocalBusiness',
     name: business.name,
-    telephone: business.telephone,
     address: { ...business.address },
     sameAs: business.sameAs,
     priceRange: business.priceRange

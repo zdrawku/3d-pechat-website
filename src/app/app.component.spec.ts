@@ -76,12 +76,11 @@ describe('AppComponent', () => {
     expect(area('footer')).toBe('footer');
   });
 
-  it('makes the footer phone and Viber entries clickable links', () => {
-    const host: HTMLElement = fixture.nativeElement;
-    expect(host.querySelector('footer a[href="tel:+359883310616"]'))
-      .withContext('footer tel: link').not.toBeNull();
-    expect(host.querySelector('footer a[href="viber://chat?number=%2B359883310616"]'))
-      .withContext('footer Viber link').not.toBeNull();
+  it('offers email in the footer, and no phone, Viber or WhatsApp', () => {
+    const footer: HTMLElement = fixture.nativeElement.querySelector('footer');
+    expect(footer.querySelector('a[href="mailto:3dpechat.bg@gmail.com"]')).withContext('footer email').not.toBeNull();
+    expect(footer.querySelector('a[href^="tel:"], a[href^="viber:"], a[href*="wa.me"], a[href^="whatsapp:"]')).toBeNull();
+    expect(footer.textContent).not.toMatch(/viber|whatsapp|\+359/i);
   });
 
   it('shows the footer address from business.json (matches the schema and map listing)', () => {

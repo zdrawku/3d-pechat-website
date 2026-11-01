@@ -20,24 +20,6 @@
       <p class="info-lead">{{ 'contact.info.lead' | t }}</p>
 
       <div class="info-row">
-        <igx-icon class="info-icon">call</igx-icon>
-        <div class="info-text">
-          <b>{{ 'contact.info.phone' | t }}</b>
-          <!-- Static hrefs on purpose: a bound [href] would be sanitized by
-               Angular, which rewrites the viber: scheme to "unsafe:". -->
-          <a href="tel:+359883310616">+359 883 310 616</a>
-          <a igxButton="flat" href="viber://chat?number=%2B359883310616" class="viber-pill"
-             [igxTooltipTarget]="viberTooltip">
-            <igx-icon>chat</igx-icon>
-            {{ 'contact.info.viber' | t }}
-          </a>
-          <div igxTooltip #viberTooltip="tooltip">
-            {{ 'contact.info.viberTooltip' | t }}
-          </div>
-        </div>
-      </div>
-
-      <div class="info-row">
         <igx-icon class="info-icon">mail</igx-icon>
         <div class="info-text">
           <b>{{ 'contact.info.email' | t }}</b>
@@ -176,13 +158,13 @@
         </div>
 
         <!-- The form can't take attachments (see above), so model files go by
-             email or Viber. Keep this in sync with the FAQ facts in
+             email. Keep this in sync with the FAQ facts in
              AI-VISIBILITY-PLAN.md (D4b). -->
         <p class="file-note" data-testid="contact-file-note">
           <igx-icon>attach_file</igx-icon>
           <span>
             {{ 'contact.form.fileNoteBefore' | t: { formats: fileFormats() } }}
-            <a href="mailto:3dpechat.bg@gmail.com">3dpechat.bg&#64;gmail.com</a> {{ 'contact.form.fileNoteAfter' | t }}
+            <a href="mailto:3dpechat.bg@gmail.com">3dpechat.bg&#64;gmail.com</a>.
           </span>
         </p>
 

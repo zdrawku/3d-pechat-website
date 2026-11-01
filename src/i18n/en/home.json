@@ -9,7 +9,7 @@
     "ctaPortfolio": "Browse the portfolio",
     "noteConsultation": "✓ Free consultation",
     "noteReply": "✓ Reply within {hours} h",
-    "noteChannels": "✓ Viber & Instagram",
+    "noteChannels": "✓ Email & Instagram",
     "imageAlt": "3D printing services – professional custom 3D printing",
     "statLabel": "printed projects"
   },
@@ -24,7 +24,7 @@
   "process": {
     "eyebrow": "How we work",
     "heading": "From idea to finished part in 4 steps",
-    "idea": { "title": "Send your idea", "text": "A model, a sketch or a description — via the form, Viber or Instagram." },
+    "idea": { "title": "Send your idea", "text": "A model, a sketch or a description — via the form, email or Instagram." },
     "quote": { "title": "Quote", "text": "We agree on the material, colour and deadline, and you get a clear price." },
     "print": { "title": "Printing", "text": "We make the part with quality materials and quality control." },
     "delivery": { "title": "Delivery", "text": "You receive the finished product — with care for every detail." }
@@ -46,7 +46,6 @@
   "cta": {
     "title": "Ready to bring your idea to life?",
     "description": "Get in touch today — we'll help you choose the best solution for your project.",
-    "quote": "Get a quote",
-    "call": "Call now"
+    "quote": "Get a quote"
   }
 }

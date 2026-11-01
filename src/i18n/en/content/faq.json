@@ -13,7 +13,7 @@
   },
   "files": {
     "question": "Which files do you accept?",
-    "answer": "STL, 3MF (preferred), OBJ and STEP. Send them by email or Viber – the contact form doesn't accept attachments."
+    "answer": "STL, 3MF (preferred), OBJ and STEP. Send them by email – the contact form doesn't accept attachments."
   },
   "materials": {
     "question": "Which materials do you print with?",
@@ -25,7 +25,7 @@
   },
   "delivery": {
     "question": "How do I get my order?",
-    "answer": "In Sofia – in person or by city courier, arranged by phone or message. Anywhere else in Bulgaria we ship with Econt or Speedy to an office, an address or a parcel locker, with cash on delivery available. Delivery is free anywhere in Bulgaria for orders over €100; below that amount the courier's rate applies."
+    "answer": "In Sofia – in person or by city courier, arranged by email or message. Anywhere else in Bulgaria we ship with Econt or Speedy to an office, an address or a parcel locker, with cash on delivery available. Delivery is free anywhere in Bulgaria for orders over €100; below that amount the courier's rate applies."
   },
   "payment": {
     "question": "How can I pay?",
@@ -37,6 +37,6 @@
   },
   "contact": {
     "question": "How quickly do you reply?",
-    "answer": "Usually within 24 hours, and the consultation is free. We work every day from 9:00 to 18:00 and answer in English and Bulgarian – the quickest way to reach us is by phone or Viber."
+    "answer": "Usually within 24 hours, and the consultation is free. We work every day from 9:00 to 18:00 and answer in English and Bulgarian."
   }
 }

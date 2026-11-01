@@ -1,14 +1,15 @@
 import { TestBed } from '@angular/core/testing';
 
-import { BUSINESS, formatPhone } from './business';
+import { BUSINESS } from './business';
 import { I18nService } from '../app/i18n/i18n.service';
 import { openingHoursText } from '../app/i18n/business-copy';
 
 describe('business data', () => {
   // Opening hours as text (every language, partial weeks) are formatted by
   // src/app/i18n/business-copy.ts — see business-copy.spec.ts.
-  it('formats the phone the way the site prints it', () => {
-    expect(formatPhone()).toBe('+359 883 310 616');
+  // No phone, Viber or WhatsApp anywhere: contact is by email, the form and social media.
+  it('lists no phone number', () => {
+    expect('telephone' in BUSINESS).toBeFalse();
   });
 
   it('keeps the identity the map listing uses', () => {

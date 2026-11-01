@@ -117,7 +117,6 @@ function businessMismatches(schema, business) {
   const eq = (label, a, b) => { if (JSON.stringify(a) !== JSON.stringify(b)) out.push(`${label}: live ${JSON.stringify(a)} ≠ business.json ${JSON.stringify(b)}`); };
   eq('@type', schema['@type'], 'LocalBusiness');
   eq('name', schema.name, business.name);
-  eq('telephone', schema.telephone, business.telephone);
   eq('address.streetAddress', schema.address && schema.address.streetAddress, business.address.streetAddress);
   eq('address.postalCode', schema.address && schema.address.postalCode, business.address.postalCode);
   eq('sameAs', schema.sameAs, business.sameAs);

@@ -22,7 +22,7 @@ test('builds a LocalBusiness from business.json with the stable @id', () => {
   assert.equal(s['@type'], 'LocalBusiness');
   assert.equal(s['@id'], 'https://3dpechat.bg/#organization');
   assert.equal(s.name, business.name);
-  assert.equal(s.telephone, business.telephone);
+  assert.equal('telephone' in s, false);
   assert.equal(s.address.postalCode, '1700');
   assert.equal(s.geo['@type'], 'GeoCoordinates');
   assert.equal(s.priceRange, business.priceRange);

@@ -9,8 +9,3 @@
 import business from './business.json';
 
 export const BUSINESS = business;
-
-/** "+359883310616" → "+359 883 310 616", the way the site prints the number. */
-export function formatPhone(e164: string = BUSINESS.telephone): string {
-  return e164.replace(/^\+359(\d{3})(\d{3})(\d{3})$/, '+359 $1 $2 $3');
-}

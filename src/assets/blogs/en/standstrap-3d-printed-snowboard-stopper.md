@@ -36,7 +36,7 @@ The clip is designed for a standard snowboard edge:
 
 The whole model measures about **101 × 49 × 170 mm**.
 
-![StandStrap from the side, showing the curved hinge and the phone number on the top end](assets/blogs/images/articles/standstrap-profil-telefon.webp)
+![StandStrap from the side, showing the curved hinge and the text on the top end](assets/blogs/images/articles/standstrap-profil-telefon.webp)
 
 ## Printing it
 

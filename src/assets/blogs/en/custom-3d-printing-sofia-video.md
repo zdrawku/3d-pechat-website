@@ -24,7 +24,7 @@ Below you'll find what's in the video, the second each project appears, and how 
 
 In the second half of the video we show the whole process. It's the same whether you need a single part or a small batch.
 
-1. **Send us your idea.** A model, a sketch or a description, through the [contact form](/en/contact/), Viber or Instagram. Files go by email or Viber, as the form doesn't take attachments.
+1. **Send us your idea.** A model, a sketch or a description, through the [contact form](/en/contact/) or Instagram. Files go by email, as the form doesn't take attachments.
 2. **Quote.** We agree the material, colour and lead time, and you get a clear price. Guide prices are on our [prices page](/en/prices/).
 3. **Printing.** We make the part with quality materials and check it before it leaves.
 4. **Delivery.** You receive the finished product.
@@ -59,5 +59,5 @@ No. You can send a sketch, a photo or a description. We help you get from the id
 
 ### How quickly do you reply to an enquiry?
 
-We usually reply within 24 hours, by email, Viber or Instagram.
+We usually reply within 24 hours, by email or Instagram.
 <!-- /faq -->

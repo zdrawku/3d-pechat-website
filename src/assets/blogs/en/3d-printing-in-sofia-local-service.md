@@ -16,7 +16,7 @@ When you work with a local provider, you remove the biggest unknown in the equat
 
 * **Direct communication:** Complex industrial parts or architectural models often need details clarified. Being able to meet in person and talk through materials and tolerances saves days of emails back and forth. We answer enquiries in English and Bulgarian.
 * **Quality control:** With a local **3D printing service**, you can order a test piece and see it in person before the whole batch goes to print.
-* **Simple local delivery:** No customs and no expensive international couriers. In Sofia, the finished part reaches you by city courier or in person, arranged by phone or message.
+* **Simple local delivery:** No customs and no expensive international couriers. In Sofia, the finished part reaches you by city courier or in person, arranged by email or message.
 
 ## Local 3D printing vs an online platform abroad
 
@@ -24,7 +24,7 @@ To show the differences more clearly, we've put together a comparison of a **3D 
 
 | Criterion | 3D printing in Sofia (local) | Foreign / online provider |
 | --- | --- | --- |
-| **Communication** | Direct (phone, message or in person) | Slow (ticket systems/chat) |
+| **Communication** | Direct (message or in person) | Slow (ticket systems/chat) |
 | **Lead time** | 1–3 working days for small parts, 3–7 for larger parts and small batches | 5–10 working days for shipping alone |
 | **Shipping risk** | Minimal (in person/city courier) | High (fine details can break in transit) |
 | **Delivery cost** | No fee for in-person handover; free delivery across Bulgaria on orders over €100 | High (especially for bulky models) |
@@ -56,11 +56,11 @@ We usually reply within 24 hours. Small parts take 1–3 working days, and large
 
 ### How do I receive the finished part?
 
-In Sofia, in person or by city courier, arranged by phone or message. Elsewhere in Bulgaria, we ship with Econt or Speedy, the country's main couriers, to an office, an address or a parcel locker, with cash on delivery available. Delivery is free across Bulgaria for orders over €100; below that, the courier's rate applies.
+In Sofia, in person or by city courier, arranged by email or message. Elsewhere in Bulgaria, we ship with Econt or Speedy, the country's main couriers, to an office, an address or a parcel locker, with cash on delivery available. Delivery is free across Bulgaria for orders over €100; below that, the courier's rate applies.
 
 ### What do I need to prepare to order?
 
-Ideally, a ready 3D model: STL, 3MF (preferred), OBJ or STEP. If you only have an idea or a sketch, get in touch and we'll help you at every stage. Send files by email or Viber. For an enquiry, the easiest way is the [contact form](/en/contact/) or a phone call.
+Ideally, a ready 3D model: STL, 3MF (preferred), OBJ or STEP. If you only have an idea or a sketch, get in touch and we'll help you at every stage. Send files by email. For an enquiry, the easiest way is the [contact form](/en/contact/).
 <!-- /faq -->
 
 ## Conclusion
@@ -75,5 +75,3 @@ Don't waste time waiting for deliveries or chasing unclear answers. As your loca
 
 📩 Get in touch today:
  <a href="mailto:3dpechat.bg@gmail.com" class="ig-typography__body-2 link_customer_support_footer"> 3dpechat.bg@gmail.com </a>
-
- or call us on <a href="tel:+359883310616">+359 883 310 616</a>

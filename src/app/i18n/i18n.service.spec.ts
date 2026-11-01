@@ -38,7 +38,7 @@ describe('I18nService', () => {
     expect(i18n.t('home.hero.title')).toBe('Професионален 3D печат и 3D принтиране по поръчка');
     // Registering twice is harmless.
     i18n.registerPage('home', homeMessages);
-    expect(i18n.t('home.cta.call')).toBe('Обади се сега');
+    expect(i18n.t('home.cta.quote')).toBe('Заяви оферта');
   });
 
   it('fills placeholders and leaves unknown ones visible', () => {
