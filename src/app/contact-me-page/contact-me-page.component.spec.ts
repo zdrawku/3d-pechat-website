@@ -44,7 +44,7 @@ describe('ContactMePageComponent', () => {
       const intro = host().querySelector('[data-testid="contact-intro"]')!;
       const how = host().querySelector('[data-testid="contact-how"]')!;
       expect(intro.textContent).toContain('3D печат по поръчка');
-      expect(intro.textContent).toContain('Viber');
+      expect(intro.textContent).toContain('имейл');
       expect(wordCount(intro)).withContext('lead word count').toBeLessThanOrEqual(50);
 
       // The copy that used to be one long paragraph still reaches the page.
@@ -84,12 +84,11 @@ describe('ContactMePageComponent', () => {
       expect(Array.from(how.querySelectorAll('a'), a => a.getAttribute('href'))).toEqual(['/prices', '/portfolio']);
     });
 
-    it('tells visitors to send model files by email or Viber (the form takes no attachments)', () => {
+    it('tells visitors to send model files by email (the form takes no attachments)', () => {
       const note = (fixture.nativeElement as HTMLElement).querySelector('[data-testid="contact-file-note"]')!;
       expect(note).withContext('file note').not.toBeNull();
       expect(note.querySelector('igx-icon')).withContext('Ignite icon').not.toBeNull();
       expect(note.textContent).toContain('STL');
-      expect(note.textContent).toContain('Viber');
       expect(note.querySelector('a')?.getAttribute('href')).toBe('mailto:3dpechat.bg@gmail.com');
     });
   });
@@ -97,16 +96,10 @@ describe('ContactMePageComponent', () => {
   describe('contact links', () => {
     const host = (): HTMLElement => fixture.nativeElement;
 
-    it('makes the phone number a tel: link', () => {
-      const tel = host().querySelector<HTMLAnchorElement>('.info-text a[href="tel:+359883310616"]');
-      expect(tel).withContext('phone tel: link').not.toBeNull();
-    });
-
-    it('opens a Viber chat with an encoded + (not viber://add, not unsafe:)', () => {
-      const viber = host().querySelector<HTMLAnchorElement>('a.viber-pill');
-      expect(viber).withContext('Viber link').not.toBeNull();
-      expect(viber!.getAttribute('href')).toBe('viber://chat?number=%2B359883310616');
-      expect(viber!.hasAttribute('igxButton')).withContext('styled via igxButton').toBeTrue();
+    it('offers no phone, Viber or WhatsApp — email, the form and social media only', () => {
+      expect(host().querySelector('a[href^="tel:"], a[href^="viber:"], a[href*="wa.me"], a[href^="whatsapp:"]')).toBeNull();
+      expect(host().textContent).not.toMatch(/viber|whatsapp|\+359/i);
+      expect(host().querySelector('.info-text a[href="mailto:3dpechat.bg@gmail.com"]')).withContext('email link').not.toBeNull();
     });
 
     it('offers a YouTube social pill built from Ignite components that opens the channel', () => {

@@ -33,7 +33,6 @@ function buildSchema(b) {
     url: b.url,
     logo: b.logo,
     image: b.image,
-    telephone: b.telephone,
     email: b.email,
     address: { '@type': 'PostalAddress', ...b.address },
     geo: { '@type': 'GeoCoordinates', latitude: b.geo.latitude, longitude: b.geo.longitude },

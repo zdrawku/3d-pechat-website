@@ -36,7 +36,7 @@
 
 Целият модел е около **101 × 49 × 170 mm**.
 
-![StandStrap отстрани — вижда се извитата панта и телефонният номер на горния край](assets/blogs/images/articles/standstrap-profil-telefon.webp)
+![StandStrap отстрани — вижда се извитата панта и надписът на горния край](assets/blogs/images/articles/standstrap-profil-telefon.webp)
 
 ## Печатът
 

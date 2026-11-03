@@ -232,6 +232,46 @@ a 0.4 mm floor with 1.2 mm walls and deep cells vs. a 1 mm base with 0.6 mm rais
 Ask: draw the depth in the preview (for example light shading on the raised lines and their side
 walls, or a slight angle), so the two looks are visibly different. The page needs no change for it.
 
+### 1.12 MUST (2026-11-01) — picture bookmarks: relief and detail at the default quality
+
+**What Zdravko saw.** A picture bookmark ordered at the default quality looks flat in the slicer. Of
+its 8 layers, 5 are the base colour and the picture's colours sit only in the top 2–3. The surface
+has no height steps, so there is **no relief**, and the picture loses most of its detail. The old
+stacked engine had both, and he wants them back.
+
+**Why it happens (0.1.0, read from `dist/bookmark/plan.js` and reproduced with the CLI).** The page
+sends `layering: 'plan'` (`engine/request.js`) and the default `quality` 0.7. The planner's stops for
+an ordinary 4-colour photo, 1.6 mm, nozzle 0.4 (`make --recipe`, `"layering":"plan"`) are:
+
+| stop (value) | plan | bands (bottom → top) | swaps / purge |
+|---|---|---|---|
+| economy (0) | `stacked` | 4 × 0.4 mm terraces: real relief | 3 / 0.9 g |
+| balanced (0.35) | `recessed` | | 6 / 1.8 g |
+| **quality (0.7, default)** | **`flat`** | base 0–1.0 mm, then all colours in 1.0–1.6 mm, flat top | 8 / 2.2 g |
+| best (1) | `flat+` | the same with one more paint layer | 11 / 2.9 g |
+
+`scorePlan` counts every height step where two colours meet as badness (`EDGE_WEIGHT = 20` per mm).
+So relief always scores as the worst look and lands on the cheapest stop („Пестеливо“ on the page).
+A customer who picks better quality gets less relief.
+
+**Ask.**
+1. **Relief is a choice of its own, not a side effect of the filament slider.** For example a request
+   field `surface: 'relief' | 'flat'` (or whatever name you choose), listed with labels in
+   `options()`. With `relief`, every quality stop keeps height steps between colours, and the slider
+   only trades swaps and purge against show-through. The default is yours to set. Zdravko's wish is
+   that a picture bookmark has relief unless the customer turns it off.
+2. **Detail.** Check how much of the picture survives the `flat`/`recessed` slab split (each slab is
+   vectorized and cleaned again in `bandsFromPlan`) against `stacked` on the same photo. If the plan
+   path drops detail that `stacked` keeps, fix that. If it has to drop it, say so with
+   `DETAIL_SIMPLIFIED`.
+3. **The preview shows it** (with §1.11): relief steps visible in `preview().png`, so the customer
+   sees what the choice does.
+4. Golden tests: the same photo at each stop with `relief` gives a band stack whose top heights differ
+   between colours. With `flat` it gives today's result.
+
+The page adds the control once the field is in `options()`. Until then it keeps the quality picker
+as it is. Deliver as a new tarball (§3).
+
 ## 2. Behaviour the page depends on
 
 ### 2.1 MUST — preview is fast, repeatable and cheap to repeat

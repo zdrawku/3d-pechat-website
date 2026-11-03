@@ -40,7 +40,7 @@ const LANGUAGE_PAGES = {
       '/products/': { label: 'Products', desc: 'Ready 3D printed products to order.' },
       '/products/bookmarks/': { label: 'Bookmarks', desc: 'Design a bookmark from your picture, a pattern or a set, and order it.' },
       '/prices/': { label: 'Prices', desc: 'Prices by weight, a price calculator and the FAQ in English.' },
-      '/contact/': { label: 'Contact', desc: 'Phone, Viber, email, address, opening hours and the enquiry form.' },
+      '/contact/': { label: 'Contact', desc: 'Email, address, opening hours and the enquiry form.' },
       '/blog/': { label: 'Blog', desc: 'The articles translated into English; the rest of the blog is in Bulgarian.' },
       '/privacy/': { label: 'Privacy Policy', desc: 'Who handles your data, what we receive, how long we keep it and your rights.' },
       '/terms/': { label: 'Terms of Use', desc: 'Ordering, payment, delivery, returns, the legal guarantee and rights to the models you send.' },
@@ -133,7 +133,6 @@ function generate() {
   const business = JSON.parse(fs.readFileSync(BUSINESS_FILE, 'utf8'));
   const faq = JSON.parse(fs.readFileSync(FAQ_FILE, 'utf8'));
   const locales = readLocales();
-  const phone = business.telephone.replace(/^\+359(\d{3})(\d{3})(\d{3})$/, '+359 $1 $2 $3');
 
   const lines = [
     `# ${business.name}`,
@@ -148,7 +147,7 @@ function generate() {
     '## Факти',
     '',
     ...business.facts.map(f => `- ${f}`),
-    `- Контакти: телефон и Viber ${phone}, имейл ${business.email}.`,
+    `- Контакти: имейл ${business.email}, формата за контакт и социалните мрежи.`,
     '',
     '## Често задавани въпроси',
     '',

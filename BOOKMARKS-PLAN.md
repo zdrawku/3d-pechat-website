@@ -17,7 +17,7 @@ sends the order.
 |---|---|---|
 | **W1** | Menu group, page with the three modes, order form, localisation, tests — all on a **stub** engine | ✅ built 2026-10-29, uncommitted |
 | **W1 open item** | **Real Web3Forms test: does a `.json` attachment arrive on the free plan?** | ❌ attachments refused (Pro-only) 2026-10-31 → the order JSON now goes as text in the field `order_json`, pasted into the Studio; ⬜ a real picture order still to send — see below |
-| **W2** | Wire the real engine: first from a local `.tgz` (`npm pack`, no symlink), then from npm — see "W2" below | 🟡 wired 2026-10-30 on rc.2; switched 2026-10-31 to `@printkit/bookmark-creator@^0.1.0` from npm (saved in `package.json`), uncommitted; every engine option on the page since 2026-10-31 (see "Every engine option on the page"); per-picture palettes wait for the engine |
+| **W2** | Wire the real engine: first from a local `.tgz` (`npm pack`, no symlink), then from npm — see "W2" below | 🟡 wired 2026-10-30 on rc.2; switched 2026-10-31 to `@printkit/bookmark-creator@^0.1.0` from npm (saved in `package.json`), on `^0.1.1` since 2026-11-03; every engine option on the page since 2026-10-31 (see "Every engine option on the page"); per-picture palettes wait for the engine |
 
 ## What W1 contains
 
@@ -175,6 +175,9 @@ bumps the version, builds, packs and prints the path) is in the contract, §3.
    repeat the checks against the registry build, commit. Done 2026-10-31 with `^0.1.0`: build,
    430 unit tests, 273 e2e, the browser run on the real engine (bg + en, light/dark, 390 px),
    a Studio print build and `make --order` on site-made orders (json + zip) all pass.
+   `^0.1.1` on 2026-11-03: the same code as the smoke-tested `0.1.1-beta.1` (0.1.0 API plus
+   trimmed 0.2-nozzle print settings). The lockfile was bumped by hand and `npm ci` passes. Build,
+   461 unit tests, 179 script tests and 21 bookmark e2e pass.
 
 ### Checklist
 

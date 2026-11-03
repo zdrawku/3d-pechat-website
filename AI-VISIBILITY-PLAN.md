@@ -57,6 +57,11 @@ Why it works today:
   in front.
 - 18 Bulgarian articles cover the topic, so there is little competition.
 - The Organization schema uses the same phone number as the listing.
+  **2026-10-31: the owner removed the phone, Viber and WhatsApp from the site.**
+  The schema no longer has a `telephone`, and `neverClaim` in `business.json`
+  forbids naming them as a way to reach us. The Google Business Profile still
+  lists the phone (the owner's call whether to remove it there too). A missing
+  field doesn't contradict the listing; a different number would.
 
 Weak spots this plan fixes:
 

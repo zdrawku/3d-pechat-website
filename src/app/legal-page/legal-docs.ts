@@ -1,4 +1,4 @@
-import { BUSINESS, formatPhone } from '../../data/business';
+import { BUSINESS } from '../../data/business';
 import { localizedAddress } from '../i18n/business-copy';
 import { interpolate } from '../i18n/i18n.service';
 import { DEFAULT_LOCALE, Locale } from '../i18n/locales';
@@ -15,8 +15,8 @@ export const LEGAL_DOCS: Record<LegalDoc, { dateModified: string; icon: string }
   // Hand-maintained (CLAUDE.md Rule 5.3): bump when a document's text changes
   // in substance, together with its MAIN_PAGE_LASTMOD entries in
   // scripts/generate-sitemap.js. The page shows it as „Последна промяна“.
-  privacy: { dateModified: '2026-10-20', icon: 'privacy_tip' },
-  terms: { dateModified: '2026-10-20', icon: 'handshake' },
+  privacy: { dateModified: '2026-10-31', icon: 'privacy_tip' },
+  terms: { dateModified: '2026-10-31', icon: 'handshake' },
 };
 
 /** Every language must have both texts: a new language is a compile error until they exist. */
@@ -54,14 +54,13 @@ export interface LegalText {
 /**
  * The facts a legal text may name, from business.json (Rule 5) — written in
  * the markdown as {operator}, {operatorAddress} (the permanent address),
- * {address} (where the work is done), {email}, {phone}, {freeDeliveryOver}.
+ * {address} (where the work is done), {email}, {freeDeliveryOver}.
  */
 export function legalParams(locale: Locale): Record<string, string> {
   return {
     operator: locale === DEFAULT_LOCALE ? BUSINESS.operator.name : BUSINESS.operator.nameEn,
     operatorAddress: locale === DEFAULT_LOCALE ? BUSINESS.operator.address : BUSINESS.operator.addressEn,
     email: BUSINESS.email,
-    phone: formatPhone(),
     address: localizedAddress(locale),
     freeDeliveryOver: String(BUSINESS.freeDeliveryOverEur)
   };

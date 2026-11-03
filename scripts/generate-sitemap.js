@@ -22,24 +22,24 @@ const translationsFile = (code) => path.join(__dirname, `../src/i18n/${code}/con
 // `dateAdded` (stamped by /add-product and the issue form), so a new product
 // reaches the sitemap and IndexNow without a hand bump here.
 const MAIN_PAGE_LASTMOD = {
-  '/': '2026-10-18',          // hreflang → the English home page /en/, language switcher
+  '/': '2026-10-31',          // phone, Viber and the „Обади се“ button removed (was 2026-10-18: hreflang, switcher)
   '/portfolio/': '2026-10-18', // hreflang → /en/portfolio/, language switcher
   '/products/': '2026-10-29',  // bookmark creator card (hreflang → /en/products/, language switcher)
   '/products/bookmarks/': '2026-10-29', // bookmark creator page created
-  '/prices/': '2026-10-18',    // hreflang → /en/prices/, language switcher
-  '/contact/': '2026-10-18',   // hreflang → /en/contact/, language switcher
+  '/prices/': '2026-10-31',    // FAQ: no phone or Viber (was 2026-10-18: hreflang, switcher)
+  '/contact/': '2026-10-31',   // phone and Viber removed (was 2026-10-18: hreflang, switcher)
   '/blog/': '2026-10-19',      // hreflang → the English blog /en/blog/
-  '/en/': '2026-10-19',        // now the translated home page (was a separate English landing); English gallery alt text
+  '/en/': '2026-10-31',        // phone, Viber and the „Call now“ button removed (translated home page since 2026-10-19)
   '/en/portfolio/': '2026-10-19', // English version created; English gallery alt text
   '/en/products/': '2026-10-29',  // bookmark creator card (English version created 2026-10-18)
   '/en/products/bookmarks/': '2026-10-29', // bookmark creator page created
-  '/en/prices/': '2026-10-18',    // English version created
-  '/en/contact/': '2026-10-18',   // English version created
+  '/en/prices/': '2026-10-31',    // FAQ: no phone or Viber (English version created 2026-10-18)
+  '/en/contact/': '2026-10-31',   // phone and Viber removed (English version created 2026-10-18)
   '/en/blog/': '2026-10-19',      // English blog created (8 translated posts)
-  '/privacy/': '2026-10-20',      // Privacy Policy created (src/legal/, LEGAL_DOCS in legal-page/legal-docs.ts)
-  '/terms/': '2026-10-20',        // Terms of Use created
-  '/en/privacy/': '2026-10-20',   // English Privacy Policy created
-  '/en/terms/': '2026-10-20'      // English Terms of Use created
+  '/privacy/': '2026-10-31',      // phone and Viber removed; created 2026-10-20 (src/legal/, LEGAL_DOCS in legal-page/legal-docs.ts)
+  '/terms/': '2026-10-31',        // phone and Viber removed; created 2026-10-20
+  '/en/privacy/': '2026-10-31',   // phone and Viber removed; created 2026-10-20
+  '/en/terms/': '2026-10-31'      // phone and Viber removed; created 2026-10-20
 };
 
 // changefreq / priority per page, the same in every language.

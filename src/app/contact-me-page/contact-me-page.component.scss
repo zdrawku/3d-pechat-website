@@ -121,29 +121,6 @@
   }
 }
 
-// Scoped under .contact-info (0,2,0) so it out-specifies the igx-button theme
-// (0,1,0) — background/colour/padding win with no !important. The icon uses
-// Ignite's own --ig-icon-* tokens.
-.contact-info .viber-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: rem(6px);
-  background: #fff;
-  // Shared accessible orange on the white pill (was #E64A19 @ 3.9:1 — failed).
-  color: var(--accent-on-light);
-  --foreground: var(--accent-on-light);
-  --ig-icon-color: var(--accent-on-light);
-  --ig-icon-size: #{rem(14px)};
-  font-weight: 700;
-  font-size: rem(11.2px);
-  padding: rem(6px) rem(12px);
-  border-radius: var(--radius-pill);
-  text-decoration: none; // it's an <a>; don't inherit .info-text a's underline
-  margin-top: rem(6px);
-  width: fit-content;
-  height: max-content;
-}
-
 .social-row {
   display: flex;
   gap: rem(10px);

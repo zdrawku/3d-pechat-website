@@ -1,5 +1,5 @@
 - `person` The 3dpechat.bg website is run by {operator}, a private individual in Sofia.
-- `request_quote` Quotes are free. An order is placed once you confirm the quote in writing, by email or on Viber.
+- `request_quote` Quotes are free. An order is placed once you confirm the quote in writing, by email or a social media message.
 - `precision_manufacturing` Items made from your model or to your specifications are made just for you and can't be returned unless they are defective.
 - `assignment_return` Ready-made products from the catalogue can be returned within 14 days of receipt.
 - `verified` Check your item on receipt. The legal guarantee covers defects that existed at delivery, not changes to PLA from use (heat, sunlight, load).
@@ -10,22 +10,21 @@ The 3dpechat.bg website and the services it describes are provided by **{operato
 
 - Permanent address: {operatorAddress}
 - Business address: {address}
-- Phone and Viber: {phone}
 - Email: {email}
 
 We don't issue invoices.
 
 ## What these terms cover {#scope}
 
-These terms apply to using the website and to every order for 3D printing, 3D modelling or a catalogue product, whether made through the contact form, by email, by phone, on Viber or through a social media message.
+These terms apply to using the website and to every order for 3D printing, 3D modelling or a catalogue product, whether made through the contact form, by email or through a social media message.
 
 If you order as a consumer, the law gives you rights that can't be restricted. Nothing in these terms reduces them.
 
 ## How ordering works {#ordering}
 
 1. **Enquiry.** You describe what you need and send a 3D model, a sketch, a photo or just an idea. The [Contact](/en/contact/) page explains how to send files.
-2. **Quote.** We send you a free written quote by email or on Viber. It states the price, the lead time, the delivery method, when and how you pay, and whether you have a right of withdrawal (see "Cancelling an order").
-3. **Confirmation.** The order is placed once you confirm the quote in writing. If we agreed by phone, we still send you the quote in writing, and the order is placed after you confirm it in writing.
+2. **Quote.** We send you a free written quote by email or a social media message. It states the price, the lead time, the delivery method, when and how you pay, and whether you have a right of withdrawal (see "Cancelling an order").
+3. **Confirmation.** The order is placed once you confirm the quote in writing.
 4. **Making and delivery**, within the time stated in the quote.
 
 Before you confirm, we may decline an order without giving a reason.
@@ -81,7 +80,7 @@ Your right to cancel depends on what you order. The quote always says which case
 
 You can cancel within **14 days** of receipt, without giving a reason.
 
-- Tell us by email or on Viber. You can use the form below, but you don't have to.
+- Tell us by email or a social media message. You can use the form below, but you don't have to.
 - Send the item back within 14 days of telling us. You pay the cost of returning it.
 - We refund everything you paid, including standard delivery, within 14 days of your notice. We may wait until we receive the item back.
 - You are responsible for any loss in the item's value from handling it more than needed to examine it.
@@ -117,7 +116,7 @@ Modelling is a service. You can cancel within **14 days** of confirming the quot
 
 ## Defects and the legal guarantee {#guarantee}
 
-**Check your item on receipt.** If you see a defect (a broken or missing part, a size or colour different from the quote), write to us straight away by email or on Viber, with a short description and a photo. That is when the cause is easiest to establish.
+**Check your item on receipt.** If you see a defect (a broken or missing part, a size or colour different from the quote), write to us straight away by email or a social media message, with a short description and a photo. That is when the cause is easiest to establish.
 
 **PLA changes with use.** Most items are made of PLA. This plastic softens and can deform at high temperatures (for example in a car in the sun or near a heat source), fades in direct sunlight and wears under load and friction. These are properties of the material, not defects.
 
