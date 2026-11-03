@@ -63,7 +63,7 @@
     }
   },
   "devDependencies": {
-    "@angular/build": "^21.2.28",
+    "@angular/build": "^21.2.29",
     "@angular/cli": "~21.2.28",
     "@angular/compiler-cli": "21.2.25",
     "@axe-core/playwright": "^4.12.1",
@@ -83,7 +83,7 @@
     "karma-coverage": "~2.2.1",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "^2.2.0",
-    "sharp": "^0.35.3",
+    "sharp": "^0.35.5",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.59.3"
   }
