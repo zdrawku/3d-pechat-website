@@ -333,5 +333,18 @@
     "hasOldCoins": false,
     "hasEuroCoins": false,
     "tags": ["Подарък", "статуетка"]
+  },
+  {
+    "id": 19,
+    "linkId": "advent-koledna-kula-kalendar",
+    "name": "Адвент Коледна Кула Календар",
+    "description": "Коледен адвент календар във формата на висока червена кула с елха и звезда на върха. Всеки ден издърпваш плъзгача с номер от 1 до 24 и малка изненада (пример с бонбон или шоколадче) пада през вратичката най-отдолу.",
+    "frontImage": "/assets/real-images/advent-koledna-kula-kalendar.webp",
+    "backImage": "/assets/real-images/advent-koledna-kula-kalendar-back.webp",
+    "dateAdded": "2026-11-16",
+    "hasOldCoins": false,
+    "hasEuroCoins": false,
+    "featured": true,
+    "tags": ["коледен календар", "коледа", "адвент календар", "коледен кумин", "advent christmas calendar", "christmas"]
   }
 ]
