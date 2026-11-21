@@ -13,8 +13,9 @@ import post10 from "../../assets/blogs/litofan-s-3d-printirane-kak-da-prevarnesh
 import post11 from "../../assets/blogs/monetna-karta-bulgarski-evro-moneti.md";
 import post12 from "../../assets/blogs/pla-pla-pla-pro-i-pln-razliki-i-izbor.md";
 import post13 from "../../assets/blogs/prozrachen-i-poluprozrachen-pla-filament-svetlopropuskliv-3d-pechat.md";
-import post14 from "../../assets/blogs/standstrap-3d-printiran-stoper-za-snoubord.md";
-import post15 from "../../assets/blogs/what-is-3d-printing.md";
+import post14 from "../../assets/blogs/rezervna-chast-s-3d-pechat.md";
+import post15 from "../../assets/blogs/standstrap-3d-printiran-stoper-za-snoubord.md";
+import post16 from "../../assets/blogs/what-is-3d-printing.md";
 
 /** Lets scripts/preload-locale-chunks.js find this chunk in the build (dynamic imports keep every export). */
 export const CHUNK_MARKER = "blog-content:bg";
@@ -34,6 +35,7 @@ export const BLOG_CONTENT: Record<string, string> = {
   "monetna-karta-bulgarski-evro-moneti": post11,
   "pla-pla-pla-pro-i-pln-razliki-i-izbor": post12,
   "prozrachen-i-poluprozrachen-pla-filament-svetlopropuskliv-3d-pechat": post13,
-  "standstrap-3d-printiran-stoper-za-snoubord": post14,
-  "what-is-3d-printing": post15
+  "rezervna-chast-s-3d-pechat": post14,
+  "standstrap-3d-printiran-stoper-za-snoubord": post15,
+  "what-is-3d-printing": post16
 };
