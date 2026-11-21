@@ -37,7 +37,7 @@ jobs:
     steps:
       # Only the allowlist, the form and their checkers are needed here — no
       # dependencies, nothing from the issue is executed.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           sparse-checkout: |
             .github/issue-authors.json
@@ -84,12 +84,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # create-pull-request gets the token as an input, so git needs none.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
 
@@ -107,7 +107,7 @@ jobs:
 
       - name: Create Pull Request
         id: pr
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'feat(products): add ${{ steps.add.outputs.product_name }}'
